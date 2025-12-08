@@ -1,0 +1,2 @@
+/home/hossam/Documents/flutter_projects/icare/android/app/.cxx/RelWithDebInfo/1x4o1i20/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/hossam/Documents/flutter_projects/icare/android/app/.cxx/RelWithDebInfo/1x4o1i20/armeabi-v7a/CMakeFiles/rebuild_cache.dir

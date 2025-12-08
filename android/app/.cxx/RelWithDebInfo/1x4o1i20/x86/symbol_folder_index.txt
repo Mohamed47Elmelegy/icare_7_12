@@ -1,0 +1,1 @@
+/home/hossam/Documents/flutter_projects/icare/build/app/intermediates/cxx/RelWithDebInfo/1x4o1i20/obj/x86
