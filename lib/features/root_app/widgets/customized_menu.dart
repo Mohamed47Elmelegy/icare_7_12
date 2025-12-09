@@ -8,8 +8,8 @@ import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/screens/notifications/notifications_screen.dart';
 import 'package:icare/features/account/presentation/widgets/profile_image_with_action.dart';
-import 'package:icare/features/booking/presentation/screens/main_order_screen.dart';
 import 'package:icare/features/nurse/presentation/screens/vertical_specialists_list.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_event.dart';
@@ -27,31 +27,41 @@ class CustomizedMenuWidget extends StatelessWidget {
     return Container(
       width: 220.w,
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
-        color: DMUtil.getWC()
-      ),
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          color: DMUtil.getWC()),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 10,),
-          if(!Util.checkUser())
-           ItemLineDrawer(
-            title: translate("login.app_bar"),
-            icon:  Icon(Icons.people,color: DMUtil.getUnSelectedIcon(),),
-            fn: ()=> Util.pushPage(const NewExperienceScreen(), context),
+          const SizedBox(
+            height: 10,
           ),
-
-          if(Util.isCustomer())
-          ItemLineDrawer(
-            title: translate("nurse.all_nurses"),
-            icon:  Icon(Icons.people,color: DMUtil.getUnSelectedIcon(),),
-            fn: ()=> Util.pushPage(const AllSpecialistsScreen(), context),
-          ),
-          if(Util.checkUser())...[
+          if (!Util.checkUser())
+            ItemLineDrawer(
+              title: translate("login.app_bar"),
+              icon: Icon(
+                Icons.people,
+                color: DMUtil.getUnSelectedIcon(),
+              ),
+              fn: () => Util.pushPage(const NewExperienceScreen(), context),
+            ),
+          if (Util.isCustomer())
+            ItemLineDrawer(
+              title: translate("nurse.all_nurses"),
+              icon: Icon(
+                Icons.people,
+                color: DMUtil.getUnSelectedIcon(),
+              ),
+              fn: () => Util.pushPage(const AllSpecialistsScreen(), context),
+            ),
+          if (Util.checkUser()) ...[
             ItemLineDrawer(
               title: translate("profile.profile"),
-              icon:  SvgAssetIconWidget(iconPath: AppImages.profile,color: DMUtil.getUnSelectedIcon(),),
-              fn: (){
+              icon: SvgAssetIconWidget(
+                iconPath: AppImages.profile,
+                color: DMUtil.getUnSelectedIcon(),
+              ),
+              fn: () {
                 int index = Util.isCustomer() ? 3 : 2;
                 RootBloc.get(context).add(ChangeIndex(index: index, title: ""));
                 RootBloc.get(context).add(const ShowDrawerMenuEvent());
@@ -59,42 +69,57 @@ class CustomizedMenuWidget extends StatelessWidget {
             ),
             ItemLineDrawer(
               title: translate("profile.notification"),
-              icon:  SvgAssetIconWidget(iconPath: AppImages.notification,color: DMUtil.getUnSelectedIcon(),),
-              fn: (){
+              icon: SvgAssetIconWidget(
+                iconPath: AppImages.notification,
+                color: DMUtil.getUnSelectedIcon(),
+              ),
+              fn: () {
+                RootBloc.get(context).add(const ShowDrawerMenuEvent());
+                Util.pushPage(const NotificationsScreen(), context);
+              },
+            ),
+            if (Util.isCustomer())
+              ItemLineDrawer(
+                title: translate("icare.new_appointment"),
+                icon: Icon(
+                  Icons.add_circle_outline,
+                  color: DMUtil.getUnSelectedIcon(),
+                ),
+                fn: () {
+                  RootBloc.get(context).add(const ShowDrawerMenuEvent());
+                  Util.pushPage(const AllSpecialistsScreen(), context);
+                },
+              ),
+            ItemLineDrawer(
+              title: translate("icare.my_appointments"),
+              icon: Icon(
+                Icons.date_range_sharp,
+                color: DMUtil.getUnSelectedIcon(),
+              ),
+              fn: () {
                 int index = Util.isCustomer() ? 4 : 3;
                 RootBloc.get(context).add(ChangeIndex(index: index, title: ""));
                 RootBloc.get(context).add(const ShowDrawerMenuEvent());
               },
             ),
-            if(Util.isCustomer())
-            ItemLineDrawer(
-              title: translate("icare.new_appointment"),
-              icon:  Icon(Icons.add_circle_outline,color: DMUtil.getUnSelectedIcon(),),
-              fn: (){
-                RootBloc.get(context).add(const ShowDrawerMenuEvent());
-                Util.pushPage(const AllSpecialistsScreen(), context);
-              },
-            ),
-            ItemLineDrawer(
-              title: translate("icare.my_appointments"),
-              icon:  Icon(Icons.date_range_sharp,color: DMUtil.getUnSelectedIcon(),),
-              fn: (){
-                RootBloc.get(context).add(const ShowDrawerMenuEvent());
-                Util.pushPage(const MainBookingScreen(), context);
-              },
-            ),
           ],
-
           ItemLineDrawer(
             title: translate("button.change_language"),
-            icon:  Icon(Icons.language,color: DMUtil.getUnSelectedIcon(),),
-            fn: ()=> Util.changeLang(ctx: context),
+            icon: Icon(
+              Icons.language,
+              color: DMUtil.getUnSelectedIcon(),
+            ),
+            fn: () => Util.changeLang(ctx: context),
           ),
-          if(Util.checkUser())...[
+          if (Util.checkUser()) ...[
             ItemLineDrawer(
               title: translate("activity_setting.sign_out"),
-              icon: Icon(Icons.logout,size: 20.w,color: DMUtil.getUnSelectedIcon(),),
-              fn: (){
+              icon: Icon(
+                Icons.logout,
+                size: 20.w,
+                color: DMUtil.getUnSelectedIcon(),
+              ),
+              fn: () {
                 RootBloc.get(context).add(const ShowDrawerMenuEvent());
                 CustomDialogs.signOut(context);
               },
@@ -107,13 +132,23 @@ class CustomizedMenuWidget extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      ProfileImageEdit(enableEditIcon: false, img:Util.isCustomer()? AppImages.avatar : AppImages.nurseImg,enablePadding: false,iconSize: 28,),
+                      ProfileImageEdit(
+                        enableEditIcon: false,
+                        img: Util.isCustomer()
+                            ? AppImages.avatar
+                            : AppImages.nurseImg,
+                        enablePadding: false,
+                        iconSize: 28,
+                      ),
                       // const CircleProfileImage(),
-                      const SizedBox(width: 10,),
-                      BlocBuilder<AccountBloc,AccountState>(
-                        builder: (ctx,state){
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      BlocBuilder<AccountBloc, AccountState>(
+                        builder: (ctx, state) {
                           var bloc = AccountBloc.get(ctx);
-                          if(bloc.currentUser==null)return const SizedBox.shrink();
+                          if (bloc.currentUser == null)
+                            return SizedBox.shrink();
                           return SizedBox(
                             width: 100.w,
                             child: CustomText(
@@ -128,14 +163,17 @@ class CustomizedMenuWidget extends StatelessWidget {
                     ],
                   ),
                   InkWell(
-                    onTap: ()=> RootBloc.get(context).add(const ShowDrawerMenuEvent()),
-                    child: Icon(Icons.close,size: 22.w,),
+                    onTap: () =>
+                        RootBloc.get(context).add(const ShowDrawerMenuEvent()),
+                    child: Icon(
+                      Icons.close,
+                      size: 22.w,
+                    ),
                   ),
                 ],
               ),
             ),
           ],
-
         ],
       ),
     );

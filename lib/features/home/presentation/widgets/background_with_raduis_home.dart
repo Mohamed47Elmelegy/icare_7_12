@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:icare/core/strings/app_images.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
-import 'package:icare/features/account/presentation/widgets/profile_image_with_action.dart';
 import 'package:icare/features/home/presentation/widgets/request_company/request_btn.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
@@ -28,17 +26,20 @@ class HomeBackGroundWithRadius extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 195.w,
+      constraints: BoxConstraints(
+        minHeight: 195.w,
+      ),
       padding: EdgeInsets.symmetric(
             horizontal: AppStyle.paddingFromH.w,
           ) +
-          EdgeInsets.only(top: AppStyle.paddingFromTop.w),
+          EdgeInsets.only(top: AppStyle.paddingFromTop.w, bottom: 15.w),
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20)),
           color: DMUtil.getPC()),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -48,16 +49,18 @@ class HomeBackGroundWithRadius extends StatelessWidget {
                 const BackArrowButton()
               else
                 const SizedBox(width: 35),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const LogoWidget(
-                    width: 100,
-                    height: 53,
-                    isWhite: true,
-                  ),
-                  if (setRequestBtn && Util.isCustomer()) const RequestBtn(),
-                ],
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const LogoWidget(
+                      width: 100,
+                      height: 53,
+                      isWhite: true,
+                    ),
+                    if (setRequestBtn && Util.isCustomer()) const RequestBtn(),
+                  ],
+                ),
               ),
               Container(
                   width: 30.w,
@@ -88,11 +91,14 @@ class HomeBackGroundWithRadius extends StatelessWidget {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomText(
-                          text: currentUser.userName ?? "",
-                          color: DMUtil.getWC(),
-                          fontWeight: FontWeight.w600,
-                          fontSize: AppStyle.large.sp,
+                        Flexible(
+                          child: CustomText(
+                            text: currentUser.userName ?? "",
+                            color: DMUtil.getWC(),
+                            fontWeight: FontWeight.w600,
+                            fontSize: AppStyle.large.sp,
+                            maxLine: 2,
+                          ),
                         ),
                         if (Util.isNurse()) ...[
                           SizedBox(

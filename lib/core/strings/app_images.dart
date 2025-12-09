@@ -14,7 +14,6 @@ class AppImages {
   static const String splashGif = "$images/splash-animated.gif";
   static const String loadingGif = "$images/loading.gif";
 
-
   //welcome
   static const welcomeFirst = "$images/page_item_one.svg";
   static const welcomeSecond = "$images/page_item_two.svg";
@@ -23,7 +22,6 @@ class AppImages {
   static const backgroundRadius = "$images/background_radius.svg";
   static const turnOnNotification = "$images/turn_on_notification.svg";
   static const arrowIcon = "$icons/arrow.svg";
-
 
   //auth icons
   static const String lock = "$icons/lock_black.png";
@@ -48,7 +46,6 @@ class AppImages {
   static const String cart = "$icons/Cart.png";
   static const String cartSelected = "$icons/Cart.svg";
 
-
   static const String purchasePrescription = "$icons/purchase_prescription.svg";
   static const String brain = "$icons/brain.svg";
 
@@ -71,7 +68,6 @@ class AppImages {
 
   //search
   static const String search = "$icons/find.svg";
-
 
   static const String like = "$icons/like.png";
 
@@ -101,4 +97,6 @@ class AppImages {
   static const String companyTest = "$icons/test_company.png";
   static const String imgPlaceHolder = "$images/placeholder.jpeg";
   static const String nurseImg = "$images/nurse_test.png";
+
+  static const String appointments = "$icons/Date.svg";
 }

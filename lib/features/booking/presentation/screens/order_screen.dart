@@ -7,8 +7,6 @@ import 'package:icare/features/home/presentation/widgets/background_with_raduis_
 import 'package:flutter/material.dart';
 import 'package:icare/features/booking/presentation/widgets/small_order_widgets.dart';
 
-
-
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
 
@@ -16,7 +14,8 @@ class OrderScreen extends StatefulWidget {
   State<OrderScreen> createState() => _OrderScreenState();
 }
 
-class _OrderScreenState extends State<OrderScreen>  with TickerProviderStateMixin{
+class _OrderScreenState extends State<OrderScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
 
   @override
@@ -25,36 +24,39 @@ class _OrderScreenState extends State<OrderScreen>  with TickerProviderStateMixi
     tabController = TabController(vsync: this, length: 2);
     NotificationsUtils.pushNotificationListener(context);
   }
+
   @override
   void dispose() {
     tabController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DMUtil.getWC(),
-      body: RefreshIndicator(
-        color: DMUtil.getPC(),
-        onRefresh: ()=> _buildRefresh(context),
-        child: const SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              HomeBackGroundWithRadius(enableBackIcon: true,),
-              SizedBox(height: 20,),
-              BookingTapsRow(),
-              OrderList(),
-            ],
+        backgroundColor: DMUtil.getWC(),
+        body: RefreshIndicator(
+          color: DMUtil.getPC(),
+          onRefresh: () => _buildRefresh(context),
+          child: const SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                HomeBackGroundWithRadius(
+                  enableBackIcon: false,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                BookingTapsRow(),
+                OrderList(),
+              ],
+            ),
           ),
-        ),
-      )
-    );
+        ));
   }
 
   Future<void> _buildRefresh(BuildContext context) async {
     BookingBloc.get(context).add(const FetchAllOrderEvent());
   }
 }
-
-
