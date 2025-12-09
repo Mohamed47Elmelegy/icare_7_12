@@ -6,11 +6,9 @@ import 'package:icare/features/home/presentation/widgets/publications/video_widg
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_app_image.dart';
 
-
-
 class PublicationWidget extends StatelessWidget {
   final PublicationsEntity item;
-  const PublicationWidget({super.key,required this.item});
+  const PublicationWidget({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +19,18 @@ class PublicationWidget extends StatelessWidget {
           text: item.title,
           fontSize: AppStyle.average.sp,
         ),
-        const SizedBox(height: 5,),
-        if(item.videoUrl!="")...[
+        const SizedBox(
+          height: 5,
+        ),
+        if (item.videoUrl != "") ...[
           VideoWidget(item: item),
-        ]else...[
+        ] else ...[
           Align(
-            child: ImageWidget(imgUrl: item.imgUrl,height: 210,fit: BoxFit.fill,),
+            child: ImageWidget(
+              imgUrl: item.imgUrl,
+              height: 210,
+              fit: BoxFit.fill,
+            ),
           ),
         ]
       ],

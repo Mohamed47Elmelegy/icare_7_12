@@ -20,14 +20,24 @@ class SwitchProfileStatus extends StatelessWidget {
           text: translate("profile.offline"),
           fontWeight: FontWeight.w600,
           fontSize: AppStyle.verySmall.sp,
+          color: DMUtil.getWC(),
         ),
-        BlocBuilder<AccountBloc,AccountState>(
-          builder: (ctx,state){
+        BlocBuilder<AccountBloc, AccountState>(
+          builder: (ctx, state) {
             var bloc = AccountBloc.get(ctx);
-            return Switch(
-              value: bloc.isOnline,
-              activeColor: DMUtil.getPC(),
-              onChanged: (val)=> bloc.add(const SwitchProfileStatusEvent()),
+            return Transform.scale(
+              scale: 0.8, // Adjust size if needed
+              child: Switch(
+                value: bloc.isOnline,
+                activeColor: Colors.white,
+                activeTrackColor: DMUtil.getPcSc(),
+                inactiveThumbColor: Colors.white,
+                inactiveTrackColor: Colors.grey.shade300,
+                trackOutlineColor:
+                    MaterialStateProperty.all(Colors.transparent),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                onChanged: (val) => bloc.add(const SwitchProfileStatusEvent()),
+              ),
             );
           },
         ),
@@ -35,8 +45,8 @@ class SwitchProfileStatus extends StatelessWidget {
           text: translate("profile.online"),
           fontWeight: FontWeight.w600,
           fontSize: AppStyle.verySmall.sp,
+          color: DMUtil.getWC(),
         ),
-
       ],
     );
   }

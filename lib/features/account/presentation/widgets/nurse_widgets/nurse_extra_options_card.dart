@@ -17,31 +17,32 @@ class ExtraOptionsNurseCardProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         var currentNurse = bloc.currentUser;
-        if(currentNurse==null)return const SizedBox.shrink();
+        if (currentNurse == null) return const SizedBox.shrink();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SwitchProfileStatus(),
+                // const SwitchProfileStatus(),
                 CustomButton(
-                  height: 25.w, 
-                  width: 94.w, 
+                  height: 25.w,
+                  width: 94.w,
                   widget: CustomText(
                     text: translate("profile.emerg"),
                     fontWeight: FontWeight.w600,
-                    fontSize: AppStyle.small.sp-1.2,
+                    fontSize: AppStyle.small.sp - 1.2,
                     color: DMUtil.getWC(),
-                  ),        
+                  ),
                   color: DMUtil.getRED(),
-                  onPressed: ()async{
-                    if(bloc.emergencyContactsList!=null && bloc.emergencyContactsList!.isNotEmpty){
-                      for(var i in bloc.emergencyContactsList!){
+                  onPressed: () async {
+                    if (bloc.emergencyContactsList != null &&
+                        bloc.emergencyContactsList!.isNotEmpty) {
+                      for (var i in bloc.emergencyContactsList!) {
                         await Util.sendSms(i);
                       }
                     }
@@ -66,17 +67,32 @@ class ExtraOptionsNurseCardProfile extends StatelessWidget {
             //   ),
             // ),
 
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
 
             const Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SmallProfileCards(title: "10K", subTitle: "patients",),
-                SizedBox(width: 5,),
-                SmallProfileCards(title: "5 years", subTitle: "experience",),
-                SizedBox(width: 5,),
-                SmallProfileCards(title: "5.0", subTitle: "Avg Rating",),
+                SmallProfileCards(
+                  title: "10K",
+                  subTitle: "patients",
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                SmallProfileCards(
+                  title: "5 years",
+                  subTitle: "experience",
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                SmallProfileCards(
+                  title: "5.0",
+                  subTitle: "Avg Rating",
+                ),
               ],
             ),
           ],
@@ -85,7 +101,3 @@ class ExtraOptionsNurseCardProfile extends StatelessWidget {
     );
   }
 }
-
-
-
-

@@ -1,4 +1,3 @@
-
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
@@ -15,28 +14,28 @@ class NotificationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: !Util.checkUser()?
-        const AccountNotAuth():
-        RefreshIndicator(
-          onRefresh: () => _buildRefresh(context),
-          color: DMUtil.getPC(),
-          child: Scrollbar(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  HomeBackGroundWithRadius(title:  translate("profile.notification"),),
-                  const NotificationsList(),
-                ],
-              ),
-            ),
-          )
-        )
-    );
+        body: !Util.checkUser()
+            ? const AccountNotAuth()
+            : RefreshIndicator(
+                onRefresh: () => _buildRefresh(context),
+                color: DMUtil.getPC(),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        HomeBackGroundWithRadius(
+                          title: translate("profile.notification"),
+                          enableBackIcon: true,
+                        ),
+                        const NotificationsList(),
+                      ],
+                    ),
+                  ),
+                )));
   }
 
   Future<void> _buildRefresh(BuildContext context) async {
     AccountBloc.get(context).add(const FetchAllNotificationsEvent());
   }
 }
-

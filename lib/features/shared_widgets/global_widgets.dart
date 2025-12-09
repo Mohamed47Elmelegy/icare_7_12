@@ -24,16 +24,15 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool whiteLogo;
   final Color? textColor;
   final Color backGroundColor;
-  const GlobalAppBar({
-    super.key,
-    this.title,
-    this.icon,
-    this.leadingIcon,
-    this.justLogo = false,
-    this.whiteLogo = false,
-    this.backGroundColor = Colors.transparent,
-    this.textColor
-  });
+  const GlobalAppBar(
+      {super.key,
+      this.title,
+      this.icon,
+      this.leadingIcon,
+      this.justLogo = false,
+      this.whiteLogo = false,
+      this.backGroundColor = Colors.transparent,
+      this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,8 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
         preferredSize: Size(double.infinity, AppStyle.appBarHeight.w),
         child: Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.only(left: 10.w, right: 10.w, top: AppStyle.paddingFromTop.h),
+          padding: EdgeInsets.only(
+              left: 10.w, right: 10.w, top: AppStyle.paddingFromTop.h),
           decoration: BoxDecoration(
             color: backGroundColor,
           ),
@@ -49,33 +49,43 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if(justLogo)...[
+              if (justLogo) ...[
                 Expanded(
                   child: Stack(
-                    alignment: Util.getLang()=="ar"? Alignment.centerRight:Alignment.centerLeft,
+                    alignment: Util.getLang() == "ar"
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
                     children: [
                       leadingIcon ?? const SizedBox.shrink(),
-                      if(justLogo)const LogoWidget(height: 140,width: 100,fit: BoxFit.contain,),
+                      if (justLogo)
+                        const LogoWidget(
+                          height: 140,
+                          width: 100,
+                          fit: BoxFit.contain,
+                        ),
                     ],
                   ),
                 ),
-              ]else ... [
+              ] else ...[
                 leadingIcon ?? const SizedBox.shrink(),
-                if(title!=null)Expanded(
-                  child: Padding(
-                    padding: leadingIcon!=null ? EdgeInsets.only(left: Util.getLang()=="ar"?40.w:0,right: Util.getLang()!="ar"?40.w:0):EdgeInsets.zero,
-                    child: CustomText(
-                      text: title.toString(),
-                      color: textColor ?? DMUtil.getDC(),
-                      fontSize: AppStyle.large.sp-1.w,
-                      alignCenter: true,
-                      isEllipsis: true,
+                if (title != null)
+                  Expanded(
+                    child: Padding(
+                      padding: leadingIcon != null
+                          ? EdgeInsets.only(
+                              left: Util.getLang() == "ar" ? 40.w : 0,
+                              right: Util.getLang() != "ar" ? 40.w : 0)
+                          : EdgeInsets.zero,
+                      child: CustomText(
+                        text: title.toString(),
+                        color: textColor ?? DMUtil.getDC(),
+                        fontSize: AppStyle.large.sp - 1.w,
+                        alignCenter: true,
+                        isEllipsis: true,
+                      ),
                     ),
                   ),
-                ),
               ],
-
-
               icon ?? const SizedBox.shrink(),
             ],
           ),
@@ -83,10 +93,8 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize =>
-      Size.fromHeight(AppStyle.appBarHeight.w);
+  Size get preferredSize => Size.fromHeight(AppStyle.appBarHeight.w);
 }
-
 
 class AppBarWithRadius extends StatelessWidget {
   final bool enableBackIcon;
@@ -96,34 +104,58 @@ class AppBarWithRadius extends StatelessWidget {
   final double paddingBottom;
   final bool isRegisterNurse;
   final VoidCallback? backFn;
-  const AppBarWithRadius({super.key,this.enableBackIcon=false,this.title,this.backGroundHeight=200,this.paddingBottom = 70,this.isRegisterNurse=false,this.switchLang,this.backFn});
+  const AppBarWithRadius(
+      {super.key,
+      this.enableBackIcon = false,
+      this.title,
+      this.backGroundHeight = 200,
+      this.paddingBottom = 70,
+      this.isRegisterNurse = false,
+      this.switchLang,
+      this.backFn});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
       children: [
-        SvgPicture.asset(AppImages.backgroundRadius,fit: BoxFit.fill,width: double.infinity,height: backGroundHeight.w,),
+        SvgPicture.asset(
+          AppImages.backgroundRadius,
+          fit: BoxFit.fill,
+          width: double.infinity,
+          height: backGroundHeight.w,
+        ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w)+ EdgeInsets.only(bottom: paddingBottom.w),
-          child:  Row(
+          padding: EdgeInsets.symmetric(horizontal: 10.w) +
+              EdgeInsets.only(bottom: paddingBottom.w),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
-                  if(enableBackIcon || (title ==null && switchLang==null))... [
-                    BackArrowButton(fn: backFn,),
-                    const SizedBox(width: 5,),
+                  if (enableBackIcon ||
+                      (title == null && switchLang == null)) ...[
+                    BackArrowButton(
+                      fn: backFn,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
                   ],
-
-                  const LogoWidget(isWhite: true,width: 60,fit: BoxFit.contain,height: 50,),
+                  const LogoWidget(
+                    isWhite: true,
+                    width: 60,
+                    fit: BoxFit.contain,
+                    height: 50,
+                  ),
                 ],
               ),
-              if(title!=null)
+              if (title != null)
                 InkWell(
-                  onTap: (){
-                    if(title.toString().contains("My Account") || title.toString().contains("حسابي")){
+                  onTap: () {
+                    if (title.toString().contains("My Account") ||
+                        title.toString().contains("حسابي")) {
                       Util.pushPage(const EditProfilePage(), context);
                     }
                   },
@@ -134,12 +166,10 @@ class AppBarWithRadius extends StatelessWidget {
                     fontSize: AppStyle.small.sp,
                   ),
                 ),
-              if(switchLang==true)
-                SwitchLanguageWidget(isRegisterNurse: isRegisterNurse,),
-
-
-
-
+              if (switchLang == true)
+                SwitchLanguageWidget(
+                  isRegisterNurse: isRegisterNurse,
+                ),
             ],
           ),
         ),
@@ -148,54 +178,51 @@ class AppBarWithRadius extends StatelessWidget {
   }
 }
 
-
-
-
 class BackArrowButton extends StatelessWidget {
   final VoidCallback? fn;
   final Color? color;
   final Alignment? alignment;
-  const BackArrowButton({super.key,this.fn,this.alignment,this.color,});
+  const BackArrowButton({
+    super.key,
+    this.fn,
+    this.alignment,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Ink(
       child: InkWell(
-        onTap: fn??()=> Navigator.of(context).pop(),
-        child: Padding(
-          padding: EdgeInsets.only(right: 3.w, left: 3.w,top: 0),
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: color??DMUtil.getWC(),
-            size: 23.w,
-          ),
-        )
-      ),
+          onTap: fn ?? () => Navigator.of(context).pop(),
+          child: Padding(
+            padding: EdgeInsets.only(right: 3.w, left: 3.w, top: 0),
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: color ?? DMUtil.getWC(),
+              size: 23.w,
+            ),
+          )),
     );
   }
 }
 
-
-
 class NotificationIcon extends StatelessWidget {
-  final Color color;
+  final Color? color;
   final VoidCallback? fn;
-  const NotificationIcon({super.key,this.color = Colors.white,this.fn});
+  const NotificationIcon({super.key, this.color, this.fn});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: fn ?? () =>  Util.pushPage(const NotificationsScreen(), context),
+      onTap: fn ?? () => Util.pushPage(const NotificationsScreen(), context),
       child: Stack(
         alignment: Alignment.topRight,
         children: [
           SvgPicture.asset(
             AppImages.notification,
             width: 20.w,
-            colorFilter: ColorFilter.mode(
-                color,
-                BlendMode.srcIn
-            ),
+            colorFilter:
+                ColorFilter.mode(color ?? DMUtil.getPcSc(), BlendMode.srcIn),
           ),
           BlocBuilder<BookingBloc, BookingState>(
             builder: (ctx, state) {
@@ -213,15 +240,14 @@ class NotificationIcon extends StatelessWidget {
 class CircleGreenMark extends StatelessWidget {
   final double size;
   final Color? color;
-  const CircleGreenMark({super.key,this.size = 3,this.color});
+  const CircleGreenMark({super.key, this.size = 3, this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(width: 1,color: DMUtil.getWC()),
-        borderRadius: const BorderRadius.all(Radius.circular(10))
-      ),
+          border: Border.all(width: 1, color: DMUtil.getWC()),
+          borderRadius: const BorderRadius.all(Radius.circular(10))),
       margin: const EdgeInsets.only(right: 3),
       child: CircleAvatar(
         backgroundColor: color ?? DMUtil.getGreen(),
@@ -231,22 +257,22 @@ class CircleGreenMark extends StatelessWidget {
   }
 }
 
-
-
-
 class ProfileIcon extends StatelessWidget {
   final Color color;
-  const ProfileIcon({super.key,this.color = Colors.white});
+  const ProfileIcon({super.key, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Util.pushPage(const ProfileScreen(), context),
-      child: Icon(Icons.account_circle_outlined,color: DMUtil.getWC(),size: 20.w,),
+      child: Icon(
+        Icons.account_circle_outlined,
+        color: DMUtil.getWC(),
+        size: 20.w,
+      ),
     );
   }
 }
-
 
 class GrabberBottomSheet extends StatelessWidget {
   const GrabberBottomSheet({super.key});
@@ -254,15 +280,15 @@ class GrabberBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-    child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      width: 50.w,
-      height: 5.w,
-      decoration: BoxDecoration(
-        color: kBackGround,
-        borderRadius: BorderRadius.circular(8.0),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        width: 50.w,
+        height: 5.w,
+        decoration: BoxDecoration(
+          color: kBackGround,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
       ),
-    ),
-  );
+    );
   }
 }

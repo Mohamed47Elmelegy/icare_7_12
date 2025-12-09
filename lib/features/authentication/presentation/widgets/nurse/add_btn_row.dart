@@ -37,9 +37,9 @@ class AddRowWithTitle extends StatelessWidget {
         //   ),
         // ),
         CustomButton(
-          height: 35.h,
-          width: 95.w,
-          color: DMUtil.getPC2(),
+          height: 28.h,
+          width: 70.w,
+          color: DMUtil.getPC(),
           onPressed: onTap,
           circular: 10,
           widget: CustomText(
