@@ -21,12 +21,9 @@ import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
 import 'package:icare/features/authentication/domain/entities/user_entity.dart';
 
-
-
-class AccountBloc extends Bloc<AccountEvent,AccountState>{
+class AccountBloc extends Bloc<AccountEvent, AccountState> {
   bool showPassword = false;
   static AccountBloc get(BuildContext context) => BlocProvider.of(context);
-
 
   GetUserServiceUseCase getUserServiceUseCase;
   ChangePasswordUseCase changePasswordUseCase;
@@ -41,39 +38,38 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
     required this.getAllNotificationsUseCase,
     required this.getAllUsersUseCase,
     required this.updateProfileStatusUseCase,
-}) : super(AccountInitialState()) {
-
-    on<UpdateProfileEvent>((event, emit) async{
+  }) : super(AccountInitialState()) {
+    on<UpdateProfileEvent>((event, emit) async {
       await updateProfile(event, emit);
       await getProfileData(event, emit);
     });
 
-    on<UpdateProfileCurrentDataEvent>((event, emit){
+    on<UpdateProfileCurrentDataEvent>((event, emit) {
       updateCurrentUserData(event, emit);
     });
 
-    on<EnableUpdateProfileEvent>((event, emit){
+    on<EnableUpdateProfileEvent>((event, emit) {
       enableUpdateProfile(event, emit);
     });
 
-    on<FetchProfileDataEvent>((event, emit) async{
+    on<FetchProfileDataEvent>((event, emit) async {
       await getProfileData(event, emit);
     });
 
-    on<FetchAllUsersDataEvent>((event, emit) async{
+    on<FetchAllUsersDataEvent>((event, emit) async {
       await getAllUsersData(event, emit);
     });
 
-    on<FetchAllNotificationsEvent>((event, emit) async{
+    on<FetchAllNotificationsEvent>((event, emit) async {
       await getAllNotifications(event, emit);
     });
 
-    on<ChangeUserPasswordEvent>((event, emit) async{
+    on<ChangeUserPasswordEvent>((event, emit) async {
       await changeUserPassword(event, emit);
     });
 
     on<ChangeNotificationModeEvent>((event, emit) {
-       changeNotificationMode(event, emit);
+      changeNotificationMode(event, emit);
     });
 
     on<SwitchProfileTapsEvent>((event, emit) {
@@ -101,36 +97,35 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
       modifyCurrentService(event, emit);
     });
 
-    on<SwitchProfileStatusEvent>((event, emit) async{
+    on<SwitchProfileStatusEvent>((event, emit) async {
       await changeNurseProfileStatus(event, emit);
     });
   }
 
   bool enableUpdate = false;
   bool enableUpdateImg = false;
-  enableUpdateProfile(EnableUpdateProfileEvent event,emit){
+  enableUpdateProfile(EnableUpdateProfileEvent event, emit) {
     emit(const ProfileLoadingState());
-    if(event.isImg==true){
+    if (event.isImg == true) {
       enableUpdateImg = !enableUpdateImg;
-    }else if(event.isSave==true){
+    } else if (event.isSave == true) {
       enableUpdate = false;
       enableUpdateImg = false;
       currentModifyService = null;
-    }else{
+    } else {
       enableUpdate = !enableUpdate;
     }
     emit(const ProfileSuccessState());
   }
+
   int currentProfileTapsIndex = 0;
-  switchProfileTaps(SwitchProfileTapsEvent event,emit){
+  switchProfileTaps(SwitchProfileTapsEvent event, emit) {
     emit(const ProfileLoadingState());
     currentProfileTapsIndex = event.index;
     emit(const ProfileSuccessState());
   }
 
-
   /// nurse section
-
 
   File? license;
   File? certificate;
@@ -145,90 +140,98 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
   List<String>? coursesList;
   List<String>? emergencyContactsList;
   List<ServicesModel>? servicesList;
-  updateNurseData(UpdateNurseDataEvent event,emit){
+  updateNurseData(UpdateNurseDataEvent event, emit) {
     emit(const ProfileLoadingState());
-    if(event.nurse!=null)nurse = event.nurse;
-    if(event.license!=null)license = event.license;
-    if(event.certificate!=null)certificate = event.certificate;
-    if(event.nurseID!=null)nurseID = event.nurseID;
-    if(event.associationCard!=null)associationCard = event.associationCard;
-    if(event.relatedJobId!=null)relatedJobId = event.relatedJobId;
-    if(event.avatar!=null)nurseAvatar = event.avatar;
-    if(event.languageList!=null)languageList = event.languageList;
-    if(event.educationList!=null)educationList = event.educationList;
-    if(event.publicationsList!=null)publicationsList = event.publicationsList;
-    if(event.coursesList!=null)coursesList = event.coursesList;
-    if(event.emergencyContactsList!=null)emergencyContactsList = event.emergencyContactsList;
-    if(event.servicesList!=null)servicesList = event.servicesList;
-    Timer(const Duration(seconds: 1),()async{
+    if (event.nurse != null) nurse = event.nurse;
+    if (event.license != null) license = event.license;
+    if (event.certificate != null) certificate = event.certificate;
+    if (event.nurseID != null) nurseID = event.nurseID;
+    if (event.associationCard != null) associationCard = event.associationCard;
+    if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
+    if (event.avatar != null) nurseAvatar = event.avatar;
+    if (event.languageList != null) languageList = event.languageList;
+    if (event.educationList != null) educationList = event.educationList;
+    if (event.publicationsList != null)
+      publicationsList = event.publicationsList;
+    if (event.coursesList != null) coursesList = event.coursesList;
+    if (event.emergencyContactsList != null)
+      emergencyContactsList = event.emergencyContactsList;
+    if (event.servicesList != null) servicesList = event.servicesList;
+    Timer(const Duration(seconds: 1), () async {
       await UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
-        if(languageList!=null)'languages' : languageList,
-        if(educationList!=null)'education' : educationList,
-        if(publicationsList!=null)'publications' : publicationsList,
-        if(coursesList!=null)'courses' : coursesList,
-        if(emergencyContactsList!=null)'emergency_contacts' : emergencyContactsList,
-        if(servicesList!=null&&event.servicesList!=null)'services' :  convertServiceToIDS(event.servicesList!),
+        if (languageList != null) 'languages': languageList,
+        if (educationList != null) 'education': educationList,
+        if (publicationsList != null) 'publications': publicationsList,
+        if (coursesList != null) 'courses': coursesList,
+        if (emergencyContactsList != null)
+          'emergency_contacts': emergencyContactsList,
+        if (servicesList != null && event.servicesList != null)
+          'services': convertServiceToIDS(event.servicesList!),
       });
     });
     _afterUpdateProfile();
     emit(const UpdateNurseDataSuccessState());
   }
 
-  changeUserPassword(ChangeUserPasswordEvent event,emit)async{
+  changeUserPassword(ChangeUserPasswordEvent event, emit) async {
     emit(ChangeUserPasswordState(response: AuthResponse(isLoad: true)));
     String resMsg = "";
-    try{
+    try {
       var res = await changePasswordUseCase(data: event.data);
       res.fold((l) {
         resMsg = l.toString();
-        emit(ChangeUserPasswordState(response: AuthResponse(isFailed: true,msg: resMsg)));
-      },(data) async{
-        if(data.isSuccess==true){
-          emit(ChangeUserPasswordState(response: AuthResponse(isSuccess: true,msg: data.msg)));
-        }else{
-          emit(ChangeUserPasswordState(response: AuthResponse(isFailed: true,msg: data.msg)));
+        emit(ChangeUserPasswordState(
+            response: AuthResponse(isFailed: true, msg: resMsg)));
+      }, (data) async {
+        if (data.isSuccess == true) {
+          emit(ChangeUserPasswordState(
+              response: AuthResponse(isSuccess: true, msg: data.msg)));
+        } else {
+          emit(ChangeUserPasswordState(
+              response: AuthResponse(isFailed: true, msg: data.msg)));
         }
       });
-    }catch(e){
-      emit(ChangeUserPasswordState(response: AuthResponse(isFailed: true,msg: e.toString())));
+    } catch (e) {
+      emit(ChangeUserPasswordState(
+          response: AuthResponse(isFailed: true, msg: e.toString())));
       debugPrint("changeUserPassword: $e");
     }
   }
 
-
   UserService? currentModifiedUser;
   File? avatar;
-  updateCurrentUserData(UpdateProfileCurrentDataEvent event,emit){
+  updateCurrentUserData(UpdateProfileCurrentDataEvent event, emit) {
     emit(const ProfileLoadingState());
-    if(event.userData['avatar']!=null)avatar = event.userData['avatar'];
-    emit(UpdateProfileState(response: AuthResponse(isSuccess:  true)));
+    if (event.userData['avatar'] != null) avatar = event.userData['avatar'];
+    emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
   }
 
-  updateProfile(UpdateProfileEvent event,emit) async{
-    if(!Util.checkUser())return;
-    emit(UpdateProfileState(response: AuthResponse(isLoad:  true)));
+  updateProfile(UpdateProfileEvent event, emit) async {
+    if (!Util.checkUser()) return;
+    emit(UpdateProfileState(response: AuthResponse(isLoad: true)));
     String resMsg = "";
-    try{
+    try {
       var res = await updateUserServiceUseCase(userData: event.user);
       res.fold((l) {
         resMsg = l.toString();
-      },(data) async{
-        if(data.userId!=0){
+      }, (data) async {
+        if (data.userId != 0) {
           currentUser = data;
           _afterUpdateProfile();
-          emit(UpdateProfileState(response: AuthResponse(isSuccess:  true)));
+          emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
           await saveUserDate(AuthResponse(user: data));
-        }else{
+        } else {
           resMsg = translate("toast.wrong");
         }
       });
-    }catch(e){
-      emit(UpdateProfileState(response: AuthResponse(msg: resMsg,isFailed: true)));
+    } catch (e) {
+      emit(UpdateProfileState(
+          response: AuthResponse(msg: resMsg, isFailed: true)));
       debugPrint("updateProfile: $e");
     }
   }
 
-  _afterUpdateProfile(){
+  _afterUpdateProfile() {
     enableUpdate = false;
     enableUpdateImg = false;
     currentPublication = "";
@@ -236,20 +239,20 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
   }
 
   UserService? currentUser;
-  getProfileData(event, emit)async{
-    if(!Util.checkUser())return;
+  getProfileData(event, emit) async {
+    if (!Util.checkUser()) return;
     emit(FetchProfileDataState(response: AuthResponse(isLoad: true)));
     String resMsg = "";
-    try{
+    try {
       var res = await getUserServiceUseCase();
       res.fold((l) {
         resMsg = l.toString();
-      },(data) async{
-        if(data.userId!=null && data.userId!=0){
+      }, (data) async {
+        if (data.userId != null && data.userId != 0) {
           currentUser = data;
           isOnline = currentUser!.status ?? false;
           emergencyContactsList = currentUser!.emergencyContactsList;
-          if(currentUser!.nurse!=null){
+          if (currentUser!.nurse != null) {
             var nurse = currentUser!.nurse;
             languageList = nurse!.languageList;
             educationList = nurse.educationList;
@@ -258,62 +261,70 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
             servicesList = nurse.servicesList;
           }
           _afterUpdateProfile();
-          emit(UpdateProfileState(response: AuthResponse(isSuccess:  true)));
-          await saveUserDate(AuthResponse(user: data,isSuccess: true,msg: resMsg));
+          emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
+          await saveUserDate(
+              AuthResponse(user: data, isSuccess: true, msg: resMsg));
         }
       });
-    }catch(e){
-      emit(FetchProfileDataState(response: AuthResponse(msg: resMsg,isFailed: true)));
+    } catch (e) {
+      emit(FetchProfileDataState(
+          response: AuthResponse(msg: resMsg, isFailed: true)));
       debugPrint("getProfileDataBlocError: $e");
     }
   }
 
-  saveUserDate(AuthResponse res)async{
-    if(res.user==null)return;
-    if(res.user!.userId==null)await SharedPref().setPreferencesString(Constants.userId, res.user!.userId.toString());
-    if(res.user!.email==null&&res.user!.email!="")await SharedPref().setPreferencesString(Constants.email, res.user!.email.toString());
-    if(res.user!.phoneNumber==null&&res.user!.phoneNumber!="")await SharedPref().setPreferencesString(Constants.mobile, res.user!.phoneNumber.toString());
-    if(res.user!.userName==null&&res.user!.userName!="")await SharedPref().setPreferencesString(Constants.name, res.user!.userName.toString());
+  saveUserDate(AuthResponse res) async {
+    if (res.user == null) return;
+    if (res.user!.userId == null)
+      await SharedPref()
+          .setPreferencesString(Constants.userId, res.user!.userId.toString());
+    if (res.user!.email == null && res.user!.email != "")
+      await SharedPref()
+          .setPreferencesString(Constants.email, res.user!.email.toString());
+    if (res.user!.phoneNumber == null && res.user!.phoneNumber != "")
+      await SharedPref().setPreferencesString(
+          Constants.mobile, res.user!.phoneNumber.toString());
+    if (res.user!.userName == null && res.user!.userName != "")
+      await SharedPref()
+          .setPreferencesString(Constants.name, res.user!.userName.toString());
   }
-
 
   /// get all users
   List<UserService> allUsers = [];
-  getAllUsersData(event, emit)async{
+  getAllUsersData(event, emit) async {
     emit(FetchProfileDataState(response: AuthResponse(isLoad: true)));
     String resMsg = "";
-    try{
+    try {
       var res = await getAllUsersUseCase();
       res.fold((l) {
         resMsg = l.toString();
         emit(FetchProfileDataState(response: AuthResponse(isFailed: true)));
-      },(data) async{
-        if(data.isNotEmpty){
+      }, (data) async {
+        if (data.isNotEmpty) {
           allUsers = data;
           emit(FetchProfileDataState(response: AuthResponse(isSuccess: true)));
         }
       });
-    }catch(e){
-      emit(FetchProfileDataState(response: AuthResponse(msg: resMsg,isFailed: true)));
+    } catch (e) {
+      emit(FetchProfileDataState(
+          response: AuthResponse(msg: resMsg, isFailed: true)));
       debugPrint("getProfileDataBlocError: $e");
     }
   }
 
-
-
   /// notifications
   List<NotificationsEntity> notificationList = [];
-  getAllNotifications(event,emit)async{
-    if(!Util.checkUser())return;
+  getAllNotifications(event, emit) async {
+    if (!Util.checkUser()) return;
     // try{
-      emit(const FetchNotificationsLoadingState());
-      var res = await getAllNotificationsUseCase();
-      res.fold((l) {
-        emit(const FetchNotificationsFailedState());
-      },(data) {
-        notificationList = data.reversed.toList();
-        emit(const FetchNotificationsSuccessfullyState());
-      });
+    emit(const FetchNotificationsLoadingState());
+    var res = await getAllNotificationsUseCase();
+    res.fold((l) {
+      emit(const FetchNotificationsFailedState());
+    }, (data) {
+      notificationList = data.reversed.toList();
+      emit(const FetchNotificationsSuccessfullyState());
+    });
     // }catch(e){
     //   debugPrint("getAllNotifications: $e");
     //   emit(const FetchNotificationsFailedState());
@@ -321,7 +332,7 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
   }
 
   bool isEnabledNotification = false;
-  changeNotificationMode(event,emit){
+  changeNotificationMode(event, emit) {
     emit(AccountInitialState());
     isEnabledNotification = !isEnabledNotification;
     emit(const UpdateNotificationsModeState());
@@ -332,112 +343,121 @@ class AccountBloc extends Bloc<AccountEvent,AccountState>{
     // await UserServiceRemoteDataSource.updateUserToken();
   }
 
-
   /// patientData
   String currentPublication = "";
   String currentMedicalConditions = "";
-  updateCurrentPatientData(UpdateUserPatientDataEvent event, emit){
+  updateCurrentPatientData(UpdateUserPatientDataEvent event, emit) {
     emit(AccountInitialState());
-    if(event.data['publications']!=null)currentPublication = event.data['publications'];
-    if(event.data['medical_conditions']!=null)currentMedicalConditions = event.data['medical_conditions'];
+    if (event.data['publications'] != null)
+      currentPublication = event.data['publications'];
+    if (event.data['medical_conditions'] != null)
+      currentMedicalConditions = event.data['medical_conditions'];
     emit(const ProfileSuccessState());
   }
 
-
-
-  convertAllergiesToIDS(){
+  convertAllergiesToIDS() {
     var list = [];
-    for(var i in currentUser!.allergiesList!){
+    for (var i in currentUser!.allergiesList!) {
       list.add(i.id);
     }
     return list;
   }
 
-
   List<ServicesModel> allServiceList = [];
-  getAllServiceList()async{
-    if(!Util.checkUser())return;
-    allServiceList = await UserServiceRemoteDataSource.getAllServicesList();
+  getAllServiceList({String? userType}) async {
+    if (!Util.checkUser()) return;
+
+    // Get user_type from current user if not provided
+    if (userType == null && currentUser?.userType != null) {
+      userType = currentUser!.userType;
+      debugPrint("🔍 Using current user type: $userType");
+    }
+
+    allServiceList = await UserServiceRemoteDataSource.getAllServicesList(
+        userType: userType);
+
+    debugPrint(
+        "📋 Loaded ${allServiceList.length} services for user_type: ${userType ?? 'all'}");
   }
 
   ServicesModel? currentService;
   String? priceTxt;
-  changeCurrentService(ChangeCurrentService event,emit){
+  changeCurrentService(ChangeCurrentService event, emit) {
     emit(AccountInitialState());
     currentService = event.item;
-    if(event.txt!=null)priceTxt = event.txt;
+    if (event.txt != null) priceTxt = event.txt;
     emit(const ProfileSuccessState());
   }
 
   int? currentModifyService;
-  enableModifyService(EnableModifyCurrentService event,emit){
+  enableModifyService(EnableModifyCurrentService event, emit) {
     emit(AccountInitialState());
     currentModifyService = event.item;
     emit(const ProfileSuccessState());
   }
 
-  modifyCurrentService(ModifyCurrentService event,emit){
+  modifyCurrentService(ModifyCurrentService event, emit) {
     emit(AccountInitialState());
     currentModifyService = null;
-    if(servicesList==null)return;
-    int indexI = servicesList!.indexWhere((element) => element.id==event.item.id);
-    if(event.isRemove==true){
-      if(indexI==-1)return;
+    if (servicesList == null) return;
+    int indexI =
+        servicesList!.indexWhere((element) => element.id == event.item.id);
+    if (event.isRemove == true) {
+      if (indexI == -1) return;
       servicesList!.removeAt(indexI);
-    }else{
-      servicesList![indexI]=event.item;
+    } else {
+      servicesList![indexI] = event.item;
     }
     UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
-      if(servicesList!=null)'services' :  convertServiceToIDS(servicesList!),
+      if (servicesList != null) 'services': convertServiceToIDS(servicesList!),
     });
     emit(const ProfileSuccessState());
   }
 
-  convertServiceToIDS(List<ServicesModel> listP){
+  convertServiceToIDS(List<ServicesModel> listP) {
     var list = [];
-    for(var i in listP){
+    for (var i in listP) {
       list.add({
-        'id':i.id,
-        'value':i.value,
+        'id': i.id,
+        'value': i.value,
       });
     }
     return list;
   }
 
-
   bool isOnline = false;
-  changeNurseProfileStatus(SwitchProfileStatusEvent event,emit) async{
+  changeNurseProfileStatus(SwitchProfileStatusEvent event, emit) async {
     emit(AccountInitialState());
-    try{
-    if(event.isOnline!=null)isOnline=event.isOnline!;
-    var res = await updateProfileStatusUseCase(userData: {'status': isOnline==true?"offline":"online"});
-    res.fold((l) {
-      emit(const ProfileFailedState());
-    },(data) {
-      if(data){
-        isOnline = !isOnline;
-        emit(const ProfileSuccessState());
-      }
-    });
-    }catch(e){
+    try {
+      if (event.isOnline != null) isOnline = event.isOnline!;
+      var res = await updateProfileStatusUseCase(
+          userData: {'status': isOnline == true ? "offline" : "online"});
+      res.fold((l) {
+        emit(const ProfileFailedState());
+      }, (data) {
+        if (data) {
+          isOnline = !isOnline;
+          emit(const ProfileSuccessState());
+        }
+      });
+    } catch (e) {
       debugPrint("changeNurseProfileStatus: $e");
       isOnline = false;
       emit(const ProfileFailedState());
     }
   }
 
-  switchCurrentUserWithPatientProfile(String id,String userType)async{
+  switchCurrentUserWithPatientProfile(String id, String userType) async {
     // await Util.saveLocalData({
     //   'user':{
     //     'id':id,
     //     'user_type':userType
     //   }
     // });
-     ApiUrl.headerAuth = {
-        'Content-Type': 'application/json',
-        'ID': id,
-        'user_type':userType,
-      };
+    ApiUrl.headerAuth = {
+      'Content-Type': 'application/json',
+      'ID': id,
+      'user_type': userType,
+    };
   }
-
 }

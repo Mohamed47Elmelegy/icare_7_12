@@ -7,6 +7,7 @@ import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart
 import 'package:icare/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'injection_container_import.dart' as di;
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Lock orientation to portrait only
   await SystemChrome.setPreferredOrientations([
@@ -41,57 +40,61 @@ void main() async{
   var delegate = await LocalizationDelegate.create(
       fallbackLocale: 'en_US', supportedLocales: ['en_US', 'ar']);
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;    
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(LocalizedApp(delegate, const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key,});
+  const MyApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     var localizationDelegate = LocalizedApp.of(context).delegate;
     return ScreenUtilInit(
-      designSize: const Size(360, 690),
-      builder: (context,widget)  => MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (ctx) => di.sl<RootBloc>()),
-          BlocProvider(create: (ctx) => di.sl<AuthBloc>()),
-          BlocProvider(create: (ctx) => di.sl<AccountBloc>()),
-          BlocProvider(create: (ctx) => di.sl<NurseBloc>()),
-          BlocProvider(create: (ctx) => di.sl<LocationsBloc>()),
-          BlocProvider(create: (ctx) => di.sl<CategoriesBloc>()),
-          BlocProvider(create: (ctx) => di.sl<BookingBloc>()),
-          BlocProvider(create: (ctx) => di.sl<ChatBloc>()),
-        ],
-        child: LocalizationProvider(
-          state: LocalizationProvider.of(context).state,
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              localizationDelegate
-            ],
-            supportedLocales: localizationDelegate.supportedLocales,
-            locale: Util.getLang()=="en_US"?localizationDelegate.supportedLocales.first:localizationDelegate.supportedLocales.last,
-            builder: (BuildContext? context, Widget? widget) {
-              // Ensure orientation lock is maintained
-              SystemChrome.setPreferredOrientations([
-                DeviceOrientation.portraitUp,
-              ]);
-              ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-                return CustomError(errorDetails: errorDetails);
-              };
-              return widget!;
-            },
-            title: 'Icare',
-            home: const SplashScreen(),
-          ),
-        ),
-      )
-    );
+        designSize: const Size(360, 690),
+        builder: (context, widget) => MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (ctx) => di.sl<RootBloc>()),
+                BlocProvider(create: (ctx) => di.sl<AuthBloc>()),
+                BlocProvider(create: (ctx) => di.sl<AccountBloc>()),
+                BlocProvider(create: (ctx) => di.sl<NurseBloc>()),
+                BlocProvider(create: (ctx) => di.sl<LocationsBloc>()),
+                BlocProvider(create: (ctx) => di.sl<CategoriesBloc>()),
+                BlocProvider(create: (ctx) => di.sl<BookingBloc>()),
+                BlocProvider(create: (ctx) => di.sl<ChatBloc>()),
+                BlocProvider(create: (ctx) => di.sl<SearchBloc>()),
+              ],
+              child: LocalizationProvider(
+                state: LocalizationProvider.of(context).state,
+                child: MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  localizationsDelegates: [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                    localizationDelegate
+                  ],
+                  supportedLocales: localizationDelegate.supportedLocales,
+                  locale: Util.getLang() == "en_US"
+                      ? localizationDelegate.supportedLocales.first
+                      : localizationDelegate.supportedLocales.last,
+                  builder: (BuildContext? context, Widget? widget) {
+                    // Ensure orientation lock is maintained
+                    SystemChrome.setPreferredOrientations([
+                      DeviceOrientation.portraitUp,
+                    ]);
+                    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                      return CustomError(errorDetails: errorDetails);
+                    };
+                    return widget!;
+                  },
+                  title: 'Icare',
+                  home: const SplashScreen(),
+                ),
+              ),
+            ));
   }
 }
 

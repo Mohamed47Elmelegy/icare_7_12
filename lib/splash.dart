@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:icare/core/strings/app_images.dart';
 import 'package:icare/core/utils/notifications_utils.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/shared_widgets/update_app.dart';
 import 'package:upgrader/upgrader.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,7 +22,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   _checkInternet() async {
     if (await Util.isConnected() == false) {
-      if (mounted) Util.pushPageAndRemoveRoutes(const NoConnectionScreen(), context);
+      if (mounted)
+        Util.pushPageAndRemoveRoutes(const NoConnectionScreen(), context);
       return;
     }
   }
@@ -47,14 +47,15 @@ class _SplashScreenState extends State<SplashScreen> {
         // }else{
         //   if(mounted)Util.pushPageAndRemoveRoutes(const RootScreen(), context);
         // }
-        if(mounted)Util.pushPageAndRemoveRoutes(const RootScreen(), context);
+        if (mounted) Util.pushPageAndRemoveRoutes(const RootScreen(), context);
       } else {
-        if(Util.getUserType()!='null' && Util.getUserType()!=''){
+        if (Util.getUserType() != 'null' && Util.getUserType() != '') {
           Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
           Util.pushPage(const LoginScreen(), context);
           return;
         }
-        if (mounted) Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
+        if (mounted)
+          Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
       }
     });
     super.didChangeDependencies();

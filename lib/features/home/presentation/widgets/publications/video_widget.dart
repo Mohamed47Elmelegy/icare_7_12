@@ -59,11 +59,11 @@
 //             height: 250.w,
 //             child: Stack(alignment: Alignment.center, children: [
 //               YoutubePlayer(
-               
+
 //                 controller: _controller!,
 //                 showVideoProgressIndicator: true,
 //                 onReady: () {
-                  
+
 //                   // Do stuff when the player is ready
 //                 },
 //               ),
@@ -106,14 +106,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/categories/domain/entities/publications_entity.dart';
 import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart';
-import 'package:icare/features/categories/presentation/bloc/cateogries_event.dart';
 import 'package:icare/features/categories/presentation/bloc/cateogries_state.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'full_screen_video_player.dart'; // Import the new widget
-
 
 class VideoWidget extends StatefulWidget {
   final PublicationsEntity item;
@@ -130,7 +127,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   @override
   void dispose() {
     _updateTimer?.cancel();
-    
+
     if (_controller != null) {
       try {
         if (_controller!.value.isPlaying) {
@@ -140,18 +137,18 @@ class _VideoWidgetState extends State<VideoWidget> {
         debugPrint("Error pausing controller on dispose: $e");
       }
     }
-    
+
     super.dispose();
   }
 
   void _openFullScreenVideo() {
     if (_controller == null) return;
-    
+
     // Pause the current video
     if (_controller!.value.isPlaying) {
       _controller!.pause();
     }
-    
+
     // Navigate to full screen
     Navigator.push(
       context,
@@ -169,18 +166,17 @@ class _VideoWidgetState extends State<VideoWidget> {
       child: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (ctx, state) {
           var bloc = CategoriesBloc.get(ctx);
-          
+
           if (widget.item.videoUrl != "") {
-            int indexV = bloc.videoControllerList.indexWhere(
-              (element) => element.initialVideoId.toString() == 
-                YoutubePlayer.convertUrlToId(widget.item.videoUrl)
-            );
+            int indexV = bloc.videoControllerList.indexWhere((element) =>
+                element.initialVideoId.toString() ==
+                YoutubePlayer.convertUrlToId(widget.item.videoUrl));
             if (indexV == -1) return const SizedBox.shrink();
             _controller = bloc.videoControllerList[indexV];
           }
-          
+
           if (_controller == null) return const SizedBox.shrink();
-          
+
           return GestureDetector(
             onTap: _openFullScreenVideo,
             child: Container(
@@ -199,7 +195,7 @@ class _VideoWidgetState extends State<VideoWidget> {
                       controller: _controller!,
                       showVideoProgressIndicator: false,
                     ),
-                    
+
                     // Play Button Overlay
                     Container(
                       decoration: BoxDecoration(

@@ -1,9 +1,4 @@
-import 'dart:async';
-
 // import 'package:background_locator/location_dto.dart';
-import 'package:flutter/material.dart';
-
-import 'location_service_repository.dart';
 
 class LocationCallbackHandler {
   // static Future<void> initCallback(Map<dynamic, dynamic> params) async {

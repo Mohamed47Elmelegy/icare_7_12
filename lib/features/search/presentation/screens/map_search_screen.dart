@@ -9,11 +9,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/strings/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
+import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
+import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 
@@ -48,20 +49,31 @@ class MapScreenState extends State<MapSearchScreen> {
   late NurseBloc nurseBloc;
   late RootBloc rootBloc;
   late AuthBloc authBloc;
-  
+  late SearchBloc searchBloc;
 
   @override
   void didChangeDependencies() {
     nurseBloc = NurseBloc.get(context);
     rootBloc = RootBloc.get(context);
     authBloc = AuthBloc.get(context);
-    nurseBloc.add(SetNurseOnMapEvent(ctx: context));
+    searchBloc = SearchBloc.get(context);
+
+    // Initial map setup with filters
+    _updateMapWithFilters();
 
     //update markers every 5 seconds
-    nurseBloc.markersTimer = Timer.periodic(const Duration(seconds: 5),(t){
-      authBloc.add(UpdateMarkersEvent(markers: authBloc.markers));
+    nurseBloc.markersTimer = Timer.periodic(const Duration(seconds: 5), (t) {
+      _updateMapWithFilters();
     });
     super.didChangeDependencies();
+  }
+
+  void _updateMapWithFilters() {
+    nurseBloc.add(SetNurseOnMapEvent(
+      ctx: context,
+      userType: searchBloc.selectedProviderType,
+      serviceIds: searchBloc.selectedServices.map((s) => s.id).toList(),
+    ));
   }
 
   @override
@@ -73,34 +85,37 @@ class MapScreenState extends State<MapSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (ctx, state) {
-          var bloc = AuthBloc.get(ctx);
-          String checkVal = bloc.isWomen == true ? "isWomen" : "isMan";
-          Map<MarkerId, Marker> currentMarkers = bloc.markers.values.where((marker) {
-            if (marker.markerId.value.toString().trim().contains(checkVal)) {
-              return true;
-            }
-            return false;
-          }).fold<Map<MarkerId, Marker>>({}, (map, marker) {
-            map[marker.markerId] = marker;
-            return map;
-          });
-          return GoogleMap(
-            initialCameraPosition: CameraPosition(
-                target: lastLocation ?? const LatLng(30.059482, 31.2172649),
-                zoom: 12),
-            onMapCreated: onMapCreated,
-            onCameraMove: _onCameraMoved,
-            myLocationEnabled: true,
-            mapType: MapType.normal,
-            tiltGesturesEnabled: true,
-            compassEnabled: true,
-            scrollGesturesEnabled: true,
-            zoomGesturesEnabled: true,
-            markers: Set<Marker>.of(currentMarkers.values),
-          );
+      body: BlocListener<SearchBloc, SearchState>(
+        listener: (context, searchState) {
+          // When search filters change or search is successful, update the map
+          if (searchState is ProviderTypeSelectedState ||
+              searchState is ServicesSelectedState ||
+              searchState is SearchSuccessState) {
+            _updateMapWithFilters();
+          }
         },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (ctx, state) {
+            var bloc = AuthBloc.get(ctx);
+            // Get all markers (filtering is now done in the bloc)
+            Map<MarkerId, Marker> currentMarkers = bloc.markers;
+
+            return GoogleMap(
+              initialCameraPosition: CameraPosition(
+                  target: lastLocation ?? const LatLng(30.059482, 31.2172649),
+                  zoom: 12),
+              onMapCreated: onMapCreated,
+              onCameraMove: _onCameraMoved,
+              myLocationEnabled: true,
+              mapType: MapType.normal,
+              tiltGesturesEnabled: true,
+              compassEnabled: true,
+              scrollGesturesEnabled: true,
+              zoomGesturesEnabled: true,
+              markers: Set<Marker>.of(currentMarkers.values),
+            );
+          },
+        ),
       ),
     );
   }
@@ -128,11 +143,13 @@ class MapScreenState extends State<MapSearchScreen> {
   }
 
   _setUserCurrentLocation() async {
-    try{
+    try {
       if (widget.longitude == null) {
-        if (await Permission.location.isGranted == false)await Permission.location.request();
+        if (await Permission.location.isGranted == false)
+          await Permission.location.request();
         Position position = await Geolocator.getCurrentPosition(
-            locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
+            locationSettings:
+                const LocationSettings(accuracy: LocationAccuracy.high));
         if (mounted) {
           setState(() {
             lastLocation = LatLng(position.latitude, position.longitude);
@@ -149,10 +166,11 @@ class MapScreenState extends State<MapSearchScreen> {
           rootBloc.mapController
               .animateCamera(CameraUpdate.newLatLngZoom(lastLocation!, 14));
           _checkIFUserLocation(
-              await LocationUtil.getAndSaveLocationDetails(lastLocation!), lastLocation!);
+              await LocationUtil.getAndSaveLocationDetails(lastLocation!),
+              lastLocation!);
         });
       }
-    }catch(e){
+    } catch (e) {
       debugPrint("_setUserCurrentLocation: $e");
     }
   }
@@ -173,5 +191,3 @@ class MapScreenState extends State<MapSearchScreen> {
     }
   }
 }
-
-

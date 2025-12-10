@@ -275,7 +275,22 @@
       "search": "البحث",
       "no_result": "لايوجد نتائج للبحث !",
       "select_area": "حدد المنطقة",
-      "all_nurses":"جميع الممرضين"
+      "all_nurses":"جميع الممرضين",
+      "provider_type": "نوع مقدم الخدمة",
+      "select_service": "اختر الخدمة",
+      "services_selected": "خدمات محددة",
+      "all_services": "جميع الخدمات",
+      "no_results": "لا توجد نتائج",
+      "clear_filters": "مسح الفلاتر",
+      "loading_services": "جاري تحميل الخدمات...",
+      "gender": "الجنس",
+      "nurses_list": "قائمة الممرضين",
+      "please_select_filters": "الرجاء اختيار خدمة واحدة على الأقل أو نوع مقدم الخدمة",
+      "found": "تم العثور على",
+      "results": "نتيجة",
+      "services_for": "الخدمات المتاحة لـ",
+      "services_available": "خدمة متاحة",
+      "no_services_for_type": "لا توجد خدمات متاحة لهذا النوع من مقدمي الخدمة"
     },
     "rules":{
       "check": " قم بالموافقه على التراخيص والبنود  ",

@@ -10,7 +10,6 @@ import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/nurse/presentation/widgets/small_card_nurse_details.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
-import 'package:icare/features/shared_widgets/switch_profile_status.dart';
 
 class ExtraOptionsNurseCardProfile extends StatelessWidget {
   const ExtraOptionsNurseCardProfile({super.key});

@@ -274,7 +274,22 @@
 		"search": " Search",
 		"no_result": "No result matching!",
 		"select_area": "select area",
-		"all_nurses":"All Nurses"
+		"all_nurses":"All Nurses",
+		"provider_type": "Provider Type",
+		"select_service": "Select Service",
+		"services_selected": "services selected",
+		"all_services": "All Services",
+		"no_results": "No Results",
+		"clear_filters": "Clear Filters",
+		"loading_services": "Loading services...",
+		"gender": "Gender",
+		"nurses_list": "Nurses List",
+		"please_select_filters": "Please select at least one service or provider type",
+		"found": "Found",
+		"results": "results",
+		"services_for": "Available services for",
+		"services_available": "services available",
+		"no_services_for_type": "No services available for this provider type"
 	},
 	"rules":{
 		"check": " you accepted the Licenses and Terms ",

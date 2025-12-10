@@ -18,6 +18,11 @@ import 'package:icare/features/nurse/data/repositories/nurse_model_repository.da
 import 'package:icare/features/nurse/domain/repositories/nurse_repository.dart';
 import 'package:icare/features/nurse/domain/use_cases/get_all_nurses_usecase.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+import 'package:icare/features/search/data/data_sources/search_remote_data_source.dart';
+import 'package:icare/features/search/data/repositories/search_repository_impl.dart';
+import 'package:icare/features/search/domain/repositories/search_repository.dart';
+import 'package:icare/features/search/domain/use_cases/search_by_service_usecase.dart';
+import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
 import 'package:icare/features/setting/data/repositories/settings_mode_repository.dart';
 import 'package:icare/features/setting/domain/repositories/settings_repository.dart';
@@ -46,6 +51,5 @@ import 'package:icare/features/booking/domain/use_cases/delete_order_usecase.dar
 import 'package:icare/features/booking/domain/use_cases/get_all_order_usecase.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
-
 
 part 'injection_container.dart';

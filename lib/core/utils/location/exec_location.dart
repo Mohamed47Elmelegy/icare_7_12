@@ -5,26 +5,25 @@ import 'dart:developer';
 // import 'package:background_locator/settings/ios_settings.dart';
 // import 'package:background_locator/settings/locator_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:icare/core/utils/location/location_callback_handler.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void onStartTrack() async {
-  try{
+  try {
     if (await checkLocationPermission()) {
       _startLocator();
       // await BackgroundLocator.isServiceRunning();
     } else {
       // show error
     }
-  }catch(e){
+  } catch (e) {
     debugPrint("on start $e");
   }
 }
 
-void onStopTrack()async{
-  try{
+void onStopTrack() async {
+  try {
     // await BackgroundLocator.unRegisterLocationUpdate();
-  }catch(e){
+  } catch (e) {
     debugPrint("onStopTrack $e");
   }
 }
@@ -34,8 +33,8 @@ Future<bool> checkLocationPermission() async {
 }
 
 void _startLocator() {
-  Map<String, dynamic> data = {'countInit': 1};
-  try{
+  // Map<String, dynamic> data = {'countInit': 1};
+  try {
     // BackgroundLocator.registerLocationUpdate(
     //     LocationCallbackHandler.callback,
     //     initCallback: LocationCallbackHandler.initCallback,
@@ -63,7 +62,7 @@ void _startLocator() {
     //               }).onError((error, stackTrace) {
     //                    debugPrint("d $error");
     //               });
-  }catch(e){
+  } catch (e) {
     log("_startLocator: $e");
   }
 }

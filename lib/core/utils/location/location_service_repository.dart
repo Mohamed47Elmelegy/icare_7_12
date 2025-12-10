@@ -1,18 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:isolate';
-import 'dart:math';
-import 'dart:ui';
 // import 'package:background_locator/location_dto.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:icare/core/strings/api/api_url.dart';
-import 'package:icare/core/strings/constant.dart';
-import 'package:icare/core/utils/location/file_manager.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-
-
 
 // class LocationServiceRepository {
 //   static final LocationServiceRepository _instance = LocationServiceRepository._();

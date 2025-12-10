@@ -11,34 +11,36 @@ import 'package:icare/features/setting/data/models/privacy_model.dart';
 import 'package:icare/features/setting/data/models/refund_policy_model.dart';
 import 'package:icare/features/setting/data/models/terms_model.dart';
 
-abstract class SettingsRemoteDataSourceImpl{
+abstract class SettingsRemoteDataSourceImpl {
   Future<List<AboutUsModel>> getAboutUsData();
   Future<List<RefundPolicyModel>> getRefundPolicyData();
   Future<List<TermsModel>> getTermsData();
   Future<List<PrivacyModel>> getPrivacyData();
 
-
   /// user settings
   Future<List<NotificationsModel>> getAllNotifications();
 }
 
-class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl{
+class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
   final http.Client client;
   SettingsRemoteDataSource({required this.client});
 
-
-
   @override
   Future<List<NotificationsModel>> getAllNotifications() async {
-    var response = await client.get(Uri.parse("${ApiUrl.USER_NOTIFICATIONS}/${Util.getUserID()}"),headers: ApiUrl.headerAuth);
+    var response = await client.get(
+        Uri.parse("${ApiUrl.USER_NOTIFICATIONS}/${Util.getUserID()}"),
+        headers: ApiUrl.headerAuth);
     debugPrint("getAllNotifications ${response.body}");
     if (response.statusCode == 200) {
-      return NotificationsModel.notificationListFromJson(jsonEncode(jsonDecode(response.body)['data']));
+      var data = jsonDecode(response.body)['data'];
+      if (data == null) {
+        return [];
+      }
+      return NotificationsModel.notificationListFromJson(jsonEncode(data));
     } else {
       throw ServerException();
     }
   }
-
 
   @override
   Future<List<AboutUsModel>> getAboutUsData() {
@@ -60,15 +62,12 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl{
     throw UnimplementedError();
   }
 
-
-
-  static Future<bool> sendContactUs(Map<String,dynamic> data) async{
-    var response = await http.post(Uri.parse(ApiUrl.BASE_URL),
-        body: data);
+  static Future<bool> sendContactUs(Map<String, dynamic> data) async {
+    var response = await http.post(Uri.parse(ApiUrl.BASE_URL), body: data);
     // debugPrint("sendContactUs: ${response.body}");
     var decodedData = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      if(decodedData['success']==true){
+      if (decodedData['success'] == true) {
         return true;
       }
       return false;
@@ -77,14 +76,12 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl{
     }
   }
 
-
-
-  static Future<List<CityModel>> fetchAllGovernorates() async{
+  static Future<List<CityModel>> fetchAllGovernorates() async {
     var response = await http.get(Uri.parse(ApiUrl.GOVERNORATES));
     debugPrint("fetchAllGovernorates: ${response.body}");
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
-      if(decodedData['status']){
+      if (decodedData['status']) {
         return CityModel.listFromJson(jsonEncode(decodedData['data']));
       }
       return [];
@@ -93,12 +90,12 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl{
     }
   }
 
-  static Future<List<CityModel>> fetchAllCities() async{
+  static Future<List<CityModel>> fetchAllCities() async {
     var response = await http.get(Uri.parse(ApiUrl.CITIES));
     debugPrint("fetchAllCities: ${response.body}");
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
-      if(decodedData['status']){
+      if (decodedData['status']) {
         return CityModel.listFromJson(jsonEncode(decodedData['data']));
       }
       return [];
@@ -106,9 +103,4 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl{
       return [];
     }
   }
-
-
-
-
-
 }

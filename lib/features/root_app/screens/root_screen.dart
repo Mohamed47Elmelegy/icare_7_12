@@ -1,7 +1,6 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/account/presentation/screens/notifications/notifications_screen.dart';
 import 'package:icare/features/booking/presentation/screens/order_screen.dart';
 import 'package:icare/features/home/presentation/screens/home.dart';
 import 'package:icare/features/root_app/bloc/root_event.dart';

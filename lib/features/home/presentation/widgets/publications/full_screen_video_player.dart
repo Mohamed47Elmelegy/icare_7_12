@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icare/core/constants/video_player_constants.dart';
 import 'package:icare/core/services/video_screen_service.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
@@ -34,12 +33,12 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
       setState(() {
         _isPlayerReady = true;
       });
-      
+
       // Auto-play when ready
       if (mounted && !widget.controller.value.isPlaying) {
         widget.controller.play();
       }
-      
+
       // Auto-hide controls
       _hideControlsAfterDelay();
     }
@@ -69,7 +68,7 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
 
   void _togglePlayPause() {
     if (!_isPlayerReady) return;
-    
+
     setState(() {
       if (widget.controller.value.isPlaying) {
         widget.controller.pause();
