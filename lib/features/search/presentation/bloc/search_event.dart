@@ -48,3 +48,16 @@ class LoadServicesForProviderEvent extends SearchEvent {
   @override
   List<Object?> get props => [providerType];
 }
+
+class UpdateLocationEvent extends SearchEvent {
+  final double latitude;
+  final double longitude;
+
+  const UpdateLocationEvent({
+    required this.latitude,
+    required this.longitude,
+  });
+
+  @override
+  List<Object?> get props => [latitude, longitude];
+}

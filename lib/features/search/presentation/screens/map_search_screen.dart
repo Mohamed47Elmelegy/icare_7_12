@@ -14,6 +14,7 @@ import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
+import 'package:icare/features/search/presentation/bloc/search_event.dart';
 import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:icare/core/utils/location/location_util.dart';
@@ -147,19 +148,70 @@ class MapScreenState extends State<MapSearchScreen> {
       if (widget.longitude == null) {
         if (await Permission.location.isGranted == false)
           await Permission.location.request();
-        Position position = await Geolocator.getCurrentPosition(
-            locationSettings:
-                const LocationSettings(accuracy: LocationAccuracy.high));
-        if (mounted) {
-          setState(() {
-            lastLocation = LatLng(position.latitude, position.longitude);
-          });
+
+        try {
+          // Try to get current position
+          Position position = await Geolocator.getCurrentPosition(
+              locationSettings:
+                  const LocationSettings(accuracy: LocationAccuracy.high));
+
+          if (mounted) {
+            setState(() {
+              lastLocation = LatLng(position.latitude, position.longitude);
+            });
+
+            // Update location in SearchBloc
+            final searchBloc = context.read<SearchBloc>();
+            searchBloc.add(UpdateLocationEvent(
+              latitude: position.latitude,
+              longitude: position.longitude,
+            ));
+
+            debugPrint("📍 User Location Set (GPS):");
+            debugPrint("   └─ Latitude: ${position.latitude}");
+            debugPrint("   └─ Longitude: ${position.longitude}");
+          }
+        } catch (e) {
+          debugPrint("⚠️ Failed to get GPS location: $e");
+          // Fallback to SharedPreferences
+          final savedLat =
+              SharedPref().getPreferenceDouble(Constants.userLatitude);
+          final savedLong =
+              SharedPref().getPreferenceDouble(Constants.userLongitude);
+
+          if (savedLat != 0.0 && savedLong != 0.0 && mounted) {
+            setState(() {
+              lastLocation = LatLng(savedLat, savedLong);
+            });
+
+            // Update location in SearchBloc
+            final searchBloc = context.read<SearchBloc>();
+            searchBloc.add(UpdateLocationEvent(
+              latitude: savedLat,
+              longitude: savedLong,
+            ));
+
+            debugPrint("📍 User Location Set (Saved):");
+            debugPrint("   └─ Latitude: $savedLat");
+            debugPrint("   └─ Longitude: $savedLong");
+          } else {
+            debugPrint("❌ No location available");
+          }
         }
       } else {
         latitude = widget.latitude!;
         longitude = widget.longitude!;
         lastLocation = LatLng(double.parse(latitude.toString()),
             double.parse(longitude.toString()));
+
+        // Update location in SearchBloc
+        if (mounted) {
+          final searchBloc = context.read<SearchBloc>();
+          searchBloc.add(UpdateLocationEvent(
+            latitude: double.parse(latitude),
+            longitude: double.parse(longitude),
+          ));
+        }
       }
       if (mounted) {
         Timer(const Duration(milliseconds: 100), () async {

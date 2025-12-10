@@ -22,6 +22,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<SearchByFiltersEvent>(_onSearchByFilters);
     on<ClearSearchFiltersEvent>(_onClearFilters);
     on<LoadServicesForProviderEvent>(_onLoadServicesForProvider);
+    on<UpdateLocationEvent>(_onUpdateLocation);
   }
 
   void _onSelectProviderType(
@@ -100,6 +101,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     // This event is handled by filtering services in the UI
     // based on the selected provider type
     emit(ProviderTypeSelectedState(providerType: event.providerType));
+  }
+
+  void _onUpdateLocation(UpdateLocationEvent event, Emitter<SearchState> emit) {
+    debugPrint("📍 Location Updated:");
+    debugPrint("   └─ Latitude: ${event.latitude}");
+    debugPrint("   └─ Longitude: ${event.longitude}");
+
+    currentLatitude = event.latitude;
+    currentLongitude = event.longitude;
+
+    // No need to emit new state, just update internal location
   }
 
   // Helper method to get current filters

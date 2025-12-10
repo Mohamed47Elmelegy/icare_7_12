@@ -21,10 +21,44 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
     required SearchFilterModel filters,
   }) async {
     try {
-      // ✅ Old approach: Backend returns all nurses, frontend filters
-      // Just call the basic nurses endpoint like before
+      // 🚀 Build URL with query parameters for backend filtering
+      String baseUrl = "${ApiUrl.nurses}/1";
+      List<String> queryParams = [];
+
+      // Add user_type filter
+      if (filters.userType != null && filters.userType!.isNotEmpty) {
+        queryParams.add("user_type=${filters.userType}");
+      }
+
+      // Add service_ids filter
+      if (filters.serviceIds != null && filters.serviceIds!.isNotEmpty) {
+        String serviceIdsStr = filters.serviceIds!.join(',');
+        queryParams.add("service_ids=$serviceIdsStr");
+      }
+
+      // Add location filters for nearby search
+      if (filters.latitude != null && filters.longitude != null) {
+        queryParams.add("lat=${filters.latitude}");
+        queryParams.add("long=${filters.longitude}");
+        // Optional: add radius parameter (default 5km)
+        queryParams.add("radius=5");
+      }
+
+      // Add search text filter
+      if (filters.searchText != null && filters.searchText!.isNotEmpty) {
+        queryParams.add("search=${Uri.encodeComponent(filters.searchText!)}");
+      }
+
+      // Build final URL
+      String url = baseUrl;
+      if (queryParams.isNotEmpty) {
+        url = "$baseUrl?${queryParams.join('&')}";
+      }
+
+      print("🌐 API Request URL: $url");
+
       final response = await client.get(
-        Uri.parse("${ApiUrl.nurses}/1"),
+        Uri.parse(url),
         headers: ApiUrl.headerAuth,
       );
 
