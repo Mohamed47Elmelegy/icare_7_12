@@ -653,6 +653,12 @@
       "free_delivery": "توصيل مجاني ✓"
     },
     "order": {
+      "nurse": "الممرض",
+      "customer": "العميل",
+      "requested_service": "الخدمة المطلوبة",
+      "gender": "النوع",
+      "destination": "الوجهة",
+      "on_map": "على الخريطة",
       "thanks_order": "نشكرك على ثقتك في الشراء من ",
       "super_admin": "ادمن",
       "manager": "مدير",
@@ -722,6 +728,8 @@
       "completed": "منتهي",
       "track_location": "تتبع الحجز",
       "track_nurse": "تتبع الممرض",
+      "track": "تتبع",
+      "call": "اتصال",
       "may_track_location": " بالإمكان تتبع الحجز",
       "payed_by_admin": "المدفوع",
       "still": "المتبقي",

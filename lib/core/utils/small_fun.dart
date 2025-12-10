@@ -30,12 +30,13 @@ import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/root_app/screens/root_screen.dart';
+import 'package:icare/features/chat/presentation/screens/main_conversation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Util {
   // implemented this function after register and login
   static getAllUserAppData(
-      {required BuildContext context, bool isSplash = false}) async{
+      {required BuildContext context, bool isSplash = false}) async {
     if (isSplash) {
       /// get all app data like [GOVERNORATE,CITIES]
       RootBloc.get(context).add(const FetchSettingEvent());
@@ -49,22 +50,26 @@ class Util {
       ..add(const FetchProfileDataEvent())
       ..add(const FetchAllNotificationsEvent())
       ..getAllServiceList();
-    await updateLocationAndToken(context);  
+    await updateLocationAndToken(context);
   }
 
-  static updateLocationAndToken(context)async{
-    try{
+  static updateLocationAndToken(context) async {
+    try {
       bool locationEnabled = await Permission.location.serviceStatus.isEnabled;
       Position? position;
-      if(locationEnabled) position= await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      if (locationEnabled)
+        position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
       var user = {
         'profile': '',
         'remember_token': await Util.setToken(),
-        if(locationEnabled&&position!=null)'latitude':position.latitude.toString(),
-        if(locationEnabled&&position!=null)'longitude':position.longitude.toString(),
+        if (locationEnabled && position != null)
+          'latitude': position.latitude.toString(),
+        if (locationEnabled && position != null)
+          'longitude': position.longitude.toString(),
       };
       AccountBloc.get(context).add(UpdateProfileEvent(user: user));
-    }catch(e){
+    } catch (e) {
       debugPrint("updateLocationAndTokenUtil: $e");
     }
   }
@@ -165,7 +170,6 @@ class Util {
         ? await launchUrl(emailLaunchUri)
         : debugPrint("error when sendMailMsg");
   }
-
 
   static call(String phone) async {
     try {
@@ -271,7 +275,6 @@ class Util {
     }
   }
 
-
   static bool isCustomer() {
     return getUserType().toString().trim().toLowerCase() ==
         UserEnum.CUSTOMER.name.toString().toLowerCase();
@@ -361,9 +364,9 @@ class Util {
   }
 
   static double getLongitude() {
-    try{
+    try {
       return SharedPref().getPreferenceDouble(Constants.userLongitude);
-    }catch(e){
+    } catch (e) {
       debugPrint("getLongitude: $e");
       return 0.0;
     }
@@ -423,26 +426,64 @@ class Util {
     return "${diff.inMinutes} ${translate("order.minute")} - ${diff.inHours} ${translate("order.hours")} - ${diff.inDays} ${translate("order.day")}";
   }
 
+  static Future<String?> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String? deviceId;
 
-
-  static Future<String?> getDeviceId() async {  
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();  
-    String? deviceId;  
-
-    try {  
-      if (Platform.isAndroid) {  
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;  
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         deviceId = androidInfo.id;
-      } else if (Platform.isIOS) {  
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;  
-        deviceId = iosInfo.identifierForVendor; 
-      }  
-    } on PlatformException {  
-      debugPrint('Failed to get device ID');  
-    }  
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        deviceId = iosInfo.identifierForVendor;
+      }
+    } on PlatformException {
+      debugPrint('Failed to get device ID');
+    }
 
-    return deviceId;  
-  }  
+    return deviceId;
+  }
 
+  /// Open chat conversation screen
+  static void openChat({
+    required BuildContext context,
+    required String receiverID,
+    required String receiverName,
+    required String chatRoomID,
+  }) {
+    // Import needed: 'package:icare/features/chat/presentation/screens/main_conversation.dart'
+    final conversationScreen = ConversationScreen(
+      receiverID: receiverID,
+      receiverName: receiverName,
+      chatRoomID: chatRoomID,
+    );
+    pushPage(conversationScreen, context);
+  }
 
+  /// Make a phone call with validation
+  static Future<void> makeCall({
+    required BuildContext context,
+    required String? phoneNumber,
+  }) async {
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      SnackBarBuilder.showFeedBackMessage(
+        context,
+        translate("toast.no_phone_number"),
+        Colors.red,
+      );
+      return;
+    }
+
+    try {
+      await call(phoneNumber);
+    } catch (e) {
+      debugPrint("makeCall error: $e");
+      SnackBarBuilder.showFeedBackMessage(
+        context,
+        translate("toast.oops"),
+        Colors.red,
+      );
+    }
+  }
 }

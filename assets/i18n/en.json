@@ -644,6 +644,12 @@
 		"confirm_current_location":"Confirm the location"
 	},
     "order": {
+		"nurse": "Nurse",
+		"customer": "Customer",
+		"requested_service": "Requested Service",
+		"gender": "Gender",
+		"destination": "Destination",
+		"on_map": "On Map",
 		"thanks_order": "Thank you for your trust",
 		"super_admin": "Super Admin",
 		"manager": "Manager",
@@ -713,6 +719,8 @@
 		"completed": "completed",
 		"track_location": "Track booking",
 		"track_nurse": "Track the nurse",
+		"track": "Track",
+		"call": "Call",
 		"may_track_location": "Booking can be tracked",
 		"payed_by_admin": "paid up",
 		"still": "The remaining amount of",
