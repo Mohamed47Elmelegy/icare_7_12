@@ -44,6 +44,11 @@ class MapScreenState extends State<MapSearchScreen> {
   String latitude = '', longitude = '';
   String selectedAddress = "";
   Map<MarkerId, Marker> _currentMarkers = {};
+  Map<MarkerId, NurseEntity> _markerNurseMap =
+      {}; // Store nurse data with marker
+  Map<String, BitmapDescriptor> _imageCache = {}; // Cache loaded images
+  Timer? _updateTimer;
+  bool _isUpdating = false;
 
   @override
   void initState() {
@@ -62,11 +67,21 @@ class MapScreenState extends State<MapSearchScreen> {
     rootBloc = RootBloc.get(context);
     authBloc = AuthBloc.get(context);
     searchBloc = SearchBloc.get(context);
+
+    // 🔄 Update markers every 5 seconds with progressive loading
+    _updateTimer?.cancel();
+    _updateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (!_isUpdating && mounted && searchBloc.state is SearchSuccessState) {
+        _refreshMarkersProgressively();
+      }
+    });
+
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
+    _updateTimer?.cancel();
     super.dispose();
   }
 
@@ -116,23 +131,62 @@ class MapScreenState extends State<MapSearchScreen> {
           compassEnabled: true,
           scrollGesturesEnabled: true,
           zoomGesturesEnabled: true,
-          markers: Set<Marker>.of(_currentMarkers.values),
+          markers: Set<Marker>.of(_getFilteredMarkers().values),
         ),
       ),
     );
   }
 
-  // 🚀 Optimized: Parallel image loading for better performance
-  // Time Complexity: O(n/k) where k = concurrent operations
-  // Instead of sequential O(n × t), we load all images in parallel O(t)
+  // 🔍 Filter markers based on selected services
+  Map<MarkerId, Marker> _getFilteredMarkers() {
+    // If no service filter is applied, show all markers
+    if (searchBloc.selectedServices.isEmpty) {
+      return _currentMarkers;
+    }
+
+    // Get selected service IDs
+    final selectedServiceIds =
+        searchBloc.selectedServices.map((s) => s.id).toSet();
+
+    // Filter markers based on nurse services
+    return Map.fromEntries(
+      _currentMarkers.entries.where((entry) {
+        final nurse = _markerNurseMap[entry.key];
+        if (nurse == null || nurse.servicesList == null) return false;
+
+        // Check if nurse has any of the selected services
+        return nurse.servicesList!
+            .any((service) => selectedServiceIds.contains(service.id));
+      }),
+    );
+  }
+
+  // 🔄 Refresh markers progressively (called by timer)
+  Future<void> _refreshMarkersProgressively() async {
+    if (!mounted) return;
+
+    _isUpdating = true;
+    final currentState = searchBloc.state;
+
+    if (currentState is SearchSuccessState) {
+      debugPrint(
+          "🔄 Periodic refresh: Updating ${currentState.results.length} nurses...");
+      await _createMarkersFromResults(currentState.results);
+    }
+
+    _isUpdating = false;
+  }
+
+  // 🎯 Progressive Radius Loading Algorithm
+  // Shows nearest nurses first (5km → 10km → 15km)
+  // Each batch loads images and updates map progressively
   Future<Map<MarkerId, Marker>> _createMarkersFromResults(
       List<NurseEntity> results) async {
-    Map<MarkerId, Marker> markers = {};
-
-    debugPrint("🗺️ Creating ${results.length} markers (parallel loading)...");
+    debugPrint(
+        "🗺️ Starting Progressive Radius Loading for ${results.length} nurses...");
     final stopwatch = Stopwatch()..start();
 
-    // Filter valid nurses first
+    // Filter and validate nurses (only check location data, not distance)
     final validNurses = results
         .where((nurse) =>
             nurse.userData != null &&
@@ -142,92 +196,189 @@ class MapScreenState extends State<MapSearchScreen> {
             nurse.userData!.long != 0.0)
         .toList();
 
-    debugPrint("   └─ ${validNurses.length} valid locations found");
+    debugPrint("   └─ ${validNurses.length} valid nurses found");
 
-    // Load all icons in parallel (much faster!)
-    final iconFutures = validNurses.map((nurse) async {
-      try {
-        return await LocationUtil.convertImageFileToCustomBitmapDescriptor(
-                nurse.userData!.image.toString())
-            .timeout(
-          const Duration(seconds: 3),
-          onTimeout: () {
-            // Return default icon on timeout
-            return BitmapDescriptor.defaultMarkerWithHue(
-                nurse.userData!.isWomen == true
-                    ? BitmapDescriptor.hueRose
-                    : BitmapDescriptor.hueBlue);
-          },
-        );
-      } catch (e) {
-        // Use default marker if image loading fails
-        return BitmapDescriptor.defaultMarkerWithHue(
-            nurse.userData!.isWomen == true
-                ? BitmapDescriptor.hueRose
-                : BitmapDescriptor.hueBlue);
+    if (validNurses.isEmpty) {
+      debugPrint("   ⚠️ No nurses with valid location data!");
+      // Debug: Show what's wrong with the data
+      for (var nurse in results.take(3)) {
+        debugPrint("      Sample nurse: ${nurse.userData?.userName}");
+        debugPrint(
+            "         lat: ${nurse.userData?.lat}, long: ${nurse.userData?.long}");
+        debugPrint("         distanceKM: ${nurse.distanceKM}");
       }
-    }).toList();
+      return {};
+    }
 
-    // Wait for all icons to load in parallel
-    final icons = await Future.wait(iconFutures, eagerError: false);
+    // Sort by distance (nearest first) - handle null and -1 values
+    validNurses.sort((a, b) {
+      final distA = (a.distanceKM != null && a.distanceKM! > 0)
+          ? a.distanceKM!
+          : 999999.0;
+      final distB = (b.distanceKM != null && b.distanceKM! > 0)
+          ? b.distanceKM!
+          : 999999.0;
+      return distA.compareTo(distB);
+    });
 
-    debugPrint(
-        "   └─ Loaded ${icons.length} icons in ${stopwatch.elapsedMilliseconds}ms");
+    // Progressive radius bands: 5km, 10km, 15km, 30km, rest
+    final radiusBands = [5.0, 10.0, 15.0, 30.0, double.infinity];
+    int totalLoaded = 0;
 
-    // Create markers with pre-loaded icons (fast!)
-    int iconErrors = 0;
-    for (int i = 0; i < validNurses.length; i++) {
-      final nurse = validNurses[i];
-      final markerIcon = icons[i];
+    for (int bandIndex = 0; bandIndex < radiusBands.length; bandIndex++) {
+      final maxRadius = radiusBands[bandIndex];
+      final minRadius = bandIndex > 0 ? radiusBands[bandIndex - 1] : 0.0;
 
-      // Count default icons as errors
-      if (markerIcon == BitmapDescriptor.defaultMarker) {
-        iconErrors++;
-      }
+      // Get nurses in this radius band
+      final nursesInBand = validNurses.where((nurse) {
+        final distance = (nurse.distanceKM != null && nurse.distanceKM! > 0)
+            ? nurse.distanceKM!
+            : double.infinity; // Put unknown distances in last band
+        return distance > minRadius && distance <= maxRadius;
+      }).toList();
 
-      try {
-        var point = LatLng(nurse.userData!.lat!, nurse.userData!.long!);
-        MarkerId markerId = MarkerId(
-            "${nurse.userData!.isWomen == true ? "isWomen" : "isMan"}-${nurse.id}");
+      debugPrint(
+          "      🔍 Band ${minRadius}km → ${maxRadius == double.infinity ? '∞' : '${maxRadius}km'}: ${nursesInBand.length} nurses");
 
-        Marker marker = Marker(
-          markerId: markerId,
-          position: point,
-          onTap: () {},
-          infoWindow: InfoWindow(
-            title:
-                "${nurse.userData!.userName} ${ReviewModel.calcReviewStar(nurse.reviewList!)}",
-            snippet:
-                LocationUtil.getDistanceView(nurse.distanceKM, nurse.distanceM),
-            onTap: () {
-              nurseBloc.add(UpdateCurrentNurseEvent(nurse: nurse));
-              if (context.mounted) {
-                Util.pushPage(const NurseDetails(), context);
-              }
-            },
-          ),
-          icon: markerIcon,
-        );
+      if (nursesInBand.isEmpty) continue;
 
-        markers[markerId] = marker;
-      } catch (e) {
-        debugPrint("   ❌ Error creating marker: $e");
+      debugPrint(
+          "📍 Radius ${minRadius}km → ${maxRadius == double.infinity ? '∞' : '${maxRadius}km'}: ${nursesInBand.length} nurses");
+
+      // Load this batch progressively
+      await _loadMarkerBatch(nursesInBand, bandIndex);
+
+      totalLoaded += nursesInBand.length;
+
+      // Small delay between batches for smooth UI
+      if (bandIndex < radiusBands.length - 1 && nursesInBand.isNotEmpty) {
+        await Future.delayed(const Duration(milliseconds: 100));
       }
     }
 
     stopwatch.stop();
-    final skipped = results.length - validNurses.length;
-
     debugPrint(
-        "✅ Created ${markers.length} markers in ${stopwatch.elapsedMilliseconds}ms");
-    if (skipped > 0) {
-      debugPrint("   ⚠️ Skipped $skipped nurses (invalid location)");
-    }
-    if (iconErrors > 0) {
-      debugPrint("   ℹ️ $iconErrors markers using default icons");
+        "✅ Progressive loading completed in ${stopwatch.elapsedMilliseconds}ms");
+    debugPrint("   └─ Total markers loaded: $totalLoaded");
+
+    return _currentMarkers;
+  }
+
+  // 🔄 Load batch of markers with images
+  Future<void> _loadMarkerBatch(
+      List<NurseEntity> nurses, int batchIndex) async {
+    final batchStopwatch = Stopwatch()..start();
+
+    debugPrint("      📦 Loading batch with ${nurses.length} nurses...");
+
+    // Batch size for parallel loading (optimize based on performance)
+    const int parallelBatchSize = 5;
+    int successCount = 0;
+    int failedCount = 0;
+
+    for (int i = 0; i < nurses.length; i += parallelBatchSize) {
+      final end = (i + parallelBatchSize < nurses.length)
+          ? i + parallelBatchSize
+          : nurses.length;
+      final batch = nurses.sublist(i, end);
+
+      debugPrint("         Loading images for ${batch.length} nurses...");
+
+      // Load images in small parallel batches
+      final markerFutures = batch.map((nurse) => _createSingleMarker(nurse));
+      final markers = await Future.wait(markerFutures, eagerError: false);
+
+      // Update map with new markers
+      if (mounted) {
+        setState(() {
+          for (int j = 0; j < markers.length; j++) {
+            final marker = markers[j];
+            if (marker != null && j < batch.length) {
+              _currentMarkers[marker.markerId] = marker;
+              _markerNurseMap[marker.markerId] = batch[j]; // Store nurse data
+              successCount++;
+            } else if (marker == null) {
+              failedCount++;
+              debugPrint(
+                  "         ❌ Failed to create marker for: ${batch[j].userData?.userName}");
+            }
+          }
+        });
+      }
+
+      // Update auth bloc markers reference
+      authBloc.markers = Map.from(_currentMarkers);
     }
 
-    return markers;
+    batchStopwatch.stop();
+    debugPrint(
+        "      ✅ Batch ${batchIndex + 1}: $successCount markers, $failedCount failed in ${batchStopwatch.elapsedMilliseconds}ms");
+  }
+
+  // 🎨 Create single marker with custom image
+  Future<Marker?> _createSingleMarker(NurseEntity nurse) async {
+    try {
+      final nurseName = nurse.userData?.userName ?? "Unknown";
+      final imageUrl = nurse.userData?.image.toString() ?? "";
+
+      debugPrint("            🖼️ Loading image for: $nurseName");
+      debugPrint("               URL: $imageUrl");
+
+      // Check cache first (avoid re-downloading same image)
+      BitmapDescriptor markerIcon;
+      if (_imageCache.containsKey(imageUrl)) {
+        markerIcon = _imageCache[imageUrl]!;
+        debugPrint("               💾 Using cached image for $nurseName");
+      } else {
+        // Load custom image icon (with increased timeout)
+        try {
+          markerIcon =
+              await LocationUtil.convertImageFileToCustomBitmapDescriptor(
+            imageUrl,
+          ).timeout(
+            const Duration(seconds: 5), // Increased from 2 to 5 seconds
+            onTimeout: () {
+              debugPrint(
+                  "               ⏱️ Timeout (5s) loading image for $nurseName");
+              throw TimeoutException('Image load timeout');
+            },
+          );
+          // Cache the loaded image
+          _imageCache[imageUrl] = markerIcon;
+          debugPrint("               ✅ Image loaded & cached for $nurseName");
+        } catch (e) {
+          // Skip colored default markers - only show custom images
+          debugPrint(
+              "               ❌ Failed to load image for $nurseName: $e");
+          return null;
+        }
+      }
+
+      // Create marker with custom icon only
+      final point = LatLng(nurse.userData!.lat!, nurse.userData!.long!);
+      final markerId = MarkerId("nurse-${nurse.id}");
+
+      return Marker(
+        markerId: markerId,
+        position: point,
+        icon: markerIcon,
+        infoWindow: InfoWindow(
+          title:
+              "${nurse.userData!.userName} ${ReviewModel.calcReviewStar(nurse.reviewList!)}",
+          snippet:
+              LocationUtil.getDistanceView(nurse.distanceKM, nurse.distanceM),
+          onTap: () {
+            nurseBloc.add(UpdateCurrentNurseEvent(nurse: nurse));
+            if (context.mounted) {
+              Util.pushPage(const NurseDetails(), context);
+            }
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint("   ❌ Error creating marker: $e");
+      return null;
+    }
   }
 
   _setUp() {
