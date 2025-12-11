@@ -9,7 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/strings/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
@@ -18,6 +17,10 @@ import 'package:icare/features/search/presentation/bloc/search_event.dart';
 import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:icare/core/utils/location/location_util.dart';
+import 'package:icare/features/nurse/data/models/review_model.dart';
+import 'package:icare/features/nurse/presentation/screens/nurse_details_screen.dart';
+import 'package:icare/core/utils/small_fun.dart';
+import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 
 class MapSearchScreen extends StatefulWidget {
   final String? longitude, latitude;
@@ -40,6 +43,7 @@ class MapScreenState extends State<MapSearchScreen> {
   LatLng? lastLocation;
   String latitude = '', longitude = '';
   String selectedAddress = "";
+  Map<MarkerId, Marker> _currentMarkers = {};
 
   @override
   void initState() {
@@ -58,28 +62,11 @@ class MapScreenState extends State<MapSearchScreen> {
     rootBloc = RootBloc.get(context);
     authBloc = AuthBloc.get(context);
     searchBloc = SearchBloc.get(context);
-
-    // Initial map setup with filters
-    _updateMapWithFilters();
-
-    //update markers every 5 seconds
-    nurseBloc.markersTimer = Timer.periodic(const Duration(seconds: 5), (t) {
-      _updateMapWithFilters();
-    });
     super.didChangeDependencies();
-  }
-
-  void _updateMapWithFilters() {
-    nurseBloc.add(SetNurseOnMapEvent(
-      ctx: context,
-      userType: searchBloc.selectedProviderType,
-      serviceIds: searchBloc.selectedServices.map((s) => s.id).toList(),
-    ));
   }
 
   @override
   void dispose() {
-    nurseBloc.markersTimer?.cancel();
     super.dispose();
   }
 
@@ -87,38 +74,80 @@ class MapScreenState extends State<MapSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<SearchBloc, SearchState>(
-        listener: (context, searchState) {
-          // When search filters change or search is successful, update the map
-          if (searchState is ProviderTypeSelectedState ||
-              searchState is ServicesSelectedState ||
-              searchState is SearchSuccessState) {
-            _updateMapWithFilters();
+        listener: (context, searchState) async {
+          if (searchState is SearchSuccessState) {
+            // Create markers from search results when state changes
+            final markers =
+                await _createMarkersFromResults(searchState.results);
+            if (mounted) {
+              setState(() {
+                _currentMarkers = markers;
+                authBloc.markers = markers;
+              });
+            }
           }
         },
-        child: BlocBuilder<AuthBloc, AuthState>(
-          builder: (ctx, state) {
-            var bloc = AuthBloc.get(ctx);
-            // Get all markers (filtering is now done in the bloc)
-            Map<MarkerId, Marker> currentMarkers = bloc.markers;
-
-            return GoogleMap(
-              initialCameraPosition: CameraPosition(
-                  target: lastLocation ?? const LatLng(30.059482, 31.2172649),
-                  zoom: 12),
-              onMapCreated: onMapCreated,
-              onCameraMove: _onCameraMoved,
-              myLocationEnabled: true,
-              mapType: MapType.normal,
-              tiltGesturesEnabled: true,
-              compassEnabled: true,
-              scrollGesturesEnabled: true,
-              zoomGesturesEnabled: true,
-              markers: Set<Marker>.of(currentMarkers.values),
-            );
-          },
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(
+              target: lastLocation ?? const LatLng(30.059482, 31.2172649),
+              zoom: 12),
+          onMapCreated: onMapCreated,
+          onCameraMove: _onCameraMoved,
+          myLocationEnabled: true,
+          mapType: MapType.normal,
+          tiltGesturesEnabled: true,
+          compassEnabled: true,
+          scrollGesturesEnabled: true,
+          zoomGesturesEnabled: true,
+          markers: Set<Marker>.of(_currentMarkers.values),
         ),
       ),
     );
+  }
+
+  // Helper method to create markers from search results
+  Future<Map<MarkerId, Marker>> _createMarkersFromResults(
+      List<NurseEntity> results) async {
+    Map<MarkerId, Marker> markers = {};
+
+    debugPrint("🗺️ Creating ${results.length} markers from search results");
+
+    for (var nurse in results) {
+      if (nurse.userData != null &&
+          nurse.userData!.lat != null &&
+          nurse.userData!.long != null &&
+          nurse.userData!.lat != 0.0 &&
+          nurse.userData!.long != 0.0) {
+        var point = LatLng(nurse.userData!.lat!, nurse.userData!.long!);
+        MarkerId markerId = MarkerId(
+            "${nurse.userData!.isWomen == true ? "isWomen" : "isMan"}-${nurse.id}");
+
+        Marker marker = Marker(
+          markerId: markerId,
+          position: point,
+          onTap: () {},
+          infoWindow: InfoWindow(
+            title:
+                "${nurse.userData!.userName} ${ReviewModel.calcReviewStar(nurse.reviewList!)}",
+            snippet:
+                LocationUtil.getDistanceView(nurse.distanceKM, nurse.distanceM),
+            onTap: () {
+              nurseBloc.add(UpdateCurrentNurseEvent(nurse: nurse));
+              if (context.mounted) {
+                Util.pushPage(const NurseDetails(), context);
+              }
+            },
+          ),
+          icon: await LocationUtil.convertImageFileToCustomBitmapDescriptor(
+              nurse.userData!.image.toString()),
+        );
+
+        markers[markerId] = marker;
+      }
+    }
+
+    debugPrint("✅ Created ${markers.length} markers");
+    return markers;
   }
 
   _setUp() {
