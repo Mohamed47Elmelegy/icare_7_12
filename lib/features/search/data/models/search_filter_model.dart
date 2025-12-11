@@ -7,6 +7,7 @@ class SearchFilterModel extends SearchFilterEntity {
     super.latitude,
     super.longitude,
     super.searchText,
+    super.searchRadius,
   });
 
   factory SearchFilterModel.fromEntity(SearchFilterEntity entity) {
@@ -16,6 +17,7 @@ class SearchFilterModel extends SearchFilterEntity {
       latitude: entity.latitude,
       longitude: entity.longitude,
       searchText: entity.searchText,
+      searchRadius: entity.searchRadius,
     );
   }
 
@@ -42,6 +44,10 @@ class SearchFilterModel extends SearchFilterEntity {
       data['search'] = searchText;
     }
 
+    if (searchRadius != null) {
+      data['radius'] = searchRadius;
+    }
+
     return data;
   }
 
@@ -54,6 +60,7 @@ class SearchFilterModel extends SearchFilterEntity {
       latitude: json['lat'] as double?,
       longitude: json['long'] as double?,
       searchText: json['search'] as String?,
+      searchRadius: json['radius'] as double?,
     );
   }
 }

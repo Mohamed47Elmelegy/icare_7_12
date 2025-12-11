@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/search/domain/entities/search_filter_entity.dart';
 import 'package:icare/features/search/domain/use_cases/search_by_service_usecase.dart';
@@ -10,13 +11,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final SearchByServiceUseCase searchByServiceUseCase;
 
   // Current filter state - default to 'nurse'
-  String? selectedProviderType = 'nurse';
+  String? selectedProviderType = UserEnum.NURSE.name.toLowerCase();
   List<ServicesModel> selectedServices = [];
   double? currentLatitude;
   double? currentLongitude;
 
   SearchBloc({required this.searchByServiceUseCase})
-      : super(const ProviderTypeSelectedState(providerType: 'nurse')) {
+      : super(ProviderTypeSelectedState(providerType: UserEnum.NURSE.name.toLowerCase())) {
     on<SelectProviderTypeEvent>(_onSelectProviderType);
     on<SelectServiceEvent>(_onSelectService);
     on<SearchByFiltersEvent>(_onSearchByFilters);
@@ -64,6 +65,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     debugPrint("   └─ Service IDs: ${event.filters.serviceIds}");
     debugPrint("   └─ Latitude: ${event.filters.latitude}");
     debugPrint("   └─ Longitude: ${event.filters.longitude}");
+    if (event.filters.searchRadius != null) {
+      debugPrint("   └─ Custom Max Radius: ${event.filters.searchRadius}km");
+    } else {
+      debugPrint("   └─ Max Radius: 20km (sorted by distance, nearest first)");
+    }
 
     emit(SearchLoadingState());
 
@@ -84,6 +90,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       },
       (results) {
         debugPrint("✅ Search Successful: ${results.length} results found");
+        if (results.isNotEmpty && event.filters.latitude != null) {
+          debugPrint("   └─ Results sorted by distance (nearest to farthest)");
+        }
         emit(SearchSuccessState(results: results));
       },
     );
@@ -121,6 +130,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       serviceIds: selectedServices.map((s) => s.id).toList(),
       latitude: currentLatitude,
       longitude: currentLongitude,
+      searchRadius: null, // null = use progressive radius expansion
     );
   }
 

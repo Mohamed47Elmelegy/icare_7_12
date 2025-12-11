@@ -76,6 +76,8 @@ class MapScreenState extends State<MapSearchScreen> {
       body: BlocListener<SearchBloc, SearchState>(
         listener: (context, searchState) async {
           if (searchState is SearchSuccessState) {
+            debugPrint(
+                "🔄 Map received ${searchState.results.length} results, creating markers...");
             // Create markers from search results when state changes
             final markers =
                 await _createMarkersFromResults(searchState.results);
@@ -84,6 +86,21 @@ class MapScreenState extends State<MapSearchScreen> {
                 _currentMarkers = markers;
                 authBloc.markers = markers;
               });
+              debugPrint("🗺️ Map updated with ${markers.length} markers");
+
+              // Move camera to show first result if available
+              if (markers.isNotEmpty) {
+                try {
+                  final firstMarker = markers.values.first;
+                  rootBloc.mapController.animateCamera(
+                    CameraUpdate.newLatLngZoom(firstMarker.position, 13),
+                  );
+                  debugPrint(
+                      "📍 Camera moved to first result: ${firstMarker.position}");
+                } catch (e) {
+                  debugPrint("⚠️ Could not move camera: $e");
+                }
+              }
             }
           }
         },
@@ -105,19 +122,70 @@ class MapScreenState extends State<MapSearchScreen> {
     );
   }
 
-  // Helper method to create markers from search results
+  // 🚀 Optimized: Parallel image loading for better performance
+  // Time Complexity: O(n/k) where k = concurrent operations
+  // Instead of sequential O(n × t), we load all images in parallel O(t)
   Future<Map<MarkerId, Marker>> _createMarkersFromResults(
       List<NurseEntity> results) async {
     Map<MarkerId, Marker> markers = {};
 
-    debugPrint("🗺️ Creating ${results.length} markers from search results");
+    debugPrint("🗺️ Creating ${results.length} markers (parallel loading)...");
+    final stopwatch = Stopwatch()..start();
 
-    for (var nurse in results) {
-      if (nurse.userData != null &&
-          nurse.userData!.lat != null &&
-          nurse.userData!.long != null &&
-          nurse.userData!.lat != 0.0 &&
-          nurse.userData!.long != 0.0) {
+    // Filter valid nurses first
+    final validNurses = results
+        .where((nurse) =>
+            nurse.userData != null &&
+            nurse.userData!.lat != null &&
+            nurse.userData!.long != null &&
+            nurse.userData!.lat != 0.0 &&
+            nurse.userData!.long != 0.0)
+        .toList();
+
+    debugPrint("   └─ ${validNurses.length} valid locations found");
+
+    // Load all icons in parallel (much faster!)
+    final iconFutures = validNurses.map((nurse) async {
+      try {
+        return await LocationUtil.convertImageFileToCustomBitmapDescriptor(
+                nurse.userData!.image.toString())
+            .timeout(
+          const Duration(seconds: 3),
+          onTimeout: () {
+            // Return default icon on timeout
+            return BitmapDescriptor.defaultMarkerWithHue(
+                nurse.userData!.isWomen == true
+                    ? BitmapDescriptor.hueRose
+                    : BitmapDescriptor.hueBlue);
+          },
+        );
+      } catch (e) {
+        // Use default marker if image loading fails
+        return BitmapDescriptor.defaultMarkerWithHue(
+            nurse.userData!.isWomen == true
+                ? BitmapDescriptor.hueRose
+                : BitmapDescriptor.hueBlue);
+      }
+    }).toList();
+
+    // Wait for all icons to load in parallel
+    final icons = await Future.wait(iconFutures, eagerError: false);
+
+    debugPrint(
+        "   └─ Loaded ${icons.length} icons in ${stopwatch.elapsedMilliseconds}ms");
+
+    // Create markers with pre-loaded icons (fast!)
+    int iconErrors = 0;
+    for (int i = 0; i < validNurses.length; i++) {
+      final nurse = validNurses[i];
+      final markerIcon = icons[i];
+
+      // Count default icons as errors
+      if (markerIcon == BitmapDescriptor.defaultMarker) {
+        iconErrors++;
+      }
+
+      try {
         var point = LatLng(nurse.userData!.lat!, nurse.userData!.long!);
         MarkerId markerId = MarkerId(
             "${nurse.userData!.isWomen == true ? "isWomen" : "isMan"}-${nurse.id}");
@@ -138,15 +206,27 @@ class MapScreenState extends State<MapSearchScreen> {
               }
             },
           ),
-          icon: await LocationUtil.convertImageFileToCustomBitmapDescriptor(
-              nurse.userData!.image.toString()),
+          icon: markerIcon,
         );
 
         markers[markerId] = marker;
+      } catch (e) {
+        debugPrint("   ❌ Error creating marker: $e");
       }
     }
 
-    debugPrint("✅ Created ${markers.length} markers");
+    stopwatch.stop();
+    final skipped = results.length - validNurses.length;
+
+    debugPrint(
+        "✅ Created ${markers.length} markers in ${stopwatch.elapsedMilliseconds}ms");
+    if (skipped > 0) {
+      debugPrint("   ⚠️ Skipped $skipped nurses (invalid location)");
+    }
+    if (iconErrors > 0) {
+      debugPrint("   ℹ️ $iconErrors markers using default icons");
+    }
+
     return markers;
   }
 

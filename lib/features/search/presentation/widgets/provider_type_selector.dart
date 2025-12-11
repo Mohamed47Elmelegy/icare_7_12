@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
@@ -43,7 +44,7 @@ class ProviderTypeSelector extends StatelessWidget {
                       _buildProviderOption(
                         context: context,
                         bloc: bloc,
-                        type: 'nurse',
+                        type: UserEnum.NURSE.name.toLowerCase(),
                         label: translate("nurse.nurse"),
                         selectedColor: selectedColor,
                       ),
@@ -51,7 +52,7 @@ class ProviderTypeSelector extends StatelessWidget {
                       _buildProviderOption(
                         context: context,
                         bloc: bloc,
-                        type: 'assistant',
+                        type: UserEnum.ASSISTANT.name.toLowerCase(),
                         label: translate("nurse.assistant"),
                         selectedColor: selectedColor,
                       ),
@@ -60,7 +61,7 @@ class ProviderTypeSelector extends StatelessWidget {
                         context: context,
                         bloc: bloc,
                         type: 'doctor',
-                        label: translate("nurse.doctor"),
+                        label: translate("doctor.doctor"),
                         selectedColor: selectedColor,
                       ),
                     ],

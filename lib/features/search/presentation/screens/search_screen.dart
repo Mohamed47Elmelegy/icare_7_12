@@ -5,6 +5,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
 import 'package:icare/features/search/presentation/bloc/search_state.dart';
@@ -30,26 +31,16 @@ class SearchScreen extends StatelessWidget {
         }
 
         if (state is SearchSuccessState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${translate("search.found")} ${state.results.length} ${translate("search.results")}',
-                style: const TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            ),
+          SnackBarBuilder.showFeedBackMessage(
+            context,
+            '${translate("search.found")} ${state.results.length} ${translate("search.results")}',
+            Colors.green,
           );
         } else if (state is SearchErrorState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.message,
-                style: const TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
+          SnackBarBuilder.showFeedBackMessage(
+            context,
+            state.message,
+            Colors.red,
           );
         }
       },

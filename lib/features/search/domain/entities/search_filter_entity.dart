@@ -6,6 +6,7 @@ class SearchFilterEntity extends Equatable {
   final double? latitude;
   final double? longitude;
   final String? searchText;
+  final double? searchRadius; // Optional: custom search radius in kilometers
 
   const SearchFilterEntity({
     this.userType,
@@ -13,6 +14,7 @@ class SearchFilterEntity extends Equatable {
     this.latitude,
     this.longitude,
     this.searchText,
+    this.searchRadius,
   });
 
   SearchFilterEntity copyWith({
@@ -21,6 +23,7 @@ class SearchFilterEntity extends Equatable {
     double? latitude,
     double? longitude,
     String? searchText,
+    double? searchRadius,
   }) {
     return SearchFilterEntity(
       userType: userType ?? this.userType,
@@ -28,10 +31,11 @@ class SearchFilterEntity extends Equatable {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       searchText: searchText ?? this.searchText,
+      searchRadius: searchRadius ?? this.searchRadius,
     );
   }
 
   @override
   List<Object?> get props =>
-      [userType, serviceIds, latitude, longitude, searchText];
+      [userType, serviceIds, latitude, longitude, searchText, searchRadius];
 }
