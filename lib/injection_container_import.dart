@@ -18,6 +18,14 @@ import 'package:icare/features/nurse/data/repositories/nurse_model_repository.da
 import 'package:icare/features/nurse/domain/repositories/nurse_repository.dart';
 import 'package:icare/features/nurse/domain/use_cases/get_all_nurses_usecase.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+
+// Doctor imports
+import 'package:icare/features/doctor/data/data_sources/doctor_remote_data_source.dart';
+import 'package:icare/features/doctor/data/repositories/doctor_model_repository.dart';
+import 'package:icare/features/doctor/domain/repositories/doctor_repository.dart';
+import 'package:icare/features/doctor/domain/use_cases/get_all_doctors_usecase.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
+
 import 'package:icare/features/search/data/data_sources/search_remote_data_source.dart';
 import 'package:icare/features/search/data/repositories/search_repository_impl.dart';
 import 'package:icare/features/search/domain/repositories/search_repository.dart';

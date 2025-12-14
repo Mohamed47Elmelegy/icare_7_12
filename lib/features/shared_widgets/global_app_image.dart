@@ -3,6 +3,7 @@ import 'package:icare/features/shared_widgets/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ImageWidget extends StatelessWidget {
   final double height;
@@ -34,7 +35,31 @@ class ImageWidget extends StatelessWidget {
       width: width.h,
       fit: fit,
       placeholder: (context, url) => LoadingWidget(height: height.h,),
-      errorWidget: (context, url, error) => Image.asset(errorImg ?? AppImages.logo),
+      errorWidget: (context, url, error) {
+        final fallbackImage = errorImg ?? AppImages.logo;
+        // Check if the image is SVG
+        if (fallbackImage.toLowerCase().endsWith('.svg')) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(radius ?? 10),
+            child: SvgPicture.asset(
+              fallbackImage,
+              height: height.h,
+              width: width.h,
+              fit: fit,
+            ),
+          );
+        }
+        // Otherwise use regular Image.asset
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(radius ?? 10),
+          child: Image.asset(
+            fallbackImage,
+            height: height.h,
+            width: width.h,
+            fit: fit,
+          ),
+        );
+      },
     );
   }
 }

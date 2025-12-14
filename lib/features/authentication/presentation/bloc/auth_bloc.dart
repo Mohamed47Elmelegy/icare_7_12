@@ -286,9 +286,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   /// nurse section
   bool isNurse = true;
+  bool isDoctor = false;
   switchNurseType(SwitchNurseTypeEvent event, emit) {
     emit(const EnableAuthButtonLoadingState());
     isNurse = event.isNurse;
+    isDoctor = event.isDoctor ?? false;
     emit(const EnableAuthButtonState());
   }
 

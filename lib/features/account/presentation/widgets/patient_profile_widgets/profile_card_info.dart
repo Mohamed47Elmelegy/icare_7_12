@@ -1,5 +1,6 @@
 import 'package:icare/features/account/presentation/widgets/profile_image_with_action.dart';
 import 'package:icare/features/nurse/presentation/widgets/nurse_profile_details_image.dart';
+import 'package:icare/features/doctor/presentation/widgets/doctor_profile_details_image.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class ProfileCardInfo extends StatelessWidget {
   final bool enableBackIcon;
   final bool enableEditIcon;
   final bool viewNurseDetails;
+  final bool viewDoctorDetails;
   final VoidCallback? backFn;
   const ProfileCardInfo(
       {super.key,
@@ -17,6 +19,7 @@ class ProfileCardInfo extends StatelessWidget {
       this.enableBackIcon = false,
       this.enableEditIcon = true,
       this.viewNurseDetails = false,
+      this.viewDoctorDetails = false,
       this.backFn});
 
   @override
@@ -32,6 +35,8 @@ class ProfileCardInfo extends StatelessWidget {
 
         if (viewNurseDetails) ...[
           const NurseProfileDetailsImage(),
+        ] else if (viewDoctorDetails) ...[
+          const DoctorProfileDetailsImage(),
         ] else ...[
           ProfileImageEdit(
               enableEditIcon: title == null ? false : enableEditIcon, img: img),

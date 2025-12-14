@@ -104,7 +104,47 @@ class RegisterScreen extends StatelessWidget {
                   registerData['country_code'] = '';
                   registerData['status'] = 'online';
                   registerData['is_male'] = authBloc.isWomen ? "0" : "1";
-                  if (Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
+                  
+                  // Check if doctor type first
+                  if (authBloc.isDoctor) {
+                    await Util.getUserType() ==(UserEnum.DOCTOR.name.toLowerCase());
+                    registerData['user_type'] = "doctor";
+                    if (authBloc.license != null) {
+                      registerData['license'] = authBloc.license;
+                    }
+                    if (authBloc.certificate != null) {
+                      registerData['certificate'] = authBloc.certificate;
+                    }
+                    if (authBloc.nurseID != null) {
+                      registerData['doctorID'] = authBloc.nurseID;
+                    }
+                    if (authBloc.associationCard != null) {
+                      registerData['associationCard'] =
+                          authBloc.associationCard;
+                    }
+                    if (authBloc.relatedJobId != null) {
+                      registerData['related_job_id'] = authBloc.relatedJobId;
+                    }
+                    if (authBloc.avatar != null) {
+                      registerData['avatar'] = authBloc.avatar;
+                    }
+                    if (authBloc.languageList != null) {
+                      registerData['languages'] =
+                          jsonEncode(authBloc.languageList);
+                    }
+                    if (authBloc.educationList != null) {
+                      registerData['education'] =
+                          jsonEncode(authBloc.educationList);
+                    }
+                    if (authBloc.publicationsList != null) {
+                      registerData['publications'] =
+                          jsonEncode(authBloc.publicationsList);
+                    }
+                    if (authBloc.coursesList != null) {
+                      registerData['courses'] =
+                          jsonEncode(authBloc.coursesList);
+                    }
+                  } else if (Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
                     registerData['user_type'] =
                         authBloc.isNurse ? "nurse" : "assistant";
                     if (authBloc.license != null) {

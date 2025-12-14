@@ -4,5 +4,6 @@ enum UserEnum{
   CUSTOMER,
   NURSE,
   ASSISTANT,
+  DOCTOR,
   ADMIN
 }

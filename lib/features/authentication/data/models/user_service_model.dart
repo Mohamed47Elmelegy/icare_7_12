@@ -6,6 +6,7 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/authentication/domain/entities/user_entity.dart';
 import 'package:icare/features/categories/data/models/allergies.dart';
 import 'package:icare/features/nurse/data/models/nurse_model.dart';
+import 'package:icare/features/doctor/data/models/doctor_model.dart';
 
 class UserServiceModel extends UserService {
   const UserServiceModel({
@@ -26,6 +27,7 @@ class UserServiceModel extends UserService {
     super.medicalConditions,
     super.status,
     super.nurse,
+    super.doctor,
     super.emergencyContactsList,
     super.distanceKM,
     super.distanceM,
@@ -63,6 +65,7 @@ class UserServiceModel extends UserService {
       cityID: fromJson['city'] ?? '', status: fromJson['status'] == "online",
       emergencyContactsList: fromJson['emergency_contacts']==null || fromJson['emergency_contacts'] ==''? [] : emergencyContactsList,
       nurse:fromJson['nurse'] ==null || fromJson['nurse'].toString()=='' ||fromJson['nurse'].toString()=='null'?null: NurseModel.fromJsonUser(fromJson['nurse']),
+      doctor:fromJson['doctor'] ==null || fromJson['doctor'].toString()=='' ||fromJson['doctor'].toString()=='null'?null: DoctorModel.fromJsonUser(fromJson['doctor']),
       distanceKM: double.tryParse(fromJson['distanceKm']??"-1") ,
       distanceM: double.tryParse(fromJson['distanceMe']??"-1") ,
     );

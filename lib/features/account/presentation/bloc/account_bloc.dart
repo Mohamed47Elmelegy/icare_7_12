@@ -6,6 +6,7 @@ import 'package:icare/features/account/data/data_sources/account_data_source.dar
 import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
+import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
 import 'package:flutter/material.dart';
@@ -252,6 +253,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           currentUser = data;
           isOnline = currentUser!.status ?? false;
           emergencyContactsList = currentUser!.emergencyContactsList;
+          
+          // Load nurse data if exists
           if (currentUser!.nurse != null) {
             var nurse = currentUser!.nurse;
             languageList = nurse!.languageList;
@@ -260,6 +263,17 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
             coursesList = nurse.coursesList;
             servicesList = nurse.servicesList;
           }
+          
+          // Load doctor data if exists
+          if (currentUser!.doctor != null) {
+            var doctor = currentUser!.doctor;
+            languageList = doctor!.languageList;
+            educationList = doctor.educationList;
+            publicationsList = doctor.publicationsList;
+            coursesList = doctor.coursesList;
+            servicesList = doctor.servicesList;
+          }
+          
           _afterUpdateProfile();
           emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
           await saveUserDate(

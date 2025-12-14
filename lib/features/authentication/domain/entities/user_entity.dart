@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/features/categories/data/models/allergies.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
+import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 
 class UserService extends Equatable {
   final int? userId;
@@ -31,6 +32,7 @@ class UserService extends Equatable {
   final String? medicalConditions;
 
   final NurseEntity? nurse;
+  final DoctorEntity? doctor;
   final List<String>? emergencyContactsList;
 
   final double? distanceKM;
@@ -61,6 +63,7 @@ class UserService extends Equatable {
     this.publications,
     this.medicalConditions,
     this.nurse,
+    this.doctor,
     this.emergencyContactsList,
     this.distanceKM,
     this.distanceM
@@ -70,7 +73,13 @@ class UserService extends Equatable {
   List<Object?> get props =>
       [userId, userName, email, area, address, countryCode];
 
-  String viewTypeText ()=> "${userType.toString().toLowerCase()=="nurse"?translate("nurse.nurse"):translate("nurse.assistant")} ".replaceAll("null", "");
+  String viewTypeText() {
+    final type = userType.toString().toLowerCase();
+    if (type == "nurse") return "${translate("nurse.nurse")} ".replaceAll("null", "");
+    if (type == "assistant") return "${translate("nurse.assistant")} ".replaceAll("null", "");
+    if (type == "doctor") return "${translate("doctor.doctor")} ".replaceAll("null", "");
+    return "";
+  }
 
 }
 

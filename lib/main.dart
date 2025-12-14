@@ -6,6 +6,7 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart';
 import 'package:icare/features/chat/presentation/bloc/chat_bloc.dart';
 import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/splash.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
                 BlocProvider(create: (ctx) => di.sl<AuthBloc>()),
                 BlocProvider(create: (ctx) => di.sl<AccountBloc>()),
                 BlocProvider(create: (ctx) => di.sl<NurseBloc>()),
+                BlocProvider(create: (ctx) => di.sl<DoctorBloc>()),
                 BlocProvider(create: (ctx) => di.sl<LocationsBloc>()),
                 BlocProvider(create: (ctx) => di.sl<CategoriesBloc>()),
                 BlocProvider(create: (ctx) => di.sl<BookingBloc>()),
@@ -112,3 +114,7 @@ class MyApp extends StatelessWidget {
 
 // 01123876427
 // 01123876427
+
+
+// sign with doctor
+// 1123236588

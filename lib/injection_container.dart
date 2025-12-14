@@ -129,6 +129,16 @@ Future<void> init() async {
   sl.registerLazySingleton<NursesRemoteDataSourceImpl>(
       () => NursesRemoteDataSource(client: sl()));
 
+  /// doctors bloc and classes initial
+  sl.registerFactory(
+      () => DoctorBloc(getAllDoctorsUseCase: sl(), rateDoctorUseCase: sl()));
+  sl.registerLazySingleton(() => GetAllDoctorsUseCase(doctorRepository: sl()));
+  sl.registerLazySingleton(() => RateDoctorUseCase(doctorRepository: sl()));
+  sl.registerLazySingleton<DoctorsRepository>(() => DoctorsModelRepository(
+      networkInfo: sl(), doctorsRemoteDataSourceImpl: sl()));
+  sl.registerLazySingleton<DoctorsRemoteDataSourceImpl>(
+      () => DoctorsRemoteDataSource(client: sl()));
+
   /// search bloc and classes initial
   sl.registerFactory(() => SearchBloc(searchByServiceUseCase: sl()));
   sl.registerLazySingleton(

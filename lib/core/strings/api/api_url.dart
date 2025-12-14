@@ -65,6 +65,11 @@ class ApiUrl {
 
   static const String nurses = '${BASE_URL}nurses';
   static const String RATE_NURSE = '${BASE_URL}nurse/rate';
+  
+  // Doctors APIs
+  static const String doctors = '${BASE_URL}doctors';
+  static const String RATE_DOCTOR = '${BASE_URL}doctor/rate';
+  
   static const String COMMENTS_URL = '${BASE_URL}reviews';
   static const String OFFERS_URL = '${BASE_URL}products/featured';
   static const String SLIDERS_URL = '${BASE_URL}sliders/all';

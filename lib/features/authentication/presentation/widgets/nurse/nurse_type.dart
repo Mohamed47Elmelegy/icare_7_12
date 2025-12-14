@@ -19,37 +19,58 @@ class NurseType extends StatelessWidget {
     return BlocBuilder<AuthBloc,AuthState>(
       builder: (ctx,state){
         var bloc = AuthBloc.get(ctx);
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        return Column(
           children: [
+            // First row: Nurse & Assistant
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InkWell(
+                  onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: true, isDoctor: false)),
+                  child: Row(
+                    children: [
+                      SelectedCircle(selected: bloc.isNurse && !bloc.isDoctor,selectedColor: selectedColor,),
+                      const SizedBox(width: 10,),
+                      CustomText(
+                        text: translate("nurse.nurse"),
+                        fontSize: AppStyle.small.sp,
+                      ),
+                    ],
+                  ),
+                ),
+
+                InkWell(
+                  onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: false, isDoctor: false)),
+                  child: Row(
+                    children: [
+                      SelectedCircle(selected: !bloc.isNurse && !bloc.isDoctor,selectedColor: selectedColor,),
+                      const SizedBox(width: 10,),
+                      CustomText(
+                        text: translate("nurse.assistant"),
+                        fontSize: AppStyle.small.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            
+            // Second row: Doctor
+            SizedBox(height: 10.h),
             InkWell(
-              onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: true)),
+              onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: false, isDoctor: true)),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SelectedCircle(selected: bloc.isNurse,selectedColor: selectedColor,),
+                  SelectedCircle(selected: bloc.isDoctor,selectedColor: selectedColor,),
                   const SizedBox(width: 10,),
                   CustomText(
-                    text: translate("nurse.nurse"),
+                    text: translate("doctor.doctor"),
                     fontSize: AppStyle.small.sp,
                   ),
                 ],
               ),
             ),
-
-            InkWell(
-              onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: false)),
-              child: Row(
-                children: [
-                  SelectedCircle(selected: !bloc.isNurse,selectedColor: selectedColor,),
-                  const SizedBox(width: 10,),
-                  CustomText(
-                    text: translate("nurse.assistant"),
-                    fontSize: AppStyle.small.sp,
-                  ),
-                ],
-              ),
-            ),
-
           ],
         );
       },

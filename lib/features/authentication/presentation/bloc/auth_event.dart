@@ -89,8 +89,9 @@ class UpdateNurseRegisterDataEvent extends AuthEvent{
 
 ///nurse section
 class SwitchNurseTypeEvent extends AuthEvent{
-  final bool isNurse ;
-  const SwitchNurseTypeEvent({required this.isNurse});
+  final bool isNurse;
+  final bool? isDoctor;
+  const SwitchNurseTypeEvent({required this.isNurse, this.isDoctor});
 }
 
 

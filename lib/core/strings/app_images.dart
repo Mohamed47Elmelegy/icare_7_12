@@ -97,6 +97,7 @@ class AppImages {
   static const String companyTest = "$icons/test_company.png";
   static const String imgPlaceHolder = "$images/placeholder.jpeg";
   static const String nurseImg = "$images/nurse_test.png";
+  static const String doctorImg = "$images/doctor.png"; // Use existing doctor.svg or create doctor.png
 
   static const String appointments = "$icons/Date.svg";
 }
