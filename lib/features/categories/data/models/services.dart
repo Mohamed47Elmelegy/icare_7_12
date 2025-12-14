@@ -5,7 +5,14 @@ class ServicesModel{
   final int id;
   final String value;
   final String? name;
-  const ServicesModel({required this.id, required this.value,this.name});
+  final String? userType; // nurse, assistant, doctor
+  
+  const ServicesModel({
+    required this.id, 
+    required this.value,
+    this.name,
+    this.userType,
+  });
 
 
   static ServicesModel fromJson(Map<String, dynamic> json) {
@@ -13,6 +20,7 @@ class ServicesModel{
       id: json['id'],
       value: json['value'] ?? "",
       name: json['name'] ?? "",
+      userType: json['user_type'],
     );
   }
 

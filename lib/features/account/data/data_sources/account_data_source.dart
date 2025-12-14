@@ -192,11 +192,14 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       if (userType != null && userType.isNotEmpty) {
         url = '$url?user_type=$userType';
         debugPrint("🔍 Fetching services for user_type: $userType");
+      } else {
+        debugPrint("🔍 Fetching ALL services (no user_type filter)");
       }
 
       var response = await http.get(Uri.parse(url), headers: ApiUrl.headerAuth);
 
       debugPrint("📥 getAllServicesList Response: ${response.statusCode}");
+      debugPrint("📥 URL: $url");
 
       var decodedData = jsonDecode(response.body);
       if (decodedData['status'] == true) {
@@ -204,8 +207,19 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
             ServicesModel.listModelFromJson(jsonEncode(decodedData['data']));
         debugPrint("✅ Loaded ${services.length} services" +
             (userType != null ? " for $userType" : ""));
+        
+        // Debug: Show first 3 services with their user_type
+        if (services.isNotEmpty) {
+          debugPrint("📋 First few services:");
+          for (var i = 0; i < services.length && i < 3; i++) {
+            var service = services[i];
+            debugPrint("   ${i + 1}. ${service.value} (ID: ${service.id}, user_type: ${service.userType ?? 'not set'})");
+          }
+        }
+        
         return services;
       } else {
+        debugPrint("❌ API returned status: false");
         return [];
       }
     } catch (e) {

@@ -10,15 +10,21 @@ import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
 import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:icare/features/search/presentation/screens/map_search_screen.dart';
+import 'package:icare/features/search/presentation/screens/all_providers_screen.dart';
 import 'package:icare/features/search/presentation/widgets/provider_type_selector.dart';
 import 'package:icare/features/search/presentation/widgets/search_list.dart';
 import 'package:icare/features/search/presentation/widgets/service_selector.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/logo_widget.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SearchBloc, SearchState>(
@@ -151,79 +157,118 @@ class SearchScreen extends StatelessWidget {
                     builder: (context, state) {
                       final isLoading = state is SearchLoadingState;
 
-                      return SizedBox(
-                        width: double.infinity,
-                        height: 50.h,
-                        child: ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  final searchBloc = SearchBloc.get(context);
+                      return Row(
+                        children: [
+                          // Search Button
+                          Expanded(
+                            child: SizedBox(
+                              height: 50.h,
+                              child: ElevatedButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        final searchBloc = SearchBloc.get(context);
 
-                                  // Validate that at least service or provider type is selected
-                                  if (searchBloc.selectedServices.isEmpty &&
-                                      searchBloc.selectedProviderType == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          translate(
-                                              "search.please_select_filters"),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                        // Validate that provider type is selected (required)
+                                        if (searchBloc.selectedProviderType == null) {
+                                          SnackBarBuilder.showFeedBackMessage(
+                                            context,
+                                            translate("search.please_select_provider_type"),
+                                            Colors.orange,
+                                          );
+                                          return;
+                                        }
+
+                                        // Validate that at least one service is selected (required)
+                                        if (searchBloc.selectedServices.isEmpty) {
+                                          SnackBarBuilder.showFeedBackMessage(
+                                            context,
+                                            translate("search.please_select_service"),
+                                            Colors.orange,
+                                          );
+                                          return;
+                                        }
+
+                                        // Get current filters
+                                        final filters =
+                                            searchBloc.getCurrentFilters();
+
+                                        // Trigger search
+                                        searchBloc.add(
+                                            SearchByFiltersEvent(filters: filters));
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: DMUtil.getPC(),
+                                  foregroundColor: DMUtil.getWC(),
+                                  elevation: 2,
+                                  disabledBackgroundColor:
+                                      DMUtil.getPC().withOpacity(0.6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: isLoading
+                                    ? SizedBox(
+                                        height: 24.h,
+                                        width: 24.w,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            DMUtil.getWC(),
+                                          ),
                                         ),
-                                        backgroundColor: Colors.orange,
+                                      )
+                                    : Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.search,
+                                            size: 24.w,
+                                            color: DMUtil.getWC(),
+                                          ),
+                                          SizedBox(width: 10.w),
+                                          CustomText(
+                                            text: translate("search.search"),
+                                            fontSize: AppStyle.average.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: DMUtil.getWC(),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                    return;
-                                  }
-
-                                  // Get current filters
-                                  final filters =
-                                      searchBloc.getCurrentFilters();
-
-                                  // Trigger search
-                                  searchBloc.add(
-                                      SearchByFiltersEvent(filters: filters));
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: DMUtil.getPC(),
-                            foregroundColor: DMUtil.getWC(),
-                            elevation: 2,
-                            disabledBackgroundColor:
-                                DMUtil.getPC().withOpacity(0.6),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
-                          child: isLoading
-                              ? SizedBox(
-                                  height: 24.h,
-                                  width: 24.w,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      DMUtil.getWC(),
-                                    ),
+                          SizedBox(width: 10.w),
+                          // List Icon Button
+                          Container(
+                            height: 50.h,
+                            width: 50.w,
+                            decoration: BoxDecoration(
+                              color: DMUtil.getWC(),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: DMUtil.getPC(),
+                                width: 2,
+                              ),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const AllProvidersScreen(),
                                   ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.search,
-                                      size: 24.w,
-                                      color: DMUtil.getWC(),
-                                    ),
-                                    SizedBox(width: 10.w),
-                                    CustomText(
-                                      text: translate("search.search"),
-                                      fontSize: AppStyle.average.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: DMUtil.getWC(),
-                                    ),
-                                  ],
-                                ),
-                        ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.list,
+                                size: 24.w,
+                                color: DMUtil.getPC(),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),

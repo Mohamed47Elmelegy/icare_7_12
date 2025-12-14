@@ -39,6 +39,7 @@ class ServiceSelector extends StatelessWidget {
         // Services are already filtered by user_type from the API
         var servicesList = accountBloc.allServiceList;
 
+        // If no services, return empty widget (user must select provider type first)
         if (accountBloc.allServiceList.isEmpty) return const SizedBox.shrink();
 
         return Column(

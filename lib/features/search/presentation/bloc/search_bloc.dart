@@ -10,14 +10,14 @@ import 'package:icare/features/search/presentation/bloc/search_state.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final SearchByServiceUseCase searchByServiceUseCase;
 
-  // Current filter state - default to 'nurse'
-  String? selectedProviderType = UserEnum.NURSE.name.toLowerCase();
+  // Current filter state - NO DEFAULT, user must select
+  String? selectedProviderType; // Changed from default 'nurse' to null
   List<ServicesModel> selectedServices = [];
   double? currentLatitude;
   double? currentLongitude;
 
   SearchBloc({required this.searchByServiceUseCase})
-      : super(ProviderTypeSelectedState(providerType: UserEnum.NURSE.name.toLowerCase())) {
+      : super( SearchInitialState()) { // Changed from ProviderTypeSelectedState
     on<SelectProviderTypeEvent>(_onSelectProviderType);
     on<SelectServiceEvent>(_onSelectService);
     on<SearchByFiltersEvent>(_onSearchByFilters);

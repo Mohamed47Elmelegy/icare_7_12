@@ -199,8 +199,9 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
       // Filter by serviceIds if provided
       if (event.serviceIds != null && event.serviceIds!.isNotEmpty) {
         list = list.where((nurse) {
-          if (nurse.servicesList == null || nurse.servicesList!.isEmpty)
+          if (nurse.servicesList == null || nurse.servicesList!.isEmpty) {
             return false;
+          }
           return nurse.servicesList!
               .any((service) => event.serviceIds!.contains(service.id));
         }).toList();
@@ -241,8 +242,9 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
               snippet: LocationUtil.getDistanceView(i.distanceKM, i.distanceM),
               onTap: () {
                 NurseBloc.get(event.ctx).add(UpdateCurrentNurseEvent(nurse: i));
-                if (event.ctx.mounted)
+                if (event.ctx.mounted) {
                   Util.pushPage(const NurseDetails(), event.ctx);
+                }
               },
             ),
             icon: showAllNurses
@@ -259,8 +261,9 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
           markers.addAll(
               {for (var marker in markersToAdd) marker.markerId: marker});
           await Future.delayed(const Duration(milliseconds: 300));
-          if (event.ctx.mounted)
+          if (event.ctx.mounted) {
             AuthBloc.get(event.ctx).add(UpdateMarkersEvent(markers: markers));
+          }
           debugPrint("------------------add new markerID: $markerId ");
         }
       }

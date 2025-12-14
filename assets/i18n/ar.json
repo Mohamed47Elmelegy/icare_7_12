@@ -22,13 +22,13 @@
       "update_app": "تحديث التطبيق",
       "new_version_from": "يوجد تحديث جديد",
       "update_to_enjoy": "قم بتحديث التطبيق للاستمتاع باحدث نسخه",
-      "away":"يبعد",
-      "edit":"تعديل"
+      "away": "يبعد",
+      "edit": "تعديل"
     },
     "icare": {
-      "distance":"علي بعد مسافة",
-      "must_edit":"يجب التعديل علي بروفايل المريض قبل انهاء الحجز ",
-      "give_nurse_access":"يرجي اعطاء صلاحية الوصول للمرض لاكمال الحجز",
+      "distance": "علي بعد مسافة",
+      "must_edit": "يجب التعديل علي بروفايل المريض قبل انهاء الحجز ",
+      "give_nurse_access": "يرجي اعطاء صلاحية الوصول للمرض لاكمال الحجز",
       "select_price": "ادخل تكلفة الخدمة بالجنية المصري",
       "select_service": "حدد الخدمة",
       "add_option_value": "اضف قيمة جديدة",
@@ -60,7 +60,7 @@
       "my_appointments": "جميع الحجوزات",
       "find_your_nurse": "ابحث عن الممرضة الخاصة بك",
       "storage_your_medical_records": "تخزين السجلات الطبية الخاصة بك",
-      "discuss_in_forum":"ناقش في المنتدى",
+      "discuss_in_forum": "ناقش في المنتدى",
       "medical_record": "السجل الطبي",
       "select_service_first": "حدد الخدمات أولا",
       "nurse_is_busy": "الممرض غير متاح الأن"
@@ -90,7 +90,7 @@
       "licence": "رخصة"
     },
     "nurse": {
-      "nearby_nurses":"الممرضين الاقرب اليك",
+      "nearby_nurses": "الممرضين الاقرب اليك",
       "nurse": "ممرض",
       "assistant": "مساعد ممرض",
       "nurse_id": "البطاقة الشخصية",
@@ -106,17 +106,15 @@
       "call": "تواصل",
       "courses": "الدورات",
       "publications": "المنشورات",
-      "experience_year":"سنوات الخبره",
-      "experience_year_placeholder":"٥ سنين خبره",
-      "you_can_add_just_two_numbers":"يمكنك اضافه رقمين فقط للطوارئ",
+      "experience_year": "سنوات الخبره",
+      "experience_year_placeholder": "٥ سنين خبره",
+      "you_can_add_just_two_numbers": "يمكنك اضافه رقمين فقط للطوارئ",
       "education": "التعليم",
       "languages": "اللغات",
       "subscribe_plans": "خطط الاشتراك",
       "subscribe": "اشترك الان",
       "all_nurses": "جميع المتخصصين"
     },
-
-
     "doctor": {
       "doctor": "دكتور",
       "assistant": "مساعد دكتور",
@@ -215,7 +213,7 @@
       "add": "اضف"
     },
     "toast": {
-      "give_access_success":"تم اعطاء الصلاحية بنجاج",
+      "give_access_success": "تم اعطاء الصلاحية بنجاج",
       "welcome_back": "اهلا بعودتك",
       "sure_to_submit": "تأكيد تنفيذ العملية ؟",
       "field_empty": "من فضلك قم بادخال جميع الحقول",
@@ -225,7 +223,7 @@
       "internet": "من فضلك افحص  الإتصال بالإنترنت",
       "user_exist": "!انت مسجل بالفعل معنا",
       "user_not_exist": " المستخدم غير مسجل من قبل",
-      "welcome" : "أهلا بك فى تطبيق Icare",
+      "welcome": "أهلا بك فى تطبيق Icare",
       "order_send": "تم ارسال طلب الحجز بنجاح",
       "update_user_data": "تم تحديث البيانات بنجاح",
       "gbs": " قم بتفعيل ال GBS ",
@@ -275,7 +273,9 @@
       "search": "البحث",
       "no_result": "لايوجد نتائج للبحث !",
       "select_area": "حدد المنطقة",
-      "all_nurses":"جميع الممرضين",
+      "all_nurses": "جميع الممرضين",
+      "all_providers": "جميع المتخصصين",
+      "please_search_first": "الرجاء البحث أولاً",
       "provider_type": "نوع مقدم الخدمة",
       "select_service": "اختر الخدمة",
       "services_selected": "خدمات محددة",
@@ -290,9 +290,11 @@
       "results": "نتيجة",
       "services_for": "الخدمات المتاحة لـ",
       "services_available": "خدمة متاحة",
-      "no_services_for_type": "لا توجد خدمات متاحة لهذا النوع من مقدمي الخدمة"
+      "no_services_for_type": "لا توجد خدمات متاحة لهذا النوع من مقدمي الخدمة",
+      "please_select_provider_type": "الرجاء تحديد نوع مقدم الخدمة أولاً",
+      "please_select_service": "الرجاء اختيار خدمة واحدة على الأقل"
     },
-    "rules":{
+    "rules": {
       "check": " قم بالموافقه على التراخيص والبنود  ",
       "toast_check": " من فضلك قم بالموافقه على البنود والتراخيص أولا  "
     },
@@ -387,13 +389,11 @@
       "terms_conditions_accept": "موافقة علي الشروط والآحكام",
       "must_accept": "يجب ال"
     },
-
     "activity_user": {
       "edit": "تعديل الحساب",
       "ads": "إعلاناتى",
       "personal_photo": "صور شخصية"
     },
-
     "activity_setting": {
       "allow_display_over": "السماح لبرنامج I Care للعرض فوق التطبيقات الأخرى",
       "order_when_online": "السماح لبرنامج I Care للعرض فوق التطبيقات الأخرى ف الطلب لتلقي الطلبات عندما تكون متصلاً بالإنترنت",
@@ -442,11 +442,10 @@
       "Device_completed_2_years": "تم اكتمال عامين للجهاز من تاريخ الشراء",
       "serial": "مسلسل المنتج",
       "product_module": "وحدة المنتج",
-      "complaints":"تفاصيل الشكوي",
+      "complaints": "تفاصيل الشكوي",
       "upload_image": "اضافة صورة",
       "success_msg": "تم ارسال الطلب بنجاح"
     },
-
     "profile": {
       "pulse_rate": "معدل النبض",
       "weight": "وزن",
@@ -458,8 +457,8 @@
       "publications": "الاجراءات",
       "lab_tests": "التحاليل الطبيه",
       "emergency_contacts": "جهة اتصال للطوارئ",
-      "emergency":"طوارئ",
-      "emerg":"استغاثة",
+      "emergency": "طوارئ",
+      "emerg": "استغاثة",
       "personal": "شخصي",
       "allergies": "الحساسية",
       "medications": "الأدوية",
@@ -499,7 +498,7 @@
       "update": "تحديث",
       "profile": "الملف الشخصى",
       "SAR": "ريال سعودى",
-      "number_of_order":  " عدد الطلبات ",
+      "number_of_order": " عدد الطلبات ",
       "review": "التقييم",
       "add": "إضافة",
       "add_offer": "أضف عرض ",
@@ -551,10 +550,10 @@
       "front_car": "جانب امامي من السياره او الدراجه الخاصه بك",
       "back_car": "جانب خلفي من السياره او الدراجه الخاصه بك",
       "your_current_location": "موقعك الحالي",
-      "confirm_current_location":"تاكيد الموقع"
+      "confirm_current_location": "تاكيد الموقع"
     },
     "home": {
-      "request":"طلب اقامة",
+      "request": "طلب اقامة",
       "view_all": "عرض الكل",
       "save": "وفر",
       "buy": "اشتري الان",
@@ -571,7 +570,7 @@
       "on": "علي",
       "ShippingـCharge": "رسوم الشحن",
       "search": "بحث",
-      "near_with_you":"بالقرب منك",
+      "near_with_you": "بالقرب منك",
       "delivery_now": "التسليم الفوري",
       "your_location": "مكانك",
       "enjoy": "استمتع بوجبتك المفضلة",
@@ -581,12 +580,9 @@
       "fam_kitchen": "حاب تكون معروف ومطبخك ينشهر",
       "deliver_enj": "كن معنا واستمتع بتوصيل وجباتنا"
     },
-
-
     "support": {
-        "title": "الدعم"
+      "title": "الدعم"
     },
-
     "wishlist": {
       "title": "المفضلة",
       "empty": "المفضلة فارغة",
@@ -604,7 +600,7 @@
       "reviews": "التقييمات",
       "review_product": "قيم المنتج",
       "help_other_to_buy": "ساعد الاخرين علي شراء المنتجات الافضل!",
-      "shipping_delivery":"الشحن والتوصيل",
+      "shipping_delivery": "الشحن والتوصيل",
       "add_comment": "إضافة تعليق",
       "related_products": "منتجات ذات صلة",
       "qty": "العدد",
@@ -651,7 +647,7 @@
       "attributes": "الخصائص",
       "select": "قم باختيار",
       "please_select_option": "من فضلك قم باختيار خصائص للمنتج",
-      "coupon_t":"كوبون خصم",
+      "coupon_t": "كوبون خصم",
       "coupon": "اكتب كود الخصم",
       "do_you_have_coupon": "هل لديك كود خصم ؟",
       "active_coupon": "تفعيل",
@@ -683,7 +679,7 @@
       "tax": "ضريبة",
       "sub_total": "مجموع المنتجات",
       "order_content": "محتوي الطلب",
-      "ago":"منذ",
+      "ago": "منذ",
       "customer_details": "تفاصيل العميل",
       "customer_location": "موقع العميل",
       "customer_name": "اسم العميل",
@@ -698,7 +694,7 @@
       "all_orders": "جميع الطلبات",
       "pending_orders": "الطلبات المعلقة",
       "approved_orders": "طلبات تمت الموافقة عليها",
-      "on_going_orders":"طلبات قيد التنفيذ",
+      "on_going_orders": "طلبات قيد التنفيذ",
       "completed_orders": "الطلبات المكتملة",
       "canceled_orders": "الطلبات الملغية",
       "assign_order": "تكليف الطلب",
@@ -727,8 +723,8 @@
       "order_prepared_action": "تاكيد تحضير الطلب",
       "order_finished": "تم الانتهاء من تحضير الطلب",
       "order_details": "تفاصيل الطلب",
-      "delivery_progress":"جاري تاكيد عملية التوصيل",
-      "delivery_progress_driver":"جاري توصيل الطلب",
+      "delivery_progress": "جاري تاكيد عملية التوصيل",
+      "delivery_progress_driver": "جاري توصيل الطلب",
       "delivery_order": "سوف اوصل الطلب الآن",
       "delivery_hint": "يرجي توصيل الطلب ف وقت قصير",
       "order_sure_to_delivery": "❌ يرجي تآكيد توصيل الطلب حين وصولة",
@@ -763,9 +759,6 @@
       "order_process": "نحن نعمل على معالجة طلبك",
       "shipping_to": "الشحن الي "
     },
-
-
-
     "map": {
       "directions": "اتجاهات",
       "sure_location": "تأكيد الموقع",

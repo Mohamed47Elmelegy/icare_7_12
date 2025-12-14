@@ -29,13 +29,6 @@ class ProviderTypeSelector extends StatelessWidget {
           width: double.infinity,
           child: Row(
             children: [
-              CustomText(
-                text: translate("search.provider_type"),
-                fontSize: AppStyle.small.sp,
-                color: txtColor ?? DMUtil.getDC(),
-                fontWeight: FontWeight.w600,
-              ),
-              SizedBox(width: 10.w),
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
