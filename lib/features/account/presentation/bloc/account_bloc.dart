@@ -253,7 +253,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           currentUser = data;
           isOnline = currentUser!.status ?? false;
           emergencyContactsList = currentUser!.emergencyContactsList;
-          
+
           // Load nurse data if exists
           if (currentUser!.nurse != null) {
             var nurse = currentUser!.nurse;
@@ -263,7 +263,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
             coursesList = nurse.coursesList;
             servicesList = nurse.servicesList;
           }
-          
+
           // Load doctor data if exists
           if (currentUser!.doctor != null) {
             var doctor = currentUser!.doctor;
@@ -273,7 +273,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
             coursesList = doctor.coursesList;
             servicesList = doctor.servicesList;
           }
-          
+
           _afterUpdateProfile();
           emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
           await saveUserDate(
@@ -462,16 +462,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   }
 
   switchCurrentUserWithPatientProfile(String id, String userType) async {
-    // await Util.saveLocalData({
-    //   'user':{
-    //     'id':id,
-    //     'user_type':userType
-    //   }
-    // });
-    ApiUrl.headerAuth = {
-      'Content-Type': 'application/json',
-      'ID': id,
-      'user_type': userType,
-    };
+    // Update SharedPreferences to switch user context
+    await SharedPref().setPreferencesString(Constants.userId, id);
+    await SharedPref().setPreferencesString(Constants.userType, userType);
+
+    debugPrint("✅ Switched to user ID: $id, type: $userType");
+    // Note: ApiUrl.headerAuth is now a dynamic getter that will automatically
+    // use the updated user ID and token from SharedPreferences
   }
 }

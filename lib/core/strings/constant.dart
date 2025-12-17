@@ -1,7 +1,7 @@
-
-
 class Constants {
-  static const String token = "token";
+  static const String token = "token"; // FCM token for push notifications
+  static const String apiToken =
+      "apiToken"; // API authentication token from backend
   static const String userId = "userId";
   static const String userType = "userType";
   static const String userLogin = "user_login";
@@ -19,9 +19,6 @@ class Constants {
   static const String currencyAmount = "currencyAmount";
   static const String lastVerificationCode = "lastVerificationCode";
 
-
   static const String allLocalLocationsList = "locations";
   static const String allLocalWishList = "wishList";
-
-
 }

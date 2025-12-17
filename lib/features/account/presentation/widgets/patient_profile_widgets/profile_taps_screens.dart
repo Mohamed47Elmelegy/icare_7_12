@@ -1,8 +1,8 @@
-
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/personal_tap_screen.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/profile_medications_tap_screen.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/report_tap_screen.dart';
+import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
@@ -12,7 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileTapsScreens extends StatelessWidget {
   final bool? isNurseEditMode;
-  const ProfileTapsScreens({super.key,this.isNurseEditMode=false});
+  final GlobalKey<TodayMonitoringVitalsState>? vitalsKey;
+  const ProfileTapsScreens({super.key, this.isNurseEditMode=false, this.vitalsKey});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class ProfileTapsScreens extends StatelessWidget {
         }else if(currentTap==1){
          return const ProfileMedicationsTapScreen();
         }else{
-         return const ReportTapScreen();
+         return ReportTapScreen(isNurseEditMode: isNurseEditMode, vitalsKey: vitalsKey);
         }
       },
     );

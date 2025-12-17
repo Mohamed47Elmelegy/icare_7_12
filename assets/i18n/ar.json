@@ -65,6 +65,15 @@
       "select_service_first": "حدد الخدمات أولا",
       "nurse_is_busy": "الممرض غير متاح الأن"
     },
+    "notification": {
+      "patient": "المريض",
+      "requested_service": "الخدمة المطلوبة",
+      "gender": "النوع",
+      "destination": "الوجهة",
+      "on_map": "على الخريطة",
+      "accept": "قبول",
+      "reject": "رفض"
+    },
     "admin": {
       "general": "عام",
       "add_company": "أضف شركة جديدة",
@@ -705,8 +714,10 @@
       "approved": "تمت الموافقة علي تحضير الطلب",
       "pending": "الطلب قيد المراجعة",
       "ongoing": "الطلب قيد التنفيذ",
+      "completed": "تم إنجاز الطلب",
       "completed_o": "تم تنفيذ الطلب بنجاح",
       "canceled": "تم الغاء الطلب",
+      "refused": "تم رفض الطلب",
       "no_orders": "لا يوجد طلبات حالية",
       "delivery_on": "قيد التوصيل",
       "complete_order": "تم الانتهاء من الحجز",
@@ -736,7 +747,6 @@
       "continue_shopping": "تابع التسوق",
       "today_orders": "طلبات اليوم",
       "today_earning": "ارباح اليوم",
-      "completed": "منتهي",
       "track_location": "تتبع الحجز",
       "track_nurse": "تتبع الممرض",
       "track": "تتبع",
@@ -757,7 +767,8 @@
       "upload_photo": "تحميل صوره",
       "take_photo": "التقط صورة",
       "order_process": "نحن نعمل على معالجة طلبك",
-      "shipping_to": "الشحن الي "
+      "shipping_to": "الشحن الي ",
+      "order_completed_successfully": "تم إكمال الطلب بنجاح"
     },
     "map": {
       "directions": "اتجاهات",

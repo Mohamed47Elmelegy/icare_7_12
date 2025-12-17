@@ -5,12 +5,19 @@ import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/profile_card_info.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/profile_taps.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/profile_taps_screens.dart';
+import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
 import 'package:flutter/material.dart';
 
 class PatientProfile extends StatelessWidget {
   final bool isNurseEditMode;
   final VoidCallback? fnAfterNurseEdit;
-  const PatientProfile({super.key,this.isNurseEditMode = false,this.fnAfterNurseEdit});
+  final GlobalKey<TodayMonitoringVitalsState>? vitalsKey;
+  const PatientProfile({
+    super.key,
+    this.isNurseEditMode = false,
+    this.fnAfterNurseEdit,
+    this.vitalsKey,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +30,7 @@ class PatientProfile extends StatelessWidget {
             children: [
               const ProfileTaps(),
               const SizedBox(height: 20,),
-              ProfileTapsScreens(isNurseEditMode: isNurseEditMode,),
+              ProfileTapsScreens(isNurseEditMode: isNurseEditMode, vitalsKey: vitalsKey,),
             ],
           ),
         ),

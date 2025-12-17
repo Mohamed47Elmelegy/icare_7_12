@@ -8,7 +8,9 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 
 class ReportTapScreen extends StatelessWidget {
-  const ReportTapScreen({super.key});
+  final bool? isNurseEditMode;
+  final GlobalKey<TodayMonitoringVitalsState>? vitalsKey;
+  const ReportTapScreen({super.key, this.isNurseEditMode = false, this.vitalsKey});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,10 @@ class ReportTapScreen extends StatelessWidget {
           color: DMUtil.getDC(),
         ),
         const SizedBox(height: 10,),
-        const TodayMonitoringVitals(),
+        TodayMonitoringVitals(
+          key: vitalsKey,
+          isNurseEditMode: isNurseEditMode ?? false,
+        ),
 
         const SizedBox(height: 10,),
         CustomText(

@@ -35,18 +35,20 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
         if (state is UpdateOrderSuccessfullyState) {
           SnackBarBuilder.showFeedBackMessage(
               context, translate('toast.complete_order'), Colors.green);
-        }else if(state is OrderErrorState){
-            SnackBarBuilder.showFeedBackMessage(
+        } else if (state is OrderErrorState) {
+          SnackBarBuilder.showFeedBackMessage(
               context, state.errors.toString(), Colors.red);
-        }else{
+        } else {
           SnackBarBuilder.showFeedBackMessage(
               context, translate('toast.oops'), Colors.red);
         }
       },
-      listenWhen: (ctx, state) => state is UpdateOrderSuccessfullyState || state is OrderErrorState,
+      listenWhen: (ctx, state) =>
+          state is UpdateOrderSuccessfullyState || state is OrderErrorState,
       child: Row(
         children: [
-          if (!Util.isCustomer() && item.nurseCanEditPatientProfile==true) ...[
+          if (!Util.isCustomer() &&
+              item.nurseCanEditPatientProfile == true) ...[
             InkWell(
               onTap: () async {
                 var accountBloc = AccountBloc.get(context);
@@ -54,28 +56,32 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
                     item.userId.toString(), 'customer');
                 accountBloc.add(const FetchProfileDataEvent());
                 await Util.pushPage(
-                    PopScope(  
-                    canPop: true,
-                    onPopInvoked : (didPop)async{
-                      if(didPop){
-                        await _afterEditPatient(context, accountBloc, orderNurse);  
-                      }
-                    },
-                    child: Scaffold(  
-                      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,  
-                      floatingActionButton: const SaveProfileBtn(),  
-                      body: SingleChildScrollView(  
-                        physics: const BouncingScrollPhysics(),  
-                        child: PatientProfile(  
-                          isNurseEditMode: true,  
-                          fnAfterNurseEdit: () async {  
-                            await _afterEditPatient(context, accountBloc, orderNurse,pop: true);  
-                          },  
-                        ),  
-                      ),  
-                      backgroundColor: Colors.white,  
-                    ),  
-                  ),
+                    PopScope(
+                      canPop: true,
+                      onPopInvoked: (didPop) async {
+                        if (didPop) {
+                          await _afterEditPatient(
+                              context, accountBloc, orderNurse);
+                        }
+                      },
+                      child: Scaffold(
+                        floatingActionButtonLocation:
+                            FloatingActionButtonLocation.centerFloat,
+                        floatingActionButton: const SaveProfileBtn(),
+                        body: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: PatientProfile(
+                            isNurseEditMode: true,
+                            fnAfterNurseEdit: () async {
+                              await _afterEditPatient(
+                                  context, accountBloc, orderNurse,
+                                  pop: true);
+                            },
+                          ),
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
                     context);
               },
               child: Tooltip(
@@ -123,8 +129,8 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
               if (val.toString().trim() == "complete_booking") {
                 BookingBloc.get(context).add(UpdateOrderEvent(
                   data: {
-                    'status': 'COMPLETED',
                     'booking_id': item.orderId,
+                    'status': 'COMPLETED',
                   },
                 ));
               }
@@ -168,12 +174,15 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
     );
   }
 
-  _afterEditPatient(BuildContext context, AccountBloc accountBloc,
-      NurseEntity orderNurse,{bool pop = false}) async {
+  _afterEditPatient(
+      BuildContext context, AccountBloc accountBloc, NurseEntity orderNurse,
+      {bool pop = false}) async {
     await accountBloc.switchCurrentUserWithPatientProfile(
-        orderNurse.userData!.userId.toString(), 'nurse');///will be change if nurse or assistant
+        orderNurse.userData!.userId.toString(), 'nurse');
+
+    ///will be change if nurse or assistant
     accountBloc.add(const FetchProfileDataEvent());
     await Future.delayed(const Duration(microseconds: 100));
-    if(pop)Navigator.of(context).pop();
+    if (pop) Navigator.of(context).pop();
   }
 }

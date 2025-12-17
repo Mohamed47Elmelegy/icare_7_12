@@ -66,6 +66,15 @@
 		"select_service_first": "select service first",
 		"nurse_is_busy": "nurse is not available now"
 	},
+	"notification": {
+		"patient": "Patient",
+		"requested_service": "Requested Service",
+		"gender": "Gender",
+		"destination": "Destination",
+		"on_map": "On Map",
+		"accept": "Accept",
+		"reject": "Reject"
+	},
 	"admin": {
 		"general": "General",
 		"add_company": "Add Company",
@@ -700,9 +709,11 @@
 		"assigned": "Assigned",
 		"delivered_o": "Delivered",
 		"ongoing": "Order in the way",
+		"completed": "Order Completed",
 		"delivered": "Delivered Order",
 		"completed_o": "Order completed successfully",
 		"canceled": "Order has been canceled",
+		"refused": "Order has been refused",
 		"no_orders": "no orders available now",
 		"delivery_on": "On Delivery",
 		"complete_order": "Complete Order",
@@ -732,7 +743,6 @@
 		"continue_shopping": "continue shopping",
 		"today_orders": "Today's Booking",
 		"today_earning": "Today's Earning",
-		"completed": "completed",
 		"track_location": "Track booking",
 		"track_nurse": "Track the nurse",
 		"track": "Track",
@@ -753,7 +763,8 @@
 		"upload_photo": "upload photo",
 		"take_photo": "take a photo",
 		"order_process": "We are working on processing your request",
-		"shipping_to": "Shipping to"
+		"shipping_to": "Shipping to",
+		"order_completed_successfully": "Order completed successfully"
 	},
 	"support": {
 		"title": "Support"

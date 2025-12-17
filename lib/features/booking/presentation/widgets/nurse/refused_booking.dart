@@ -12,12 +12,12 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class RefusedBookingRequestBtn extends StatelessWidget {
   final String orderID;
-  const RefusedBookingRequestBtn({super.key,required this.orderID});
+  const RefusedBookingRequestBtn({super.key, required this.orderID});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookingBloc,BookingState>(
-      builder: (ctx,state){
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (ctx, state) {
         return CustomButton(
           height: 35.h,
           width: 150.w,
@@ -29,10 +29,10 @@ class RefusedBookingRequestBtn extends StatelessWidget {
           ),
           color: DMUtil.getPC(),
           circular: 8,
-          onPressed: ()=> BookingBloc.get(context).add(UpdateOrderEvent(
+          onPressed: () => BookingBloc.get(context).add(UpdateOrderEvent(
             data: {
-              'status': 'REFUESD',
               'booking_id': orderID,
+              'status': 'CANCELLED',
             },
           )),
         );

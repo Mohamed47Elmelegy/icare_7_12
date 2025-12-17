@@ -266,10 +266,24 @@ class Util {
           Constants.userId, bodyData['user']['id'].toString());
       await SharedPref().setPreferencesString(
           Constants.userType, bodyData['user']['user_type'].toString());
-      ApiUrl.headerAuth = {
-        'Content-Type': 'application/json',
-        'ID': '${bodyData['user']['id']}',
-      };
+
+      // Save API authentication token (not FCM token)
+      if (bodyData['token'] != null) {
+        await SharedPref().setPreferencesString(
+            Constants.apiToken, bodyData['token'].toString());
+        debugPrint(
+            "✅ API Token saved: ${bodyData['token'].toString().substring(0, 20)}...");
+      } else if (bodyData['access_token'] != null) {
+        await SharedPref().setPreferencesString(
+            Constants.apiToken, bodyData['access_token'].toString());
+        debugPrint(
+            "✅ API Token saved: ${bodyData['access_token'].toString().substring(0, 20)}...");
+      } else {
+        debugPrint("⚠️ No API token found in response");
+      }
+
+      // Note: No need to manually set ApiUrl.headerAuth anymore
+      // It's now a getter that will automatically include the token
     } catch (e) {
       debugPrint("saveLocalData: $e");
     }
@@ -303,12 +317,27 @@ class Util {
     return token.toString();
   }
 
-  static String getToken() {
+  /// Get FCM token for push notifications
+  static String getFcmToken() {
     return SharedPref()
         .getPreferenceString(Constants.token)
         .toString()
         .trim()
         .replaceAll("null", "");
+  }
+
+  /// Get API authentication token from backend
+  static String getToken() {
+    return SharedPref()
+        .getPreferenceString(Constants.apiToken)
+        .toString()
+        .trim()
+        .replaceAll("null", "");
+  }
+
+  /// Alias for getToken() - Get API authentication token
+  static String getApiToken() {
+    return getToken();
   }
 
   static String getUserID() {

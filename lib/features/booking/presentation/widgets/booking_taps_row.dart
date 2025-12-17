@@ -15,8 +15,8 @@ class BookingTapsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookingBloc,BookingState>(
-      builder: (ctx,state){
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (ctx, state) {
         var bloc = BookingBloc.get(ctx);
         return Container(
           height: 35.w,
@@ -24,13 +24,26 @@ class BookingTapsRow extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w),
           decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              color: DMUtil.getBackGroundTaps()
-          ),
+              color: DMUtil.getBackGroundTaps()),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TapWidget(title: translate("order.current_booking"), index: 0,selected: bloc.currentTapOrdersIndex==0,width: 165,fn: ()=> bloc.add(const ChangeCurrentOrdersEvent(type: ORDER_STATUS.ONGOING, index: 0)),),
-              TapWidget(title: translate("order.past_booking"), index: 1,selected: bloc.currentTapOrdersIndex==1,width: 165,fn: ()=> bloc.add(const ChangeCurrentOrdersEvent(type: ORDER_STATUS.COMPLETED, index: 1)),),
+              TapWidget(
+                title: translate("order.current_booking"),
+                index: 0,
+                selected: bloc.currentTapOrdersIndex == 0,
+                width: 165,
+                fn: () => bloc.add(const ChangeCurrentOrdersEvent(
+                    type: ORDER_STATUS.ONGOING, index: 0)),
+              ),
+              TapWidget(
+                title: translate("order.past_booking"),
+                index: 1,
+                selected: bloc.currentTapOrdersIndex == 1,
+                width: 165,
+                fn: () => bloc.add(const ChangeCurrentOrdersEvent(
+                    type: ORDER_STATUS.COMPLETED, index: 1)),
+              ),
             ],
           ),
         );

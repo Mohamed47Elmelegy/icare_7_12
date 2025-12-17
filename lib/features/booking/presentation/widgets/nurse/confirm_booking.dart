@@ -12,12 +12,12 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class ConfirmBookingRequestBtn extends StatelessWidget {
   final String orderID;
-  const ConfirmBookingRequestBtn({super.key,required this.orderID});
+  const ConfirmBookingRequestBtn({super.key, required this.orderID});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookingBloc,BookingState>(
-      builder: (ctx,state){
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (ctx, state) {
         return CustomButton(
           height: 35.h,
           width: 150.w,
@@ -29,11 +29,11 @@ class ConfirmBookingRequestBtn extends StatelessWidget {
           ),
           color: DMUtil.getPC(),
           circular: 8,
-          onPressed: ()=> BookingBloc.get(context).add(UpdateOrderEvent(
-              data: {
-                'status': 'ONGOING',
-                'booking_id': orderID,
-              },
+          onPressed: () => BookingBloc.get(context).add(UpdateOrderEvent(
+            data: {
+              'booking_id': orderID,
+              'status': 'ONGOING',
+            },
           )),
         );
       },

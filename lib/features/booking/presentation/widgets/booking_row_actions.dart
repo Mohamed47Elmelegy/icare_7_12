@@ -17,6 +17,12 @@ import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
+import 'package:icare/features/account/data/data_sources/account_data_source.dart';
+import 'package:icare/features/account/presentation/bloc/account_event.dart';
+import 'package:icare/features/account/presentation/screens/patient_profile.dart';
+import 'package:icare/features/account/presentation/widgets/save_patient_vitals_btn.dart';
+import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
+import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 
 class BookingRowActions extends StatelessWidget {
   final Booking item;
@@ -96,11 +102,66 @@ class BookingRowActions extends StatelessWidget {
           );
         }
 
-        // For nurses, show the old menu
+        // For nurses
         return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OnGoingBookingMenuWidget(item: item, orderNurse: orderNurse),
+            // Call button
+            Expanded(
+              child: CustomButton(
+                height: 24.h,
+                width: double.infinity,
+                color: Colors.transparent,
+                sideColor: DMUtil.getPC(),
+                sideWidth: 1,
+                circular: 20,
+                widget: CustomText(
+                  text: translate("order.call"),
+                  fontSize: AppStyle.small.sp,
+                  color: DMUtil.getPC(),
+                  fontWeight: FontWeight.w500,
+                ),
+                onPressed: () => _handleCall(context),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            // Chat button
+            Expanded(
+              child: CustomButton(
+                height: 24.h,
+                width: double.infinity,
+                color: Colors.transparent,
+                sideColor: DMUtil.getPC(),
+                sideWidth: 1,
+                circular: 20,
+                widget: CustomText(
+                  text: translate("profile.chat"),
+                  fontSize: AppStyle.small.sp,
+                  color: DMUtil.getPC(),
+                  fontWeight: FontWeight.w500,
+                ),
+                onPressed: () => _handleChat(context),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            // Finish Order button (Navigate to Edit Patient)
+            Expanded(
+              child: CustomButton(
+                height: 24.h,
+                width: double.infinity,
+                color: Colors.transparent,
+                sideColor: DMUtil.getPC(),
+                sideWidth: 1,
+                circular: 20,
+                widget: CustomText(
+                  text: translate("order.complete_order"),
+                  fontSize: AppStyle.small.sp,
+                  color: DMUtil.getPC(),
+                  fontWeight: FontWeight.w500,
+                ),
+                onPressed: () => _handleValuesWrapper(context),
+              ),
+            ),
           ],
         );
       },
@@ -108,18 +169,112 @@ class BookingRowActions extends StatelessWidget {
   }
 
   void _handleChat(BuildContext context) {
+    String receiverName = "";
+    String receiverID = "";
+    if (Util.isCustomer()) {
+      receiverName = item.nurseName.toString();
+      receiverID = item.nurseID.toString();
+    } else {
+      receiverName = item.userName.toString();
+      receiverID = item.userId.toString();
+    }
+
     Util.openChat(
       context: context,
-      receiverID: item.nurseID.toString(),
-      receiverName: item.nurseName.toString(),
+      receiverID: receiverID,
+      receiverName: receiverName,
       chatRoomID: item.orderId.toString(),
     );
   }
 
   Future<void> _handleCall(BuildContext context) async {
-    await Util.makeCall(
-      context: context,
-      phoneNumber: orderNurse.userData?.phoneNumber,
-    );
+    String? phoneNumber;
+    if (Util.isCustomer()) {
+      phoneNumber = orderNurse.userData?.phoneNumber;
+    } else {
+      // For nurse calling patient, we need to fetch user data first
+      try {
+        var patient = await UserServiceRemoteDataSource.getUserFullData(
+            item.userId.toString());
+        phoneNumber = patient.phoneNumber;
+      } catch (e) {
+        debugPrint("Error fetching patient phone: $e");
+      }
+    }
+
+    if (phoneNumber != null && phoneNumber.isNotEmpty) {
+      await Util.makeCall(
+        context: context,
+        phoneNumber: phoneNumber,
+      );
+    }
+  }
+
+  Future<void> _handleValuesWrapper(BuildContext context) async {
+    // Check if nurse has permission to edit patient profile
+    if (item.nurseCanEditPatientProfile != true) {
+      // Show message that nurse needs patient permission first
+      SnackBarBuilder.showFeedBackMessage(
+        context,
+        translate("icare.give_nurse_access"),
+        DMUtil.getRED(),
+      );
+      return;
+    }
+    
+    // Nurse has permission, proceed to edit patient profile
+    var accountBloc = AccountBloc.get(context);
+    await accountBloc.switchCurrentUserWithPatientProfile(
+        item.userId.toString(), 'customer');
+    accountBloc.add(const FetchProfileDataEvent());
+    
+    // Create a GlobalKey to access the vitals widget state
+    final vitalsKey = GlobalKey<TodayMonitoringVitalsState>();
+    
+    await Util.pushPage(
+        PopScope(
+          canPop: true,
+          onPopInvoked: (didPop) async {
+            if (didPop) {
+              await _afterEditPatient(context, accountBloc, orderNurse);
+            }
+          },
+          child: Scaffold(
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: SavePatientVitalsAndCompleteBookingBtn(
+              booking: item,
+              vitalsKey: vitalsKey,
+              onCompleted: () async {
+                await _afterEditPatient(context, accountBloc, orderNurse, pop: true);
+              },
+            ),
+            body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: PatientProfile(
+                isNurseEditMode: true,
+                vitalsKey: vitalsKey,
+                fnAfterNurseEdit: () async {
+                  await _afterEditPatient(context, accountBloc, orderNurse,
+                      pop: true);
+                },
+              ),
+            ),
+            backgroundColor: Colors.white,
+          ),
+        ),
+        context);
+  }
+
+  _afterEditPatient(
+      BuildContext context, AccountBloc accountBloc, NurseEntity orderNurse,
+      {bool pop = false}) async {
+    await accountBloc.switchCurrentUserWithPatientProfile(
+        orderNurse.userData!.userId.toString(), 'nurse');
+
+    ///will be change if nurse or assistant
+    accountBloc.add(const FetchProfileDataEvent());
+    await Future.delayed(const Duration(microseconds: 100));
+    if (pop) Navigator.of(context).pop();
   }
 }
