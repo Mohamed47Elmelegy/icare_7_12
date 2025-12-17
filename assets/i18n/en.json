@@ -537,6 +537,7 @@
 	},
 	"home": {
 		"request": "Request Service",
+		"view_all_offer": "View All Offers",
 		"view_all": "View All",
 		"home": "Home Page",
 		"save": "Save",

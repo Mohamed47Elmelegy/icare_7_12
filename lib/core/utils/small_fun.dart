@@ -267,6 +267,7 @@ class Util {
       await SharedPref().setPreferencesString(
           Constants.userType, bodyData['user']['user_type'].toString());
 
+      debugPrint("🔍 LOGIN RESPONSE BODY: $bodyData");
       // Save API authentication token (not FCM token)
       if (bodyData['token'] != null) {
         await SharedPref().setPreferencesString(
@@ -279,7 +280,8 @@ class Util {
         debugPrint(
             "✅ API Token saved: ${bodyData['access_token'].toString().substring(0, 20)}...");
       } else {
-        debugPrint("⚠️ No API token found in response");
+        debugPrint(
+            "⚠️ No API token found in response. Full Data keys: ${bodyData.keys.toList()}");
       }
 
       // Note: No need to manually set ApiUrl.headerAuth anymore

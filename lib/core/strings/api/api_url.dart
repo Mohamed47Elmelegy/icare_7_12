@@ -4,13 +4,17 @@ import 'package:icare/core/utils/notifications_utils.dart';
 import 'package:icare/core/utils/small_fun.dart';
 
 class ApiUrl {
-  static Map<String, String> headerAuth = {
-    'Content-Type': 'application/json',
-    if (Util.checkUser()) 'ID': Util.getUserID(),
-    'lat': Util.getLatitude().toString(),
-    'long': Util.getLongitude().toString(),
-    // if(Util.checkUser())'Authorization': 'Bearer ${Util.getToken()}',
-  };
+  static Map<String, String> get headerAuth {
+    String token = Util.getToken();
+    print("🔑 ACCESS TOKEN: $token");
+    return {
+      'Content-Type': 'application/json',
+      if (Util.checkUser()) 'ID': Util.getUserID(),
+      'lat': Util.getLatitude().toString(),
+      'long': Util.getLongitude().toString(),
+      if (Util.checkUser()) 'Authorization': 'Bearer $token',
+    };
+  }
 
   static Future<Map<String, String>> secureData() async {
     return {

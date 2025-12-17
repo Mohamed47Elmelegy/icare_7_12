@@ -47,8 +47,7 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
           state is UpdateOrderSuccessfullyState || state is OrderErrorState,
       child: Row(
         children: [
-          if (!Util.isCustomer() &&
-              item.nurseCanEditPatientProfile == true) ...[
+          if (!Util.isCustomer()) ...[
             InkWell(
               onTap: () async {
                 var accountBloc = AccountBloc.get(context);

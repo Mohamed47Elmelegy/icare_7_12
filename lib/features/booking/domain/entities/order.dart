@@ -36,37 +36,36 @@ class Booking extends Equatable {
 
   // final String rejectedReason;
 
-  const Booking({
-    this.orderId,
-    this.code,
-    this.userId,
-    this.userName,
-    this.userGender,
-    this.nurseID,
-    this.nurseName,
-    this.companyID,
-    this.addressId,
-    this.desc,
-    this.area,
-    this.city,
-    this.shippingAddress,
-    this.status,
-    this.statusView,
-    this.type,
-    this.price,
-    this.discount,
-    this.couponDiscount,
-    this.totalPrice,
-    this.paymentMethod,
-    this.lat,
-    this.lng,
-    this.date,
-    this.week,
-    this.day,
-    this.hours,
-    this.file,
-    this.nurseCanEditPatientProfile
-  });
+  const Booking(
+      {this.orderId,
+      this.code,
+      this.userId,
+      this.userName,
+      this.userGender,
+      this.nurseID,
+      this.nurseName,
+      this.companyID,
+      this.addressId,
+      this.desc,
+      this.area,
+      this.city,
+      this.shippingAddress,
+      this.status,
+      this.statusView,
+      this.type,
+      this.price,
+      this.discount,
+      this.couponDiscount,
+      this.totalPrice,
+      this.paymentMethod,
+      this.lat,
+      this.lng,
+      this.date,
+      this.week,
+      this.day,
+      this.hours,
+      this.file,
+      this.nurseCanEditPatientProfile});
 
   @override
   List<Object?> get props => [
@@ -85,4 +84,3 @@ class Booking extends Equatable {
         // rejectedReason
       ];
 }
-

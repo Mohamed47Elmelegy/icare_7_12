@@ -211,26 +211,15 @@ class BookingRowActions extends StatelessWidget {
   }
 
   Future<void> _handleValuesWrapper(BuildContext context) async {
-    // Check if nurse has permission to edit patient profile
-    if (item.nurseCanEditPatientProfile != true) {
-      // Show message that nurse needs patient permission first
-      SnackBarBuilder.showFeedBackMessage(
-        context,
-        translate("icare.give_nurse_access"),
-        DMUtil.getRED(),
-      );
-      return;
-    }
-    
-    // Nurse has permission, proceed to edit patient profile
+    // Navigate directly to edit patient profile without permission check
     var accountBloc = AccountBloc.get(context);
     await accountBloc.switchCurrentUserWithPatientProfile(
         item.userId.toString(), 'customer');
     accountBloc.add(const FetchProfileDataEvent());
-    
+
     // Create a GlobalKey to access the vitals widget state
     final vitalsKey = GlobalKey<TodayMonitoringVitalsState>();
-    
+
     await Util.pushPage(
         PopScope(
           canPop: true,
@@ -246,7 +235,8 @@ class BookingRowActions extends StatelessWidget {
               booking: item,
               vitalsKey: vitalsKey,
               onCompleted: () async {
-                await _afterEditPatient(context, accountBloc, orderNurse, pop: true);
+                await _afterEditPatient(context, accountBloc, orderNurse,
+                    pop: true);
               },
             ),
             body: SingleChildScrollView(
