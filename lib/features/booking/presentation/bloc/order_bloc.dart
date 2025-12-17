@@ -174,11 +174,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         emit(OrderErrorState(errors: l.toString()));
       }, (data) async {
         if (data.state == true) {
-          // Workaround: Update status to PENDING immediately because backend defaults to ONGOING
-          if (data.orderID != null && data.orderID!.isNotEmpty) {
-            await updateOrderUseCase(
-                data: {'booking_id': data.orderID, 'status': 'PENDING'});
-          }
+          // TODO: Backend should respect the 'current_status' field sent in collectOrderData
+          // Now sending 'current_status' as 'PENDING' (aligned with backend API)
+          // Backend returns 'order_status' in response which is parsed by OrderModel
           emit(AssignOrderSuccessfullyState());
         } else {
           emit(OrderErrorState(errors: data.msg.toString()));
@@ -262,9 +260,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       'desc': desc,
       'address': orderData['address'] ?? '',
       'lat': orderData['lat'] ?? '',
-      'long': orderData['long'] ?? '',
-      'status': 'PENDING',
-      'order_status': 'PENDING'
+      'lng': orderData['long'] ?? '', // ✅ Fixed: 'long' → 'lng'
+      'current_status':
+          'PENDING' // ✅ Fixed: Use 'current_status' as per backend API
     };
     return data;
   }
