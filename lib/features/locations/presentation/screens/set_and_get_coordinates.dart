@@ -171,9 +171,10 @@ class MapScreenState extends State<MapScreen> {
                   color: DMUtil.getPC(),
                   circular: 6,
                   onPressed: () async {
-                    if (lastLocation == null)
+                    if (lastLocation == null) {
                       return SnackBarBuilder.showFeedBackMessage(context,
                           translate("toast.select_location"), Colors.red);
+                    }
                     final data = await LocationUtil.getAndSaveLocationDetails(
                         lastLocation!);
                     if (mounted) {

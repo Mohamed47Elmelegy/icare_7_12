@@ -67,8 +67,9 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       userData['type'] = 'emergency_contacts';
       res = await updatePatientData(userData: userData);
     }
-    if (userData['avatar'] != null)
+    if (userData['avatar'] != null) {
       await updateImg(imgPath: userData['avatar']);
+    }
     if (userData['profile'] != null) {
       var body = {
         if (userData['name'] != null) 'name': userData['name'] ?? '',
@@ -243,8 +244,8 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       if (decodedData['status'] == true) {
         var services =
             ServicesModel.listModelFromJson(jsonEncode(decodedData['data']));
-        debugPrint("✅ Loaded ${services.length} services" +
-            (userType != null ? " for $userType" : ""));
+        debugPrint(
+            "✅ Loaded ${services.length} services${userType != null ? " for $userType" : ""}");
 
         // Debug: Show first 3 services with their user_type
         if (services.isNotEmpty) {

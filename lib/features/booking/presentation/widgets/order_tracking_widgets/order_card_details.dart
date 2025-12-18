@@ -14,7 +14,6 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/locations/presentation/screens/set_and_get_coordinates.dart';
 
-import '../../../data/models/order_model.dart';
 
 class OrderCardDetails extends StatelessWidget {
   final bool enableTracking;

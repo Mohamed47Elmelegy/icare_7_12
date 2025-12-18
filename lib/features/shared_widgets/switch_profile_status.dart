@@ -33,8 +33,7 @@ class SwitchProfileStatus extends StatelessWidget {
                 activeTrackColor: DMUtil.getPcSc(),
                 inactiveThumbColor: Colors.white,
                 inactiveTrackColor: Colors.grey.shade300,
-                trackOutlineColor:
-                    WidgetStateProperty.all(Colors.transparent),
+                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onChanged: (val) => bloc.add(const SwitchProfileStatusEvent()),
               ),

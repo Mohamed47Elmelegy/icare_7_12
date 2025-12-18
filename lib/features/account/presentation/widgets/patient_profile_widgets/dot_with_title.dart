@@ -24,7 +24,8 @@ class DotWithTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController textEditingController = TextEditingController();
     AccountBloc bloc = AccountBloc.get(context);
-    if (bloc.currentPublication.trim() != "" && title.trim() == "publications") {
+    if (bloc.currentPublication.trim() != "" &&
+        title.trim() == "publications") {
       textEditingController.text = bloc.currentPublication;
     }
     if (bloc.currentMedicalConditions.trim() != "" &&

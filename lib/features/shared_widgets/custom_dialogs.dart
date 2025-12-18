@@ -7,9 +7,6 @@ import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/widgets/nurse_widgets/add_new_value.dart';
-import 'package:icare/features/booking/data/data_sources/order_remote_data_source.dart';
-import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/booking/presentation/widgets/thanks_order_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/features/account/presentation/widgets/delete_account.dart';
@@ -18,7 +15,6 @@ import 'package:icare/features/booking/presentation/widgets/sure_to_cancel_order
 import 'package:icare/features/booking/presentation/widgets/shipping_address.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
-import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:icare/features/shared_widgets/sure_to_delete_widget.dart';
 import 'package:icare/features/shared_widgets/sure_to_submit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

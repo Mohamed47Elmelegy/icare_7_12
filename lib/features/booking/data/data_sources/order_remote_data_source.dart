@@ -90,7 +90,8 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     var res = await http.Response.fromStream(streamedResponse);
     // debugPrint("updateOrder: ${res.body}");
     if (res.body.toString().contains("true")) {
-      // SetNotification.showNotification(title: "", msg: translate("toast.update_user_data"));
+      SetNotification.showNotification(
+          title: "", msg: translate("toast.update_user_data"));
       return OrderResponse(state: true, msg: "success", orderID: "");
     } else if (res.body.toString().contains("edit patient")) {
       return OrderResponse(

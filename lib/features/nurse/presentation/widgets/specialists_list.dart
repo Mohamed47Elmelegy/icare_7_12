@@ -24,7 +24,8 @@ class VerticalSpecialistsList extends StatelessWidget {
             ),
           );
         }
-        if (state is! FetchNotificationsLoadingState && bloc.nursesList.isEmpty) {
+        if (state is! FetchNotificationsLoadingState &&
+            bloc.nursesList.isEmpty) {
           return const EmptyDataWidget();
         }
         var list = bloc.nursesList;
