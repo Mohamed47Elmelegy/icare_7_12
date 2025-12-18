@@ -79,11 +79,16 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     }
 
     // // Optional patient vitals fields (sent only when completing booking)
-    // if(data['heart_rate']!=null)request.fields['heart_rate'] = data['heart_rate'].toString();
-    // if(data['blood_pressure']!=null)request.fields['blood_pressure'] = data['blood_pressure'].toString();
-    // if(data['height']!=null)request.fields['height'] = data['height'].toString();
-    // if(data['weight']!=null)request.fields['weight'] = data['weight'].toString();
-    // if(data['pulse_rate']!=null)request.fields['pulse_rate'] = data['pulse_rate'].toString();
+    if (data['heart_rate'] != null)
+      request.fields['heart_rate'] = data['heart_rate'].toString();
+    if (data['blood_pressure'] != null)
+      request.fields['blood_pressure'] = data['blood_pressure'].toString();
+    if (data['height'] != null)
+      request.fields['height'] = data['height'].toString();
+    if (data['weight'] != null)
+      request.fields['weight'] = data['weight'].toString();
+    if (data['pulse_rate'] != null)
+      request.fields['pulse_rate'] = data['pulse_rate'].toString();
 
     request.headers.addAll(headers);
     var streamedResponse = await request.send();

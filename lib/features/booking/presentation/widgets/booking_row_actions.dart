@@ -263,6 +263,6 @@ class BookingRowActions extends StatelessWidget {
     ///will be change if nurse or assistant
     accountBloc.add(const FetchProfileDataEvent());
     await Future.delayed(const Duration(microseconds: 100));
-    if (pop) Navigator.of(context).pop();
+    if (pop && context.mounted) Navigator.of(context).pop();
   }
 }

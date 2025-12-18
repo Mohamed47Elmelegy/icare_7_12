@@ -26,11 +26,11 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
   void initState() {
     super.initState();
     // Initialize controllers with default values
-    heartRateController = TextEditingController(text: "56");
-    bloodPressureController = TextEditingController(text: "120/80");
-    heightController = TextEditingController(text: "5'7''ft");
-    weightController = TextEditingController(text: "135");
-    pulseRateController = TextEditingController(text: "135");
+    heartRateController = TextEditingController(text: "");
+    bloodPressureController = TextEditingController(text: "");
+    heightController = TextEditingController(text: "");
+    weightController = TextEditingController(text: "");
+    pulseRateController = TextEditingController(text: "");
   }
 
   @override

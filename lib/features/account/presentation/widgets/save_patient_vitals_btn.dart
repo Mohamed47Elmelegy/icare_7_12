@@ -12,6 +12,8 @@ import 'package:icare/features/booking/presentation/bloc/order_state.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
+import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/account_event.dart';
 
 class SavePatientVitalsAndCompleteBookingBtn extends StatefulWidget {
   final Booking booking;
@@ -38,34 +40,33 @@ class _SavePatientVitalsAndCompleteBookingBtnState
   Widget build(BuildContext context) {
     return BlocConsumer<BookingBloc, BookingState>(
       listener: (context, state) {
-        if (_isProcessing) {
-          if (state is UpdateOrderSuccessfullyState) {
-            // Success - show message and call completion callback
-            SnackBarBuilder.showFeedBackMessage(
-              context,
-              translate("order.order_completed_successfully"),
-              DMUtil.getGreen(),
-            );
-            setState(() {
-              _isProcessing = false;
-            });
-            if (widget.onCompleted != null) {
-              widget.onCompleted!();
-            }
-          } else if (state is OrderErrorState) {
-            // Error - show error message
-            SnackBarBuilder.showFeedBackMessage(
-              context,
-              state.errors,
-              DMUtil.getRED(),
-            );
-            setState(() {
-              _isProcessing = false;
-            });
+        if (!_isProcessing) return;
+
+        if (state is UpdateOrderSuccessfullyState) {
+          // Success - show message and call completion callback
+          SnackBarBuilder.showFeedBackMessage(
+            context,
+            translate("order.order_completed_successfully"),
+            DMUtil.getGreen(),
+          );
+
+          setState(() => _isProcessing = false);
+
+          if (widget.onCompleted != null) {
+            widget.onCompleted!();
           }
+        } else if (state is OrderErrorState) {
+          // Error - show error message
+          SnackBarBuilder.showFeedBackMessage(
+            context,
+            state.errors,
+            DMUtil.getRED(),
+          );
+
+          setState(() => _isProcessing = false);
         }
       },
-      builder: (ctx, state) {
+      builder: (context, state) {
         return Container(
           color: Colors.transparent,
           padding: const EdgeInsets.all(10),
@@ -78,7 +79,9 @@ class _SavePatientVitalsAndCompleteBookingBtnState
                     width: 20.w,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(DMUtil.getWC()),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        DMUtil.getWC(),
+                      ),
                     ),
                   )
                 : CustomText(
@@ -88,36 +91,58 @@ class _SavePatientVitalsAndCompleteBookingBtnState
                     color: DMUtil.getWC(),
                   ),
             color: DMUtil.getPC(),
-            onPressed: _isProcessing
-                ? null
-                : () async {
-                    // Get vital values from the widget
-                    final vitalsState = widget.vitalsKey.currentState;
-                    if (vitalsState != null) {
-                      final vitalValues = vitalsState.getVitalValues();
-
-                      // Set processing flag
-                      setState(() {
-                        _isProcessing = true;
-                      });
-
-                      // Update order status to COMPLETED with vital signs data
-                      BookingBloc.get(context).add(UpdateOrderEvent(
-                        data: {
-                          'booking_id': widget.booking.orderId.toString(),
-                          'status': 'COMPLETED',
-                          'heart_rate': vitalValues['heart_rate'],
-                          'blood_pressure': vitalValues['blood_pressure'],
-                          'height': vitalValues['height'],
-                          'weight': vitalValues['weight'],
-                          'pulse_rate': vitalValues['pulse_rate'],
-                        },
-                      ));
-                    }
-                  },
+            onPressed: _isProcessing ? null : _handleSaveAndComplete,
           ),
         );
       },
     );
+  }
+
+  void _handleSaveAndComplete() async {
+    final vitalsState = widget.vitalsKey.currentState;
+    if (vitalsState == null) return;
+
+    final vitalValues = vitalsState.getVitalValues();
+
+    if (vitalValues.values.any((element) => element.isEmpty)) {
+      SnackBarBuilder.showFeedBackMessage(
+        context,
+        translate("toast.empty"),
+        DMUtil.getRED(),
+      );
+      return;
+    }
+
+    setState(() => _isProcessing = true);
+
+    // Save patient profile updates (Medical Conditions & Publications)
+    final accountBloc = AccountBloc.get(context);
+    final Map<String, dynamic> profileUpdates = {};
+
+    if (accountBloc.currentMedicalConditions.isNotEmpty) {
+      profileUpdates['medical_conditions'] =
+          accountBloc.currentMedicalConditions;
+    }
+
+    if (accountBloc.currentPublication.isNotEmpty) {
+      profileUpdates['publications'] = accountBloc.currentPublication;
+    }
+
+    if (profileUpdates.isNotEmpty) {
+      accountBloc.add(UpdateProfileEvent(user: profileUpdates));
+    }
+
+    // Update order status to COMPLETED with vital signs data
+    BookingBloc.get(context).add(UpdateOrderEvent(
+      data: {
+        'booking_id': widget.booking.orderId.toString(),
+        'status': 'COMPLETED',
+        'heart_rate': vitalValues['heart_rate'],
+        'blood_pressure': vitalValues['blood_pressure'],
+        'height': vitalValues['height'],
+        'weight': vitalValues['weight'],
+        'pulse_rate': vitalValues['pulse_rate'],
+      },
+    ));
   }
 }
