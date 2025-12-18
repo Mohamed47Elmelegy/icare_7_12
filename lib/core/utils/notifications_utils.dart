@@ -68,12 +68,12 @@ class NotificationsUtils {
         AccountBloc.get(context).add(const FetchAllNotificationsEvent());
       }
 
-      if (event.notification!.body!.contains("صلاحية") ||
-          event.notification!.body!.contains("permission")) {
-        debugPrint("access to edit patient profile");
-        BookingBloc.get(context).add(const FetchAllOrderEvent());
-        CustomDialogs.patientGiveAccessToEditProfile(context);
-      }
+      // if (event.notification!.body!.contains("صلاحية") ||
+      //     event.notification!.body!.contains("permission")) {
+      //   debugPrint("access to edit patient profile");
+      //   BookingBloc.get(context).add(const FetchAllOrderEvent());
+      //   CustomDialogs.patientGiveAccessToEditProfile(context);
+      // }
     } catch (e) {
       debugPrint("checkNotification: $e");
     }

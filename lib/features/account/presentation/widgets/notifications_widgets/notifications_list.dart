@@ -5,6 +5,7 @@ import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/account/presentation/widgets/notifications_widgets/notification_card.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_state.dart';
+import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
 import 'package:icare/features/shared_widgets/empty_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,18 +31,31 @@ class NotificationsList extends StatelessWidget {
           builder: (context, bookingState) {
             var bookingBloc = BookingBloc.get(context);
 
-            // Filter notifications locally to avoid empty spaces
+            // Filter notifications locally to avoid empty spaces and duplicates
             // Only show notifications that:
             // 1. Are NOT 'order' type
             // 2. Are 'order' type AND the corresponding booking exists
-            var visibleNotifications = bloc.notificationList.where((item) {
+            // 3. Remove duplicates based on orderID (keep the most recent)
+            var visibleNotifications = <NotificationsEntity>[];
+            var seenOrderIds = <String>{};
+
+            for (var item in bloc.notificationList) {
               if (item.type == 'order') {
                 var booking =
                     bookingBloc.getBookingByOrderId(item.orderID.toString());
-                return booking != null;
+
+                // Skip if booking doesn't exist or if we've already seen this orderID
+                if (booking == null ||
+                    seenOrderIds.contains(item.orderID.toString())) {
+                  continue;
+                }
+
+                seenOrderIds.add(item.orderID.toString());
+                visibleNotifications.add(item);
+              } else {
+                visibleNotifications.add(item);
               }
-              return true;
-            }).toList();
+            }
 
             if (visibleNotifications.isEmpty) {
               return const EmptyDataWidget();

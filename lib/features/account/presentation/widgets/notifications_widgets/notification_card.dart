@@ -200,14 +200,18 @@ class NotificationListCard extends StatelessWidget {
                         Expanded(
                           child: _buildInfoColumn(
                             label: translate("notification.patient"),
-                            value: booking?.userName ?? "N/A",
+                            value: booking?.userName?.isNotEmpty == true
+                                ? booking!.userName!
+                                : translate("notification.patient"),
                           ),
                         ),
                         SizedBox(width: 12.w),
                         Expanded(
                           child: _buildInfoColumn(
                             label: translate("notification.requested_service"),
-                            value: booking?.type ?? "N/A",
+                            value: booking?.desc?.isNotEmpty == true
+                                ? booking!.desc!
+                                : (booking?.type ?? "N/A"),
                           ),
                         ),
                       ],

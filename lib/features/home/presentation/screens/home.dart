@@ -18,13 +18,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-  void initState() {
-    super.initState();
-    NotificationsUtils.pushNotificationListener(context);
-    Timer(const Duration(seconds: 2), () {
-      if (mounted) CustomDialogs.patientGiveAccessToEditProfile(context);
-    });
-  }
+  // void initState() {
+  //   super.initState();
+  //   NotificationsUtils.pushNotificationListener(context);
+  //   Timer(const Duration(seconds: 2), () {
+  //     if (mounted) CustomDialogs.patientGiveAccessToEditProfile(context);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

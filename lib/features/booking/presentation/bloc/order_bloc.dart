@@ -244,10 +244,24 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   Map<String, dynamic> collectOrderData(
       {required PaymentOption payment,
       required Map<String, dynamic> orderData}) {
+    debugPrint("📦 ========== COLLECT ORDER DATA ==========");
+    debugPrint(
+        "📋 Total services in orderServiceList: ${orderServiceList.length}");
+
     String desc = "";
     for (var i in orderServiceList) {
+      debugPrint("   🔹 Service ID: ${i.id}");
+      debugPrint("      - Name: ${i.name}");
+      debugPrint("      - Value (Price): ${i.value}");
+
       desc += "${i.name}: ${i.value}${translate("icare.le")} ";
+
+      debugPrint(
+          "      - Added to desc: '${i.name}: ${i.value}${translate("icare.le")}'");
     }
+
+    debugPrint("✅ Final Description String: '$desc'");
+
     var data = {
       'user_id': Util.getUserID(),
       'nurse_id': orderData['nurse_id'],
@@ -264,6 +278,17 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       'current_status':
           'PENDING' // ✅ Fixed: Use 'current_status' as per backend API
     };
+
+    debugPrint("📤 Sending order data to API:");
+    debugPrint("   - user_id: ${data['user_id']}");
+    debugPrint("   - nurse_id: ${data['nurse_id']}");
+    debugPrint("   - desc: ${data['desc']}");
+    debugPrint("   - address: ${data['address']}");
+    debugPrint("   - lat: ${data['lat']}");
+    debugPrint("   - lng: ${data['lng']}");
+    debugPrint("   - current_status: ${data['current_status']}");
+    debugPrint("📦 ========================================");
+
     return data;
   }
 
@@ -292,6 +317,27 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       );
     } catch (_) {
       return null;
+    }
+  }
+
+  /// Check if a nurse is currently busy (has an active ONGOING or PENDING booking)
+  bool isNurseBusy(int nurseId) {
+    try {
+      // Check if nurse has any ONGOING or PENDING bookings
+      bookingList.firstWhere(
+        (booking) {
+          final status =
+              OrderModel.getStatusViewCheck(booking.status.toString());
+          return booking.nurseID == nurseId &&
+              (status == ORDER_STATUS.ONGOING ||
+                  status == ORDER_STATUS.PENDING);
+        },
+      );
+      // If we reach here, nurse has an active booking
+      return true;
+    } catch (_) {
+      // No active booking found for this nurse
+      return false;
     }
   }
 

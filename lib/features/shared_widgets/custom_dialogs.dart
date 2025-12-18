@@ -258,83 +258,83 @@ class CustomDialogs {
         });
   }
 
-  static patientGiveAccessToEditProfile(BuildContext context) async {
-    if (!Util.checkUser() || !Util.isCustomer()) return;
-    BookingBloc bookingBloc = BookingBloc.get(context);
-    if (bookingBloc.checkIfExistBookingOngoingAndNurseCanNotEdit() == false) {
-      return;
-    }
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => Dialog(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(25)),
-              ),
-              backgroundColor: Colors.white,
-              insetPadding: EdgeInsets.all(40.w),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(6),
-                child: SizedBox(
-                  height: 200.h,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomText(
-                        text: translate("icare.give_nurse_access"),
-                        color: Colors.black,
-                        fontSize: AppStyle.small.sp,
-                        maxLine: 3,
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomButton(
-                            height: 30.h,
-                            width: 110.w,
-                            widget: CustomText(
-                              text: translate("button.ok"),
-                              color: Colors.white,
-                              fontSize: AppStyle.small.sp - 1,
-                            ),
-                            color: DMUtil.getPC(),
-                            onPressed: () async {
-                              bool res = await OrderRemoteDataSource
-                                  .giveAccessEditProfile();
-                              if (res) {
-                                bookingBloc.add(const FetchAllOrderEvent());
-                                SnackBarBuilder.showFeedBackMessage(
-                                    context,
-                                    translate('toast.give_access_success'),
-                                    DMUtil.getGreen());
-                              } else {
-                                SnackBarBuilder.showFeedBackMessage(context,
-                                    translate('toast.oops'), DMUtil.getRED());
-                              }
-                              Navigator.pop(ctx);
-                            },
-                          ),
-                          // CustomButton(
-                          //   height: 30.h,
-                          //   width: 110.w,
-                          //   widget: CustomText(
-                          //     text: translate("button.cancel"),
-                          //     color: Colors.white,
-                          //     fontSize: AppStyle.small.sp - 1,
-                          //   ),
-                          //   color: DMUtil.getPC(),
-                          //   onPressed: () => Navigator.pop(ctx),
-                          // )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ));
-  }
+  // static patientGiveAccessToEditProfile(BuildContext context) async {
+  //   if (!Util.checkUser() || !Util.isCustomer()) return;
+  //   BookingBloc bookingBloc = BookingBloc.get(context);
+  //   if (bookingBloc.checkIfExistBookingOngoingAndNurseCanNotEdit() == false) {
+  //     return;
+  //   }
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (ctx) => Dialog(
+  //             shape: const RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.all(Radius.circular(25)),
+  //             ),
+  //             backgroundColor: Colors.white,
+  //             insetPadding: EdgeInsets.all(40.w),
+  //             child: SingleChildScrollView(
+  //               padding: const EdgeInsets.all(6),
+  //               child: SizedBox(
+  //                 height: 200.h,
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: [
+  //                     CustomText(
+  //                       text: translate("icare.give_nurse_access"),
+  //                       color: Colors.black,
+  //                       fontSize: AppStyle.small.sp,
+  //                       maxLine: 3,
+  //                     ),
+  //                     const SizedBox(
+  //                       height: 30,
+  //                     ),
+  //                     Row(
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       children: [
+  //                         CustomButton(
+  //                           height: 30.h,
+  //                           width: 110.w,
+  //                           widget: CustomText(
+  //                             text: translate("button.ok"),
+  //                             color: Colors.white,
+  //                             fontSize: AppStyle.small.sp - 1,
+  //                           ),
+  //                           color: DMUtil.getPC(),
+  //                           onPressed: () async {
+  //                             bool res = await OrderRemoteDataSource
+  //                                 .giveAccessEditProfile();
+  //                             if (res) {
+  //                               bookingBloc.add(const FetchAllOrderEvent());
+  //                               SnackBarBuilder.showFeedBackMessage(
+  //                                   context,
+  //                                   translate('toast.give_access_success'),
+  //                                   DMUtil.getGreen());
+  //                             } else {
+  //                               SnackBarBuilder.showFeedBackMessage(context,
+  //                                   translate('toast.oops'), DMUtil.getRED());
+  //                             }
+  //                             Navigator.pop(ctx);
+  //                           },
+  //                         ),
+  //                         // CustomButton(
+  //                         //   height: 30.h,
+  //                         //   width: 110.w,
+  //                         //   widget: CustomText(
+  //                         //     text: translate("button.cancel"),
+  //                         //     color: Colors.white,
+  //                         //     fontSize: AppStyle.small.sp - 1,
+  //                         //   ),
+  //                         //   color: DMUtil.getPC(),
+  //                         //   onPressed: () => Navigator.pop(ctx),
+  //                         // )
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ));
+  // }
 }

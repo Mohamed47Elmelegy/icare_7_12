@@ -63,7 +63,8 @@
       "discuss_in_forum": "ناقش في المنتدى",
       "medical_record": "السجل الطبي",
       "select_service_first": "حدد الخدمات أولا",
-      "nurse_is_busy": "الممرض غير متاح الأن"
+      "nurse_is_busy": "الممرض غير متاح الأن",
+      "nurse_does_not_offer_service": "الممرض لا يقدم الخدمة المطلوبة"
     },
     "notification": {
       "patient": "المريض",
@@ -157,6 +158,8 @@
     "booking": {
       "edit_patient_profile": "تعديل بروفايل المريض",
       "book": "حجز",
+      "busy": "مشغول",
+      "nurse_busy_message": "هذا الممرض مشغول حالياً بحجز آخر. يرجى اختيار ممرض آخر أو المحاولة لاحقاً.",
       "accommodation_duration": "مدة الزيارة او الحجز",
       "not_selected": "لم يتم اختياره",
       "weeks": "اسابيع",
