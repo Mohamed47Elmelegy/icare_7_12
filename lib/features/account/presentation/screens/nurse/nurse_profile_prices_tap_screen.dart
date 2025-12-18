@@ -6,37 +6,45 @@ import 'package:icare/features/account/presentation/widgets/nurse_widgets/servic
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icare/features/nurse/presentation/widgets/prices_screen_widgets/service_price_row.dart';
 
-
-
 class NurseProfilePricesTapScreen extends StatelessWidget {
   const NurseProfilePricesTapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         var list = bloc.servicesList;
         return Column(
           children: [
-            if(bloc.enableUpdate)...[
-              const ServicesListDropDown(width: double.infinity,),
-              const SizedBox(height: 20,),
+            if (bloc.enableUpdate) ...[
+              const ServicesListDropDown(
+                width: double.infinity,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
             ],
-            if(list != null && list.isNotEmpty)...[
+            if (list != null && list.isNotEmpty) ...[
               ListView.separated(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (ctx,index){
+                  itemBuilder: (ctx, index) {
                     var item = list[index];
-                    int ind = bloc.allServiceList.indexWhere((element) => item.id==element.id);
-                    if(ind==-1)return const SizedBox.shrink();
-                    return ServicePriceRowWithModify(serviceID: bloc.allServiceList[ind].id,serviceName: bloc.allServiceList[ind].value.toString(),price: item.value.toString(),);
+                    int ind = bloc.allServiceList
+                        .indexWhere((element) => item.id == element.id);
+                    if (ind == -1) return const SizedBox.shrink();
+                    return ServicePriceRowWithModify(
+                      serviceID: bloc.allServiceList[ind].id,
+                      serviceName: bloc.allServiceList[ind].value.toString(),
+                      price: item.value.toString(),
+                    );
                   },
-                  separatorBuilder: (ctx,index)=> Divider(height: 25.w,),
-                  itemCount: list.length
-              ),
+                  separatorBuilder: (ctx, index) => Divider(
+                        height: 25.w,
+                      ),
+                  itemCount: list.length),
             ],
           ],
         );
@@ -44,5 +52,3 @@ class NurseProfilePricesTapScreen extends StatelessWidget {
     );
   }
 }
-
-

@@ -30,14 +30,18 @@ class CustomButton extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      decoration: withShadow !=null  && withShadow ==true? BoxDecoration(
-        borderRadius: BorderRadius.circular(circular),
-        boxShadow: [
-          BoxShadow(color: DMUtil.getPC2().withOpacity(0.3),blurRadius: 10),
-          BoxShadow(color: DMUtil.getPC2().withOpacity(0.3),blurRadius: 10),
-          BoxShadow(color: DMUtil.getPC2().withOpacity(0.3),blurRadius: 10),
-        ]
-      ): const BoxDecoration(),
+      decoration: withShadow != null && withShadow == true
+          ? BoxDecoration(
+              borderRadius: BorderRadius.circular(circular),
+              boxShadow: [
+                  BoxShadow(
+                      color: DMUtil.getPC2().withOpacity(0.3), blurRadius: 10),
+                  BoxShadow(
+                      color: DMUtil.getPC2().withOpacity(0.3), blurRadius: 10),
+                  BoxShadow(
+                      color: DMUtil.getPC2().withOpacity(0.3), blurRadius: 10),
+                ])
+          : const BoxDecoration(),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(

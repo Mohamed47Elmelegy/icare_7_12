@@ -17,25 +17,32 @@ class AddNewAllergiesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CategoriesBloc,CategoriesState>(
-      builder: (ctx,state){
+    return BlocBuilder<CategoriesBloc, CategoriesState>(
+      builder: (ctx, state) {
         var catBloc = CategoriesBloc.get(ctx);
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const AllergiesListDropDown(width: 200,),
-            BlocBuilder<AccountBloc,AccountState>(
-              builder: (ctx,state){
+            const AllergiesListDropDown(
+              width: 200,
+            ),
+            BlocBuilder<AccountBloc, AccountState>(
+              builder: (ctx, state) {
                 var profileBloc = AccountBloc.get(ctx);
                 // if(state is UpdateProfileState && state.response.isLoad==true)return CircularProgressIndicator(backgroundColor: DMUtil.getPC(),);
                 return TextButton(
-                    onPressed: (){
-                      if(catBloc.currentAllergies!=null){
-                        profileBloc.currentUser!.allergiesList!.add(catBloc.currentAllergies!);
-                        if(profileBloc.currentUser!.allergiesList!=null && profileBloc.currentUser!.allergiesList!.isNotEmpty){
-                          AccountBloc.get(context).add(UpdateProfileEvent(user: {
-                            'allergies': profileBloc.convertAllergiesToIDS(),
-                          },));
+                    onPressed: () {
+                      if (catBloc.currentAllergies != null) {
+                        profileBloc.currentUser!.allergiesList!
+                            .add(catBloc.currentAllergies!);
+                        if (profileBloc.currentUser!.allergiesList != null &&
+                            profileBloc
+                                .currentUser!.allergiesList!.isNotEmpty) {
+                          AccountBloc.get(context).add(UpdateProfileEvent(
+                            user: {
+                              'allergies': profileBloc.convertAllergiesToIDS(),
+                            },
+                          ));
                         }
                       }
                     },
@@ -47,10 +54,13 @@ class AddNewAllergiesWidget extends StatelessWidget {
                           color: DMUtil.getPC(),
                           textDecoration: TextDecoration.underline,
                         ),
-                        Icon(Icons.add,size: 16.w,color: DMUtil.getPC(),),
+                        Icon(
+                          Icons.add,
+                          size: 16.w,
+                          color: DMUtil.getPC(),
+                        ),
                       ],
-                    )
-                );
+                    ));
               },
             )
           ],

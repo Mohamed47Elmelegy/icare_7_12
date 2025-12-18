@@ -11,7 +11,10 @@ class LikeIcon extends StatelessWidget {
     return CircleAvatar(
       backgroundColor: DMUtil.getBackGround(),
       radius: 19.w,
-      child: Image.asset(AppImages.like,width: 20.w,),
+      child: Image.asset(
+        AppImages.like,
+        width: 20.w,
+      ),
     );
   }
 }

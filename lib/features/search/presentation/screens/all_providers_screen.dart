@@ -143,7 +143,8 @@ class AllProvidersScreen extends StatelessWidget {
                       ),
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: uniqueNurses.length,
-                      separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10.h),
                       itemBuilder: (context, index) {
                         final nurse = uniqueNurses[index];
                         return VerticalSpecialistCard(nurse: nurse);

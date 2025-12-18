@@ -11,13 +11,12 @@ class MyLocationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DMUtil.getWC(),
-      bottomNavigationBar: const AddNewLocationButton(),
-      appBar: GlobalAppBar(
-        title: translate("profile.addresses"),
-        leadingIcon: const BackArrowButton(),
-      ),
-      body: const LocationsList()
-    );
+        backgroundColor: DMUtil.getWC(),
+        bottomNavigationBar: const AddNewLocationButton(),
+        appBar: GlobalAppBar(
+          title: translate("profile.addresses"),
+          leadingIcon: const BackArrowButton(),
+        ),
+        body: const LocationsList());
   }
 }

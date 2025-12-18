@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/error/failure.dart';
@@ -41,9 +40,8 @@ class CategoryModelRepository implements CategoryRepository {
     }
   }
 
-
   @override
-  Future<Either<Failure, List<SliderEntity>>> getAllSliders() async{
+  Future<Either<Failure, List<SliderEntity>>> getAllSliders() async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await categoryRemoteDataSource.getAllSliders());
@@ -55,9 +53,8 @@ class CategoryModelRepository implements CategoryRepository {
     }
   }
 
-
   @override
-  Future<Either<Failure, List<PublicationsModel>>> getAllPublications() async{
+  Future<Either<Failure, List<PublicationsModel>>> getAllPublications() async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await categoryRemoteDataSource.getAllPublications());
@@ -68,5 +65,4 @@ class CategoryModelRepository implements CategoryRepository {
       return Left(OfflineFailure());
     }
   }
-
 }

@@ -11,7 +11,13 @@ class TapWidget extends StatelessWidget {
   final bool selected;
   final double width;
   final VoidCallback fn;
-  const TapWidget({super.key,required this.title,required this.index,required this.selected,this.width = 100,required this.fn});
+  const TapWidget(
+      {super.key,
+      required this.title,
+      required this.index,
+      required this.selected,
+      this.width = 100,
+      required this.fn});
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +29,18 @@ class TapWidget extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
-            gradient: selected? const LinearGradient(
-                colors: [
-                  Color(0xff329D9C),
-                  Color(0xff7BE495),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight
-            ):null,
+            gradient: selected
+                ? const LinearGradient(colors: [
+                    Color(0xff329D9C),
+                    Color(0xff7BE495),
+                  ], begin: Alignment.centerLeft, end: Alignment.centerRight)
+                : null,
           ),
           child: CustomText(
             text: title,
-            fontSize: AppStyle.small.sp-1,
-            color: selected?DMUtil.getWC():kPrimary,
+            fontSize: AppStyle.small.sp - 1,
+            color: selected ? DMUtil.getWC() : kPrimary,
           ),
-        )
-    );
+        ));
   }
 }

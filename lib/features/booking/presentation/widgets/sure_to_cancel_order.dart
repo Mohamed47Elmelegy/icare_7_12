@@ -15,9 +15,7 @@ class CancelOrderWidget extends StatelessWidget {
       height: 180.h,
       width: 300.w,
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15)
-      ),
+          color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -26,7 +24,9 @@ class CancelOrderWidget extends StatelessWidget {
               text: translate("order.sure_to_cancel"),
               color: Colors.black,
               fontSize: AppStyle.average.sp),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -39,7 +39,7 @@ class CancelOrderWidget extends StatelessWidget {
                       color: Colors.white,
                       fontSize: AppStyle.small.sp),
                   color: kPrimary,
-                  onPressed: ()=> Navigator.pop(context,"cancel")),
+                  onPressed: () => Navigator.pop(context, "cancel")),
               CustomButton(
                   height: 30.h,
                   width: 100.w,
@@ -51,8 +51,7 @@ class CancelOrderWidget extends StatelessWidget {
                   color: Colors.white,
                   sideWidth: 1,
                   sideColor: Colors.black45,
-                  onPressed: ()=>Navigator.of(context).pop()),
-
+                  onPressed: () => Navigator.of(context).pop()),
             ],
           ),
         ],

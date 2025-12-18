@@ -14,12 +14,16 @@ class UploadWidget extends StatelessWidget {
       width: 60.w,
       child: Row(
         children: [
-          Icon(Icons.upload,color: DMUtil.getRED(),size: 18.w,),
+          Icon(
+            Icons.upload,
+            color: DMUtil.getRED(),
+            size: 18.w,
+          ),
           CustomText(
             text: translate("button.upload"),
             color: DMUtil.getRED(),
             textDecoration: TextDecoration.underline,
-            fontSize: AppStyle.small.sp-2,
+            fontSize: AppStyle.small.sp - 2,
           ),
         ],
       ),

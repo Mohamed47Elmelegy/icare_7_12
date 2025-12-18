@@ -8,7 +8,6 @@ import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/booking/presentation/bloc/order_state.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
-
 class RequestDateSelectDropDown extends StatelessWidget {
   const RequestDateSelectDropDown({super.key});
 
@@ -19,10 +18,9 @@ class RequestDateSelectDropDown extends StatelessWidget {
       decoration: BoxDecoration(
           color: DMUtil.getWC(),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1,color:  DMUtil.getOpacity())
-      ),
-      child: BlocBuilder<BookingBloc,BookingState>(
-        builder: (ctx,state){
+          border: Border.all(width: 1, color: DMUtil.getOpacity())),
+      child: BlocBuilder<BookingBloc, BookingState>(
+        builder: (ctx, state) {
           var bloc = BookingBloc.get(ctx);
           return DropdownButton<String>(
             value: null,
@@ -36,14 +34,17 @@ class RequestDateSelectDropDown extends StatelessWidget {
             isExpanded: true,
             style: TextStyle(color: DMUtil.getD2C()),
             underline: const SizedBox(),
-            onChanged: (String? newValue) => bloc.add(UpdateRequestFormDataEvent(data: {'date_val': newValue.toString()})),
-            items: ['يوم','اسبوع','شهر'].map<DropdownMenuItem<String>>((value) {
+            onChanged: (String? newValue) => bloc.add(
+                UpdateRequestFormDataEvent(
+                    data: {'date_val': newValue.toString()})),
+            items:
+                ['يوم', 'اسبوع', 'شهر'].map<DropdownMenuItem<String>>((value) {
               return DropdownMenuItem<String>(
-                  value: value.toString(),
-                  child: CustomText(
-                    text: value,
-                    fontSize: AppStyle.small.sp,
-                  ),
+                value: value.toString(),
+                child: CustomText(
+                  text: value,
+                  fontSize: AppStyle.small.sp,
+                ),
               );
             }).toList(),
           );

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/search/domain/entities/search_filter_entity.dart';
 import 'package:icare/features/search/domain/use_cases/search_by_service_usecase.dart';
@@ -17,7 +16,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   double? currentLongitude;
 
   SearchBloc({required this.searchByServiceUseCase})
-      : super( SearchInitialState()) { // Changed from ProviderTypeSelectedState
+      : super(SearchInitialState()) {
+    // Changed from ProviderTypeSelectedState
     on<SelectProviderTypeEvent>(_onSelectProviderType);
     on<SelectServiceEvent>(_onSelectService);
     on<SearchByFiltersEvent>(_onSearchByFilters);

@@ -7,18 +7,21 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class PendingTitleWidget extends StatelessWidget {
   final bool isSmall;
-  const PendingTitleWidget({super.key,this.isSmall = false});
+  const PendingTitleWidget({super.key, this.isSmall = false});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(Icons.alarm,size: isSmall?20.w:40.w,),
+        Icon(
+          Icons.alarm,
+          size: isSmall ? 20.w : 40.w,
+        ),
         CustomText(
           text: translate("order.pending"),
           color: Colors.black,
-          fontSize: isSmall? AppStyle.verySmall.sp : AppStyle.average.sp,
+          fontSize: isSmall ? AppStyle.verySmall.sp : AppStyle.average.sp,
           fontFamily: primaryFontBold,
         ),
       ],

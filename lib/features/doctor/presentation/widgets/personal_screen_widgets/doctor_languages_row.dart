@@ -16,7 +16,9 @@ class DoctorLanguagesRow extends StatelessWidget {
       builder: (ctx, state) {
         var bloc = DoctorBloc.get(ctx);
         var currentDoctor = bloc.currentDoctor;
-        if (currentDoctor == null || currentDoctor.languageList == null) return const SizedBox.shrink();
+        if (currentDoctor == null || currentDoctor.languageList == null) {
+          return const SizedBox.shrink();
+        }
         var list = currentDoctor.languageList;
         if (list!.isEmpty) return const SizedBox.shrink();
         return GridView.builder(
@@ -33,10 +35,19 @@ class DoctorLanguagesRow extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             var item = list[index];
             var flag = "";
-            if (item.toLowerCase().contains("english") || item.toLowerCase().contains("eng")) flag = "🇬🇧";
-            if (item.toLowerCase().contains("french") || item.toLowerCase().contains("france")) flag = "🇫🇷";
+            if (item.toLowerCase().contains("english") ||
+                item.toLowerCase().contains("eng")) {
+              flag = "🇬🇧";
+            }
+            if (item.toLowerCase().contains("french") ||
+                item.toLowerCase().contains("france")) {
+              flag = "🇫🇷";
+            }
             if (item.toLowerCase().contains("german")) flag = "🇧🇪";
-            if (item.toLowerCase().contains("arabic") || item.toLowerCase().contains("ar")) flag = "🇪🇬";
+            if (item.toLowerCase().contains("arabic") ||
+                item.toLowerCase().contains("ar")) {
+              flag = "🇪🇬";
+            }
             return CustomText(
               text: "$flag $item",
               fontSize: AppStyle.small.sp,

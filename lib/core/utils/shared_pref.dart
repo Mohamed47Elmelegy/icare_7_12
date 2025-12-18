@@ -15,8 +15,12 @@ class SharedPref {
   ///Below method is to initialize the SharedPreference instance.
   Future instantiatePreferences() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    if(!sharedPreferences.containsKey(Constants.userLang))sharedPreferences.setString(Constants.userLang, "ar");
-    if(!sharedPreferences.containsKey(Constants.userTheme))sharedPreferences.setString(Constants.userTheme, "light");
+    if (!sharedPreferences.containsKey(Constants.userLang)) {
+      sharedPreferences.setString(Constants.userLang, "ar");
+    }
+    if (!sharedPreferences.containsKey(Constants.userTheme)) {
+      sharedPreferences.setString(Constants.userTheme, "light");
+    }
   }
 
   ///Below method is to return the SharedPreference instance.
@@ -51,7 +55,14 @@ class SharedPref {
 
   ///Below method is to set the double value from the SharedPreferences.
   double getPreferenceDouble(String key) {
-    return sharedPreferences.getDouble(key) ?? 0.0;
+    try {
+      return sharedPreferences.getDouble(key) ?? 0.0;
+    } catch (e) {
+      if (sharedPreferences.getString(key) != null) {
+        return double.tryParse(sharedPreferences.getString(key)!) ?? 0.0;
+      }
+      return 0.0;
+    }
   }
 
   ///Below method is to set the int value in the SharedPreferences.
@@ -81,6 +92,8 @@ class SharedPref {
   ///Below method is to clear the SharedPreference.
   clearPreferences() async {
     await sharedPreferences.clear();
-    if(!sharedPreferences.containsKey(Constants.userLang))sharedPreferences.setString(Constants.userLang, "ar");
+    if (!sharedPreferences.containsKey(Constants.userLang)) {
+      sharedPreferences.setString(Constants.userLang, "ar");
+    }
   }
 }

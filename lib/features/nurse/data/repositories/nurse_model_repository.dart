@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/error/failure.dart';
@@ -13,7 +12,8 @@ class NursesModelRepository implements NursesRepository {
   NursesModelRepository(
       {required this.nursesRemoteDataSourceImpl, required this.networkInfo});
   @override
-  Future<Either<Failure, List<NurseEntity>>> getAllNurses({required Map<String,dynamic> data}) async {
+  Future<Either<Failure, List<NurseEntity>>> getAllNurses(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await nursesRemoteDataSourceImpl.getAllNurses(data: data));
@@ -26,7 +26,8 @@ class NursesModelRepository implements NursesRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> rateNurse({required Map<String,dynamic> data}) async {
+  Future<Either<Failure, bool>> rateNurse(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await nursesRemoteDataSourceImpl.rateNurse(data: data));
@@ -37,8 +38,4 @@ class NursesModelRepository implements NursesRepository {
       return Left(OfflineFailure());
     }
   }
-
-
-
-
 }

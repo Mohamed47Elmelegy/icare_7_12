@@ -17,8 +17,7 @@ class NotHaveAnAccountWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
-        text:
-        "${translate("login.dont_have_anaccount")}  ",
+        text: "${translate("login.dont_have_anaccount")}  ",
         children: [
           TextSpan(
             text: translate("signup.signup"),
@@ -29,14 +28,16 @@ class NotHaveAnAccountWidget extends StatelessWidget {
               decoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
-              ..onTap = () =>  Util.getUserType()==UserEnum.NURSE.name.toLowerCase()?  Util.pushPage(const CreateNurseAccountScreen(), context) : Util.pushPage(const RegisterScreen(), context),
+              ..onTap = () =>
+                  Util.getUserType() == UserEnum.NURSE.name.toLowerCase()
+                      ? Util.pushPage(const CreateNurseAccountScreen(), context)
+                      : Util.pushPage(const RegisterScreen(), context),
           )
         ],
         style: TextStyle(
-          color: DMUtil.getD2C(),
-          fontFamily: primaryFontReg,
-          fontSize: AppStyle.verySmall.sp
-        ),
+            color: DMUtil.getD2C(),
+            fontFamily: primaryFontReg,
+            fontSize: AppStyle.verySmall.sp),
       ),
     );
   }

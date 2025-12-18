@@ -33,12 +33,13 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
-    
+
     // Load initial data for both tabs
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NurseBloc.get(context).add(const nurse_event.FetchAllNurseEvent());
-      context.read<doctor_bloc.DoctorBloc>()
-          .add(doctor_event.FetchAllDoctorEvent(page: 1));
+      context
+          .read<doctor_bloc.DoctorBloc>()
+          .add(const doctor_event.FetchAllDoctorEvent(page: 1));
     });
   }
 
@@ -49,7 +50,8 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
       if (_tabController.index == 0) {
         NurseBloc.get(context).add(nurse_event.UpdateSearchTxtEvent(txt: txt));
       } else {
-        context.read<doctor_bloc.DoctorBloc>()
+        context
+            .read<doctor_bloc.DoctorBloc>()
             .add(doctor_event.UpdateSearchTxtEvent(txt: txt));
       }
     }
@@ -100,9 +102,11 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
                           .add(nurse_event.UpdateSearchTxtEvent(txt: val))),
                   _buildTabBody(context,
                       child: const VerticalDoctorSpecialistsList(),
-                      onRefresh: () async => context.read<doctor_bloc.DoctorBloc>()
-                          .add(doctor_event.FetchAllDoctorEvent(page: 1)),
-                      onSearch: (val) => context.read<doctor_bloc.DoctorBloc>()
+                      onRefresh: () async => context
+                          .read<doctor_bloc.DoctorBloc>()
+                          .add(const doctor_event.FetchAllDoctorEvent(page: 1)),
+                      onSearch: (val) => context
+                          .read<doctor_bloc.DoctorBloc>()
                           .add(doctor_event.UpdateSearchTxtEvent(txt: val))),
                 ],
               ),

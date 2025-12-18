@@ -16,29 +16,39 @@ import 'package:icare/features/shared_widgets/review.dart';
 
 class SpecialistCard extends StatelessWidget {
   final NurseEntity nurse;
-  const SpecialistCard({super.key,required this.nurse});
+  const SpecialistCard({super.key, required this.nurse});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         NurseBloc.get(context).add(UpdateCurrentNurseEvent(nurse: nurse));
         Util.pushPage(const NurseDetails(), context);
       },
       child: Card(
         color: DMUtil.getWC(),
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10))
-        ),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               children: [
-                const SizedBox(width: 5,),
-                ImageWidget(imgUrl: nurse.userData!.image.toString(),width: 60,height: 60,fit: BoxFit.fill,errorImg: AppImages.nurse,radius: 50,),
-                const SizedBox(width: 10,),
+                const SizedBox(
+                  width: 5,
+                ),
+                ImageWidget(
+                  imgUrl: nurse.userData!.image.toString(),
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.fill,
+                  errorImg: AppImages.nurse,
+                  radius: 50,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -46,26 +56,26 @@ class SpecialistCard extends StatelessWidget {
                     CustomText(
                       text: nurse.viewTypeText(),
                       color: DMUtil.getText(),
-                      fontSize: AppStyle.small.sp-1,
+                      fontSize: AppStyle.small.sp - 1,
                     ),
-
                     SizedBox(
                       width: 100.w,
                       child: CustomText(
                         text: nurse.userData!.userName.toString(),
                         color: DMUtil.getText(),
-                        fontSize: AppStyle.average.sp-1,
+                        fontSize: AppStyle.average.sp - 1,
                         isEllipsis: true,
                       ),
                     ),
-
-                    ReviewsWidget(amount: 200, color: DMUtil.getBookButtonColor()),
-
+                    ReviewsWidget(
+                        amount: 200, color: DMUtil.getBookButtonColor()),
                   ],
                 ),
               ],
             ),
-            SizedBox(width: 24.w,),
+            SizedBox(
+              width: 24.w,
+            ),
             CustomButton(
               height: 24.h,
               width: 70.w,
@@ -74,17 +84,20 @@ class SpecialistCard extends StatelessWidget {
               sideWidth: 1,
               widget: CustomText(
                 text: translate("booking.book"),
-                fontSize: AppStyle.small.sp-1,
+                fontSize: AppStyle.small.sp - 1,
                 color: DMUtil.getBookButtonColor(),
                 alignCenter: true,
               ),
               color: DMUtil.getWC(),
-              onPressed: (){
-                NurseBloc.get(context).add(UpdateCurrentNurseEvent(nurse: nurse));
+              onPressed: () {
+                NurseBloc.get(context)
+                    .add(UpdateCurrentNurseEvent(nurse: nurse));
                 Util.pushPage(const NurseDetails(), context);
               },
             ),
-            const SizedBox(width: 5,),
+            const SizedBox(
+              width: 5,
+            ),
           ],
         ),
       ),

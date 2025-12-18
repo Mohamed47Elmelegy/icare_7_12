@@ -8,13 +8,20 @@ class LogoWidget extends StatelessWidget {
   final double height;
   final BoxFit fit;
   final bool isWhite;
-  const LogoWidget({super.key,this.height=30,this.width=double.infinity,this.fit=BoxFit.fill,this.isWhite = false});
+  const LogoWidget(
+      {super.key,
+      this.height = 30,
+      this.width = double.infinity,
+      this.fit = BoxFit.fill,
+      this.isWhite = false});
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(isWhite?AppImages.logoWhite:AppImages.logo,height: height.h,width: width.w,fit: fit,);
+    return SvgPicture.asset(
+      isWhite ? AppImages.logoWhite : AppImages.logo,
+      height: height.h,
+      width: width.w,
+      fit: fit,
+    );
   }
 }
-
-
-

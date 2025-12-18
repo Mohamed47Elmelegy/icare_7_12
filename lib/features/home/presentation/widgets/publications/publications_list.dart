@@ -18,7 +18,11 @@ class PublicationsList extends StatelessWidget {
         var bloc = CategoriesBloc.get(ctx);
         var list = bloc.publicationsList;
         if (state is FetchPublicationsLoadingState) {
-          return Image.asset(AppImages.loadingGif,height: 100.w,width: double.infinity,);
+          return Image.asset(
+            AppImages.loadingGif,
+            height: 100.w,
+            width: double.infinity,
+          );
         }
         if (list.isEmpty) return const SizedBox.shrink();
         return ListView.separated(

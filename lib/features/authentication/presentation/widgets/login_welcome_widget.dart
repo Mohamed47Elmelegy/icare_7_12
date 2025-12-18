@@ -13,7 +13,11 @@ class LoginWelcomeWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LogoWidget(width: 150.w,fit: BoxFit.contain,height: 70.h,),
+            LogoWidget(
+              width: 150.w,
+              fit: BoxFit.contain,
+              height: 70.h,
+            ),
             // const SizedBox(height: 20,),
             // CustomText(
             //   text: translate("login.app_bar"),
@@ -22,7 +26,6 @@ class LoginWelcomeWidget extends StatelessWidget {
             //   fontSize: AppStyle.large.sp,
             // ),
           ],
-        )
-    );
+        ));
   }
 }

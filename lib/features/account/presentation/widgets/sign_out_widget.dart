@@ -12,21 +12,26 @@ class SignOutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()=> CustomDialogs.signOut(context),
+      onTap: () => CustomDialogs.signOut(context),
       child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Row(
             children: [
-              Icon(Icons.logout,color: DMUtil.getD2C(),size: 20.w,),
-              const SizedBox(width: 10,),
+              Icon(
+                Icons.logout,
+                color: DMUtil.getD2C(),
+                size: 20.w,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
               CustomText(
                 text: translate("activity_setting.sign_out"),
                 color: DMUtil.getD2C(),
                 fontSize: AppStyle.average.sp,
               ),
             ],
-          )
-      ),
+          )),
     );
   }
 }

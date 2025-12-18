@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
@@ -22,46 +21,48 @@ class RequestBtn extends StatelessWidget {
         widget: Padding(
           padding: const EdgeInsets.only(top: 4),
           child: CustomText(
-            text: translate("home.request"), 
+            text: translate("home.request"),
             fontSize: AppStyle.average.sp,
             color: kPrimary,
           ),
         ),
         sideColor: kPrimary,
         sideWidth: 1,
-        color: kWhite, 
-        onPressed: ()=> openCarBottomSheet(context),
+        color: kWhite,
+        onPressed: () => openCarBottomSheet(context),
       ),
     );
   }
 }
 
-void openCarBottomSheet(context,){
+void openCarBottomSheet(
+  context,
+) {
   showModalBottomSheet(
-    context: context,  
-    isScrollControlled: true,  
-    builder: (context) {  
-      return AnimatedBuilder(  
-        animation: Tween(begin:0.0, end:1.0).animate(CurvedAnimation(  
-        parent: ModalRoute.of(context)!.animation!,  
-        curve: Curves.easeInOut,)),  
-        builder: (context, child) {  
-            return Transform.translate(  
-              offset: Offset(0,100 * (1 - ModalRoute.of(context)!.animation!.value)),  
-              child: Container(  
-                height: 560.w,
-                decoration: BoxDecoration(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) {
+      return AnimatedBuilder(
+        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+          parent: ModalRoute.of(context)!.animation!,
+          curve: Curves.easeInOut,
+        )),
+        builder: (context, child) {
+          return Transform.translate(
+            offset:
+                Offset(0, 100 * (1 - ModalRoute.of(context)!.animation!.value)),
+            child: Container(
+              height: 560.w,
+              decoration: BoxDecoration(
                   color: DMUtil.getWC(),
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)
-                  )
-                ),  
-                child: const RequestForm(),
-              ),  
-            );  
-          },  
-      );  
-    },  
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              child: const RequestForm(),
+            ),
+          );
+        },
+      );
+    },
   );
 }

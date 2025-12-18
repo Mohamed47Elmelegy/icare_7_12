@@ -29,8 +29,6 @@ import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 
-
-
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
@@ -39,12 +37,18 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final TextEditingController emailTextEditingController = TextEditingController();
-  final TextEditingController firstNameTextEditingController = TextEditingController();
-  final TextEditingController phoneTextEditingController = TextEditingController();
-  final TextEditingController passwordTextEditingController = TextEditingController();
-  final TextEditingController cityTextEditingController = TextEditingController();
-  final TextEditingController addressTextEditingController = TextEditingController();
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+  final TextEditingController firstNameTextEditingController =
+      TextEditingController();
+  final TextEditingController phoneTextEditingController =
+      TextEditingController();
+  final TextEditingController passwordTextEditingController =
+      TextEditingController();
+  final TextEditingController cityTextEditingController =
+      TextEditingController();
+  final TextEditingController addressTextEditingController =
+      TextEditingController();
 
   late AccountBloc accountBloc;
   late LocationsBloc locationsBloc;
@@ -54,37 +58,58 @@ class _EditProfilePageState extends State<EditProfilePage> {
     locationsBloc = LocationsBloc.get(context);
     accountBloc = AccountBloc.get(context);
     var user = accountBloc.currentUser;
-    if(user!=null){
-      firstNameTextEditingController.text = user.userName.toString().replaceAll("null", "");
-      emailTextEditingController.text = user.email.toString().replaceAll("null", "");
-      phoneTextEditingController.text = user.phoneNumber.toString().replaceAll("null", "");
-      if(user.governorate!=null && user.governorate!=""){
+    if (user != null) {
+      firstNameTextEditingController.text =
+          user.userName.toString().replaceAll("null", "");
+      emailTextEditingController.text =
+          user.email.toString().replaceAll("null", "");
+      phoneTextEditingController.text =
+          user.phoneNumber.toString().replaceAll("null", "");
+      if (user.governorate != null && user.governorate != "") {
         var governoratesList = RootBloc.get(context).governoratesList;
-        int governorateIndex = governoratesList.indexWhere((element) => element.title.trim()==user.governorate.toString().trim() || element.id.toString()==user.governorate);
-        if(governorateIndex!=-1)locationsBloc.add(UpdateCurrentLocationEvent(governorate: governoratesList[governorateIndex].title.toString()));
+        int governorateIndex = governoratesList.indexWhere((element) =>
+            element.title.trim() == user.governorate.toString().trim() ||
+            element.id.toString() == user.governorate);
+        if (governorateIndex != -1) {
+          locationsBloc.add(UpdateCurrentLocationEvent(
+              governorate:
+                  governoratesList[governorateIndex].title.toString()));
+        }
       }
-      if(user.cityID!=null && user.cityID!=""){
+      if (user.cityID != null && user.cityID != "") {
         var cityList = RootBloc.get(context).citiesList;
-        int cityIndex = cityList.indexWhere((element) => element.title.trim()==user.cityID.toString().trim() || element.id.toString()==user.cityID);
-        if(cityIndex!=-1)locationsBloc.add(UpdateCurrentLocationEvent(city: cityList[cityIndex].title.toString()));
+        int cityIndex = cityList.indexWhere((element) =>
+            element.title.trim() == user.cityID.toString().trim() ||
+            element.id.toString() == user.cityID);
+        if (cityIndex != -1) {
+          locationsBloc.add(UpdateCurrentLocationEvent(
+              city: cityList[cityIndex].title.toString()));
+        }
       }
-      locationsBloc.add(UpdateCurrentLocationEvent(location: LocationEntity(
-          address1: user.address.toString(), address2: user.address.toString(),
-          country: user.countryCode.toString(), phone: user.phoneNumber.toString(), id: 1,
-          type: "auth", long: double.tryParse(user.long.toString())??0,
-          lat: double.tryParse(user.lat.toString())??0,
-          state: "", firstName: "",
-          lastName: "", email: "",
-          postCode: "")));
+      locationsBloc.add(UpdateCurrentLocationEvent(
+          location: LocationEntity(
+              address1: user.address.toString(),
+              address2: user.address.toString(),
+              country: user.countryCode.toString(),
+              phone: user.phoneNumber.toString(),
+              id: 1,
+              type: "auth",
+              long: double.tryParse(user.long.toString()) ?? 0,
+              lat: double.tryParse(user.lat.toString()) ?? 0,
+              state: "",
+              firstName: "",
+              lastName: "",
+              email: "",
+              postCode: "")));
     }
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AccountBloc,AccountState>(
-      listener: (ctx,state){
-        if(state is UpdateProfileState) {
+    return BlocListener<AccountBloc, AccountState>(
+      listener: (ctx, state) {
+        if (state is UpdateProfileState) {
           if (state.response.isSuccess == true) {
             SnackBarBuilder.showFeedBackMessage(
                 context, translate("toast.update_user_data"), Colors.green);
@@ -95,7 +120,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           }
         }
       },
-      listenWhen: (ctx,state){
+      listenWhen: (ctx, state) {
         return state is UpdateProfileState;
       },
       child: Scaffold(
@@ -103,16 +128,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
           backGroundColor: DMUtil.getWC(),
           title: translate("profile.profile"),
           whiteLogo: true,
-          leadingIcon: BackArrowButton(color: DMUtil.getPC(),),
+          leadingIcon: BackArrowButton(
+            color: DMUtil.getPC(),
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton:  BlocBuilder<AccountBloc,AccountState>(
-          builder:(ctx,state){
+        floatingActionButton: BlocBuilder<AccountBloc, AccountState>(
+          builder: (ctx, state) {
             AccountBloc bloc = AccountBloc.get(ctx);
             // if(states==FetchStates.FAILED) return const Center(child: Text("an error occurred"),);
-            if(state is UpdateProfileState && state.response.isLoad==true) return CircularProgressIndicator(color: DMUtil.getPC(),);
-            return BlocBuilder<LocationsBloc,LocationsState>(
-              builder: (ctx,state){
+            if (state is UpdateProfileState && state.response.isLoad == true) {
+              return CircularProgressIndicator(
+                color: DMUtil.getPC(),
+              );
+            }
+            return BlocBuilder<LocationsBloc, LocationsState>(
+              builder: (ctx, state) {
                 var locationBloc = LocationsBloc.get(ctx);
                 var currentLocation = locationBloc.currentCheckOutLocation;
                 return CustomButton(
@@ -127,24 +158,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   color: DMUtil.getPC(),
                   onPressed: () async {
-                    if(emailTextEditingController.text.trim().isNotEmpty&&
-                        firstNameTextEditingController.text.trim().isNotEmpty&&
-                        phoneTextEditingController.text.trim().isNotEmpty
-                    ){
+                    if (emailTextEditingController.text.trim().isNotEmpty &&
+                        firstNameTextEditingController.text.trim().isNotEmpty &&
+                        phoneTextEditingController.text.trim().isNotEmpty) {
                       bloc.add(UpdateProfileEvent(user: {
-                        'profile':'update',
-                        "phone":phoneTextEditingController.text.trim(),
-                        "email":emailTextEditingController.text.trim(),
-                        "name":firstNameTextEditingController.text.trim(),
-                        if(currentLocation!=null&&locationsBloc.governorate!=null)"governorate":locationsBloc.governorate,
-                        if(currentLocation!=null&&locationsBloc.city!=null)"city":locationsBloc.city,
-                        if(currentLocation!=null)"address":"${currentLocation.address1} ${currentLocation.address2}",
-                        if(currentLocation!=null && currentLocation.postCode!="")"postal_code":currentLocation.postCode.toString(),
-                        if(currentLocation!=null && currentLocation.lat!=0)"latitude":currentLocation.lat.toString(),
-                        if(currentLocation!=null && currentLocation.long!=0)"longitude":currentLocation.long.toString(),
+                        'profile': 'update',
+                        "phone": phoneTextEditingController.text.trim(),
+                        "email": emailTextEditingController.text.trim(),
+                        "name": firstNameTextEditingController.text.trim(),
+                        if (currentLocation != null &&
+                            locationsBloc.governorate != null)
+                          "governorate": locationsBloc.governorate,
+                        if (currentLocation != null &&
+                            locationsBloc.city != null)
+                          "city": locationsBloc.city,
+                        if (currentLocation != null)
+                          "address":
+                              "${currentLocation.address1} ${currentLocation.address2}",
+                        if (currentLocation != null &&
+                            currentLocation.postCode != "")
+                          "postal_code": currentLocation.postCode.toString(),
+                        if (currentLocation != null && currentLocation.lat != 0)
+                          "latitude": currentLocation.lat.toString(),
+                        if (currentLocation != null &&
+                            currentLocation.long != 0)
+                          "longitude": currentLocation.long.toString(),
                       }));
-                    }else{
-                      return SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), Colors.red);
+                    } else {
+                      return SnackBarBuilder.showFeedBackMessage(
+                          context, translate("toast.field_empty"), Colors.red);
                     }
                   },
                 );
@@ -154,11 +196,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         backgroundColor: DMUtil.getWC(),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 15),
+          padding: EdgeInsets.symmetric(
+              horizontal: AppStyle.paddingFromH.w, vertical: 15),
           physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
-
               CustomTextFromField(
                 hasBorder: true,
                 borderWidth: 1,
@@ -167,19 +209,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 45,
                 hintText: translate("signup.username"),
                 radius: 10,
-                onChanged: (val){},
-                onFieldSubmitted: (val){},
+                onChanged: (val) {},
+                onFieldSubmitted: (val) {},
                 textEditingController: firstNameTextEditingController,
                 cursorColor: kPrimary,
                 validator: () {},
                 prefixIcon: null,
                 obscureText: false,
-                suffixIcon: Icon(Icons.person,color: DMUtil.getPC(),size: 20.w,),
+                suffixIcon: Icon(
+                  Icons.person,
+                  color: DMUtil.getPC(),
+                  size: 20.w,
+                ),
                 isLabelError: false,
               ),
-              SizedBox(height: 10.w,),
-              GenderRow(txtColor: DMUtil.getD2C(),),
-              SizedBox(height: 10.w,),
+              SizedBox(
+                height: 10.w,
+              ),
+              GenderRow(
+                txtColor: DMUtil.getD2C(),
+              ),
+              SizedBox(
+                height: 10.w,
+              ),
               CustomTextFromField(
                 hasBorder: true,
                 borderWidth: 1,
@@ -188,14 +240,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 45,
                 hintText: translate("signup.phone"),
                 radius: 10,
-                onChanged: (val){},
-                onFieldSubmitted: (val){},
+                onChanged: (val) {},
+                onFieldSubmitted: (val) {},
                 textInputType: TextInputType.phone,
                 textEditingController: phoneTextEditingController,
                 validator: () {},
                 prefixIcon: null,
                 obscureText: false,
-                suffixIcon: Icon(Icons.phone,color: DMUtil.getPC(),size: 20.w,),
+                suffixIcon: Icon(
+                  Icons.phone,
+                  color: DMUtil.getPC(),
+                  size: 20.w,
+                ),
                 isLabelError: false,
               ),
               // IntlPhoneField(
@@ -225,7 +281,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               //   onChanged: (phone) {
               //   },
               // ),
-              SizedBox(height: 10.w,),
+              SizedBox(
+                height: 10.w,
+              ),
               CustomTextFromField(
                 hasBorder: true,
                 borderWidth: 1,
@@ -234,34 +292,51 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 45,
                 hintText: translate("signup.email"),
                 radius: 10,
-                onChanged: (val){},
-                onFieldSubmitted: (val){},
+                onChanged: (val) {},
+                onFieldSubmitted: (val) {},
                 textEditingController: emailTextEditingController,
                 cursorColor: kPrimary,
                 validator: () {},
                 prefixIcon: null,
                 obscureText: false,
-                suffixIcon: Icon(Icons.email,color: DMUtil.getPC(),size: 20.w,),
+                suffixIcon: Icon(
+                  Icons.email,
+                  color: DMUtil.getPC(),
+                  size: 20.w,
+                ),
                 isLabelError: false,
               ),
 
-              SizedBox(height: 10.w,),
+              SizedBox(
+                height: 10.w,
+              ),
               const GovernorateListDropDown(),
-              SizedBox(height: 10.w,),
+              SizedBox(
+                height: 10.w,
+              ),
               const CityListDropDown(),
-              SizedBox(height: 10.w,),
+              SizedBox(
+                height: 10.w,
+              ),
               const CurrentLocationDetails(),
 
               // if(!Util.isCustomer())...[
-                Divider(height: 40.w,),
-                const EmergencyNumberWidget(),
-                const SizedBox(height: 70,),
+              Divider(
+                height: 40.w,
+              ),
+              const EmergencyNumberWidget(),
+              const SizedBox(
+                height: 70,
+              ),
               // ],
 
-              Divider(height: 40.w,),
+              Divider(
+                height: 40.w,
+              ),
               const SecureInfo(),
-              const SizedBox(height: 70,),
-
+              const SizedBox(
+                height: 70,
+              ),
             ],
           ),
         ),
@@ -269,16 +344,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  void clearData(){
+  void clearData() {
     firstNameTextEditingController.text = "";
     emailTextEditingController.text = "";
     phoneTextEditingController.text = "";
   }
 
-  bool validatePhoneInput(String phone,BuildContext context){
-    if(phone.isNotEmpty){
+  bool validatePhoneInput(String phone, BuildContext context) {
+    if (phone.isNotEmpty) {
       String? txt = Util.validatePhone(phone);
-      if(txt!=null){
+      if (txt != null) {
         SnackBarBuilder.showFeedBackMessage(context, txt, DMUtil.getRED());
         return false;
       }

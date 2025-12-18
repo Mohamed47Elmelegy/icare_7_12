@@ -7,7 +7,8 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 class StatusBarWidget extends StatelessWidget {
   final bool isEnabled;
   final String txt;
-  const StatusBarWidget({super.key,required this.txt,required this.isEnabled});
+  const StatusBarWidget(
+      {super.key, required this.txt, required this.isEnabled});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class StatusBarWidget extends StatelessWidget {
         Container(
           height: 3.h,
           width: 100.w,
-          color: isEnabled?Colors.green:kText1,
+          color: isEnabled ? Colors.green : kText1,
         ),
         CustomText(
           text: txt,

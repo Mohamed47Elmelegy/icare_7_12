@@ -25,28 +25,35 @@ class SecureInfo extends StatelessWidget {
             fontWeight: FontWeight.w600,
             fontSize: AppStyle.average.sp + 1,
           ),
-          const SizedBox(height: 15,),
+          const SizedBox(
+            height: 15,
+          ),
           CustomText(
             text: translate("signup.password"),
             color: DMUtil.getDC(),
             fontSize: AppStyle.average.sp,
           ),
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           CustomText(
             text: "************",
             color: DMUtil.getDC(),
-            fontSize: AppStyle.veryLarge.sp+3,
+            fontSize: AppStyle.veryLarge.sp + 3,
             letterSpace: 2,
           ),
-
           InkWell(
-            onTap: ()=> Util.pushPage(const ResetPassword(goToLogin: false,), context),
+            onTap: () => Util.pushPage(
+                const ResetPassword(
+                  goToLogin: false,
+                ),
+                context),
             child: CustomText(
               text: translate("login.change_pass"),
               color: DMUtil.getPC(),
               fontWeight: FontWeight.w600,
               textDecoration: TextDecoration.underline,
-              fontSize: AppStyle.small.sp-1,
+              fontSize: AppStyle.small.sp - 1,
             ),
           ),
         ],

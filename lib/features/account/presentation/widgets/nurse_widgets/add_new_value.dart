@@ -8,19 +8,18 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
 
 class AddNewOptionValue extends StatelessWidget {
-  const AddNewOptionValue({super.key,this.placeHolderValue});
+  const AddNewOptionValue({super.key, this.placeHolderValue});
   final String? placeHolderValue;
-  static final TextEditingController textEditingController = TextEditingController();
-
+  static final TextEditingController textEditingController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 200.h,
       decoration: BoxDecoration(
-        color: DMUtil.getWC(),
-        borderRadius: const BorderRadius.all(Radius.circular(20))
-      ),
+          color: DMUtil.getWC(),
+          borderRadius: const BorderRadius.all(Radius.circular(20))),
       padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,15 +27,19 @@ class AddNewOptionValue extends StatelessWidget {
         children: [
           AlignChildRow(
               child: InkWell(
-                onTap: ()=> Navigator.pop(context),
-                child: CircleAvatar(
-                  radius: 12.w,
-                  backgroundColor: DMUtil.getOpacity(),
-                  child: Icon(Icons.close,color: Colors.red,size: 18.w,),
-                )
-              )
+                  onTap: () => Navigator.pop(context),
+                  child: CircleAvatar(
+                    radius: 12.w,
+                    backgroundColor: DMUtil.getOpacity(),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.red,
+                      size: 18.w,
+                    ),
+                  ))),
+          const SizedBox(
+            height: 20,
           ),
-          const SizedBox(height: 20,),
           CustomTextFromField(
             hasBorder: true,
             borderWidth: 1,
@@ -45,26 +48,27 @@ class AddNewOptionValue extends StatelessWidget {
             height: 45,
             hintText: placeHolderValue ?? translate("icare.add_option_value"),
             radius: 10,
-            onChanged: (val){},
-            onFieldSubmitted: (val){},
+            onChanged: (val) {},
+            onFieldSubmitted: (val) {},
             textEditingController: textEditingController,
             validator: () {},
             prefixIcon: null,
             obscureText: false,
             isLabelError: false,
           ),
-
-          const SizedBox(height: 20,),
+          const SizedBox(
+            height: 20,
+          ),
           TextButton(
-              onPressed: (){
-                Navigator.pop(context,textEditingController.text.trim());
-                textEditingController.text = "";
-              },
-              child: CustomText(
-                text: translate("button.save"),
-                fontSize: AppStyle.small.sp,
-                fontWeight: FontWeight.w600,
-              ),
+            onPressed: () {
+              Navigator.pop(context, textEditingController.text.trim());
+              textEditingController.text = "";
+            },
+            child: CustomText(
+              text: translate("button.save"),
+              fontSize: AppStyle.small.sp,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

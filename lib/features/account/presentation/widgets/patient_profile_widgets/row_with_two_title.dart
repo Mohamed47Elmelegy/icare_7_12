@@ -7,7 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class RowWithTwoTitle extends StatelessWidget {
   final String title1;
   final String title2;
-  const RowWithTwoTitle({super.key,required this.title1,required this.title2});
+  const RowWithTwoTitle(
+      {super.key, required this.title1, required this.title2});
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +24,11 @@ class RowWithTwoTitle extends StatelessWidget {
               color: DMUtil.getD2C(),
             ),
           ),
-
           CustomText(
             text: title2,
             fontSize: AppStyle.verySmall.sp,
             color: DMUtil.getD2C(),
           ),
-
         ],
       ),
     );

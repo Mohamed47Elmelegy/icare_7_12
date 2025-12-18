@@ -15,19 +15,22 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
-
 class LocationUtil {
-
-  static String getDistanceView(double? km,double? m){
+  static String getDistanceView(double? km, double? m) {
     String distance = '';
-    if(km!=-1 && km!=null)distance = "$km"'km';
-    if(m!=-1 && m!=null)distance = "$distance $m"'m';
+    if (km != -1 && km != null) distance = "$km" 'km';
+    if (m != -1 && m != null) distance = "$distance $m" 'm';
     return distance;
   }
 
-  static String calcDistance({required double startLatitude,required double startLongitude,required double endLatitude,required double endLongitude}) {
-    return formatDistance(Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude).toDouble());
+  static String calcDistance(
+      {required double startLatitude,
+      required double startLongitude,
+      required double endLatitude,
+      required double endLongitude}) {
+    return formatDistance(Geolocator.distanceBetween(
+            startLatitude, startLongitude, endLatitude, endLongitude)
+        .toDouble());
   }
 
   static String formatDistance(double distanceInMeters) {
@@ -62,10 +65,14 @@ class LocationUtil {
       // await Permission.locationWhenInUse.request();
       if (!await Permission.location.serviceStatus.isEnabled) return false;
       Position position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
-      SharedPref().setPreferenceDouble(Constants.userLatitude, position.latitude);
-      SharedPref().setPreferenceDouble(Constants.userLongitude, position.longitude);    
-      debugPrint("checkLocationPermission ${await Permission.location.serviceStatus.isEnabled}");
+          locationSettings:
+              const LocationSettings(accuracy: LocationAccuracy.high));
+      SharedPref()
+          .setPreferenceDouble(Constants.userLatitude, position.latitude);
+      SharedPref()
+          .setPreferenceDouble(Constants.userLongitude, position.longitude);
+      debugPrint(
+          "checkLocationPermission ${await Permission.location.serviceStatus.isEnabled}");
       return true;
     } catch (e) {
       debugPrint("checkLocationPermission $e");

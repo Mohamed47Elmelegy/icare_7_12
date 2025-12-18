@@ -1,4 +1,4 @@
-class IssueModel{
+class IssueModel {
   final int id;
   final String txt;
 

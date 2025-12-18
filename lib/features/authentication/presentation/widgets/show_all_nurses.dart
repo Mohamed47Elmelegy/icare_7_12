@@ -15,18 +15,24 @@ class ShowAllNursesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NurseBloc,NurseState>(
-      builder: (ctx,state){
+    return BlocBuilder<NurseBloc, NurseState>(
+      builder: (ctx, state) {
         var nurseBloc = NurseBloc.get(ctx);
         return InkWell(
-          onTap: (){
+          onTap: () {
             // nurseBloc.add(const ShowAllNursesEvent());
-            nurseBloc.add(SetNurseOnMapEvent(ctx: context,showAllNurses: !nurseBloc.showAllNurses));
+            nurseBloc.add(SetNurseOnMapEvent(
+                ctx: context, showAllNurses: !nurseBloc.showAllNurses));
           },
           child: Row(
             children: [
-              SelectedCircle(selected: nurseBloc.showAllNurses,selectedColor: DMUtil.getPC(),),
-              const SizedBox(width: 10,),
+              SelectedCircle(
+                selected: nurseBloc.showAllNurses,
+                selectedColor: DMUtil.getPC(),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
               CustomText(
                 text: translate("search.all_nurses"),
                 fontSize: AppStyle.small.sp,

@@ -1,4 +1,3 @@
-
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/splash.dart';
@@ -24,10 +23,15 @@ class NoConnectionScreen extends StatelessWidget {
                 color: DMUtil.getD2C(),
                 fontSize: 20,
               ),
-              IconButton(onPressed: ()=> Util.pushPageAndRemoveRoutes(const SplashScreen(), context), icon:  Icon(Icons.refresh,color: DMUtil.getRED(),)),
+              IconButton(
+                  onPressed: () => Util.pushPageAndRemoveRoutes(
+                      const SplashScreen(), context),
+                  icon: Icon(
+                    Icons.refresh,
+                    color: DMUtil.getRED(),
+                  )),
             ],
-          )
-      ),
+          )),
     );
   }
 }

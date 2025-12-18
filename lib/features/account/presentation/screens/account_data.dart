@@ -26,45 +26,51 @@ class AccountDataScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
             const UserAccountWidget(),
 
-
-            SizedBox(height: 10.w,),
+            SizedBox(
+              height: 10.w,
+            ),
             const SecureInfo(),
 
-            const Divider(height: 1,),
+            const Divider(
+              height: 1,
+            ),
 
             const ChangePhoneSection(),
 
-
             // if(Platform.isIOS)...[
-              Container(
-                color: DMUtil.getWC(),
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(vertical: 10.w),
-                padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4,vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      text: translate("profile.delete_account"),
-                      color: DMUtil.getD2C(),
-                      fontWeight: FontWeight.w600,
-                      fontSize: AppStyle.average.sp + 1,
-                    ),
-                    const SizedBox(height: 10,),
-                    CustomText(
-                      text: translate("profile.we_ar_sad_for_leave"),
-                      fontSize: AppStyle.verySmall.sp,
-                      color: DMUtil.getD2C().withOpacity(0.8),
-                    ),
-                    const SizedBox(height: 15,),
-                    const DeleteAccountWidget(),
-                  ],
-                ),
+            Container(
+              color: DMUtil.getWC(),
+              width: double.infinity,
+              margin: EdgeInsets.symmetric(vertical: 10.w),
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppStyle.paddingFromH.w - 4, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: translate("profile.delete_account"),
+                    color: DMUtil.getD2C(),
+                    fontWeight: FontWeight.w600,
+                    fontSize: AppStyle.average.sp + 1,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomText(
+                    text: translate("profile.we_ar_sad_for_leave"),
+                    fontSize: AppStyle.verySmall.sp,
+                    color: DMUtil.getD2C().withOpacity(0.8),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  const DeleteAccountWidget(),
+                ],
               ),
+            ),
             // ],
           ],
         ),

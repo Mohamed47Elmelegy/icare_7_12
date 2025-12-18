@@ -12,7 +12,8 @@ import 'package:icare/features/booking/domain/repositories/oder_repository.dart'
 class OrderModelRepository implements OrderRepository {
   final OrderRemoteDataSourceImpl orderRemoteDataSource;
   final NetworkInfo networkInfo;
-  OrderModelRepository({required this.orderRemoteDataSource,required this.networkInfo});
+  OrderModelRepository(
+      {required this.orderRemoteDataSource, required this.networkInfo});
 
   @override
   Future<Either<Failure, List<Booking>>> getAllOrders() async {
@@ -27,9 +28,9 @@ class OrderModelRepository implements OrderRepository {
     }
   }
 
-
   @override
-  Future<Either<Failure, OrderResponse>> addOrder({required Map<String,dynamic> data}) async{
+  Future<Either<Failure, OrderResponse>> addOrder(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await orderRemoteDataSource.addOrder(data: data));
@@ -42,10 +43,12 @@ class OrderModelRepository implements OrderRepository {
   }
 
   @override
-  Future<Either<Failure, OrderResponse>> updateOrder({required Map<String,dynamic> data,File? fileR}) async{
+  Future<Either<Failure, OrderResponse>> updateOrder(
+      {required Map<String, dynamic> data, File? fileR}) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await orderRemoteDataSource.updateOrder(data: data,fileR: fileR));
+        return Right(
+            await orderRemoteDataSource.updateOrder(data: data, fileR: fileR));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -55,7 +58,7 @@ class OrderModelRepository implements OrderRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> cancelOrder({required int orderID}) async{
+  Future<Either<Failure, bool>> cancelOrder({required int orderID}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await orderRemoteDataSource.cancelOrder(orderId: orderID));
@@ -67,10 +70,10 @@ class OrderModelRepository implements OrderRepository {
     }
   }
 
-
-  /// send request 
+  /// send request
   @override
-  Future<Either<Failure, OrderResponse>> sendRequest({required Map<String,dynamic> data}) async{
+  Future<Either<Failure, OrderResponse>> sendRequest(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await orderRemoteDataSource.sendRequest(data: data));
@@ -81,5 +84,4 @@ class OrderModelRepository implements OrderRepository {
       return Left(OfflineFailure());
     }
   }
-
 }

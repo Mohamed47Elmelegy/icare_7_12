@@ -104,11 +104,14 @@ class RegisterScreen extends StatelessWidget {
                   registerData['country_code'] = '';
                   registerData['status'] = 'online';
                   registerData['is_male'] = authBloc.isWomen ? "0" : "1";
-                  
+
                   // Check if doctor type first
                   if (authBloc.isDoctor) {
-                    await Util.getUserType() ==(UserEnum.DOCTOR.name.toLowerCase());
                     registerData['user_type'] = "doctor";
+                    if (authBloc.selectedSpecialtyId != null) {
+                      registerData['specialties_id'] =
+                          authBloc.selectedSpecialtyId;
+                    }
                     if (authBloc.license != null) {
                       registerData['license'] = authBloc.license;
                     }
@@ -116,7 +119,7 @@ class RegisterScreen extends StatelessWidget {
                       registerData['certificate'] = authBloc.certificate;
                     }
                     if (authBloc.nurseID != null) {
-                      registerData['doctorID'] = authBloc.nurseID;
+                      registerData['nurseID'] = authBloc.nurseID;
                     }
                     if (authBloc.associationCard != null) {
                       registerData['associationCard'] =
@@ -144,7 +147,8 @@ class RegisterScreen extends StatelessWidget {
                       registerData['courses'] =
                           jsonEncode(authBloc.coursesList);
                     }
-                  } else if (Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
+                  } else if (authBloc.isNurse ||
+                      Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
                     registerData['user_type'] =
                         authBloc.isNurse ? "nurse" : "assistant";
                     if (authBloc.license != null) {
@@ -183,7 +187,8 @@ class RegisterScreen extends StatelessWidget {
                           jsonEncode(authBloc.coursesList);
                     }
                   } else {
-                    registerData['user_type'] = Util.getUserType();
+                    // Default to customer
+                    registerData['user_type'] = "customer";
                   }
 
                   authBloc.add(RegisterEvent(user: registerData));

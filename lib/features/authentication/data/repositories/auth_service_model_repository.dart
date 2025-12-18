@@ -9,15 +9,15 @@ import 'package:icare/features/authentication/domain/repositories/auth_service_r
 class AuthServiceModelRepository implements AuthServiceRepository {
   final AuthServiceRemoteDataSource userServiceRemoteDataSource;
   final NetworkInfo networkInfo;
-  AuthServiceModelRepository({required this.userServiceRemoteDataSource, required this.networkInfo});
-
+  AuthServiceModelRepository(
+      {required this.userServiceRemoteDataSource, required this.networkInfo});
 
   @override
-  Future<Either<Failure, AuthResponse>> loginUser(Map<String, dynamic> userData) async {
+  Future<Either<Failure, AuthResponse>> loginUser(
+      Map<String, dynamic> userData) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await userServiceRemoteDataSource.loginUser(
-            userData));
+        return Right(await userServiceRemoteDataSource.loginUser(userData));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -27,10 +27,12 @@ class AuthServiceModelRepository implements AuthServiceRepository {
   }
 
   @override
-  Future<Either<Failure, AuthResponse>> socialAuthUser(Map<String, dynamic> userData) async {
+  Future<Either<Failure, AuthResponse>> socialAuthUser(
+      Map<String, dynamic> userData) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await userServiceRemoteDataSource.socialAuthUser(userData));
+        return Right(
+            await userServiceRemoteDataSource.socialAuthUser(userData));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -41,12 +43,10 @@ class AuthServiceModelRepository implements AuthServiceRepository {
 
   @override
   Future<Either<Failure, AuthResponse>> registerUser(
-      Map<String, dynamic> userData,) async {
-    return Right(await userServiceRemoteDataSource.registerUser(userData,));
+    Map<String, dynamic> userData,
+  ) async {
+    return Right(await userServiceRemoteDataSource.registerUser(
+      userData,
+    ));
   }
-
-
-
-
-
 }

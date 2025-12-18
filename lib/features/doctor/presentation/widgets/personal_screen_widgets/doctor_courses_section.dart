@@ -14,7 +14,9 @@ class DoctorCoursesSection extends StatelessWidget {
       builder: (ctx, state) {
         var bloc = DoctorBloc.get(ctx);
         var currentDoctor = bloc.currentDoctor;
-        if (currentDoctor == null || currentDoctor.coursesList == null) return const SizedBox.shrink();
+        if (currentDoctor == null || currentDoctor.coursesList == null) {
+          return const SizedBox.shrink();
+        }
         var list = currentDoctor.coursesList;
         if (list!.isEmpty) return const SizedBox.shrink();
         return GridView.builder(

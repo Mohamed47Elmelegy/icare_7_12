@@ -28,7 +28,8 @@ class DoctorDetails extends StatelessWidget {
               viewDoctorDetails: true,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppStyle.paddingFromH.w, vertical: 10),
               child: const Column(
                 children: [
                   ExtraDoctorOptionsCard(),

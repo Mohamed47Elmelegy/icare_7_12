@@ -18,7 +18,7 @@ class AddNewLocationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(Platform.isIOS?25:10),
+      padding: EdgeInsets.all(Platform.isIOS ? 25 : 10),
       child: CustomButton(
         height: 40.h,
         width: double.infinity,
@@ -30,7 +30,11 @@ class AddNewLocationButton extends StatelessWidget {
           text: translate("map.add_location"),
         ),
         color: DMUtil.getRED(),
-        onPressed: ()=> Util.pushPage(const AddNewLocationScreen(type: "local",), context),
+        onPressed: () => Util.pushPage(
+            const AddNewLocationScreen(
+              type: "local",
+            ),
+            context),
       ),
     );
   }

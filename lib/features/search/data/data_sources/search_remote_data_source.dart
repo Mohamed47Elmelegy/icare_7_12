@@ -40,6 +40,10 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
         try {
           // Build URL with query parameters for each page
           String baseUrl = "${ApiUrl.nurses}/$page";
+          if (filters.userType == "doctor") {
+            baseUrl = "${ApiUrl.doctors}/$page";
+          }
+
           List<String> queryParams = [];
 
           // Add user_type filter
@@ -157,7 +161,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
           // Catch individual page errors, don't fail entire search
           String errorMsg = pageError.toString();
           String truncatedError = errorMsg.length > 100
-              ? errorMsg.substring(0, 100) + '...'
+              ? '${errorMsg.substring(0, 100)}...'
               : errorMsg;
           print("   ⚠️ Page $page error: $truncatedError");
           print(

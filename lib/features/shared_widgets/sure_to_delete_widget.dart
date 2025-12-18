@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -22,12 +21,11 @@ class SureToDeleteWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           CustomText(
-              text: translate("map.sure_to_delete"),
-              color: Colors.black,
-              fontSize: AppStyle.small.sp,
-              fontWeight: FontWeight.w500,
+            text: translate("map.sure_to_delete"),
+            color: Colors.black,
+            fontSize: AppStyle.small.sp,
+            fontWeight: FontWeight.w500,
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -40,7 +38,7 @@ class SureToDeleteWidget extends StatelessWidget {
                       color: Colors.white,
                       fontSize: AppStyle.small.sp),
                   color: kPrimary,
-                  onPressed: ()=>Navigator.pop(context,'ok')),
+                  onPressed: () => Navigator.pop(context, 'ok')),
               CustomButton(
                   height: 30.h,
                   width: 100.w,
@@ -52,8 +50,7 @@ class SureToDeleteWidget extends StatelessWidget {
                   color: Colors.white,
                   sideWidth: 1,
                   sideColor: Colors.black45,
-                  onPressed: ()=>Navigator.of(context).pop()),
-
+                  onPressed: () => Navigator.of(context).pop()),
             ],
           ),
         ],

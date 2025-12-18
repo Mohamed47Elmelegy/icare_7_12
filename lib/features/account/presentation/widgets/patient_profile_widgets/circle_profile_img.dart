@@ -15,9 +15,14 @@ class CircleProfileImage extends StatelessWidget {
         CircleAvatar(
           backgroundColor: Colors.white,
           radius: 30.w,
-          backgroundImage: const AssetImage(AppImages.avatar,),
+          backgroundImage: const AssetImage(
+            AppImages.avatar,
+          ),
         ),
-        CircleGreenMark(size: 7,color: DMUtil.getGreen2(),),
+        CircleGreenMark(
+          size: 7,
+          color: DMUtil.getGreen2(),
+        ),
       ],
     );
   }

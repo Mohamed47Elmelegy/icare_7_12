@@ -13,9 +13,7 @@ class UserTypeDropDown extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: DMUtil.getWC(),
-        borderRadius: BorderRadius.circular(10)
-      ),
+          color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
       child: DropdownButton<String>(
         value: null,
         icon: const Icon(Icons.arrow_drop_down),

@@ -184,6 +184,44 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     }
   }
 
+  static Future<UserServiceModel> updateDoctorOptionsValue(
+      {required Map<String, dynamic> userData}) async {
+    var data = {
+      'user_id': Util.getUserID(),
+      if (userData['languages'] != null) 'languages': userData['languages'],
+      if (userData['education'] != null) 'education': userData['education'],
+      if (userData['publications'] != null)
+        'publications': userData['publications'],
+      if (userData['courses'] != null) 'courses': userData['courses'],
+      if (userData['emergency_contacts'] != null)
+        'emergency_contacts': userData['emergency_contacts'],
+      if (userData['services'] != null) 'specialties': userData['services'],
+    };
+    var response = await http.post(Uri.parse(ApiUrl.UPDATE_DOCTOR_DATA),
+        body: json.encode(data), headers: ApiUrl.headerAuth);
+    debugPrint("updateDoctorOptionsValue: ${response.body}");
+    var decodedData = jsonDecode(response.body);
+    if (decodedData['status'] == true) {
+      return const UserServiceModel(
+          userId: 0,
+          userName: '',
+          email: '',
+          phoneNumber: "",
+          userType: "",
+          address: "",
+          image: "");
+    } else {
+      return const UserServiceModel(
+          userId: 0,
+          userName: '',
+          email: '',
+          phoneNumber: "",
+          userType: "",
+          address: "",
+          image: "");
+    }
+  }
+
   static Future<List<ServicesModel>> getAllServicesList(
       {String? userType}) async {
     try {
@@ -207,16 +245,17 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
             ServicesModel.listModelFromJson(jsonEncode(decodedData['data']));
         debugPrint("✅ Loaded ${services.length} services" +
             (userType != null ? " for $userType" : ""));
-        
+
         // Debug: Show first 3 services with their user_type
         if (services.isNotEmpty) {
           debugPrint("📋 First few services:");
           for (var i = 0; i < services.length && i < 3; i++) {
             var service = services[i];
-            debugPrint("   ${i + 1}. ${service.value} (ID: ${service.id}, user_type: ${service.userType ?? 'not set'})");
+            debugPrint(
+                "   ${i + 1}. ${service.value} (ID: ${service.id}, user_type: ${service.userType ?? 'not set'})");
           }
         }
-        
+
         return services;
       } else {
         debugPrint("❌ API returned status: false");

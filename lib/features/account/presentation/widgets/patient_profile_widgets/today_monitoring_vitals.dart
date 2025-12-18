@@ -58,14 +58,15 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
         SizedBox(
           height: 200.w,
           child: Table(
-            border: TableBorder.all(color: DMUtil.getD2C().withOpacity(0.4),),
+            border: TableBorder.all(
+              color: DMUtil.getD2C().withOpacity(0.4),
+            ),
             children: [
               TableRow(
-                children : [
+                children: [
                   VitalsWidget(
                     title: translate("profile.heart_rate"),
                     controller: heartRateController,
@@ -81,7 +82,7 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
                 ],
               ),
               TableRow(
-                children : [
+                children: [
                   VitalsWidget(
                     title: translate("profile.height"),
                     controller: heightController,
@@ -97,7 +98,7 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
                 ],
               ),
               TableRow(
-                children : [
+                children: [
                   VitalsWidget(
                     title: translate("profile.pulse_rate"),
                     controller: pulseRateController,
@@ -110,13 +111,10 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
             ],
           ),
         )
-
-        
       ],
     );
   }
 }
-
 
 class VitalsWidget extends StatelessWidget {
   final String imgPath;
@@ -141,7 +139,9 @@ class VitalsWidget extends StatelessWidget {
             imgPath,
             width: 30.w,
           ),
-          const SizedBox(width: 6,),
+          const SizedBox(
+            width: 6,
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,10 +185,12 @@ class VitalsWidget extends StatelessWidget {
                     text: controller.text,
                     fontSize: AppStyle.small.sp,
                   ),
-                const SizedBox(height: 4,),
+                const SizedBox(
+                  height: 4,
+                ),
                 CustomText(
                   text: title,
-                  fontSize: AppStyle.small.sp-2,
+                  fontSize: AppStyle.small.sp - 2,
                 ),
               ],
             ),

@@ -12,21 +12,25 @@ class HomeSpecialistsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 80.w,
-      child: BlocBuilder<NurseBloc,NurseState>(
-        builder: (ctx,state){
+      child: BlocBuilder<NurseBloc, NurseState>(
+        builder: (ctx, state) {
           var bloc = NurseBloc.get(ctx);
           var list = bloc.nursesList;
-          if(list.isEmpty)return const SizedBox.shrink();
+          if (list.isEmpty) return const SizedBox.shrink();
           return ListView.separated(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            itemBuilder: (ctx,index){
+            itemBuilder: (ctx, index) {
               var item = list[index];
-              if(item.userData==null)return const SizedBox.shrink();
-              return SpecialistCard(nurse: item,);
+              if (item.userData == null) return const SizedBox.shrink();
+              return SpecialistCard(
+                nurse: item,
+              );
             },
-            separatorBuilder: (ctx,index)=> const SizedBox(width: 7,),
-            itemCount: list.length>10?10:list.length,
+            separatorBuilder: (ctx, index) => const SizedBox(
+              width: 7,
+            ),
+            itemCount: list.length > 10 ? 10 : list.length,
           );
         },
       ),

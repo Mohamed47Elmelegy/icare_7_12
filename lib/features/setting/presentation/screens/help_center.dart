@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
 
@@ -16,7 +15,8 @@ class HelpCenterScreen extends StatefulWidget {
   State<HelpCenterScreen> createState() => _HelpCenterScreenState();
 }
 
-class _HelpCenterScreenState extends State<HelpCenterScreen>  with TickerProviderStateMixin{
+class _HelpCenterScreenState extends State<HelpCenterScreen>
+    with TickerProviderStateMixin {
   late TabController tabController;
 
   @override
@@ -24,11 +24,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen>  with TickerProvide
     tabController = TabController(vsync: this, length: 2);
     super.initState();
   }
+
   @override
   void dispose() {
     tabController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,56 +48,64 @@ class _HelpCenterScreenState extends State<HelpCenterScreen>  with TickerProvide
                 height: 35.h,
                 child: TabBar(
                   controller: tabController,
-                  indicatorPadding: EdgeInsets.symmetric(horizontal: 5.w,),
+                  indicatorPadding: EdgeInsets.symmetric(
+                    horizontal: 5.w,
+                  ),
                   indicator: ShapeDecoration(
                       color: DMUtil.getRED(),
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
-                      )
-                  ),
+                      )),
                   unselectedLabelColor: DMUtil.getDC(),
                   indicatorColor: DMUtil.getPC(),
                   labelColor: DMUtil.getWC(),
                   isScrollable: true,
-                  labelStyle: TextStyle(color: DMUtil.getPC(),fontSize: AppStyle.small.sp+1,fontFamily: primaryFontReg,fontWeight: FontWeight.w600),
+                  labelStyle: TextStyle(
+                      color: DMUtil.getPC(),
+                      fontSize: AppStyle.small.sp + 1,
+                      fontFamily: primaryFontReg,
+                      fontWeight: FontWeight.w600),
                   tabs: <Widget>[
                     Container(
                       height: 35.h,
-                      padding: EdgeInsets.symmetric(horizontal: 30.w,) + const EdgeInsets.only(top: 3),
+                      padding: EdgeInsets.symmetric(
+                            horizontal: 30.w,
+                          ) +
+                          const EdgeInsets.only(top: 3),
                       decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(width: 1,color: DMUtil.getRED())
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(width: 1, color: DMUtil.getRED())),
+                      child: Tab(
+                        text: translate("drawer.faqs"),
                       ),
-                      child: Tab(text: translate("drawer.faqs"),),
                     ),
                     Container(
                       height: 35.h,
-                      padding: EdgeInsets.symmetric(horizontal: 30.w) + const EdgeInsets.only(top: 3),
+                      padding: EdgeInsets.symmetric(horizontal: 30.w) +
+                          const EdgeInsets.only(top: 3),
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(width: 1,color: DMUtil.getRED())
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(width: 1, color: DMUtil.getRED())),
+                      child: Tab(
+                        text: translate("activity_setting.call_us"),
                       ),
-                      child: Tab(text: translate("activity_setting.call_us"),),
                     ),
-
                   ],
                 ),
               ),
             ),
             Padding(
-                padding: EdgeInsets.only(top: AppStyle.paddingFromTop.h+40),
+                padding: EdgeInsets.only(top: AppStyle.paddingFromTop.h + 40),
                 child: TabBarView(
                   controller: tabController,
-                  children:  const [
+                  children: const [
                     FaqsListWidget(),
                     ContactUsWidget(),
                   ],
-                )
-            ),
+                )),
           ],
-        )
-    );
+        ));
   }
 }
-
-

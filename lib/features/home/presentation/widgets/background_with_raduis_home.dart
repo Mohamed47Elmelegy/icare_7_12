@@ -100,7 +100,7 @@ class HomeBackGroundWithRadius extends StatelessWidget {
                             maxLine: 2,
                           ),
                         ),
-                        if (Util.isNurse()) ...[
+                        if (Util.isNurse() || Util.isDoctor()) ...[
                           SizedBox(
                             width: 10.w,
                           ),

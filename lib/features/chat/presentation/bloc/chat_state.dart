@@ -1,12 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class ChatState{
+abstract class ChatState {
   const ChatState();
 }
-
-
 
 class ChatInitialState extends ChatState {}
 
@@ -19,4 +16,3 @@ class ChatErrorState extends ChatState {
 
   const ChatErrorState({required this.errors});
 }
-

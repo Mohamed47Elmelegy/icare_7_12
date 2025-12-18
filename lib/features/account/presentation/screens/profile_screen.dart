@@ -1,4 +1,3 @@
-
 import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/widgets/account_before_auth.dart';
 import 'package:icare/features/account/presentation/widgets/save_profile_btn.dart';
-
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -25,38 +23,43 @@ class ProfileScreen extends StatelessWidget {
             onRefresh: () => _buildRefresh(context),
             child: Container(
               alignment: Alignment.topCenter,
-              child:  SingleChildScrollView(
+              child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children:  [
-
-                    if(!Util.checkUser())...[
+                  children: [
+                    if (!Util.checkUser()) ...[
                       const AccountNotAuth(),
-                    ]else...[
-                      if(Util.getUserType()==UserEnum.CUSTOMER.name.toString().toLowerCase())...[
+                    ] else ...[
+                      if (Util.getUserType() ==
+                          UserEnum.CUSTOMER.name.toString().toLowerCase()) ...[
                         const PatientProfile(),
-                      ]else if(Util.getUserType()==UserEnum.NURSE.name.toString().toLowerCase() || Util.getUserType()==UserEnum.ASSISTANT.name.toString().toLowerCase())...[
+                      ] else if (Util.getUserType() ==
+                              UserEnum.NURSE.name.toString().toLowerCase() ||
+                          Util.getUserType() ==
+                              UserEnum.ASSISTANT.name
+                                  .toString()
+                                  .toLowerCase()) ...[
                         const NurseProfileScreen(),
-                      ]else if(Util.getUserType()==UserEnum.ADMIN.name.toString().toLowerCase())...[
+                      ] else if (Util.getUserType() ==
+                          UserEnum.ADMIN.name.toString().toLowerCase()) ...[
                         const AdminProfile(),
                       ],
                     ],
-
-
-                    const SizedBox(height: 90,),
-
+                    const SizedBox(
+                      height: 90,
+                    ),
                   ],
                 ),
               ),
-            )
-        )
-    );
+            )));
   }
 
   Future<void> _buildRefresh(BuildContext context) async {
-    AccountBloc.get(context)..add(const FetchProfileDataEvent())..add(const FetchAllNotificationsEvent())..getAllServiceList();
+    AccountBloc.get(context)
+      ..add(const FetchProfileDataEvent())
+      ..add(const FetchAllNotificationsEvent())
+      ..add(const FetchAllServicesEvent());
     // Util.getAllUserAppData(context: context);
   }
-
 }

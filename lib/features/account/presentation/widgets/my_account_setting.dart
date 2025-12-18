@@ -23,9 +23,12 @@ class MyAccountSetting extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 8.w,),
+        SizedBox(
+          height: 8.w,
+        ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
+          padding:
+              EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
           child: CustomText(
             text: translate("profile.my_account"),
             color: DMUtil.getD2C().withOpacity(0.6),
@@ -33,46 +36,67 @@ class MyAccountSetting extends StatelessWidget {
             fontSize: AppStyle.average.sp,
           ),
         ),
-
         Container(
           color: DMUtil.getWC(),
-          margin:  EdgeInsets.symmetric(vertical: 8.w),
-          padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
+          margin: EdgeInsets.symmetric(vertical: 8.w),
+          padding:
+              EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
           child: Column(
             children: [
-              SettingLineOption(title: translate("profile.orders"),onTap: ()=> Util.pushPage(const OrderScreen(), context),
+              SettingLineOption(
+                title: translate("profile.orders"),
+                onTap: () => Util.pushPage(const OrderScreen(), context),
                 widget: Row(
                   children: [
-                    BlocBuilder<BookingBloc,BookingState>(
-                      builder: (ctx,state){
+                    BlocBuilder<BookingBloc, BookingState>(
+                      builder: (ctx, state) {
                         var bloc = BookingBloc.get(ctx);
                         var length = bloc.bookingList.length;
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            if(length!=0)CircleAvatar(
-                              backgroundColor: DMUtil.getPC(),
-                              radius: 11.w,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: CustomText(text: "$length",fontSize: AppStyle.small.sp,color: Colors.white,),
+                            if (length != 0)
+                              CircleAvatar(
+                                backgroundColor: DMUtil.getPC(),
+                                radius: 11.w,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: CustomText(
+                                    text: "$length",
+                                    fontSize: AppStyle.small.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
+                            const SizedBox(
+                              width: 10,
                             ),
-                            const SizedBox(width: 10,),
                           ],
                         );
                       },
                     ),
-                    Icon(Icons.arrow_forward_ios,color: DMUtil.getDC(),size: 15.w),
+                    Icon(Icons.arrow_forward_ios,
+                        color: DMUtil.getDC(), size: 15.w),
                   ],
-                ),),
+                ),
+              ),
               const Divider(),
-              SettingLineOption(title: translate("profile.wishlist"),onTap: ()=> RootBloc.get(context).add(const ChangeIndex(index: 2, title: "")),),
+              SettingLineOption(
+                title: translate("profile.wishlist"),
+                onTap: () => RootBloc.get(context)
+                    .add(const ChangeIndex(index: 2, title: "")),
+              ),
               const Divider(),
-              SettingLineOption(title: translate("profile.addresses"),onTap: ()=> Util.pushPage(const MyLocationsScreen(), context),),
+              SettingLineOption(
+                title: translate("profile.addresses"),
+                onTap: () => Util.pushPage(const MyLocationsScreen(), context),
+              ),
               const Divider(),
-              SettingLineOption(title: translate("profile.profile"),onTap: ()=> Util.pushPage(const AccountDataScreen(), context),),
+              SettingLineOption(
+                title: translate("profile.profile"),
+                onTap: () => Util.pushPage(const AccountDataScreen(), context),
+              ),
             ],
           ),
         )

@@ -53,7 +53,9 @@ class BottomNavBar extends StatelessWidget {
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
           items: [
-            if (Util.isAssistant() == true || Util.isNurse() == true) ...[
+            if (Util.isAssistant() == true ||
+                Util.isNurse() == true ||
+                Util.isDoctor() == true) ...[
               BottomNavigationBarItem(
                   icon: Icon(
                     Icons.menu,

@@ -13,10 +13,8 @@ import 'dart:math' as math;
 
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 
-
-
-class SmsApi{
-  static getRandom(){
+class SmsApi {
+  static getRandom() {
     var next = math.Random().nextDouble() * 1000;
     while (next < 1000) {
       next *= 10;
@@ -24,43 +22,47 @@ class SmsApi{
     return next.toInt().toString();
   }
 
-  static Future<bool> sendOtp({required String provider,bool isEmail=true,required BuildContext ctx})async{
-    if(isEmail){
+  static Future<bool> sendOtp(
+      {required String provider,
+      bool isEmail = true,
+      required BuildContext ctx}) async {
+    if (isEmail) {
       var otp = getRandom();
       SharedPref().setPreferencesString(Constants.lastVerificationCode, otp);
-      return await SendGmail.sendEmailMessage("This is verification code : $otp  for Icare App", provider, "Verification Otp");
-    }else{
-      return await sendMobileOtp(phone: provider,ctx: ctx);
+      return await SendGmail.sendEmailMessage(
+          "This is verification code : $otp  for Icare App",
+          provider,
+          "Verification Otp");
+    } else {
+      return await sendMobileOtp(phone: provider, ctx: ctx);
     }
   }
 
-  static Future<bool> sendMobileOtp({required String phone,required BuildContext ctx})async{
-    try{
+  static Future<bool> sendMobileOtp(
+      {required String phone, required BuildContext ctx}) async {
+    try {
       var otp = getRandom();
-      var data = {
-        "otp":otp,
-        "phone":phone
-      };
+      var data = {"otp": otp, "phone": phone};
       var response = await http.post(Uri.parse(ApiUrl.SEND_OTP),
-        headers: {
-          "Content-Type": "application/json",
-        },body: jsonEncode(data)
-      );
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode(data));
       debugPrint("sendOtp: ${response.body}");
       var decodedData = jsonDecode(response.body);
-      if(decodedData.toString().contains("4901")){
+      if (decodedData.toString().contains("4901")) {
         SharedPref().setPreferencesString(Constants.lastVerificationCode, otp);
         return true;
-      }else{
+      } else {
         // decodedData['message'].toString()
         debugPrint("sendOtp: ${response.body}");
-        SnackBarBuilder.showFeedBackMessage(ctx, translate("toast.oops"), Colors.red);
+        SnackBarBuilder.showFeedBackMessage(
+            ctx, translate("toast.oops"), Colors.red);
         return false;
       }
-    }catch(e){
+    } catch (e) {
       debugPrint('err $e');
       return false;
     }
   }
-
 }

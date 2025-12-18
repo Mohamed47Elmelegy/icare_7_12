@@ -241,17 +241,19 @@ class CustomDialogs {
         });
   }
 
-  static addNewValue(BuildContext context,{String? placeholderValue}) async {
+  static addNewValue(BuildContext context, {String? placeholderValue}) async {
     return await showDialog(
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {
-          return  Dialog(
+          return Dialog(
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(25)),
             ),
             backgroundColor: Colors.transparent,
-            child: AddNewOptionValue(placeHolderValue: placeholderValue,),
+            child: AddNewOptionValue(
+              placeHolderValue: placeholderValue,
+            ),
           );
         });
   }
@@ -259,7 +261,9 @@ class CustomDialogs {
   static patientGiveAccessToEditProfile(BuildContext context) async {
     if (!Util.checkUser() || !Util.isCustomer()) return;
     BookingBloc bookingBloc = BookingBloc.get(context);
-    if(bookingBloc.checkIfExistBookingOngoingAndNurseCanNotEdit() == false)return;
+    if (bookingBloc.checkIfExistBookingOngoingAndNurseCanNotEdit() == false) {
+      return;
+    }
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -299,12 +303,17 @@ class CustomDialogs {
                             ),
                             color: DMUtil.getPC(),
                             onPressed: () async {
-                              bool res = await OrderRemoteDataSource.giveAccessEditProfile();
-                              if(res){
+                              bool res = await OrderRemoteDataSource
+                                  .giveAccessEditProfile();
+                              if (res) {
                                 bookingBloc.add(const FetchAllOrderEvent());
-                                SnackBarBuilder.showFeedBackMessage(context, translate('toast.give_access_success'), DMUtil.getGreen());
-                              }else{
-                                SnackBarBuilder.showFeedBackMessage(context, translate('toast.oops'), DMUtil.getRED());
+                                SnackBarBuilder.showFeedBackMessage(
+                                    context,
+                                    translate('toast.give_access_success'),
+                                    DMUtil.getGreen());
+                              } else {
+                                SnackBarBuilder.showFeedBackMessage(context,
+                                    translate('toast.oops'), DMUtil.getRED());
                               }
                               Navigator.pop(ctx);
                             },

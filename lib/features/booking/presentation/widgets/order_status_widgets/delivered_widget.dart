@@ -10,36 +10,40 @@ import 'package:flutter_translate/flutter_translate.dart';
 class DeliveredImageWidget extends StatelessWidget {
   final bool isSmall;
   final String? img;
-  const DeliveredImageWidget({super.key,this.isSmall = false,this.img});
+  const DeliveredImageWidget({super.key, this.isSmall = false, this.img});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image.asset(AppImages.delivered,height: isSmall?18.h:42.h,),
+        Image.asset(
+          AppImages.delivered,
+          height: isSmall ? 18.h : 42.h,
+        ),
         CustomText(
           text: translate("order.delivered"),
           color: Colors.black,
-          fontSize: isSmall? AppStyle.verySmall.sp : AppStyle.average.sp,
+          fontSize: isSmall ? AppStyle.verySmall.sp : AppStyle.average.sp,
           fontFamily: primaryFontBold,
         ),
-
-        if(img!=null&&img!="")...[
+        if (img != null && img != "") ...[
           CustomText(
             text: translate("order.file"),
             color: Colors.black,
-            fontSize: isSmall? AppStyle.verySmall.sp : AppStyle.average.sp,
+            fontSize: isSmall ? AppStyle.verySmall.sp : AppStyle.average.sp,
             fontFamily: primaryFontBold,
           ),
           InkWell(
-            onTap: ()=> CustomDialogs.viewImage(context, img!),
-            child: Image.network(img!,width: 60.w,height: 35.h,fit: BoxFit.fill,),
+            onTap: () => CustomDialogs.viewImage(context, img!),
+            child: Image.network(
+              img!,
+              width: 60.w,
+              height: 35.h,
+              fit: BoxFit.fill,
+            ),
           )
         ],
-
-
-
       ],
     );
   }

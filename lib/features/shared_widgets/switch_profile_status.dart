@@ -29,12 +29,12 @@ class SwitchProfileStatus extends StatelessWidget {
               scale: 0.8, // Adjust size if needed
               child: Switch(
                 value: bloc.isOnline,
-                activeColor: Colors.white,
+                activeThumbColor: Colors.white,
                 activeTrackColor: DMUtil.getPcSc(),
                 inactiveThumbColor: Colors.white,
                 inactiveTrackColor: Colors.grey.shade300,
                 trackOutlineColor:
-                    MaterialStateProperty.all(Colors.transparent),
+                    WidgetStateProperty.all(Colors.transparent),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onChanged: (val) => bloc.add(const SwitchProfileStatusEvent()),
               ),

@@ -28,22 +28,30 @@ class NotificationsUtils {
 
   static void pushNotificationListener(BuildContext context) async {
     if (!Platform.isIOS) {
-      if (Util.isCustomer())
+      if (Util.isCustomer()) {
         await FirebaseMessaging.instance.subscribeToTopic('patient');
-      if (Util.isNurse())
+      }
+      if (Util.isNurse()) {
         await FirebaseMessaging.instance.subscribeToTopic('nurses');
-      if (Util.isAssistant())
+      }
+      if (Util.isAssistant()) {
         await FirebaseMessaging.instance.subscribeToTopic('assistant');
-      if (!Util.checkUser())
+      }
+      if (Util.isDoctor()) {
+        await FirebaseMessaging.instance.subscribeToTopic('doctors');
+      }
+      if (!Util.checkUser()) {
         await FirebaseMessaging.instance.subscribeToTopic('discover_users');
+      }
     }
 
     FirebaseMessaging.onMessage.listen((event) {
       SetNotification.showFlutterNotification(
           RemoteMessage(notification: event.notification!));
 
-      if (event.notification == null || event.notification!.body == null)
+      if (event.notification == null || event.notification!.body == null) {
         return;
+      }
       checkNotification(context, event);
     }).onError((err) {
       debugPrint("FirebaseMessaging onMessage: $err");

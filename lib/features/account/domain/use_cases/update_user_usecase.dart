@@ -16,7 +16,6 @@ class UpdateUserServiceUseCase {
   }
 }
 
-
 class UpdateProfileStatusUseCase {
   final UserServiceRepository userServiceRepository;
 
@@ -29,6 +28,3 @@ class UpdateProfileStatusUseCase {
     return await userServiceRepository.updateProfileStatus(userData);
   }
 }
-
-
-

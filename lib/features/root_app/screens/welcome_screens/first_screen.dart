@@ -20,19 +20,22 @@ class FirstScreen extends StatelessWidget {
           color: DMUtil.getText(),
           fontWeight: FontWeight.w600,
         ),
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         CustomText(
           text: translate("icare.welcome_f"),
-          fontSize: AppStyle.average.sp-2,
+          fontSize: AppStyle.average.sp - 2,
           color: DMUtil.getPC2(),
           fontWeight: FontWeight.w600,
         ),
-        const SizedBox(height: 40,),
+        const SizedBox(
+          height: 40,
+        ),
         SvgPicture.asset(
           AppImages.welcomeFirst,
           height: 250.h,
         ),
-
       ],
     );
   }

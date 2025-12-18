@@ -13,9 +13,9 @@ class LocationsModelRepository implements LocationsRepository {
   LocationsModelRepository(
       {required this.locationRemoteDataSource, required this.networkInfo});
 
-
   @override
-  Future<Either<Failure, bool>> addNewLocation({required Map<String, dynamic> data}) async{
+  Future<Either<Failure, bool>> addNewLocation(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await locationRemoteDataSource.addNewLocation(data: data));
@@ -28,7 +28,7 @@ class LocationsModelRepository implements LocationsRepository {
   }
 
   @override
-  Future<Either<Failure, AddressModel>> fetchAllLocations() async{
+  Future<Either<Failure, AddressModel>> fetchAllLocations() async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await locationRemoteDataSource.fetchAllLocations());
@@ -41,10 +41,11 @@ class LocationsModelRepository implements LocationsRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> removeLocation({required int addressId}) async{
+  Future<Either<Failure, bool>> removeLocation({required int addressId}) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await locationRemoteDataSource.removeLocation(addressId: addressId));
+        return Right(await locationRemoteDataSource.removeLocation(
+            addressId: addressId));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -54,7 +55,8 @@ class LocationsModelRepository implements LocationsRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateLocation({required Map<String, dynamic> data}) async{
+  Future<Either<Failure, bool>> updateLocation(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await locationRemoteDataSource.updateLocation(data: data));
@@ -65,5 +67,4 @@ class LocationsModelRepository implements LocationsRepository {
       return Left(OfflineFailure());
     }
   }
-
 }

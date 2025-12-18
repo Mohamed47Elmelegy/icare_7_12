@@ -10,11 +10,11 @@ class MainBookingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AccountBloc,AccountState>(
-        builder: (ctx,state){
+      body: BlocBuilder<AccountBloc, AccountState>(
+        builder: (ctx, state) {
           // var user = AccountBloc.get(ctx).currentUser;
           // if(user==null)return const Center(child:  CircularProgressIndicator(color: Colors.black45,));
-            return const OrderScreen();
+          return const OrderScreen();
         },
       ),
     );

@@ -10,10 +10,8 @@ class RegisterUserServiceUseCase {
     required this.authServiceRepository,
   });
 
-  Future<Either<Failure, AuthResponse>> call({required Map<String, dynamic> userData}) async {
+  Future<Either<Failure, AuthResponse>> call(
+      {required Map<String, dynamic> userData}) async {
     return await authServiceRepository.registerUser(userData);
   }
 }
-
-
-

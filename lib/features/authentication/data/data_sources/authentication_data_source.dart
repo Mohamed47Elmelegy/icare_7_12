@@ -84,16 +84,19 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
       var request =
           http.MultipartRequest('POST', Uri.parse(ApiUrl.REGISTER_URL));
 
-      debugPrint("send register user data: ${userData}");
+      debugPrint("send register user data: $userData");
       request.fields['device_info'] = jsonEncode(await ApiUrl.secureData());
-      if (userData['user_type'] == null || userData['user_type'] == "")
+      if (userData['user_type'] == null || userData['user_type'] == "") {
         userData['user_type'] = "customer";
+      }
       var headers = ApiUrl.headerAuth;
       if (userData['name'] != null) request.fields['name'] = userData['name'];
-      if (userData['email'] != null)
+      if (userData['email'] != null) {
         request.fields['email'] = userData['email'];
-      if (userData['phone'] != null)
+      }
+      if (userData['phone'] != null) {
         request.fields['phone'] = userData['phone'];
+      }
       request.fields['user_type'] = userData['user_type'] == null
           ? "customer"
           : userData['user_type']
@@ -101,31 +104,47 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
               .trim()
               .replaceAll("null", "customer");
       if (userData['city'] != null) request.fields['city'] = userData['city'];
-      if (userData['governorate'] != null)
+      if (userData['governorate'] != null) {
         request.fields['governorate'] = userData['governorate'];
-      if (userData['address'] != null)
+      }
+      if (userData['address'] != null) {
         request.fields['address'] = userData['address'];
-      if (userData['latitude'] != null)
+      }
+      if (userData['latitude'] != null) {
         request.fields['latitude'] = userData['latitude'].toString();
-      if (userData['longitude'] != null)
+      }
+      if (userData['longitude'] != null) {
         request.fields['longitude'] = userData['longitude'].toString();
-      if (userData['country_code'] != null)
+      }
+      if (userData['country_code'] != null) {
         request.fields['country_code'] = userData['country_code'];
-      if (userData['status'] != null)
+      }
+      if (userData['status'] != null) {
         request.fields['status'] = userData['status'];
-      if (userData['password'] != null)
+      }
+      if (userData['password'] != null) {
         request.fields['password'] = userData['password'];
-      if (userData['is_male'] != null)
+      }
+      if (userData['is_male'] != null) {
         request.fields['is_male'] = userData['is_male'];
+      }
+      if (userData['specialties_id'] != null) {
+        request.fields['specialties_id'] =
+            userData['specialties_id'].toString();
+      }
 
-      if (userData['languages'] != null)
+      if (userData['languages'] != null) {
         request.fields['languages'] = userData['languages'];
-      if (userData['education'] != null)
+      }
+      if (userData['education'] != null) {
         request.fields['education'] = userData['education'];
-      if (userData['publications'] != null)
+      }
+      if (userData['publications'] != null) {
         request.fields['publications'] = userData['publications'];
-      if (userData['courses'] != null)
+      }
+      if (userData['courses'] != null) {
         request.fields['courses'] = userData['courses'];
+      }
 
       if (userData['license'] != null) {
         var file = await http.MultipartFile.fromPath(

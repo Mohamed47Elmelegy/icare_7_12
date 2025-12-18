@@ -8,7 +8,8 @@ class GetAllDoctorsUseCase {
 
   GetAllDoctorsUseCase({required this.doctorRepository});
 
-  Future<Either<Failure, List<DoctorEntity>>> call({required Map<String, dynamic> data}) async {
+  Future<Either<Failure, List<DoctorEntity>>> call(
+      {required Map<String, dynamic> data}) async {
     return await doctorRepository.getAllDoctors(data: data);
   }
 }
@@ -18,7 +19,8 @@ class RateDoctorUseCase {
 
   RateDoctorUseCase({required this.doctorRepository});
 
-  Future<Either<Failure, bool>> call({required Map<String, dynamic> data}) async {
+  Future<Either<Failure, bool>> call(
+      {required Map<String, dynamic> data}) async {
     return await doctorRepository.rateDoctor(data: data);
   }
 }

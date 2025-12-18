@@ -14,28 +14,49 @@ class VerticalSpecialistsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NurseBloc,NurseState>(
-      builder: (ctx,state){
+    return BlocBuilder<NurseBloc, NurseState>(
+      builder: (ctx, state) {
         var bloc = NurseBloc.get(ctx);
-        if(state is FetchNotificationsLoadingState) return const Center(child: CircularProgressIndicator(color: kPrimary,),);
-        if(state is! FetchNotificationsLoadingState && bloc.nursesList.isEmpty) return const EmptyDataWidget();
+        if (state is FetchNotificationsLoadingState) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: kPrimary,
+            ),
+          );
+        }
+        if (state is! FetchNotificationsLoadingState && bloc.nursesList.isEmpty) {
+          return const EmptyDataWidget();
+        }
         var list = bloc.nursesList;
-        if(bloc.searchText!=''){
-          list = bloc.nursesList.where((v)=> v.userData != null && v.userData!.userName.toString().toLowerCase().trim().startsWith(bloc.searchText.toLowerCase())).toList();
+        if (bloc.searchText != '') {
+          list = bloc.nursesList
+              .where((v) =>
+                  v.userData != null &&
+                  v.userData!.userName
+                      .toString()
+                      .toLowerCase()
+                      .trim()
+                      .startsWith(bloc.searchText.toLowerCase()))
+              .toList();
         }
         return Scrollbar(
           child: ListView.separated(
             itemCount: list.length,
-            padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 70.h),
+            padding: EdgeInsets.symmetric(
+                horizontal: AppStyle.paddingFromH.w, vertical: 70.h),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
               var item = list[index];
-              if(item.userData==null)return const SizedBox.shrink();
-              return VerticalSpecialistCard(nurse: item,);
+              if (item.userData == null) return const SizedBox.shrink();
+              return VerticalSpecialistCard(
+                nurse: item,
+              );
             },
-            separatorBuilder: (BuildContext context, int index) => SizedBox(height:  list[index].userData==null ? 0 : 5.w,),
+            separatorBuilder: (BuildContext context, int index) => SizedBox(
+              height: list[index].userData == null ? 0 : 5.w,
+            ),
           ),
         );
       },

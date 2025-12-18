@@ -20,7 +20,8 @@ class RateDoctorButton extends StatelessWidget {
     return BlocListener<DoctorBloc, DoctorState>(
       listener: (ctx, state) {
         if (state is AddDoctorRateSuccessfullyState) {
-          SnackBarBuilder.showFeedBackMessage(context, translate("toast.thanks_for_rating"), Colors.green);
+          SnackBarBuilder.showFeedBackMessage(
+              context, translate("toast.thanks_for_rating"), Colors.green);
           Navigator.of(context).pop();
         }
       },
@@ -29,7 +30,9 @@ class RateDoctorButton extends StatelessWidget {
           var bloc = DoctorBloc.get(ctx);
           var currentDoctor = bloc.currentDoctor;
           if (currentDoctor == null) return const SizedBox.shrink();
-          if (state is RateDataLoadingState) return CircularProgressIndicator(color: DMUtil.getPC());
+          if (state is RateDataLoadingState) {
+            return CircularProgressIndicator(color: DMUtil.getPC());
+          }
           return CustomButton(
             height: 30.w,
             width: 140.w,
@@ -48,7 +51,8 @@ class RateDoctorButton extends StatelessWidget {
                   'comment': bloc.rateTxt.toString()
                 }));
               } else {
-                SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), Colors.red);
+                SnackBarBuilder.showFeedBackMessage(
+                    context, translate("toast.field_empty"), Colors.red);
               }
             },
           );

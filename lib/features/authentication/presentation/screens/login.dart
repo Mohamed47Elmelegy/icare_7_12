@@ -202,10 +202,11 @@ class LoginScreen extends StatelessWidget {
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (ctx, state) {
                           var autBloc = AuthBloc.get(ctx);
-                          if (state is LogInLoadingState)
+                          if (state is LogInLoadingState) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
+                          }
                           return CustomButton(
                             height: 45.h,
                             width: 200.w,

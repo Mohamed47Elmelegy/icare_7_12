@@ -22,8 +22,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   _checkInternet() async {
     if (await Util.isConnected() == false) {
-      if (mounted)
+      if (mounted) {
         Util.pushPageAndRemoveRoutes(const NoConnectionScreen(), context);
+      }
       return;
     }
   }
@@ -54,8 +55,9 @@ class _SplashScreenState extends State<SplashScreen> {
           Util.pushPage(const LoginScreen(), context);
           return;
         }
-        if (mounted)
+        if (mounted) {
           Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
+        }
       }
     });
     super.didChangeDependencies();

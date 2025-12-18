@@ -10,7 +10,8 @@ class UpdateOrderUseCase {
 
   const UpdateOrderUseCase({required this.orderRepository});
 
-  Future<Either<Failure, OrderResponse>> call({required Map<String,dynamic> data,File? fileR}) async {
-    return await orderRepository.updateOrder(data: data,fileR: fileR);
+  Future<Either<Failure, OrderResponse>> call(
+      {required Map<String, dynamic> data, File? fileR}) async {
+    return await orderRepository.updateOrder(data: data, fileR: fileR);
   }
 }

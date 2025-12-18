@@ -20,7 +20,7 @@ class AccommodationDurationWidget extends StatelessWidget {
             width: 60.w,
             child: CustomText(
               text: translate("booking.accommodation_duration"),
-              fontSize: AppStyle.verySmall.sp+1,
+              fontSize: AppStyle.verySmall.sp + 1,
               fontWeight: FontWeight.w600,
               maxLine: 2,
             ),

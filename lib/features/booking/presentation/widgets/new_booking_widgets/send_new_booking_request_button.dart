@@ -15,9 +15,11 @@ class SendNewBookingRequestBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookingBloc,BookingState>(
-      builder: (ctx,state){
-        if(state is SendNewBookingRequestLoadingState)return const CircularProgressIndicator();
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (ctx, state) {
+        if (state is SendNewBookingRequestLoadingState) {
+          return const CircularProgressIndicator();
+        }
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 20.w),
           child: CustomButton(
@@ -31,17 +33,19 @@ class SendNewBookingRequestBtn extends StatelessWidget {
             ),
             color: DMUtil.getPC(),
             circular: 8,
-            onPressed: (){
+            onPressed: () {
               showModalBottomSheet(
                 context: context,
                 useRootNavigator: true,
                 isScrollControlled: true,
                 useSafeArea: true,
                 backgroundColor: Colors.transparent,
-                shape:  const RoundedRectangleBorder(
-                  borderRadius:  BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25)),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25)),
                 ),
-                builder: (ctx){
+                builder: (ctx) {
                   return const AvailableNurses();
                 },
               );

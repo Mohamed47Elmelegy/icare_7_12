@@ -13,11 +13,20 @@ class DoctorsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
-        if(state is FetchNotificationsLoadingState) return Center(child: CircularProgressIndicator(color: DMUtil.getPC2(),),);
-        if(state is! FetchNotificationsLoadingState && bloc.notificationList.isEmpty) return const EmptyDataWidget();
+        if (state is FetchNotificationsLoadingState) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: DMUtil.getPC2(),
+            ),
+          );
+        }
+        if (state is! FetchNotificationsLoadingState &&
+            bloc.notificationList.isEmpty) {
+          return const EmptyDataWidget();
+        }
         return Container(
           alignment: Alignment.topCenter,
           decoration: const BoxDecoration(
@@ -25,15 +34,20 @@ class DoctorsList extends StatelessWidget {
           ),
           child: ListView.separated(
             itemCount: bloc.allUsers.length,
-            padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w-20,vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+                horizontal: AppStyle.paddingFromH.w - 20, vertical: 10.h),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
               var item = bloc.allUsers[index];
-              return DoctorCard(doctor: item,);
+              return DoctorCard(
+                doctor: item,
+              );
             },
-            separatorBuilder: (BuildContext context, int index) => Divider(height: 20.w,),
+            separatorBuilder: (BuildContext context, int index) => Divider(
+              height: 20.w,
+            ),
           ),
         );
       },

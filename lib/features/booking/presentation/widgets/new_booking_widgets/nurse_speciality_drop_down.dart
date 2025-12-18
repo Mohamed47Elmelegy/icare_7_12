@@ -14,9 +14,7 @@ class NurseSpecialityDropDown extends StatelessWidget {
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 10.w),
       decoration: BoxDecoration(
-          color: DMUtil.getWC(),
-          borderRadius: BorderRadius.circular(10)
-      ),
+          color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
       child: DropdownButton<String>(
         value: null,
         icon: const Icon(Icons.arrow_drop_down),

@@ -38,36 +38,33 @@ class UserService extends Equatable {
   final double? distanceKM;
   final double? distanceM;
 
-
-
-  const UserService({
-    this.userId,
-    this.userLogin,
-    this.userName,
-    this.phoneNumber,
-    this.email,
-    this.image,
-    this.area,
-    this.cityID,
-    this.governorate,
-    this.address,
-    this.countryCode,
-    this.status,
-    this.isApproved,
-    this.lat,
-    this.long,
-    this.lastNotificationUnread,
-    this.userType,
-    this.isWomen,
-    this.allergiesList,
-    this.publications,
-    this.medicalConditions,
-    this.nurse,
-    this.doctor,
-    this.emergencyContactsList,
-    this.distanceKM,
-    this.distanceM
-  });
+  const UserService(
+      {this.userId,
+      this.userLogin,
+      this.userName,
+      this.phoneNumber,
+      this.email,
+      this.image,
+      this.area,
+      this.cityID,
+      this.governorate,
+      this.address,
+      this.countryCode,
+      this.status,
+      this.isApproved,
+      this.lat,
+      this.long,
+      this.lastNotificationUnread,
+      this.userType,
+      this.isWomen,
+      this.allergiesList,
+      this.publications,
+      this.medicalConditions,
+      this.nurse,
+      this.doctor,
+      this.emergencyContactsList,
+      this.distanceKM,
+      this.distanceM});
 
   @override
   List<Object?> get props =>
@@ -75,11 +72,15 @@ class UserService extends Equatable {
 
   String viewTypeText() {
     final type = userType.toString().toLowerCase();
-    if (type == "nurse") return "${translate("nurse.nurse")} ".replaceAll("null", "");
-    if (type == "assistant") return "${translate("nurse.assistant")} ".replaceAll("null", "");
-    if (type == "doctor") return "${translate("doctor.doctor")} ".replaceAll("null", "");
+    if (type == "nurse") {
+      return "${translate("nurse.nurse")} ".replaceAll("null", "");
+    }
+    if (type == "assistant") {
+      return "${translate("nurse.assistant")} ".replaceAll("null", "");
+    }
+    if (type == "doctor") {
+      return "${translate("doctor.doctor")} ".replaceAll("null", "");
+    }
     return "";
   }
-
 }
-

@@ -13,7 +13,12 @@ class DotWithTitleNurseProfile extends StatelessWidget {
   final String title;
   final double titleWidth;
   final double editFieldWidth;
-  const DotWithTitleNurseProfile({super.key,required this.title, this.titleWidth = 40,this.editFieldWidth=300,});
+  const DotWithTitleNurseProfile({
+    super.key,
+    required this.title,
+    this.titleWidth = 40,
+    this.editFieldWidth = 300,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +33,23 @@ class DotWithTitleNurseProfile extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: DMUtil.getWC(),
-              border: Border.all(width: 2.w,color: DMUtil.getD2C())
-          ),
+              border: Border.all(width: 2.w, color: DMUtil.getD2C())),
           child: CircleAvatar(
             radius: 1.w,
             backgroundColor: Colors.white,
           ),
         ),
-        const SizedBox(width: 4,),
-        BlocBuilder<AccountBloc,AccountState>(
-          builder: (ctx,state){
+        const SizedBox(
+          width: 4,
+        ),
+        BlocBuilder<AccountBloc, AccountState>(
+          builder: (ctx, state) {
             var bloc = AccountBloc.get(ctx);
             var user = bloc.currentUser;
-            if(user==null)return const SizedBox.shrink();
-            if(bloc.enableUpdate==false || textEditingController.text.trim().isEmpty){
-
-            }
-            if(bloc.enableUpdate){
+            if (user == null) return const SizedBox.shrink();
+            if (bloc.enableUpdate == false ||
+                textEditingController.text.trim().isEmpty) {}
+            if (bloc.enableUpdate) {
               return SizedBox(
                 width: editFieldWidth.w,
                 child: CustomTextFromField(
@@ -58,14 +63,14 @@ class DotWithTitleNurseProfile extends StatelessWidget {
                   cursorColor: DMUtil.getD2C(),
                   radius: 10,
                   smallPadding: true,
-                  onChanged: (val){
-                    bloc.add(UpdateUserPatientDataEvent(
-                      data: {
-                        title.trim():val.toString().trim()
-                      },)
-                      ,);
+                  onChanged: (val) {
+                    bloc.add(
+                      UpdateUserPatientDataEvent(
+                        data: {title.trim(): val.toString().trim()},
+                      ),
+                    );
                   },
-                  onFieldSubmitted: (val){},
+                  onFieldSubmitted: (val) {},
                   textEditingController: textEditingController,
                   validator: () {},
                   prefixIcon: null,
@@ -88,7 +93,6 @@ class DotWithTitleNurseProfile extends StatelessWidget {
             );
           },
         ),
-
       ],
     );
   }

@@ -10,7 +10,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class NurseCard extends StatelessWidget {
   final UserService nurse;
-  const NurseCard({super.key,required this.nurse});
+  const NurseCard({super.key, required this.nurse});
 
   @override
   Widget build(BuildContext context) {
@@ -19,92 +19,102 @@ class NurseCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         InkWell(
-          onTap: (){
+          onTap: () {
             // Util.pushPage(const CompanyProfile(isProfileView: false), context);
           },
-          child: Image.asset(AppImages.nurseImg,height: 70.h,width: 70.w,fit: BoxFit.contain,),
+          child: Image.asset(
+            AppImages.nurseImg,
+            height: 70.h,
+            width: 70.w,
+            fit: BoxFit.contain,
+          ),
         ),
-
         Expanded(
           flex: 2,
           child: InkWell(
-            onTap: (){
-              // Util.pushPage(const CompanyProfile(isProfileView: false), context);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 6.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        text: nurse.userName.toString(),
-                        fontSize: AppStyle.small.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text.rich(
-                                TextSpan(
-                                    text: "${translate("nurse.status")}: ",
-                                    style: TextStyle(
-                                      fontSize: AppStyle.verySmall.sp+1,
-                                      color: DMUtil.getGreen(),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: translate("nurse.busy"),
-                                        style: TextStyle(
-                                          color: DMUtil.getGreen(),
-                                          fontSize: AppStyle.verySmall.sp,
-                                        ),
+              onTap: () {
+                // Util.pushPage(const CompanyProfile(isProfileView: false), context);
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          text: nurse.userName.toString(),
+                          fontSize: AppStyle.small.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text.rich(
+                                  TextSpan(
+                                      text: "${translate("nurse.status")}: ",
+                                      style: TextStyle(
+                                        fontSize: AppStyle.verySmall.sp + 1,
+                                        color: DMUtil.getGreen(),
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ]
+                                      children: [
+                                        TextSpan(
+                                          text: translate("nurse.busy"),
+                                          style: TextStyle(
+                                            color: DMUtil.getGreen(),
+                                            fontSize: AppStyle.verySmall.sp,
+                                          ),
+                                        ),
+                                      ]),
                                 ),
+                                CustomText(
+                                  text: "${translate("nurse.assigned")} lara",
+                                  fontSize: AppStyle.verySmall.sp,
+                                  color: DMUtil.getGreen(),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 10.w,
+                            ),
+                            InkWell(
+                              onTap: () {},
+                              child: Icon(
+                                Icons.more_vert,
+                                size: 16.w,
                               ),
-                              CustomText(
-                                text: "${translate("nurse.assigned")} lara",
-                                fontSize: AppStyle.verySmall.sp,
-                                color: DMUtil.getGreen(),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 10.w,),
-                          InkWell(
-                            onTap: (){},
-                            child: Icon(Icons.more_vert,size: 16.w,),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5,),
-                  SizedBox(
-                    width: 150.w,
-                    child: CustomText(
-                      text: "Dentist Frisange - 3 km",
-                      color: DMUtil.getD2C(),
-                      fontSize: AppStyle.small.sp,
-                      isEllipsis: true,
-                      maxLine: 2,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10,),
-                  const RateWidget(),
-                ],
-              ),
-            )
-          ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      width: 150.w,
+                      child: CustomText(
+                        text: "Dentist Frisange - 3 km",
+                        color: DMUtil.getD2C(),
+                        fontSize: AppStyle.small.sp,
+                        isEllipsis: true,
+                        maxLine: 2,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const RateWidget(),
+                  ],
+                ),
+              )),
         ),
-
       ],
     );
   }

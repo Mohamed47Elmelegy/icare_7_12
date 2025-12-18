@@ -12,12 +12,12 @@ import 'package:flutter_translate/flutter_translate.dart';
 class NurseType extends StatelessWidget {
   final Color? txtColor;
   final Color? selectedColor;
-  const NurseType({super.key,this.txtColor,this.selectedColor});
+  const NurseType({super.key, this.txtColor, this.selectedColor});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc,AuthState>(
-      builder: (ctx,state){
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (ctx, state) {
         var bloc = AuthBloc.get(ctx);
         return Column(
           children: [
@@ -26,11 +26,17 @@ class NurseType extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: true, isDoctor: false)),
+                  onTap: () => bloc.add(const SwitchNurseTypeEvent(
+                      isNurse: true, isDoctor: false)),
                   child: Row(
                     children: [
-                      SelectedCircle(selected: bloc.isNurse && !bloc.isDoctor,selectedColor: selectedColor,),
-                      const SizedBox(width: 10,),
+                      SelectedCircle(
+                        selected: bloc.isNurse && !bloc.isDoctor,
+                        selectedColor: selectedColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       CustomText(
                         text: translate("nurse.nurse"),
                         fontSize: AppStyle.small.sp,
@@ -38,13 +44,18 @@ class NurseType extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 InkWell(
-                  onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: false, isDoctor: false)),
+                  onTap: () => bloc.add(const SwitchNurseTypeEvent(
+                      isNurse: false, isDoctor: false)),
                   child: Row(
                     children: [
-                      SelectedCircle(selected: !bloc.isNurse && !bloc.isDoctor,selectedColor: selectedColor,),
-                      const SizedBox(width: 10,),
+                      SelectedCircle(
+                        selected: !bloc.isNurse && !bloc.isDoctor,
+                        selectedColor: selectedColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       CustomText(
                         text: translate("nurse.assistant"),
                         fontSize: AppStyle.small.sp,
@@ -54,16 +65,22 @@ class NurseType extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Second row: Doctor
             SizedBox(height: 10.h),
             InkWell(
-              onTap: ()=> bloc.add(const SwitchNurseTypeEvent(isNurse: false, isDoctor: true)),
+              onTap: () => bloc.add(
+                  const SwitchNurseTypeEvent(isNurse: false, isDoctor: true)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SelectedCircle(selected: bloc.isDoctor,selectedColor: selectedColor,),
-                  const SizedBox(width: 10,),
+                  SelectedCircle(
+                    selected: bloc.isDoctor,
+                    selectedColor: selectedColor,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   CustomText(
                     text: translate("doctor.doctor"),
                     fontSize: AppStyle.small.sp,

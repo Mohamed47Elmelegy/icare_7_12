@@ -11,27 +11,34 @@ class PricesListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NurseBloc,NurseState>(
-      builder: (ctx,state){
+    return BlocBuilder<NurseBloc, NurseState>(
+      builder: (ctx, state) {
         var bloc = NurseBloc.get(ctx);
         var currentNurse = bloc.currentNurse;
-        if(currentNurse==null || currentNurse.servicesList==null)return const SizedBox.shrink();
+        if (currentNurse == null || currentNurse.servicesList == null) {
+          return const SizedBox.shrink();
+        }
         var list = currentNurse.servicesList;
-        if(list!.isEmpty)return const EmptyDataWidget();
+        if (list!.isEmpty) return const EmptyDataWidget();
         return ListView.separated(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (ctx,index){
+            itemBuilder: (ctx, index) {
               var item = list[index];
               var mainList = AccountBloc.get(context).allServiceList;
-              int ind = mainList.indexWhere((element) => item.id==element.id);
-              if(ind==-1)return const SizedBox.shrink();
-              return ServicePriceRow(serviceID: mainList[ind].id,serviceName: mainList[ind].value.toString(),price: item.value.toString(),);
+              int ind = mainList.indexWhere((element) => item.id == element.id);
+              if (ind == -1) return const SizedBox.shrink();
+              return ServicePriceRow(
+                serviceID: mainList[ind].id,
+                serviceName: mainList[ind].value.toString(),
+                price: item.value.toString(),
+              );
             },
-            separatorBuilder: (ctx,index)=> const SizedBox(height: 10,),
-            itemCount: list.length
-        );
+            separatorBuilder: (ctx, index) => const SizedBox(
+                  height: 10,
+                ),
+            itemCount: list.length);
       },
     );
   }

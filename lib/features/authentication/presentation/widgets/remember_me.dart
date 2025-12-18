@@ -16,8 +16,8 @@ class RememberMeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc,AuthState>(
-      builder: (ctx,state){
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (ctx, state) {
         var bloc = AuthBloc.get(ctx);
         return InkWell(
           onTap: () => bloc.add(const RememberMeEvent()),
@@ -25,13 +25,14 @@ class RememberMeWidget extends StatelessWidget {
             children: [
               Checkbox(
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4))
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(4))),
                 value: bloc.rememberMe,
                 checkColor: DMUtil.getWC(),
                 activeColor: kPrimary,
-                side: BorderSide(color: DMUtil.getDC(),),
-                onChanged: (val)=> bloc.add(const RememberMeEvent()),
+                side: BorderSide(
+                  color: DMUtil.getDC(),
+                ),
+                onChanged: (val) => bloc.add(const RememberMeEvent()),
               ),
               CustomText(
                   text: translate("login.remember_me"),

@@ -13,8 +13,9 @@ class EmptyCartWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-
-        const SizedBox(height: 5,),
+        const SizedBox(
+          height: 5,
+        ),
         CustomText(
           text: translate("order.no_orders"),
           color: kText1,

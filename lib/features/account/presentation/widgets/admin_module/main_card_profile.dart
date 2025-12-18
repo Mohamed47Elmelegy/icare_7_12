@@ -9,7 +9,11 @@ class MainProfileCard extends StatelessWidget {
   final String title;
   final String imgPath;
   final VoidCallback fn;
-  const MainProfileCard({super.key,required this.title,required this.imgPath,required this.fn});
+  const MainProfileCard(
+      {super.key,
+      required this.title,
+      required this.imgPath,
+      required this.fn});
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +33,21 @@ class MainProfileCard extends StatelessWidget {
           children: [
             CustomText(
               text: title,
-              fontSize: AppStyle.small.sp-2,
+              fontSize: AppStyle.small.sp - 2,
               fontWeight: FontWeight.w600,
               color: DMUtil.getPC(),
               alignCenter: true,
               isEllipsis: true,
             ),
-            SizedBox(height: 10.w,),
-            SvgPicture.asset(imgPath,width: 60.w,height: 50.w,fit: BoxFit.contain,)
+            SizedBox(
+              height: 10.w,
+            ),
+            SvgPicture.asset(
+              imgPath,
+              width: 60.w,
+              height: 50.w,
+              fit: BoxFit.contain,
+            )
           ],
         ),
       ),

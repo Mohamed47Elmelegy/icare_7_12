@@ -3,12 +3,15 @@ import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-
 class WebViewScreen extends StatefulWidget {
   final String url;
   final String title;
   final bool openAsScreen;
-  const WebViewScreen({super.key,required this.title,required this.url,this.openAsScreen = true});
+  const WebViewScreen(
+      {super.key,
+      required this.title,
+      required this.url,
+      this.openAsScreen = true});
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -18,8 +21,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   @override
   void initState() {
-    const PlatformWebViewControllerCreationParams params  = PlatformWebViewControllerCreationParams();
-    final WebViewController controller = WebViewController.fromPlatformCreationParams(params );
+    const PlatformWebViewControllerCreationParams params =
+        PlatformWebViewControllerCreationParams();
+    final WebViewController controller =
+        WebViewController.fromPlatformCreationParams(params);
     // #enddocregion platform_features
 
     controller
@@ -68,21 +73,21 @@ Page resource error:
       )
       ..loadRequest(Uri.parse(widget.url));
 
-
-
     _controller = controller;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(!widget.openAsScreen){
+    if (!widget.openAsScreen) {
       return WebViewWidget(controller: _controller);
     }
     return Scaffold(
       appBar: GlobalAppBar(
         title: widget.title,
-        leadingIcon: BackArrowButton(color: DMUtil.getDC(),),
+        leadingIcon: BackArrowButton(
+          color: DMUtil.getDC(),
+        ),
       ),
       body: WebViewWidget(controller: _controller),
     );

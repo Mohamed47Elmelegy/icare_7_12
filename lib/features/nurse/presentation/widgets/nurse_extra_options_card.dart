@@ -13,15 +13,16 @@ class ExtraOptionsNurseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NurseBloc,NurseState>(
-      builder: (ctx,state){
+    return BlocBuilder<NurseBloc, NurseState>(
+      builder: (ctx, state) {
         var bloc = NurseBloc.get(ctx);
         var currentNurse = bloc.currentNurse;
-        if(currentNurse==null || currentNurse.userData==null)return const SizedBox.shrink();
+        if (currentNurse == null || currentNurse.userData == null) {
+          return const SizedBox.shrink();
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -42,8 +43,6 @@ class ExtraOptionsNurseCard extends StatelessWidget {
                 //   color: DMUtil.getPC(),
                 //   onPressed: ()=> Util.call("${bloc.currentNurse?.userData!.phoneNumber}"),
                 // ),
-
-
               ],
             ),
             CustomText(
@@ -55,17 +54,16 @@ class ExtraOptionsNurseCard extends StatelessWidget {
               width: 250.w,
               child: CustomText(
                 text: currentNurse.userData!.address.toString(),
-                fontSize: AppStyle.small.sp-1,
+                fontSize: AppStyle.small.sp - 1,
                 color: DMUtil.getD2C(),
                 isEllipsis: true,
                 maxLine: 2,
               ),
             ),
-
-            const SizedBox(height: 10,),
-
+            const SizedBox(
+              height: 10,
+            ),
             const SmallNurseBoxValues(),
-           
           ],
         );
       },
@@ -73,23 +71,35 @@ class ExtraOptionsNurseCard extends StatelessWidget {
   }
 }
 
-
-
 class SmallNurseBoxValues extends StatelessWidget {
   final bool isRate;
   const SmallNurseBoxValues({super.key, this.isRate = false});
 
   @override
   Widget build(BuildContext context) {
-    double width = isRate?10:5;
-    return  Row(
-      mainAxisAlignment: isRate?MainAxisAlignment.center:MainAxisAlignment.end,
-      children:  [
-        const SmallProfileCards(title: "10K", subTitle: "patients",),
-        SizedBox(width: width.w,),
-        const SmallProfileCards(title: "5 years", subTitle: "experience",),
-        SizedBox(width: width.w,),
-        const SmallProfileCards(title: "5.0", subTitle: "Avg Rating",),
+    double width = isRate ? 10 : 5;
+    return Row(
+      mainAxisAlignment:
+          isRate ? MainAxisAlignment.center : MainAxisAlignment.end,
+      children: [
+        const SmallProfileCards(
+          title: "10K",
+          subTitle: "patients",
+        ),
+        SizedBox(
+          width: width.w,
+        ),
+        const SmallProfileCards(
+          title: "5 years",
+          subTitle: "experience",
+        ),
+        SizedBox(
+          width: width.w,
+        ),
+        const SmallProfileCards(
+          title: "5.0",
+          subTitle: "Avg Rating",
+        ),
       ],
     );
   }

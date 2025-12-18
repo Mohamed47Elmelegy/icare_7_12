@@ -21,15 +21,21 @@ class CityListDropDown extends StatelessWidget {
       decoration: BoxDecoration(
           color: DMUtil.getWC(),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1,color:  DMUtil.getOpacity())
-      ),
-      child: BlocBuilder<LocationsBloc,LocationsState>(
-        builder: (ctx,state){
+          border: Border.all(width: 1, color: DMUtil.getOpacity())),
+      child: BlocBuilder<LocationsBloc, LocationsState>(
+        builder: (ctx, state) {
           var bloc = LocationsBloc.get(ctx);
           var rootBloc = RootBloc.get(context);
-          int gIndex = rootBloc.governoratesList.indexWhere((element) => element.title.trim()==bloc.governorate.toString());
+          int gIndex = rootBloc.governoratesList.indexWhere(
+              (element) => element.title.trim() == bloc.governorate.toString());
           List<CityModel> cities = [];
-          if(gIndex!=-1) cities = rootBloc.citiesList.where((element) =>  rootBloc.governoratesList[gIndex].id == element.governorateID).toList();
+          if (gIndex != -1) {
+            cities = rootBloc.citiesList
+                .where((element) =>
+                    rootBloc.governoratesList[gIndex].id ==
+                    element.governorateID)
+                .toList();
+          }
           return DropdownButton<String>(
             value: null,
             icon: const Icon(Icons.arrow_drop_down),
@@ -46,14 +52,15 @@ class CityListDropDown extends StatelessWidget {
             isExpanded: true,
             style: TextStyle(color: DMUtil.getD2C()),
             underline: const SizedBox(),
-            onChanged: (String? newValue) => bloc.add(UpdateCurrentLocationEvent(city: newValue.toString())),
+            onChanged: (String? newValue) =>
+                bloc.add(UpdateCurrentLocationEvent(city: newValue.toString())),
             items: cities.map<DropdownMenuItem<String>>((CityModel value) {
               return DropdownMenuItem<String>(
-                  value: value.title.toString(),
-                  child: CustomText(
-                    text: value.title,
-                    fontSize: AppStyle.small.sp,
-                  ),
+                value: value.title.toString(),
+                child: CustomText(
+                  text: value.title,
+                  fontSize: AppStyle.small.sp,
+                ),
               );
             }).toList(),
           );

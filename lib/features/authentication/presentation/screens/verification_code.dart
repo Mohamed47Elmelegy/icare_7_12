@@ -86,25 +86,34 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
       registerData['is_male'] = authBloc.isWomen ? "0" : "1";
       if (Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
         registerData['user_type'] = authBloc.isNurse ? "nurse" : "assistant";
-        if (authBloc.license != null)
+        if (authBloc.license != null) {
           registerData['license'] = authBloc.license;
-        if (authBloc.certificate != null)
+        }
+        if (authBloc.certificate != null) {
           registerData['certificate'] = authBloc.certificate;
-        if (authBloc.nurseID != null)
+        }
+        if (authBloc.nurseID != null) {
           registerData['nurseID'] = authBloc.nurseID;
-        if (authBloc.associationCard != null)
+        }
+        if (authBloc.associationCard != null) {
           registerData['associationCard'] = authBloc.associationCard;
-        if (authBloc.relatedJobId != null)
+        }
+        if (authBloc.relatedJobId != null) {
           registerData['related_job_id'] = authBloc.relatedJobId;
+        }
         if (authBloc.avatar != null) registerData['avatar'] = authBloc.avatar;
-        if (authBloc.languageList != null)
+        if (authBloc.languageList != null) {
           registerData['languages'] = jsonEncode(authBloc.languageList);
-        if (authBloc.educationList != null)
+        }
+        if (authBloc.educationList != null) {
           registerData['education'] = jsonEncode(authBloc.educationList);
-        if (authBloc.publicationsList != null)
+        }
+        if (authBloc.publicationsList != null) {
           registerData['publications'] = jsonEncode(authBloc.publicationsList);
-        if (authBloc.coursesList != null)
+        }
+        if (authBloc.coursesList != null) {
           registerData['courses'] = jsonEncode(authBloc.coursesList);
+        }
       } else {
         registerData['user_type'] = Util.getUserType();
       }
@@ -311,14 +320,16 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                           child: BlocBuilder<AuthBloc, AuthState>(
                             builder: (ctx, state) {
                               var bloc = AuthBloc.get(ctx);
-                              if (state is LogInLoadingState)
+                              if (state is LogInLoadingState) {
                                 return CircularProgressIndicator(
                                   backgroundColor: DMUtil.getPC(),
                                 );
-                              if (state is RegisterLoadingState)
+                              }
+                              if (state is RegisterLoadingState) {
                                 return CircularProgressIndicator(
                                   backgroundColor: DMUtil.getPC(),
                                 );
+                              }
                               return InkWell(
                                 onTap: () async {
                                   var otp = textEditingController.text.trim();

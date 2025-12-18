@@ -37,7 +37,7 @@ class _UpdateAppScreenState extends State<UpdateAppScreen> {
         child: Column(
           children: [
             SizedBox(
-              height: AppStyle.paddingFromTop.h+100,
+              height: AppStyle.paddingFromTop.h + 100,
             ),
             // const SwitchLanguageWidget(),
             Card(
@@ -49,7 +49,12 @@ class _UpdateAppScreenState extends State<UpdateAppScreen> {
                   padding: const EdgeInsets.all(10),
                   child: Column(
                     children: [
-                       Image.asset("assets/icons/logo.png",width: 200,fit: BoxFit.contain,height: 150,),
+                      Image.asset(
+                        "assets/icons/logo.png",
+                        width: 200,
+                        fit: BoxFit.contain,
+                        height: 150,
+                      ),
                       // const LogoWidget(isWhite: true,width: 200,fit: BoxFit.contain,height: 150,),
                       CustomText(
                         text: translate("app_bar.new_version_from"),

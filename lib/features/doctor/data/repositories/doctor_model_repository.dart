@@ -16,10 +16,12 @@ class DoctorsModelRepository implements DoctorsRepository {
   });
 
   @override
-  Future<Either<Failure, List<DoctorEntity>>> getAllDoctors({required Map<String, dynamic> data}) async {
+  Future<Either<Failure, List<DoctorEntity>>> getAllDoctors(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await doctorsRemoteDataSourceImpl.getAllDoctors(data: data));
+        return Right(
+            await doctorsRemoteDataSourceImpl.getAllDoctors(data: data));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -29,7 +31,8 @@ class DoctorsModelRepository implements DoctorsRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> rateDoctor({required Map<String, dynamic> data}) async {
+  Future<Either<Failure, bool>> rateDoctor(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
         return Right(await doctorsRemoteDataSourceImpl.rateDoctor(data: data));

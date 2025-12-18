@@ -26,7 +26,7 @@ class CustomText extends StatelessWidget {
     this.isEllipsis = false,
     this.wordSpace = 0,
     this.letterSpace = 0,
-    this.maxLine ,
+    this.maxLine,
   });
 
   @override
@@ -34,17 +34,16 @@ class CustomText extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        decoration: textDecoration ?? TextDecoration.none,
-        color: color ?? DMUtil.getDC(),
-        fontSize: fontSize-1,
-        fontFamily: primaryFontReg,
-        fontWeight: FontWeight.w600,
-        letterSpacing: letterSpace,
-        wordSpacing: wordSpace
-      ),
-      overflow: isEllipsis==true?TextOverflow.ellipsis:null,
+          decoration: textDecoration ?? TextDecoration.none,
+          color: color ?? DMUtil.getDC(),
+          fontSize: fontSize - 1,
+          fontFamily: primaryFontReg,
+          fontWeight: FontWeight.w600,
+          letterSpacing: letterSpace,
+          wordSpacing: wordSpace),
+      overflow: isEllipsis == true ? TextOverflow.ellipsis : null,
       textAlign: alignCenter == true ? TextAlign.center : null,
-      maxLines: maxLine??1,
+      maxLines: maxLine ?? 1,
     );
   }
 }

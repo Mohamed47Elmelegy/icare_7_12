@@ -24,34 +24,33 @@ class NewBookingScreen extends StatelessWidget {
           backGroundColor: DMUtil.getPC2(),
           title: "",
           // leadingIcon: DrawerIcon(ctx: context,color: DMUtil.getWC(),),
-          leadingIcon: BackArrowButton(color: DMUtil.getWC(),),
-          icon: const ProfileAppBarIcons()
-      ),
+          leadingIcon: BackArrowButton(
+            color: DMUtil.getWC(),
+          ),
+          icon: const ProfileAppBarIcons()),
       body: Container(
         alignment: Alignment.center,
         padding: AppStyle.globalPadding,
         decoration: AppStyle.globalDecoration,
         child: const SingleChildScrollView(
-          physics:  BouncingScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           child: Column(
             children: [
               BookingWelcomeSection(),
               NurseSpecialityDropDown(),
               RapidVisitServicesDropDown(),
-
-
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               AccommodationDurationWidget(),
               GenderRow(),
               BookingDateField(),
-
               PatientDocument(),
               PatientDocument(),
-
-
               CaseDescription(),
-
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               SendNewBookingRequestBtn(),
             ],
           ),

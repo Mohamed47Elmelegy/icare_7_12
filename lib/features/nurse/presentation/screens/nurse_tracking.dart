@@ -14,13 +14,18 @@ class NurseTracking extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            const ProfileCardInfo(title: "",img: AppImages.nurseImg,enableBackIcon: true,enableEditIcon: false,viewNurseDetails: true,),
+            const ProfileCardInfo(
+              title: "",
+              img: AppImages.nurseImg,
+              enableBackIcon: true,
+              enableEditIcon: false,
+              viewNurseDetails: true,
+            ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 10),
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppStyle.paddingFromH.w, vertical: 10),
               child: const Column(
-                children: [
-
-                ],
+                children: [],
               ),
             ),
           ],

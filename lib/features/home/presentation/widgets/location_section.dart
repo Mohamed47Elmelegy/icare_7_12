@@ -19,39 +19,50 @@ class LocationSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         InkWell(
-          onTap: ()=> Util.pushPage(const AddNewLocationScreen(), context),
+          onTap: () => Util.pushPage(const AddNewLocationScreen(), context),
           child: CustomText(
             text: translate("location.add_current_location"),
             color: Colors.black,
-            fontSize: AppStyle.average.sp-1,
+            fontSize: AppStyle.average.sp - 1,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 5,),
-        BlocBuilder<LocationsBloc,LocationsState>(
-          builder: (ctx,state) {
-            var bloc = LocationsBloc.get(ctx);
-            return SizedBox(
-              width: double.infinity,
-              child: bloc.currentCheckOutLocation!=null? Text.rich(
-                TextSpan(
-                  text: "${translate("location.delivery_to")} ",
-                  style:  TextStyle(color: kText1,fontWeight: FontWeight.w700,fontFamily: primaryFontReg,fontSize: AppStyle.small.sp),
-                  children: [
-
-                    TextSpan(
-                      text: bloc.currentCheckOutLocation!.address1,
-                      style:  TextStyle(color: kText1,fontWeight: FontWeight.w400,fontFamily: primaryFontReg,fontSize: AppStyle.verySmall.sp,overflow: TextOverflow.ellipsis),
-                    ),
-                  ]
-                ),
-                overflow:TextOverflow.ellipsis,
-              ):const SizedBox.shrink(),
-            );
-          }
+        const SizedBox(
+          height: 5,
         ),
+        BlocBuilder<LocationsBloc, LocationsState>(builder: (ctx, state) {
+          var bloc = LocationsBloc.get(ctx);
+          return SizedBox(
+            width: double.infinity,
+            child: bloc.currentCheckOutLocation != null
+                ? Text.rich(
+                    TextSpan(
+                        text: "${translate("location.delivery_to")} ",
+                        style: TextStyle(
+                            color: kText1,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: primaryFontReg,
+                            fontSize: AppStyle.small.sp),
+                        children: [
+                          TextSpan(
+                            text: bloc.currentCheckOutLocation!.address1,
+                            style: TextStyle(
+                                color: kText1,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: primaryFontReg,
+                                fontSize: AppStyle.verySmall.sp,
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                        ]),
+                    overflow: TextOverflow.ellipsis,
+                  )
+                : const SizedBox.shrink(),
+          );
+        }),
       ],
     );
   }

@@ -10,6 +10,7 @@ import 'package:icare/features/setting/data/models/notifications_model.dart';
 import 'package:icare/features/setting/data/models/privacy_model.dart';
 import 'package:icare/features/setting/data/models/refund_policy_model.dart';
 import 'package:icare/features/setting/data/models/terms_model.dart';
+import 'package:icare/features/setting/data/models/specialty_model.dart';
 
 abstract class SettingsRemoteDataSourceImpl {
   Future<List<AboutUsModel>> getAboutUsData();
@@ -97,6 +98,20 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
       var decodedData = jsonDecode(response.body);
       if (decodedData['status']) {
         return CityModel.listFromJson(jsonEncode(decodedData['data']));
+      }
+      return [];
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<SpecialtyModel>> fetchAllSpecialties() async {
+    var response = await http.get(Uri.parse(ApiUrl.SPECIALTIES));
+    debugPrint("fetchAllSpecialties: ${response.body}");
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+      if (decodedData['status']) {
+        return SpecialtyModel.listFromJson(jsonEncode(decodedData['data']));
       }
       return [];
     } else {

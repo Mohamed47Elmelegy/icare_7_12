@@ -14,14 +14,19 @@ class ProfileImageEdit extends StatelessWidget {
   final bool enableEditIcon;
   final bool enablePadding;
   final double iconSize;
-  const ProfileImageEdit({super.key,required this.enableEditIcon,required this.img,this.enablePadding = true,this.iconSize = 50});
+  const ProfileImageEdit(
+      {super.key,
+      required this.enableEditIcon,
+      required this.img,
+      this.enablePadding = true,
+      this.iconSize = 50});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
-        if(bloc.currentUser==null) {
+        if (bloc.currentUser == null) {
           return CircleAvatar(
             radius: iconSize.w,
             backgroundColor: Colors.transparent,
@@ -31,44 +36,52 @@ class ProfileImageEdit extends StatelessWidget {
           );
         }
         return Padding(
-          padding: EdgeInsets.only(top: enablePadding? 132.w : 0),
+          padding: EdgeInsets.only(top: enablePadding ? 132.w : 0),
           child: Stack(
             alignment: Alignment.bottomRight,
             children: [
-              bloc.enableUpdateImg ?
-              Stack(
-                children: [
-                  bloc.avatar==null? CircleAvatar(
-                    radius: iconSize.w,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage:   AssetImage(img,),
-                  ): CircleAvatar(
-                    radius: iconSize.w,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage:  FileImage(bloc.avatar!) ,
-                  ),
-                ],
-              )
-                  : bloc.currentUser!.image==""? CircleAvatar(
-                radius: iconSize.w,
-                backgroundColor: Colors.transparent,
-                backgroundImage:   AssetImage(img,),
-              ): CircleAvatar(
-                radius: iconSize.w,
-                backgroundColor: kPrimary,
-                backgroundImage:  NetworkImage(bloc.currentUser!.image.toString()) ,
-              ),
-
-              if(enableEditIcon)...[
-                if(bloc.enableUpdateImg)...[
+              bloc.enableUpdateImg
+                  ? Stack(
+                      children: [
+                        bloc.avatar == null
+                            ? CircleAvatar(
+                                radius: iconSize.w,
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: AssetImage(
+                                  img,
+                                ),
+                              )
+                            : CircleAvatar(
+                                radius: iconSize.w,
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: FileImage(bloc.avatar!),
+                              ),
+                      ],
+                    )
+                  : bloc.currentUser!.image == ""
+                      ? CircleAvatar(
+                          radius: iconSize.w,
+                          backgroundColor: Colors.transparent,
+                          backgroundImage: AssetImage(
+                            img,
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: iconSize.w,
+                          backgroundColor: kPrimary,
+                          backgroundImage:
+                              NetworkImage(bloc.currentUser!.image.toString()),
+                        ),
+              if (enableEditIcon) ...[
+                if (bloc.enableUpdateImg) ...[
                   InkWell(
-                    onTap: ()async{
+                    onTap: () async {
                       final res = await getImage(ctx: context);
-                      if(res==null)return;
+                      if (res == null) return;
                       final file = await cropImage(res);
-                      if(file!=null){
+                      if (file != null) {
                         bloc.add(UpdateProfileCurrentDataEvent(userData: {
-                          'avatar':file,
+                          'avatar': file,
                         }));
                       }
                     },
@@ -78,15 +91,14 @@ class ProfileImageEdit extends StatelessWidget {
                       size: 17.w,
                     ),
                   ),
-                ]else...[
+                ] else ...[
                   InkWell(
-                    onTap: ()=> AccountBloc.get(context).add(const EnableUpdateProfileEvent(isImg: true)),
+                    onTap: () => AccountBloc.get(context)
+                        .add(const EnableUpdateProfileEvent(isImg: true)),
                     child: const EditIcon(),
                   )
                 ],
               ],
-
-
             ],
           ),
         );

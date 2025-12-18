@@ -5,7 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 class SvgAssetIconWidget extends StatelessWidget {
   final String iconPath;
   final Color color;
-  const SvgAssetIconWidget({super.key,required this.iconPath,this.color = Colors.white});
+  const SvgAssetIconWidget(
+      {super.key, required this.iconPath, this.color = Colors.white});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,3 @@ class SvgAssetIconWidget extends StatelessWidget {
     );
   }
 }
-
-
-

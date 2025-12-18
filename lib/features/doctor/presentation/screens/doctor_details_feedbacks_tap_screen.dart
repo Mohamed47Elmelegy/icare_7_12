@@ -31,7 +31,9 @@ class DoctorDetailsFeedBacksTapScreen extends StatelessWidget {
           builder: (ctx, state) {
             var bloc = DoctorBloc.get(ctx);
             var doctor = bloc.currentDoctor;
-            if (doctor == null || doctor.reviewList == null) return const SizedBox.shrink();
+            if (doctor == null || doctor.reviewList == null) {
+              return const SizedBox.shrink();
+            }
             return ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               itemCount: doctor.reviewList!.length,
@@ -43,7 +45,8 @@ class DoctorDetailsFeedBacksTapScreen extends StatelessWidget {
                 var item = doctor.reviewList![index];
                 return Card(
                   margin: EdgeInsets.zero,
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(

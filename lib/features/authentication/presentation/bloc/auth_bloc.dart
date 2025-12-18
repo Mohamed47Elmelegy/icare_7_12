@@ -14,6 +14,8 @@ import 'package:icare/features/authentication/domain/use_cases/register_user_use
 import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
+import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
+import 'package:icare/features/setting/data/models/specialty_model.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool showPassword = false;
@@ -79,19 +81,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await socialLogin(event, emit);
     });
 
-    on<SwitchNurseTypeEvent>((event, emit) {
-      switchNurseType(event, emit);
+    on<SwitchNurseTypeEvent>((event, emit) async {
+      await switchNurseType(event, emit);
     });
 
     on<UpdateMarkersEvent>((event, emit) {
       updateMarkers(event, emit);
     });
+
+    on<UpdateSpecialtyEvent>((event, emit) {
+      updateSpecialty(event, emit);
+    });
   }
 
   String currentCode = "";
+  String? name;
+  String? email;
+  String? phone;
+  String? password;
+  String? countryCode;
+
   updatePhoneCountry(UpdatePhoneCountryEvent event, emit) {
     emit(const UpdateCustomerTypeLoadingState());
     currentCode = event.code;
+    countryCode = event.code;
     emit(const UpdateCustomerTypeSuccessfullyState());
   }
 
@@ -117,8 +130,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event.avatar != null) avatar = event.avatar;
     if (event.languageList != null) languageList = event.languageList;
     if (event.educationList != null) educationList = event.educationList;
-    if (event.publicationsList != null)
+    if (event.publicationsList != null) {
       publicationsList = event.publicationsList;
+    }
     if (event.coursesList != null) coursesList = event.coursesList;
     emit(const UpdateCustomerTypeSuccessfullyState());
   }
@@ -132,7 +146,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         publicationsList != null &&
         publicationsList!.isNotEmpty &&
         coursesList != null &&
-        coursesList!.isNotEmpty) return true;
+        coursesList!.isNotEmpty) {
+      return true;
+    }
     return false;
   }
 
@@ -175,6 +191,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const RegisterLoadingState());
     try {
       var res = await registerUserServiceUseCase(userData: event.user);
+      if (emit.isDone) return;
       res.fold((l) {
         resMsg = l.toString();
         emit(RegisterFailedState(
@@ -193,8 +210,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       });
     } catch (e) {
       debugPrint("registerError: $e");
-      emit(RegisterFailedState(
-          response: AuthResponse(msg: resMsg, isFailed: true)));
+      if (!emit.isDone) {
+        emit(RegisterFailedState(
+            response: AuthResponse(msg: resMsg, isFailed: true)));
+      }
     }
   }
 
@@ -202,6 +221,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const LogInLoadingState());
     try {
       var res = await loginUserServiceUseCase(data: event.user);
+      if (emit.isDone) return;
       res.fold((l) {
         resMsg = l.toString();
       }, (data) {
@@ -216,8 +236,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       });
     } catch (e) {
       debugPrint("logInError: $e");
-      emit(LogInFailedState(
-          response: AuthResponse(msg: resMsg, isFailed: true)));
+      if (!emit.isDone) {
+        emit(LogInFailedState(
+            response: AuthResponse(msg: resMsg, isFailed: true)));
+      }
     }
   }
 
@@ -225,6 +247,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const SocialLoadingState());
     try {
       var res = await socialUserServiceUseCase(data: event.user);
+      if (emit.isDone) return;
       res.fold((l) {
         resMsg = l.toString();
       }, (data) {
@@ -239,8 +262,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       });
     } catch (e) {
       debugPrint("socialLogin: $e");
-      emit(SocialFailedState(
-          response: AuthResponse(msg: resMsg, isFailed: true)));
+      if (!emit.isDone) {
+        emit(SocialFailedState(
+            response: AuthResponse(msg: resMsg, isFailed: true)));
+      }
     }
   }
 
@@ -249,6 +274,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     String lang = Util.getLang();
     String type = Util.getUserType();
     await SharedPref().clearPreferences();
+    if (emit.isDone) return;
     await SharedPref().setPreferencesString(Constants.userLang, lang);
     await SharedPref().setPreferencesString(Constants.userType, type);
     emit(const LogOutState());
@@ -287,10 +313,49 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// nurse section
   bool isNurse = true;
   bool isDoctor = false;
-  switchNurseType(SwitchNurseTypeEvent event, emit) {
+  switchNurseType(SwitchNurseTypeEvent event, emit) async {
     emit(const EnableAuthButtonLoadingState());
     isNurse = event.isNurse;
     isDoctor = event.isDoctor ?? false;
+    if (isDoctor && (specialtyList == null || specialtyList!.isEmpty)) {
+      try {
+        specialtyList = await SettingsRemoteDataSource.fetchAllSpecialties();
+        // Convert to simple map list for dropdown
+        specialtiesList = specialtyList
+            ?.map((s) => {
+                  'id': s.id,
+                  'name': s.title, // SpecialtyModel uses 'title' not 'name'
+                })
+            .toList();
+      } catch (e) {
+        debugPrint("Error fetching specialties: $e");
+      }
+    }
+    if (emit.isDone) return;
+    emit(const EnableAuthButtonState());
+  }
+
+  List<SpecialtyModel>? specialtyList;
+  SpecialtyModel? selectedSpecialty;
+  int? selectedSpecialtyId;
+  List<Map<String, dynamic>>? specialtiesList;
+
+  updateSpecialty(UpdateSpecialtyEvent event, emit) {
+    emit(const EnableAuthButtonLoadingState());
+    selectedSpecialtyId = event.specialtyId;
+
+    // Use provided specialty or find it in the list
+    if (event.specialty != null) {
+      selectedSpecialty = event.specialty;
+    } else if (specialtyList != null && event.specialtyId != null) {
+      try {
+        selectedSpecialty = specialtyList!.firstWhere(
+          (s) => s.id == event.specialtyId,
+        );
+      } catch (e) {
+        debugPrint("Specialty not found: $e");
+      }
+    }
     emit(const EnableAuthButtonState());
   }
 

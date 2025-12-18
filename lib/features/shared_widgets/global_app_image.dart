@@ -12,13 +12,20 @@ class ImageWidget extends StatelessWidget {
   final String imgUrl;
   final String? errorImg;
   final double? radius;
-  const ImageWidget({super.key,this.width=double.infinity,this.height=130,this.fit=BoxFit.fill,required this.imgUrl,this.errorImg,this.radius});
+  const ImageWidget(
+      {super.key,
+      this.width = double.infinity,
+      this.height = 130,
+      this.fit = BoxFit.fill,
+      required this.imgUrl,
+      this.errorImg,
+      this.radius});
 
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imgUrl,
-      imageBuilder: (ctx,imgProvider){
+      imageBuilder: (ctx, imgProvider) {
         return Container(
           height: height.w,
           width: width.w,
@@ -34,7 +41,9 @@ class ImageWidget extends StatelessWidget {
       height: height.h,
       width: width.h,
       fit: fit,
-      placeholder: (context, url) => LoadingWidget(height: height.h,),
+      placeholder: (context, url) => LoadingWidget(
+        height: height.h,
+      ),
       errorWidget: (context, url, error) {
         final fallbackImage = errorImg ?? AppImages.logo;
         // Check if the image is SVG

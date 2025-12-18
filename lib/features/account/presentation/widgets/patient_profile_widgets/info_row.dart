@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class InfoRow extends StatelessWidget {
   final IconData iconData;
   final String value;
-  const InfoRow({super.key,required this.iconData,required this.value});
+  const InfoRow({super.key, required this.iconData, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,9 @@ class InfoRow extends StatelessWidget {
             size: 18.w,
             color: DMUtil.getD2C(),
           ),
-          const SizedBox(width: 5,),
-
+          const SizedBox(
+            width: 5,
+          ),
           SizedBox(
             width: 250.w,
             child: CustomText(

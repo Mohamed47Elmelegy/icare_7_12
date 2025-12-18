@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/location/location_util.dart';
@@ -15,6 +14,8 @@ import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctor_event.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_event.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
@@ -42,6 +43,8 @@ class Util {
       RootBloc.get(context).add(const FetchSettingEvent());
       NurseBloc.get(context).add(const FetchAllNurseEvent());
       NurseBloc.get(context).add(const FetchAllNurseEvent(page: 2));
+      DoctorBloc.get(context).add(const FetchAllDoctorEvent());
+      DoctorBloc.get(context).add(const FetchAllDoctorEvent(page: 2));
     }
     CategoriesBloc.get(context).add(const FetchAllPublicationsEvent());
     CategoriesBloc.get(context).add(const FetchAllAllergiesEvent());
@@ -49,7 +52,7 @@ class Util {
     AccountBloc.get(context)
       ..add(const FetchProfileDataEvent())
       ..add(const FetchAllNotificationsEvent())
-      ..getAllServiceList();
+      ..add(const FetchAllServicesEvent());
     await updateLocationAndToken(context);
   }
 
@@ -57,9 +60,10 @@ class Util {
     try {
       bool locationEnabled = await Permission.location.serviceStatus.isEnabled;
       Position? position;
-      if (locationEnabled)
+      if (locationEnabled) {
         position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
+      }
       var user = {
         'profile': '',
         'remember_token': await Util.setToken(),
@@ -304,6 +308,11 @@ class Util {
   static bool isAssistant() {
     return getUserType().toString().trim().toLowerCase() ==
         UserEnum.ASSISTANT.name.toString().toLowerCase();
+  }
+
+  static bool isDoctor() {
+    return getUserType().toString().trim().toLowerCase() ==
+        UserEnum.DOCTOR.name.toString().toLowerCase();
   }
 
   static String getUserType() {

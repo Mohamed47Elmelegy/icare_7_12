@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:icare/core/strings/enum/user_enum.dart';
+
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
@@ -64,10 +64,11 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
           child: BlocBuilder<AuthBloc, AuthState>(
             builder: (ctx, state) {
               var bloc = AuthBloc.get(ctx);
-              if (state is LogInLoadingState || state is RegisterLoadingState)
+              if (state is LogInLoadingState || state is RegisterLoadingState) {
                 return CircularProgressIndicator(
                   backgroundColor: DMUtil.getPC(),
                 );
+              }
               return CustomButton(
                 height: 45.h,
                 width: 300.w,
@@ -123,33 +124,51 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                   registerData['is_male'] = bloc.isWomen ? "0" : "1";
 
                   // Add nurse-specific data
-                  if (Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
+                  // Add nurse-specific data
+                  // Since this screen is only for professionals (Nurse, Doctor, Assistant),
+                  // we rely on the bloc state set in the previous screen.
+                  if (bloc.isDoctor) {
+                    registerData['user_type'] = "doctor";
+                    if (bloc.nurseID != null) {
+                      registerData['nurseID'] = bloc.nurseID;
+                    }
+                    if (bloc.selectedSpecialtyId != null) {
+                      registerData['specialties_id'] = bloc.selectedSpecialtyId;
+                    }
+                  } else {
                     registerData['user_type'] =
                         bloc.isNurse ? "nurse" : "assistant";
-                    if (bloc.license != null)
-                      registerData['license'] = bloc.license;
-                    if (bloc.certificate != null)
-                      registerData['certificate'] = bloc.certificate;
-                    if (bloc.nurseID != null)
+                    if (bloc.nurseID != null) {
                       registerData['nurseID'] = bloc.nurseID;
-                    if (bloc.associationCard != null)
-                      registerData['associationCard'] = bloc.associationCard;
-                    if (bloc.relatedJobId != null)
-                      registerData['related_job_id'] = bloc.relatedJobId;
-                    if (bloc.avatar != null)
-                      registerData['avatar'] = bloc.avatar;
-                    if (bloc.languageList != null)
-                      registerData['languages'] = jsonEncode(bloc.languageList);
-                    if (bloc.educationList != null)
-                      registerData['education'] =
-                          jsonEncode(bloc.educationList);
-                    if (bloc.publicationsList != null)
-                      registerData['publications'] =
-                          jsonEncode(bloc.publicationsList);
-                    if (bloc.coursesList != null)
-                      registerData['courses'] = jsonEncode(bloc.coursesList);
-                  } else {
-                    registerData['user_type'] = Util.getUserType();
+                    }
+                  }
+
+                  if (bloc.license != null) {
+                    registerData['license'] = bloc.license;
+                  }
+                  if (bloc.certificate != null) {
+                    registerData['certificate'] = bloc.certificate;
+                  }
+
+                  if (bloc.associationCard != null) {
+                    registerData['associationCard'] = bloc.associationCard;
+                  }
+                  if (bloc.relatedJobId != null) {
+                    registerData['related_job_id'] = bloc.relatedJobId;
+                  }
+                  if (bloc.avatar != null) registerData['avatar'] = bloc.avatar;
+                  if (bloc.languageList != null) {
+                    registerData['languages'] = jsonEncode(bloc.languageList);
+                  }
+                  if (bloc.educationList != null) {
+                    registerData['education'] = jsonEncode(bloc.educationList);
+                  }
+                  if (bloc.publicationsList != null) {
+                    registerData['publications'] =
+                        jsonEncode(bloc.publicationsList);
+                  }
+                  if (bloc.coursesList != null) {
+                    registerData['courses'] = jsonEncode(bloc.coursesList);
                   }
 
                   // Call register event

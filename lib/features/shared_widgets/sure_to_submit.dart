@@ -1,4 +1,3 @@
-
 import 'package:icare/core/styles/my_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,21 +11,19 @@ class SureToSubmitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       height: 150.h,
       width: 300.w,
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15)
-      ),
+          color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           CustomText(
-              text: translate("toast.sure_to_submit"),
-              color: Colors.black,
-              fontSize: AppStyle.average.sp,
-              fontFamily: primaryFontBold,
+            text: translate("toast.sure_to_submit"),
+            color: Colors.black,
+            fontSize: AppStyle.average.sp,
+            fontFamily: primaryFontBold,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -41,7 +38,7 @@ class SureToSubmitWidget extends StatelessWidget {
                       fontFamily: primaryFontBold,
                       fontSize: AppStyle.average.sp),
                   color: Colors.black,
-                  onPressed: ()=> Navigator.pop(context,true)),
+                  onPressed: () => Navigator.pop(context, true)),
               CustomButton(
                   height: 30.h,
                   width: 100.w,
@@ -54,8 +51,7 @@ class SureToSubmitWidget extends StatelessWidget {
                   color: Colors.white,
                   sideWidth: 1,
                   sideColor: Colors.black45,
-                  onPressed: ()=>Navigator.pop(context,false)),
-
+                  onPressed: () => Navigator.pop(context, false)),
             ],
           ),
         ],

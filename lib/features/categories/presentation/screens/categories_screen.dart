@@ -13,21 +13,15 @@ class CategoriesScreen extends StatelessWidget {
     return SizedBox(
       child: Column(
         children: [
-
-          GlobalAppBar(title: translate("app_bar.categories"),),
-
-          Padding(padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 10),child: const SearchWidget()),
-
-
-
-
-
-
-
+          GlobalAppBar(
+            title: translate("app_bar.categories"),
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppStyle.paddingFromH.w, vertical: 10),
+              child: const SearchWidget()),
         ],
       ),
     );
   }
 }
-
-

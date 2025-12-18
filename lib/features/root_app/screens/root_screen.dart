@@ -43,7 +43,8 @@ class RootScreen extends StatelessWidget {
                       child: Stack(
                         children: [
                           if (Util.isAssistant() == true ||
-                              Util.isNurse() == true) ...[
+                              Util.isNurse() == true ||
+                              Util.isDoctor() == true) ...[
                             if (index == 1) ...[
                               const HomeScreen()
                             ] else if (index == 2) ...[

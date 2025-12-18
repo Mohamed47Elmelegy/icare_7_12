@@ -11,13 +11,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SmallTapItem extends StatelessWidget {
   final String title;
   final bool enable;
-  const SmallTapItem({super.key,required this.title,required this.enable});
+  const SmallTapItem({super.key, required this.title, required this.enable});
 
   @override
   Widget build(BuildContext context) {
     BorderRadius borderRadius = BorderRadius.circular(20);
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         // var user = AccountBloc.get(ctx).currentUser;
         // if(user==null)return const SizedBox.shrink();
         return Tab(
@@ -27,15 +27,16 @@ class SmallTapItem extends StatelessWidget {
             alignment: Alignment.center,
             height: 35.h,
             padding: EdgeInsets.symmetric(vertical: 3.w),
-            margin: const EdgeInsets.symmetric(horizontal: 5,),
-            decoration: BoxDecoration(
-              color: enable?DMUtil.getRED():DMUtil.getWC(),
-              borderRadius: borderRadius,
-              border: Border.all(color: DMUtil.getRED())
+            margin: const EdgeInsets.symmetric(
+              horizontal: 5,
             ),
+            decoration: BoxDecoration(
+                color: enable ? DMUtil.getRED() : DMUtil.getWC(),
+                borderRadius: borderRadius,
+                border: Border.all(color: DMUtil.getRED())),
             child: CustomText(
               text: title,
-              color: enable?Colors.white:DMUtil.getDC(),
+              color: enable ? Colors.white : DMUtil.getDC(),
               fontSize: AppStyle.average.sp,
               fontFamily: primaryFontSemiBold,
               alignCenter: true,
@@ -44,6 +45,5 @@ class SmallTapItem extends StatelessWidget {
         );
       },
     );
-
   }
 }

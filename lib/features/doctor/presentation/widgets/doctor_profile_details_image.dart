@@ -12,12 +12,16 @@ class DoctorProfileDetailsImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: isTopPadding ? 132.w : 0, bottom: isTopPadding == false ? 230.w : 0),
+      padding: EdgeInsets.only(
+          top: isTopPadding ? 132.w : 0,
+          bottom: isTopPadding == false ? 230.w : 0),
       child: BlocBuilder<DoctorBloc, DoctorState>(
         builder: (ctx, state) {
           var bloc = DoctorBloc.get(ctx);
           var currentDoctor = bloc.currentDoctor;
-          if (currentDoctor == null || currentDoctor.userData == null) return const SizedBox.shrink();
+          if (currentDoctor == null || currentDoctor.userData == null) {
+            return const SizedBox.shrink();
+          }
           String img = currentDoctor.userData!.image.toString();
           if (img.trim() == "") {
             return CircleAvatar(

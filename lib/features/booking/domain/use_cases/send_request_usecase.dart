@@ -8,7 +8,8 @@ class SendRequestUseCase {
 
   const SendRequestUseCase({required this.orderRepository});
 
-  Future<Either<Failure, OrderResponse>> call({required Map<String,dynamic> data}) async {
+  Future<Either<Failure, OrderResponse>> call(
+      {required Map<String, dynamic> data}) async {
     return await orderRepository.sendRequest(data: data);
   }
 }

@@ -19,10 +19,9 @@ class PatientKindListDropDown extends StatelessWidget {
       decoration: BoxDecoration(
           color: DMUtil.getWC(),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1,color:  DMUtil.getOpacity())
-      ),
-      child: BlocBuilder<AuthBloc,AuthState>(
-        builder: (ctx,state){
+          border: Border.all(width: 1, color: DMUtil.getOpacity())),
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (ctx, state) {
           var bloc = AuthBloc.get(ctx);
           return DropdownButton<String>(
             value: null,
@@ -40,7 +39,8 @@ class PatientKindListDropDown extends StatelessWidget {
             isExpanded: true,
             style: TextStyle(color: DMUtil.getD2C()),
             underline: const SizedBox(),
-            onChanged: (String? newValue) => bloc.add(UpdateCustomerTypeEvent(type: newValue.toString())),
+            onChanged: (String? newValue) =>
+                bloc.add(UpdateCustomerTypeEvent(type: newValue.toString())),
             items: <String>[
               translate("icare.relative_patient"),
               translate("icare.patient"),

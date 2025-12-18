@@ -19,7 +19,7 @@ import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 
 class MapScreen extends StatefulWidget {
   final String title;
-  final String? longitude, latitude,userID;
+  final String? longitude, latitude, userID;
   final bool isSet;
   final String? userImg;
   const MapScreen({
@@ -47,7 +47,7 @@ class MapScreenState extends State<MapScreen> {
   String latitude = '', longitude = '';
   String selectedAddress = "";
 
-  Timer? timer ;
+  Timer? timer;
   @override
   void initState() {
     super.initState();
@@ -55,16 +55,17 @@ class MapScreenState extends State<MapScreen> {
     Timer(const Duration(seconds: 5), () {
       _setUserCurrentLocation();
     });
-    timer  = Timer.periodic(const Duration(seconds: 20), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 20), (timer) {
       updateNurseLocation();
     });
   }
 
-
-  updateNurseLocation()async{
-    if(widget.userID==null)return;
-    var trackingNurse = await UserServiceRemoteDataSource.getUserFullData(widget.userID.toString());
-    _animateToUserLocation(trackingNurse.lat.toString(), trackingNurse.long.toString());
+  updateNurseLocation() async {
+    if (widget.userID == null) return;
+    var trackingNurse = await UserServiceRemoteDataSource.getUserFullData(
+        widget.userID.toString());
+    _animateToUserLocation(
+        trackingNurse.lat.toString(), trackingNurse.long.toString());
   }
 
   @override
@@ -79,39 +80,39 @@ class MapScreenState extends State<MapScreen> {
         appBar: AppBar(
           backgroundColor: DMUtil.getWC(),
           elevation: 0,
-          toolbarHeight: AppStyle.appBarHeight.w-10,
-          iconTheme: IconThemeData(color: DMUtil.getDC(),size: 20.w),
+          toolbarHeight: AppStyle.appBarHeight.w - 10,
+          iconTheme: IconThemeData(color: DMUtil.getDC(), size: 20.w),
           centerTitle: true,
           title: CustomText(
-            text: widget.title,
-            fontSize: AppStyle.average.sp,
-            color: DMUtil.getDC()
-          ),
-
+              text: widget.title,
+              fontSize: AppStyle.average.sp,
+              color: DMUtil.getDC()),
         ),
         body: Stack(
           children: [
-             GoogleMap(
-                    initialCameraPosition: CameraPosition(target: lastLocation ?? const LatLng(21.4504394, 38.8815082), zoom: 14),
-                    onMapCreated: onMapCreated,
-                    onCameraMove: _onCameraMoved,
-                    onTap: _handleTap,
-                    myLocationEnabled: true,
-                    mapType: MapType.normal,
-                    tiltGesturesEnabled: true,
-                    compassEnabled: true,
-                    scrollGesturesEnabled: true,
-                    zoomGesturesEnabled: true,
-                    markers: Set<Marker>.of(markers.values),
-                  ),
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                  target: lastLocation ?? const LatLng(21.4504394, 38.8815082),
+                  zoom: 14),
+              onMapCreated: onMapCreated,
+              onCameraMove: _onCameraMoved,
+              onTap: _handleTap,
+              myLocationEnabled: true,
+              mapType: MapType.normal,
+              tiltGesturesEnabled: true,
+              compassEnabled: true,
+              scrollGesturesEnabled: true,
+              zoomGesturesEnabled: true,
+              markers: Set<Marker>.of(markers.values),
+            ),
 
-
-              if(widget.isSet==false)
+            if (widget.isSet == false)
               Align(
                 alignment: Alignment.topCenter,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 10),
+                  margin: EdgeInsets.symmetric(
+                      horizontal: AppStyle.paddingFromH.w, vertical: 10),
                   height: 60.h,
                   decoration: BoxDecoration(
                     color: DMUtil.getWC(),
@@ -119,14 +120,22 @@ class MapScreenState extends State<MapScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.location_on_outlined,size: AppStyle.large.w,color: DMUtil.getD2C().withOpacity(0.7),),
-                            const SizedBox(width: 5,),
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: AppStyle.large.w,
+                              color: DMUtil.getD2C().withOpacity(0.7),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
                             SizedBox(
                               width: 275.w,
                               child: CustomText(
@@ -140,42 +149,57 @@ class MapScreenState extends State<MapScreen> {
                           ],
                         ),
                       ),
-                      const Divider(height: 3,),
-                      const SizedBox(height: 5,),
+                      const Divider(
+                        height: 3,
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
                     ],
                   ),
                 ),
               ),
 
             // if(widget.isSet==false)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: CustomButton(
-                      height: 45.h,
-                      width: 250.w,
-                      color: DMUtil.getPC(),
-                      circular: 6,
-                      onPressed: () async{
-                       if (lastLocation == null) return SnackBarBuilder.showFeedBackMessage(context, translate("toast.select_location"), Colors.red);
-                       final data  = await LocationUtil.getAndSaveLocationDetails(lastLocation!);
-                       if(mounted){
-                        Navigator.pop(context, LocationMapEntity(lat: lastLocation!.latitude,long: lastLocation!.longitude,city: data.locality.toString(),country: data.country.toString(),
-                           address: "${data.country}-${data.subLocality}-${data.street}-${data.administrativeArea}".replaceAll("null", ""),
-                           postalCode: data.postalCode.toString(),street: data.street.toString()
-                        ));
-                       }
-                      },
-                      widget: CustomText(
-                        text: translate("map.sure_location"),
-                        fontSize: AppStyle.average.sp  ,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: CustomButton(
+                  height: 45.h,
+                  width: 250.w,
+                  color: DMUtil.getPC(),
+                  circular: 6,
+                  onPressed: () async {
+                    if (lastLocation == null)
+                      return SnackBarBuilder.showFeedBackMessage(context,
+                          translate("toast.select_location"), Colors.red);
+                    final data = await LocationUtil.getAndSaveLocationDetails(
+                        lastLocation!);
+                    if (mounted) {
+                      Navigator.pop(
+                          context,
+                          LocationMapEntity(
+                              lat: lastLocation!.latitude,
+                              long: lastLocation!.longitude,
+                              city: data.locality.toString(),
+                              country: data.country.toString(),
+                              address:
+                                  "${data.country}-${data.subLocality}-${data.street}-${data.administrativeArea}"
+                                      .replaceAll("null", ""),
+                              postalCode: data.postalCode.toString(),
+                              street: data.street.toString()));
+                    }
+                  },
+                  widget: CustomText(
+                    text: translate("map.sure_location"),
+                    fontSize: AppStyle.average.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),
+            ),
           ],
         ));
   }
@@ -211,28 +235,29 @@ class MapScreenState extends State<MapScreen> {
     }
   }
 
-  _animateToUserLocation(String lat,String long)async{
+  _animateToUserLocation(String lat, String long) async {
     var markerIdVal = long.toString();
     final MarkerId markerId = MarkerId(markerIdVal);
     Marker marker = Marker(
-        markerId: markerId,
-        position: LatLng(double.parse(lat.toString()),
-            double.parse(long.toString())),
-        infoWindow: InfoWindow(
-          title: widget.title.toString(),
-        ),
-        icon: BitmapDescriptor.fromBytes(widget.userImg!=null
-        ? await LocationUtil.markerNetworkIcon(widget.userImg)
-        : await LocationUtil.markerIcon()),
+      markerId: markerId,
+      position:
+          LatLng(double.parse(lat.toString()), double.parse(long.toString())),
+      infoWindow: InfoWindow(
+        title: widget.title.toString(),
+      ),
+      icon: BitmapDescriptor.fromBytes(widget.userImg != null
+          ? await LocationUtil.markerNetworkIcon(widget.userImg)
+          : await LocationUtil.markerIcon()),
     );
-    if(mounted) {
+    if (mounted) {
       setState(() {
         markers.clear();
         markers[markerId] = marker;
       });
-      lastLocation = LatLng(double.parse(lat.toString()),
-          double.parse(long.toString()));
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(lastLocation!, 14));
+      lastLocation =
+          LatLng(double.parse(lat.toString()), double.parse(long.toString()));
+      mapController
+          .animateCamera(CameraUpdate.newLatLngZoom(lastLocation!, 14));
     }
   }
 
@@ -254,13 +279,22 @@ class MapScreenState extends State<MapScreen> {
       });
       LatLng latLng = LatLng(point.latitude, point.longitude);
       if (widget.title == translate("store.use_your_location")) {
-        _checkIFUserLocation(await LocationUtil.getAndSaveLocationDetails(latLng), latLng);
+        _checkIFUserLocation(
+            await LocationUtil.getAndSaveLocationDetails(latLng), latLng);
       } else {
-        final data  = await LocationUtil.getAndSaveLocationDetails(latLng);
-        Navigator.pop(context, LocationMapEntity(lat: point.latitude,long: point.longitude,country: data.country.toString(),
-            city: data.locality.toString(),address: "${data.country}-${data.subLocality}-${data.street}-${data.administrativeArea}".replaceAll("null", ""),
-          postalCode: data.postalCode.toString(),street: data.street.toString()
-        ));
+        final data = await LocationUtil.getAndSaveLocationDetails(latLng);
+        Navigator.pop(
+            context,
+            LocationMapEntity(
+                lat: point.latitude,
+                long: point.longitude,
+                country: data.country.toString(),
+                city: data.locality.toString(),
+                address:
+                    "${data.country}-${data.subLocality}-${data.street}-${data.administrativeArea}"
+                        .replaceAll("null", ""),
+                postalCode: data.postalCode.toString(),
+                street: data.street.toString()));
       }
     } catch (e) {
       debugPrint("_handleTap: $e");
@@ -272,7 +306,7 @@ class MapScreenState extends State<MapScreen> {
       markers.clear();
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      if(mounted){
+      if (mounted) {
         setState(() {
           lastLocation = LatLng(position.latitude, position.longitude);
         });
@@ -283,10 +317,13 @@ class MapScreenState extends State<MapScreen> {
       lastLocation = LatLng(double.parse(latitude.toString()),
           double.parse(longitude.toString()));
     }
-    if(mounted){
+    if (mounted) {
       Timer(const Duration(milliseconds: 100), () async {
-        mapController.animateCamera(CameraUpdate.newLatLngZoom(lastLocation!, 14));
-        _checkIFUserLocation(await LocationUtil.getAndSaveLocationDetails(lastLocation!), lastLocation!);
+        mapController
+            .animateCamera(CameraUpdate.newLatLngZoom(lastLocation!, 14));
+        _checkIFUserLocation(
+            await LocationUtil.getAndSaveLocationDetails(lastLocation!),
+            lastLocation!);
       });
     }
   }
@@ -294,22 +331,27 @@ class MapScreenState extends State<MapScreen> {
   _checkIFUserLocation(Placemark data, LatLng latLng) {
     try {
       if (widget.title == translate("store.use_your_location")) {
-        SharedPref().setPreferenceDouble(Constants.userLatitude, latLng.latitude);
-        SharedPref().setPreferenceDouble(Constants.userLongitude, latLng.longitude);
+        SharedPref()
+            .setPreferenceDouble(Constants.userLatitude, latLng.latitude);
+        SharedPref()
+            .setPreferenceDouble(Constants.userLongitude, latLng.longitude);
       }
-      if(mounted) {
+      if (mounted) {
         setState(() {
-          selectedAddress = "${data.country}-${data.subLocality}-${data.street}-${data.administrativeArea}".replaceAll("null", "");
+          selectedAddress =
+              "${data.country}-${data.subLocality}-${data.street}-${data.administrativeArea}"
+                  .replaceAll("null", "");
         });
       }
-      SharedPref().setPreferencesString(Constants.userLocationDetails, selectedAddress);
+      SharedPref()
+          .setPreferencesString(Constants.userLocationDetails, selectedAddress);
     } catch (e) {
       debugPrint("_checkIFUserLocation $e");
     }
   }
 }
 
-class LocationMapEntity{
+class LocationMapEntity {
   final double lat;
   final double long;
   final String city;
@@ -317,5 +359,12 @@ class LocationMapEntity{
   final String street;
   final String country;
   final String address;
-  LocationMapEntity({required this.lat,required this.long,required this.address,required this.city,required this.country,required this.postalCode,required this.street});
+  LocationMapEntity(
+      {required this.lat,
+      required this.long,
+      required this.address,
+      required this.city,
+      required this.country,
+      required this.postalCode,
+      required this.street});
 }

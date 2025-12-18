@@ -14,21 +14,32 @@ class NurseDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton:  const RequestButton(),
+      floatingActionButton: const RequestButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            const ProfileCardInfo(title: "",img: AppImages.nurseImg,enableBackIcon: true,enableEditIcon: false,viewNurseDetails: true,),
+            const ProfileCardInfo(
+              title: "",
+              img: AppImages.nurseImg,
+              enableBackIcon: true,
+              enableEditIcon: false,
+              viewNurseDetails: true,
+            ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 10),
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppStyle.paddingFromH.w, vertical: 10),
               child: const Column(
                 children: [
                   ExtraOptionsNurseCard(),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   NurseDetailsTaps(),
-                  SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                   NurseDetailsScreens(),
                 ],
               ),
@@ -39,6 +50,3 @@ class NurseDetails extends StatelessWidget {
     );
   }
 }
-
-
-

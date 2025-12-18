@@ -7,8 +7,6 @@ import 'package:icare/features/authentication/presentation/screens/login.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
-
-
 class SignRequiredButtons extends StatelessWidget {
   const SignRequiredButtons({super.key});
 
@@ -25,7 +23,7 @@ class SignRequiredButtons extends StatelessWidget {
               color: Colors.white,
               fontSize: AppStyle.verySmall.sp),
           color: kPrimary,
-          onPressed: ()=>Util.pushPage(const LoginScreen(), context)),
+          onPressed: () => Util.pushPage(const LoginScreen(), context)),
     );
   }
 }

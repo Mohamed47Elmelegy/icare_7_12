@@ -24,7 +24,7 @@ class NiceToMeetRowWidget extends StatelessWidget {
           CustomText(
             text: translate("icare.join"),
             color: DMUtil.getPC(),
-            fontSize: AppStyle.average.sp+2,
+            fontSize: AppStyle.average.sp + 2,
             fontWeight: FontWeight.w600,
           ),
         ],

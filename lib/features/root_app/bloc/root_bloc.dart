@@ -20,44 +20,38 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     });
 
     on<ChangeCurrentCurrency>((event, emit) {
-      changeCurrentCurrency(event,emit);
+      changeCurrentCurrency(event, emit);
     });
 
-    on<ShowDrawerMenuEvent>((event, emit)async{
-      showDrawerMenu(event,emit);
+    on<ShowDrawerMenuEvent>((event, emit) async {
+      showDrawerMenu(event, emit);
     });
 
-
-    on<FetchSettingEvent>((event, emit)async{
-      await getAllSetting(event,emit);
+    on<FetchSettingEvent>((event, emit) async {
+      await getAllSetting(event, emit);
     });
 
-
-    on<SearchEvent>((event, emit)async{
-      search(event,emit);
+    on<SearchEvent>((event, emit) async {
+      search(event, emit);
     });
 
-
-    on<ChooseCurrentAreaEvent>((event, emit)async{
-      selectCurrentArea(event,emit);
+    on<ChooseCurrentAreaEvent>((event, emit) async {
+      selectCurrentArea(event, emit);
     });
-
   }
 
-
   bool drawerMenuEnabled = false;
-  showDrawerMenu(ShowDrawerMenuEvent event,emit){
+  showDrawerMenu(ShowDrawerMenuEvent event, emit) {
     emit(RootLoadingState());
     drawerMenuEnabled = !drawerMenuEnabled;
     emit(RootSuccessState());
   }
 
-  changeCurrentCurrency(event,emit){
+  changeCurrentCurrency(event, emit) {
     emit(RootSuccessState());
   }
 
-
-  getAllSetting(event,emit)async{
+  getAllSetting(event, emit) async {
     emit(RootLoadingState());
     await getAppData();
     // await getLocations();
@@ -66,10 +60,10 @@ class RootBloc extends Bloc<RootEvent, RootState> {
 
   /// our locations
   List<LocationModel> ourLocations = [];
-  getLocations()async{
-    try{
+  getLocations() async {
+    try {
       // ourLocations = await SettingsRemoteDataSource.getOurLocations();
-    }catch(e){
+    } catch (e) {
       debugPrint("getLocationsRootBloc: $e");
     }
   }
@@ -77,45 +71,46 @@ class RootBloc extends Bloc<RootEvent, RootState> {
   /// get cities and governorates
   List<CityModel> citiesList = [];
   List<CityModel> governoratesList = [];
-  getAppData()async{
-    try{
+  getAppData() async {
+    try {
       citiesList = await SettingsRemoteDataSource.fetchAllCities();
       governoratesList = await SettingsRemoteDataSource.fetchAllGovernorates();
-    }catch(e){
+    } catch (e) {
       debugPrint("getAppDataRootBloc: $e");
     }
   }
 
-
   late GoogleMapController mapController;
 
   List<CityModel?> currentAreaList = [];
-  search(SearchEvent event,emit){
-    if(event.word.trim().isEmpty) {
+  search(SearchEvent event, emit) {
+    if (event.word.trim().isEmpty) {
       currentAreaList.clear();
       emit(RootSuccessState());
       return;
     }
     currentAreaList.clear();
     emit(RootLoadingState());
-    currentAreaList.addAll(governoratesList.where((element) => element.title.contains(event.word.toString())).toList());
-    currentAreaList.addAll(citiesList.where((element) => element.title.contains(event.word.toString())).toList());
+    currentAreaList.addAll(governoratesList
+        .where((element) => element.title.contains(event.word.toString()))
+        .toList());
+    currentAreaList.addAll(citiesList
+        .where((element) => element.title.contains(event.word.toString()))
+        .toList());
     emit(RootSuccessState());
   }
 
   CityModel? currentArea;
-  selectCurrentArea(ChooseCurrentAreaEvent event,emit){
+  selectCurrentArea(ChooseCurrentAreaEvent event, emit) {
     emit(RootLoadingState());
-    if(event.area!=null) {
+    if (event.area != null) {
       currentArea = event.area;
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(currentArea!.latitude, currentArea!.longitude), 14));
-    }else{
+      mapController.animateCamera(CameraUpdate.newLatLngZoom(
+          LatLng(currentArea!.latitude, currentArea!.longitude), 14));
+    } else {
       currentArea = null;
     }
     currentAreaList.clear();
     emit(RootSuccessState());
   }
-
-
-
 }

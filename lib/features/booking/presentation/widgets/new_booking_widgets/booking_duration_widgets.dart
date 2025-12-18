@@ -20,56 +20,58 @@ class ChooseWeeksDropDown extends StatelessWidget {
           fontSize: AppStyle.small,
           color: DMUtil.getD2C(),
         ),
-        const SizedBox(height: 4,),
-        Container(
-          width: 84.w,
-          decoration: BoxDecoration(
-              color: DMUtil.getWC(),
-              borderRadius: BorderRadius.circular(10)
-          ),
-          child: BlocBuilder<BookingBloc,BookingState>(
-            builder: (ctx,state){
-              var bloc = BookingBloc.get(ctx);
-              return DropdownButton<String>(
-                value: null,
-                icon: const Icon(Icons.arrow_drop_down),
-                elevation: 10,
-                menuMaxHeight: 250.h,
-                hint: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: CustomText(
-                    text:  bloc.currentBooking!=null && bloc.currentBooking!.week == null ? bloc.currentBooking!.week.toString() : translate("booking.not_selected"),
-                    fontSize: AppStyle.verySmall.sp,
-                    color: DMUtil.getD2C(),
-                  ),
-                ),
-                isExpanded: true,
-                style: TextStyle(color: DMUtil.getD2C()),
-                underline: const SizedBox(),
-                onChanged: (String? newValue) {},
-                items: <String>[
-                  translate("booking.not_selected"),
-                  "1 ${translate("booking.week")}",
-                  "2 ${translate("booking.week")}",
-                  "3 ${translate("booking.week")}",
-                  "4 ${translate("booking.week")}",
-                  "5 ${translate("booking.week")}",
-                  "6 ${translate("booking.week")}",
-                  "7 ${translate("booking.week")}",
-                  "8 ${translate("booking.week")}",
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: CustomText(
-                      text: value.toString(),
-                      fontSize: AppStyle.small.sp,
-                    ),
-                  );
-                }).toList(),
-              );
-            },
-          )
+        const SizedBox(
+          height: 4,
         ),
+        Container(
+            width: 84.w,
+            decoration: BoxDecoration(
+                color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
+            child: BlocBuilder<BookingBloc, BookingState>(
+              builder: (ctx, state) {
+                var bloc = BookingBloc.get(ctx);
+                return DropdownButton<String>(
+                  value: null,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  elevation: 10,
+                  menuMaxHeight: 250.h,
+                  hint: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: CustomText(
+                      text: bloc.currentBooking != null &&
+                              bloc.currentBooking!.week == null
+                          ? bloc.currentBooking!.week.toString()
+                          : translate("booking.not_selected"),
+                      fontSize: AppStyle.verySmall.sp,
+                      color: DMUtil.getD2C(),
+                    ),
+                  ),
+                  isExpanded: true,
+                  style: TextStyle(color: DMUtil.getD2C()),
+                  underline: const SizedBox(),
+                  onChanged: (String? newValue) {},
+                  items: <String>[
+                    translate("booking.not_selected"),
+                    "1 ${translate("booking.week")}",
+                    "2 ${translate("booking.week")}",
+                    "3 ${translate("booking.week")}",
+                    "4 ${translate("booking.week")}",
+                    "5 ${translate("booking.week")}",
+                    "6 ${translate("booking.week")}",
+                    "7 ${translate("booking.week")}",
+                    "8 ${translate("booking.week")}",
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: CustomText(
+                        text: value.toString(),
+                        fontSize: AppStyle.small.sp,
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            )),
       ],
     );
   }
@@ -87,15 +89,15 @@ class ChooseDaysDropDown extends StatelessWidget {
           fontSize: AppStyle.small,
           color: DMUtil.getD2C(),
         ),
-        const SizedBox(height: 4,),
+        const SizedBox(
+          height: 4,
+        ),
         Container(
             width: 84.w,
             decoration: BoxDecoration(
-                color: DMUtil.getWC(),
-                borderRadius: BorderRadius.circular(10)
-            ),
-            child: BlocBuilder<BookingBloc,BookingState>(
-              builder: (ctx,state){
+                color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
+            child: BlocBuilder<BookingBloc, BookingState>(
+              builder: (ctx, state) {
                 var bloc = BookingBloc.get(ctx);
                 return DropdownButton<String>(
                   value: null,
@@ -105,7 +107,10 @@ class ChooseDaysDropDown extends StatelessWidget {
                   hint: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: CustomText(
-                      text:  bloc.currentBooking!=null && bloc.currentBooking!.week == null ? bloc.currentBooking!.week.toString() : translate("booking.not_selected"),
+                      text: bloc.currentBooking != null &&
+                              bloc.currentBooking!.week == null
+                          ? bloc.currentBooking!.week.toString()
+                          : translate("booking.not_selected"),
                       fontSize: AppStyle.verySmall.sp,
                       color: DMUtil.getD2C(),
                     ),
@@ -134,13 +139,11 @@ class ChooseDaysDropDown extends StatelessWidget {
                   }).toList(),
                 );
               },
-            )
-        ),
+            )),
       ],
     );
   }
 }
-
 
 class ChooseHoursDropDown extends StatelessWidget {
   const ChooseHoursDropDown({super.key});
@@ -154,15 +157,15 @@ class ChooseHoursDropDown extends StatelessWidget {
           fontSize: AppStyle.small,
           color: DMUtil.getD2C(),
         ),
-        const SizedBox(height: 4,),
+        const SizedBox(
+          height: 4,
+        ),
         Container(
             width: 84.w,
             decoration: BoxDecoration(
-                color: DMUtil.getWC(),
-                borderRadius: BorderRadius.circular(10)
-            ),
-            child: BlocBuilder<BookingBloc,BookingState>(
-              builder: (ctx,state){
+                color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
+            child: BlocBuilder<BookingBloc, BookingState>(
+              builder: (ctx, state) {
                 var bloc = BookingBloc.get(ctx);
                 return DropdownButton<String>(
                   value: null,
@@ -172,7 +175,10 @@ class ChooseHoursDropDown extends StatelessWidget {
                   hint: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: CustomText(
-                      text:  bloc.currentBooking!=null && bloc.currentBooking!.week == null ? bloc.currentBooking!.week.toString() : translate("booking.not_selected"),
+                      text: bloc.currentBooking != null &&
+                              bloc.currentBooking!.week == null
+                          ? bloc.currentBooking!.week.toString()
+                          : translate("booking.not_selected"),
                       fontSize: AppStyle.verySmall.sp,
                       color: DMUtil.getD2C(),
                     ),
@@ -202,14 +208,8 @@ class ChooseHoursDropDown extends StatelessWidget {
                   }).toList(),
                 );
               },
-            )
-        ),
+            )),
       ],
     );
   }
 }
-
-
-
-
-

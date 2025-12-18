@@ -19,7 +19,11 @@ class AccountAuthCard extends StatelessWidget {
   final bool darkText;
   final bool primaryColor;
   final bool isDrawer;
-  const AccountAuthCard({super.key,this.darkText = false,this.primaryColor = false,this.isDrawer = false});
+  const AccountAuthCard(
+      {super.key,
+      this.darkText = false,
+      this.primaryColor = false,
+      this.isDrawer = false});
 
   @override
   Widget build(BuildContext context) {
@@ -35,62 +39,74 @@ class AccountAuthCard extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const SizedBox(height: 10,),
-              InkWell(
-                onTap: (){
-                  Scaffold.of(context).closeDrawer();
-                  RootBloc.get(context).add(const ChangeIndex(index: 0, title: ""));
-                },
-                child: Icon(Icons.close,color: DMUtil.getPC2(),),
+              const SizedBox(
+                height: 10,
               ),
-              const SizedBox(height: 5,),
+              InkWell(
+                onTap: () {
+                  Scaffold.of(context).closeDrawer();
+                  RootBloc.get(context)
+                      .add(const ChangeIndex(index: 0, title: ""));
+                },
+                child: Icon(
+                  Icons.close,
+                  color: DMUtil.getPC2(),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if(user == null || Util.checkUser()==false)
+                  if (user == null || Util.checkUser() == false)
                     CircleAvatar(
                       radius: 25.w,
                       backgroundColor: DMUtil.getOpacity(),
                       backgroundImage: const AssetImage(AppImages.avatar),
                     ),
-                  SizedBox(width: 10.w,),
+                  SizedBox(
+                    width: 10.w,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomText(
-                        text:translate("profile.welcome"),
+                        text: translate("profile.welcome"),
                         color: DMUtil.getD2C(),
                         fontSize: AppStyle.average.sp,
                       ),
-                      const SizedBox(height: 5,),
-
-                      if(user!=null && Util.checkUser())
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      if (user != null && Util.checkUser())
                         CustomText(
                           text: user.userName.toString(),
                           color: DMUtil.getD2C(),
-                          fontSize: AppStyle.average.sp+2,
+                          fontSize: AppStyle.average.sp + 2,
                         ),
-
-                      if(user == null || Util.checkUser()==false)
+                      if (user == null || Util.checkUser() == false)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             InkWell(
-                              onTap: ()=> Util.pushPage(const LoginScreen(), context),
+                              onTap: () =>
+                                  Util.pushPage(const LoginScreen(), context),
                               child: CustomText(
-                                text:  translate("login.login"),
-                                color: DMUtil.getPC() ,
+                                text: translate("login.login"),
+                                color: DMUtil.getPC(),
                                 fontSize: AppStyle.average.sp,
                               ),
                             ),
                             CustomText(
-                              text:  " / ",
+                              text: " / ",
                               color: DMUtil.getPC(),
                               fontSize: AppStyle.average.sp,
                             ),
                             InkWell(
-                              onTap: ()=> Util.pushPage(const RegisterScreen(), context),
+                              onTap: () => Util.pushPage(
+                                  const RegisterScreen(), context),
                               child: CustomText(
                                 text: translate("login.sing_up_now"),
                                 color: DMUtil.getPC(),
@@ -101,7 +117,6 @@ class AccountAuthCard extends StatelessWidget {
                         )
                     ],
                   ),
-
                 ],
               )
             ],
@@ -112,10 +127,10 @@ class AccountAuthCard extends StatelessWidget {
   }
 }
 
-
-
 class AccountAuthCardProfile extends StatelessWidget {
-  const AccountAuthCardProfile({super.key,});
+  const AccountAuthCardProfile({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -130,63 +145,72 @@ class AccountAuthCardProfile extends StatelessWidget {
           return Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              if(user == null)
+              if (user == null)
                 CircleAvatar(
                   radius: 20.w,
                   backgroundColor: DMUtil.getBCC(),
-                  child: Icon(CupertinoIcons.person,color: DMUtil.getD2C(),size: 20.w,),
+                  child: Icon(
+                    CupertinoIcons.person,
+                    color: DMUtil.getD2C(),
+                    size: 20.w,
+                  ),
                 ),
-              SizedBox(width: 10.w,),
+              SizedBox(
+                width: 10.w,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       CustomText(
-                        text:translate("profile.welcome"),
+                        text: translate("profile.welcome"),
                         color: DMUtil.getD2C(),
                         fontSize: AppStyle.average.sp,
                       ),
-                      const SizedBox(height: 5,),
-
-                      if(user!=null && Util.checkUser())
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      if (user != null && Util.checkUser())
                         CustomText(
                           text: user.userName.toString(),
                           color: DMUtil.getD2C(),
                           fontWeight: FontWeight.w600,
-                          fontSize: AppStyle.average.sp+2,
+                          fontSize: AppStyle.average.sp + 2,
                         ),
                     ],
                   ),
-                  if(user!=null && Util.checkUser())...[
-                    const SizedBox(height: 5,),
+                  if (user != null && Util.checkUser()) ...[
+                    const SizedBox(
+                      height: 5,
+                    ),
                     CustomText(
                       text: user.email.toString(),
                       color: DMUtil.getD2C(),
-                      fontSize: AppStyle.small.sp+2,
+                      fontSize: AppStyle.small.sp + 2,
                     ),
                   ],
-
-
-                  if(user == null || Util.checkUser()==false)
+                  if (user == null || Util.checkUser() == false)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         InkWell(
-                          onTap: ()=> Util.pushPage(const LoginScreen(), context),
+                          onTap: () =>
+                              Util.pushPage(const LoginScreen(), context),
                           child: CustomText(
-                            text:  translate("login.login"),
-                            color: DMUtil.getRED() ,
+                            text: translate("login.login"),
+                            color: DMUtil.getRED(),
                             fontSize: AppStyle.average.sp,
                           ),
                         ),
                         CustomText(
-                          text:  "   /  ",
-                          color: DMUtil.getRED() ,
+                          text: "   /  ",
+                          color: DMUtil.getRED(),
                           fontSize: AppStyle.average.sp,
                         ),
                         InkWell(
-                          onTap: ()=> Util.pushPage(const RegisterScreen(), context),
+                          onTap: () =>
+                              Util.pushPage(const RegisterScreen(), context),
                           child: CustomText(
                             text: translate("login.sing_up_now"),
                             color: DMUtil.getRED(),
@@ -197,7 +221,6 @@ class AccountAuthCardProfile extends StatelessWidget {
                     )
                 ],
               ),
-
             ],
           );
         },

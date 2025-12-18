@@ -58,6 +58,7 @@ class ApiUrl {
   /// update token with wordpress plugin api
 
   static const String UPDATE_NURSE_DATA = '${BASE_URL}nurse/options';
+  static const String UPDATE_DOCTOR_DATA = '${BASE_URL}doctor/options';
 
   //address
   static const String FETCH_ADDRESS = '${BASE_URL}user/addresses';
@@ -99,4 +100,5 @@ class ApiUrl {
   //settings
   static const String GOVERNORATES = '${BASE_URL}governorates';
   static const String CITIES = '${BASE_URL}cities';
+  static const String SPECIALTIES = '${BASE_URL}specialties/list';
 }

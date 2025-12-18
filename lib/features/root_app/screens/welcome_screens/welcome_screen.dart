@@ -23,48 +23,55 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DMUtil.getBackGround(),
-      body: BlocBuilder<RootBloc,RootState>(
-        builder: (ctx,state){
+      body: BlocBuilder<RootBloc, RootState>(
+        builder: (ctx, state) {
           var bloc = RootBloc.get(ctx);
           return PageView.builder(
             controller: pageController,
             physics: const BouncingScrollPhysics(),
-            onPageChanged: (indX){
-              if(indX>2){
+            onPageChanged: (indX) {
+              if (indX > 2) {
                 bloc.add(const ChangeIndex(index: 0, title: ""));
-                Util.pushPageAndRemoveRoutes(const TurnOnNotificationScreen(), context);
-              }else{
-                bloc.add(ChangeIndex(index: indX+1, title: ""));
+                Util.pushPageAndRemoveRoutes(
+                    const TurnOnNotificationScreen(), context);
+              } else {
+                bloc.add(ChangeIndex(index: indX + 1, title: ""));
               }
             },
-            itemBuilder: (ctx,index){
+            itemBuilder: (ctx, index) {
               return Align(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
-
-                    if(index==0)...[
+                    if (index == 0) ...[
                       const FirstScreen(),
-                    ]else if(index==1)...[
+                    ] else if (index == 1) ...[
                       const SecondScreen(),
-                    ]else...[
+                    ] else ...[
                       const ThirdScreen(),
                     ],
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        DotIcon(selected: index==0),
-                        const SizedBox(width: 5,),
-                        DotIcon(selected: index==1),
-                        const SizedBox(width: 5,),
-                        DotIcon(selected: index==2),
+                        DotIcon(selected: index == 0),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        DotIcon(selected: index == 1),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        DotIcon(selected: index == 2),
                       ],
                     ),
-                    const SizedBox(height: 40,),
+                    const SizedBox(
+                      height: 40,
+                    ),
                     CustomButton(
                         height: 40.w,
                         width: 240.w,
@@ -76,13 +83,15 @@ class WelcomeScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                         color: DMUtil.getPC(),
-                        onPressed: ()=> Util.pushPage(const TurnOnNotificationScreen(), context)
+                        onPressed: () => Util.pushPage(
+                            const TurnOnNotificationScreen(), context)),
+                    const SizedBox(
+                      height: 20,
                     ),
-
-                    const SizedBox(height: 20,),
                     const AlreadyHaveAnAccountWidget(),
-
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                   ],
                 ),
               );
@@ -94,8 +103,6 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-
-
 class DotIcon extends StatelessWidget {
   final bool selected;
   const DotIcon({super.key, required this.selected});
@@ -103,7 +110,7 @@ class DotIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Icon(
-      selected?Icons.circle:Icons.circle_outlined,
+      selected ? Icons.circle : Icons.circle_outlined,
       size: 10.w,
       color: DMUtil.getPC(),
     );

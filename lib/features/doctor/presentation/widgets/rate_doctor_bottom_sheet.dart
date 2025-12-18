@@ -38,7 +38,10 @@ class RateDoctorBottomSheet extends StatelessWidget {
                     builder: (ctx, state) {
                       var bloc = DoctorBloc.get(ctx);
                       var currentDoctor = bloc.currentDoctor;
-                      if (currentDoctor == null || currentDoctor.userData == null) return const SizedBox.shrink();
+                      if (currentDoctor == null ||
+                          currentDoctor.userData == null) {
+                        return const SizedBox.shrink();
+                      }
                       return CustomText(
                         text: currentDoctor.userData!.userName.toString(),
                         fontWeight: FontWeight.w600,
@@ -65,7 +68,8 @@ class RateDoctorBottomSheet extends StatelessWidget {
                         Icons.star,
                         color: kStarColor,
                       ),
-                      onRatingUpdate: (rating) => DoctorBloc.get(context).add(UpdateRateDataEvent(rateValue: rating)),
+                      onRatingUpdate: (rating) => DoctorBloc.get(context)
+                          .add(UpdateRateDataEvent(rateValue: rating)),
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -80,7 +84,8 @@ class RateDoctorBottomSheet extends StatelessWidget {
                       height: 120,
                       hintText: translate("products.add_comment"),
                       radius: 10,
-                      onChanged: (val) => DoctorBloc.get(context).add(UpdateRateDataEvent(rateTxt: val.toString().trim())),
+                      onChanged: (val) => DoctorBloc.get(context).add(
+                          UpdateRateDataEvent(rateTxt: val.toString().trim())),
                       onFieldSubmitted: (val) {},
                       textEditingController: textEditingController,
                       cursorColor: kPrimary,

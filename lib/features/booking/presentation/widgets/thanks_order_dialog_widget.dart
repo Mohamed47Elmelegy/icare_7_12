@@ -16,29 +16,32 @@ class ThanksOrderWidget extends StatelessWidget {
       width: 400.w,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15)
-      ),
+          color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Image.asset(AppImages.thanksOrder,height: 140.h,fit: BoxFit.contain,),
-
-          const SizedBox(height: 5,),
-          CustomText(
-              text: translate("order.thanks_order"),
-              color: DMUtil.getD2C(),
-              fontSize: AppStyle.average.sp,
-              alignCenter: true,
-              maxLine: 4,
+          Image.asset(
+            AppImages.thanksOrder,
+            height: 140.h,
+            fit: BoxFit.contain,
           ),
-
-          const SizedBox(height: 2,),
+          const SizedBox(
+            height: 5,
+          ),
+          CustomText(
+            text: translate("order.thanks_order"),
+            color: DMUtil.getD2C(),
+            fontSize: AppStyle.average.sp,
+            alignCenter: true,
+            maxLine: 4,
+          ),
+          const SizedBox(
+            height: 2,
+          ),
           CircularProgressIndicator(
             color: DMUtil.getGreen(),
           ),
-        
         ],
       ),
     );

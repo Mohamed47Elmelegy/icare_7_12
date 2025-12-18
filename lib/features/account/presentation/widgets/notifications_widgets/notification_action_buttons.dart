@@ -5,7 +5,6 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
@@ -28,7 +27,7 @@ class NotificationActionButtons extends StatelessWidget {
             onPressed: () {
               // Accept order
               bloc.acceptOrder(booking);
-              
+
               // Show success message
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -55,7 +54,7 @@ class NotificationActionButtons extends StatelessWidget {
             onPressed: () {
               // Refuse order
               bloc.refuseOrder(booking);
-              
+
               // Show success message
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

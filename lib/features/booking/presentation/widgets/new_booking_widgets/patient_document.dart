@@ -12,23 +12,28 @@ class PatientDocument extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 10.w,),
-      padding: EdgeInsets.symmetric(vertical: 12.w,horizontal: 5.w),
-      decoration: BoxDecoration(
-          color: DMUtil.getWC(),
-          borderRadius: BorderRadius.circular(10)
+      margin: EdgeInsets.only(
+        bottom: 10.w,
       ),
+      padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 5.w),
+      decoration: BoxDecoration(
+          color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
       child: Row(
         children: [
-          Icon(Icons.document_scanner_sharp,color: DMUtil.getPC2(),size: 21.w,),
-          SizedBox(width: 5.w,),
+          Icon(
+            Icons.document_scanner_sharp,
+            color: DMUtil.getPC2(),
+            size: 21.w,
+          ),
+          SizedBox(
+            width: 5.w,
+          ),
           CustomText(
-              text: translate("booking.patient_document"),
-              fontSize: AppStyle.small.sp,
+            text: translate("booking.patient_document"),
+            fontSize: AppStyle.small.sp,
           ),
         ],
       ),
-
     );
   }
 }

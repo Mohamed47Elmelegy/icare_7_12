@@ -8,7 +8,8 @@ class AddOrderUseCase {
 
   const AddOrderUseCase({required this.orderRepository});
 
-  Future<Either<Failure, OrderResponse>> call({required Map<String,dynamic> data}) async {
+  Future<Either<Failure, OrderResponse>> call(
+      {required Map<String, dynamic> data}) async {
     return await orderRepository.addOrder(data: data);
   }
 }

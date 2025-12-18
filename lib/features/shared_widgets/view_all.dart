@@ -7,20 +7,20 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 
 class ViewAllWidget extends StatelessWidget {
   final VoidCallback fn;
-  const ViewAllWidget({super.key,required this.fn});
+  const ViewAllWidget({super.key, required this.fn});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: fn,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
         decoration: BoxDecoration(
-          border: Border.all(width: 1,color: DMUtil.getPC().withOpacity(0.4)),
+          border: Border.all(width: 1, color: DMUtil.getPC().withOpacity(0.4)),
         ),
         child: CustomText(
           text: translate("home.view_all"),
-          fontSize: AppStyle.small.sp-1,
+          fontSize: AppStyle.small.sp - 1,
           fontWeight: FontWeight.w600,
           color: DMUtil.getPC(),
         ),

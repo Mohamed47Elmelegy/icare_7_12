@@ -6,7 +6,6 @@ import 'package:icare/features/categories/domain/entities/slider_entity.dart';
 import 'package:icare/features/categories/domain/repositories/category_repository.dart';
 import 'package:dartz/dartz.dart';
 
-
 class GetAllCategoryUseCase {
   final CategoryRepository categoryRepository;
 
@@ -16,8 +15,6 @@ class GetAllCategoryUseCase {
     return await categoryRepository.getAllCategories();
   }
 }
-
-
 
 class GetAllAllergiesUseCase {
   final CategoryRepository categoryRepository;
@@ -39,8 +36,6 @@ class GetAllPublicationsUseCase {
   }
 }
 
-
-
 class GetAllSlidersUseCase {
   final CategoryRepository categoryRepository;
 
@@ -50,4 +45,3 @@ class GetAllSlidersUseCase {
     return await categoryRepository.getAllSliders();
   }
 }
-

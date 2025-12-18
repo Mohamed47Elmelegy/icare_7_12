@@ -23,18 +23,28 @@ class PatientProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ProfileCardInfo(title: isNurseEditMode == true ? null :translate("profile.my_account") ,img: AppImages.avatar,backFn: fnAfterNurseEdit,),
+        ProfileCardInfo(
+          title:
+              isNurseEditMode == true ? null : translate("profile.my_account"),
+          img: AppImages.avatar,
+          backFn: fnAfterNurseEdit,
+        ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 10),
-          child:  Column(
+          padding: EdgeInsets.symmetric(
+              horizontal: AppStyle.paddingFromH.w, vertical: 10),
+          child: Column(
             children: [
               const ProfileTaps(),
-              const SizedBox(height: 20,),
-              ProfileTapsScreens(isNurseEditMode: isNurseEditMode, vitalsKey: vitalsKey,),
+              const SizedBox(
+                height: 20,
+              ),
+              ProfileTapsScreens(
+                isNurseEditMode: isNurseEditMode,
+                vitalsKey: vitalsKey,
+              ),
             ],
           ),
         ),
-
       ],
     );
   }

@@ -12,7 +12,7 @@ class DeleteAccountWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()=> CustomDialogs.deleteAccount(context),
+      onTap: () => CustomDialogs.deleteAccount(context),
       child: CustomText(
         text: translate("profile.delete_my_account"),
         fontSize: AppStyle.average.sp - 3,

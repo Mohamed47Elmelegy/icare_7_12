@@ -17,20 +17,25 @@ class RateNurseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<NurseBloc,NurseState>(
-      listener: (ctx,state){
-        if(state is AddNurseRateSuccessfullyState){
-          SnackBarBuilder.showFeedBackMessage(context, translate("toast.thanks_for_rating"), Colors.green);
+    return BlocListener<NurseBloc, NurseState>(
+      listener: (ctx, state) {
+        if (state is AddNurseRateSuccessfullyState) {
+          SnackBarBuilder.showFeedBackMessage(
+              context, translate("toast.thanks_for_rating"), Colors.green);
           Navigator.of(context).pop();
         }
       },
-      child: BlocBuilder<NurseBloc,NurseState>(
-        builder: (ctx,state){
-          var bloc  = NurseBloc.get(ctx);
+      child: BlocBuilder<NurseBloc, NurseState>(
+        builder: (ctx, state) {
+          var bloc = NurseBloc.get(ctx);
           var currentNurse = bloc.currentNurse;
-          if(currentNurse==null)return const SizedBox.shrink();
-          if(state is RateDataLoadingState)return CircularProgressIndicator(color: DMUtil.getPC(),);
-          return  CustomButton(
+          if (currentNurse == null) return const SizedBox.shrink();
+          if (state is RateDataLoadingState) {
+            return CircularProgressIndicator(
+              color: DMUtil.getPC(),
+            );
+          }
+          return CustomButton(
             height: 30.w,
             width: 140.w,
             widget: CustomText(
@@ -39,16 +44,17 @@ class RateNurseButton extends StatelessWidget {
               fontSize: AppStyle.small.sp,
             ),
             color: DMUtil.getPC(),
-            onPressed: (){
-              if(bloc.rateTxt.trim()!=""&&bloc.rateValue!=0){
+            onPressed: () {
+              if (bloc.rateTxt.trim() != "" && bloc.rateValue != 0) {
                 bloc.add(RateNurseEvent(data: {
-                  'nurse_id':bloc.currentNurse!.id.toString(),
-                  'user_id':Util.getUserID().toString(),
-                  'rating':bloc.rateValue.toString(),
-                  'comment':bloc.rateTxt.toString()
+                  'nurse_id': bloc.currentNurse!.id.toString(),
+                  'user_id': Util.getUserID().toString(),
+                  'rating': bloc.rateValue.toString(),
+                  'comment': bloc.rateTxt.toString()
                 }));
-              }else{
-                SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), Colors.red);
+              } else {
+                SnackBarBuilder.showFeedBackMessage(
+                    context, translate("toast.field_empty"), Colors.red);
               }
             },
           );

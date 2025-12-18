@@ -15,7 +15,9 @@ class DoctorPricesListWidget extends StatelessWidget {
       builder: (ctx, state) {
         var bloc = DoctorBloc.get(ctx);
         var currentDoctor = bloc.currentDoctor;
-        if (currentDoctor == null || currentDoctor.servicesList == null) return const SizedBox.shrink();
+        if (currentDoctor == null || currentDoctor.servicesList == null) {
+          return const SizedBox.shrink();
+        }
         var list = currentDoctor.servicesList;
         if (list!.isEmpty) return const EmptyDataWidget();
         return ListView.separated(

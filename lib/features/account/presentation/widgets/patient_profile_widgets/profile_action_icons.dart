@@ -12,7 +12,9 @@ class ProfileAppBarIcons extends StatelessWidget {
     return Row(
       children: [
         const NotificationIcon(),
-        const SizedBox(width: 8,),
+        const SizedBox(
+          width: 8,
+        ),
         InkWell(
           child: Icon(
             CupertinoIcons.home,

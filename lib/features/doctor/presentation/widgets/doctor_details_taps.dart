@@ -43,9 +43,10 @@ class DoctorDetailsTaps extends StatelessWidget {
                 selected: bloc.currentProfileTapsIndex == 2,
                 fn: () {
                   if (bloc.currentUser != null &&
-                      bloc.currentUser!.doctor != null)
+                      bloc.currentUser!.doctor != null) {
                     DoctorBloc.get(context).add(UpdateCurrentDoctorEvent(
                         doctor: bloc.currentUser!.doctor!));
+                  }
                   bloc.add(const SwitchProfileTapsEvent(index: 2));
                 },
               ),

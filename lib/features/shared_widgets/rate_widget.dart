@@ -21,12 +21,16 @@ class RateWidget extends StatelessWidget {
           isStart: true,
           child: ReviewsWidget(amount: 150, color: DMUtil.getReviewColor()),
         ),
-        const SizedBox(width: 5,),
-        BlocBuilder<NurseBloc,NurseState>(
-          builder: (ctx,state){
+        const SizedBox(
+          width: 5,
+        ),
+        BlocBuilder<NurseBloc, NurseState>(
+          builder: (ctx, state) {
             var bloc = NurseBloc.get(ctx);
             var nurse = bloc.currentNurse;
-            if(nurse == null || nurse.reviewList==null)return const SizedBox.shrink();
+            if (nurse == null || nurse.reviewList == null) {
+              return const SizedBox.shrink();
+            }
             return CustomText(
               text: "(${nurse.reviewList!.length})",
               fontSize: AppStyle.small.sp,
@@ -34,7 +38,6 @@ class RateWidget extends StatelessWidget {
             );
           },
         ),
-
       ],
     );
   }

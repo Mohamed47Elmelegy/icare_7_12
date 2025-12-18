@@ -20,20 +20,18 @@ class ProfileImage extends StatelessWidget {
           backgroundColor: Colors.transparent,
           backgroundImage: const AssetImage(AppImages.logo),
         ),
-
         Container(
           width: 100.w,
           height: 23.h,
           color: kWhite.withOpacity(0.8),
           child: CustomText(
             text: translate("profile.edit_photo"),
-            fontSize: AppStyle.verySmall.sp+2,
+            fontSize: AppStyle.verySmall.sp + 2,
             fontFamily: primaryFontBold,
             color: Colors.black,
             alignCenter: true,
           ),
         )
-
       ],
     );
   }

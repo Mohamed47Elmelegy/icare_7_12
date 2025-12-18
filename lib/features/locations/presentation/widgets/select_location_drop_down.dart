@@ -16,51 +16,65 @@ class SelectLocations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocationsBloc,LocationsState>(
-      builder: (ctx,state){
+    return BlocBuilder<LocationsBloc, LocationsState>(
+      builder: (ctx, state) {
         var bloc = LocationsBloc.get(ctx);
         List<LocationEntity> list = [];
-        var location  = bloc.userLocationsList;
-        if(location!=null&&location.shippingAddress!=null)list.add(location.shippingAddress!);
-        if(location!=null&&location.billingAddress!=null)list.add(location.billingAddress!);
+        var location = bloc.userLocationsList;
+        if (location != null && location.shippingAddress != null) {
+          list.add(location.shippingAddress!);
+        }
+        if (location != null && location.billingAddress != null) {
+          list.add(location.billingAddress!);
+        }
         bloc.currentCheckOutLocation ??= list.first;
-        if(list.isEmpty)return const SizedBox.shrink();
+        if (list.isEmpty) return const SizedBox.shrink();
         return Container(
             color: DMUtil.getWC(),
             child: InkWell(
-              onTap: ()=> Util.pushPage(const MyLocationsScreen(), context),
+              onTap: () => Util.pushPage(const MyLocationsScreen(), context),
               child: Container(
                 height: 30.h,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(6)),
                   color: DMUtil.getBackGround(),
-                  boxShadow: DMUtil.currentThemeIsDark()?  const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 2.0, // soften the shadow
-                      spreadRadius: 0.7, //extend the shadow
-                      offset: Offset(
-                        0.01, // Move to right 10  horizontally
-                        0.01, // Move to bottom 10 Vertically
-                      ),
-                    )
-                  ]:const [],
+                  boxShadow: DMUtil.currentThemeIsDark()
+                      ? const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 2.0, // soften the shadow
+                            spreadRadius: 0.7, //extend the shadow
+                            offset: Offset(
+                              0.01, // Move to right 10  horizontally
+                              0.01, // Move to bottom 10 Vertically
+                            ),
+                          )
+                        ]
+                      : const [],
                 ),
-                margin: EdgeInsets.symmetric(horizontal: 10.w,vertical: 4.h),
+                margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        const SizedBox(width: 10,),
-                        Icon(Icons.location_on_outlined,color: DMUtil.getD2C().withOpacity(0.7),size: AppStyle.average.w+1,),
-                        const SizedBox(width: 5,),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Icon(
+                          Icons.location_on_outlined,
+                          color: DMUtil.getD2C().withOpacity(0.7),
+                          size: AppStyle.average.w + 1,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
                         Row(
                           children: [
                             CustomText(
                               text: "${translate("store.deliver_to")} ",
                               color: DMUtil.getDC(),
-                              fontSize: AppStyle.small.sp-1,
+                              fontSize: AppStyle.small.sp - 1,
                             ),
                             CustomText(
                               text: "${bloc.currentCheckOutLocation?.address1}",
@@ -75,7 +89,11 @@ class SelectLocations extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.arrow_drop_down,color: DMUtil.getD2C(),size: AppStyle.average.w,),
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: DMUtil.getD2C(),
+                        size: AppStyle.average.w,
+                      ),
                     ),
                   ],
                 ),
@@ -121,10 +139,8 @@ class SelectLocations extends StatelessWidget {
                 //   value: bloc.currentCheckOutLocation,
                 // ),
               ),
-            )
-        );
+            ));
       },
     );
   }
-
 }

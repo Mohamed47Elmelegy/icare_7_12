@@ -22,23 +22,28 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-
 class ResetPassword extends StatelessWidget {
   final bool goToLogin;
-  const ResetPassword({super.key,this.goToLogin = true});
-  static final TextEditingController passTextEditingController = TextEditingController();
-  static final TextEditingController passEnsureTextEditingController = TextEditingController();
+  const ResetPassword({super.key, this.goToLogin = true});
+  static final TextEditingController passTextEditingController =
+      TextEditingController();
+  static final TextEditingController passEnsureTextEditingController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: DMUtil.getWC(),
         appBar: GlobalAppBar(
           justLogo: false,
-          leadingIcon:  Row(
+          leadingIcon: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              BackArrowButton(color: DMUtil.getPC(),),
-              const SizedBox(width: 5,),
+              BackArrowButton(
+                color: DMUtil.getPC(),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
               CustomText(
                 text: translate("signup.reset_password"),
                 fontSize: AppStyle.large.sp,
@@ -50,37 +55,47 @@ class ResetPassword extends StatelessWidget {
           ),
           title: '',
         ),
-        body: BlocListener<AccountBloc,AccountState>(
-          listenWhen: (context,state)=> state is ChangeUserPasswordState ,
-          listener: (ctx,state){
-            if(state is ChangeUserPasswordState){
-              if(state.response.isSuccess==true){
+        body: BlocListener<AccountBloc, AccountState>(
+          listenWhen: (context, state) => state is ChangeUserPasswordState,
+          listener: (ctx, state) {
+            if (state is ChangeUserPasswordState) {
+              if (state.response.isSuccess == true) {
                 // passTextEditingController.text = "";
-                if(goToLogin)Util.pushPageAndRemoveRoutes(const LoginScreen(), context);
-                SnackBarBuilder.showFeedBackMessage(context, state.response.msg.toString(), Colors.green);
-              }else if(state.response.isFailed==true){
-                SnackBarBuilder.showFeedBackMessage(context, state.response.msg.toString(), Colors.red);
+                if (goToLogin) {
+                  Util.pushPageAndRemoveRoutes(const LoginScreen(), context);
+                }
+                SnackBarBuilder.showFeedBackMessage(
+                    context, state.response.msg.toString(), Colors.green);
+              } else if (state.response.isFailed == true) {
+                SnackBarBuilder.showFeedBackMessage(
+                    context, state.response.msg.toString(), Colors.red);
               }
             }
           },
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,),
-            child:  Column(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppStyle.paddingFromH.w,
+            ),
+            child: Column(
               children: [
-                SizedBox(height: AppStyle.paddingFromTop.h,),
+                SizedBox(
+                  height: AppStyle.paddingFromTop.h,
+                ),
                 AlignChildRow(
                   isStart: true,
                   child: CustomText(
-                      text: translate("login.enter_new_password"),
-                      color: DMUtil.getDC(),
-                      fontSize: AppStyle.average.sp,
-                      fontFamily: primaryFontSemiBold,
+                    text: translate("login.enter_new_password"),
+                    color: DMUtil.getDC(),
+                    fontSize: AppStyle.average.sp,
+                    fontFamily: primaryFontSemiBold,
                   ),
                 ),
-                SizedBox(height: 10.w,),
-                BlocBuilder<AuthBloc,AuthState>(
-                  builder: (ctx,state){
+                SizedBox(
+                  height: 10.w,
+                ),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (ctx, state) {
                     var bloc = AuthBloc.get(ctx);
                     bool showPassword = bloc.showPassword;
                     return CustomTextFromField(
@@ -97,23 +112,24 @@ class ResetPassword extends StatelessWidget {
                         prefixIcon: null,
                         obscureText: !showPassword,
                         suffixIcon: IconButton(
-                          onPressed: () => ctx.read<AuthBloc>().add(const ChangePasswordEvent()),
+                          onPressed: () => ctx
+                              .read<AuthBloc>()
+                              .add(const ChangePasswordEvent()),
                           icon: Icon(
-                            showPassword==true
+                            showPassword == true
                                 ? CupertinoIcons.eye
                                 : CupertinoIcons.eye_slash,
                             color: DMUtil.getDC(),
                           ),
                         ),
-                        isLabelError: false
-                    );
+                        isLabelError: false);
                   },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                BlocBuilder<AuthBloc,AuthState>(
-                  builder: (ctx,state){
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (ctx, state) {
                     var bloc = AuthBloc.get(ctx);
                     bool showPassword = bloc.showPassword;
                     return CustomTextFromField(
@@ -130,9 +146,11 @@ class ResetPassword extends StatelessWidget {
                         prefixIcon: null,
                         obscureText: !showPassword,
                         suffixIcon: IconButton(
-                          onPressed: () => ctx.read<AuthBloc>().add(const ChangePasswordEvent()),
+                          onPressed: () => ctx
+                              .read<AuthBloc>()
+                              .add(const ChangePasswordEvent()),
                           icon: Icon(
-                            showPassword==true
+                            showPassword == true
                                 ? CupertinoIcons.eye
                                 : CupertinoIcons.eye_slash,
                             color: DMUtil.getDC(),
@@ -141,54 +159,67 @@ class ResetPassword extends StatelessWidget {
                         isLabelError: false);
                   },
                 ),
-
                 const SizedBox(
                   height: 30,
                 ),
-                BlocBuilder<AccountBloc,AccountState>(
-                  builder: (ctx,state){
+                BlocBuilder<AccountBloc, AccountState>(
+                  builder: (ctx, state) {
                     var bloc = AccountBloc.get(ctx);
                     return CustomButton(
-                        height: 40.h,
-                        width: double.infinity,
-                        circular: 15,
-                        widget: state is ChangeUserPasswordState && state.response.isLoad==true?
-                        CircularProgressIndicator(color: DMUtil.getWC(),):
-                        CustomText(
-                          text: translate("button.confirm"),
-                          color: DMUtil.getWC(),
-                          fontSize: AppStyle.average.sp,
-                          alignCenter: true,
-                        ),
-                        color: DMUtil.getPC(),
-                        onPressed: (){
-                          if(!checkIfTheSame())return SnackBarBuilder.showFeedBackMessage(context, translate("signup.confirm_password_error"), Colors.red);
-                          if(validateForm()){
-                            bloc.add(ChangeUserPasswordEvent(data: {
-                              "id": Util.getUserID(),
-                              "password": passTextEditingController.text.trim(),
-                            }));
-                          }else{
-                            SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), Colors.red);
-                          }
-                        },
+                      height: 40.h,
+                      width: double.infinity,
+                      circular: 15,
+                      widget: state is ChangeUserPasswordState &&
+                              state.response.isLoad == true
+                          ? CircularProgressIndicator(
+                              color: DMUtil.getWC(),
+                            )
+                          : CustomText(
+                              text: translate("button.confirm"),
+                              color: DMUtil.getWC(),
+                              fontSize: AppStyle.average.sp,
+                              alignCenter: true,
+                            ),
+                      color: DMUtil.getPC(),
+                      onPressed: () {
+                        if (!checkIfTheSame()) {
+                          return SnackBarBuilder.showFeedBackMessage(
+                              context,
+                              translate("signup.confirm_password_error"),
+                              Colors.red);
+                        }
+                        if (validateForm()) {
+                          bloc.add(ChangeUserPasswordEvent(data: {
+                            "id": Util.getUserID(),
+                            "password": passTextEditingController.text.trim(),
+                          }));
+                        } else {
+                          SnackBarBuilder.showFeedBackMessage(context,
+                              translate("toast.field_empty"), Colors.red);
+                        }
+                      },
                     );
                   },
                 ),
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 
-
-  checkIfTheSame(){
-    return passTextEditingController.text.trim()==passEnsureTextEditingController.text.trim();
+  checkIfTheSame() {
+    return passTextEditingController.text.trim() ==
+        passEnsureTextEditingController.text.trim();
   }
-  validateForm(){
-    if(passTextEditingController.text.trim().isNotEmpty&&passEnsureTextEditingController.text.trim().isNotEmpty)return true;
+
+  validateForm() {
+    if (passTextEditingController.text.trim().isNotEmpty &&
+        passEnsureTextEditingController.text.trim().isNotEmpty) {
+      return true;
+    }
     return false;
   }
 }

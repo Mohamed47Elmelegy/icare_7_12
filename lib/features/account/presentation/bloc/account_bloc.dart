@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
@@ -9,6 +8,7 @@ import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
+import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart'; // Added import
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -86,6 +86,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       updateNurseData(event, emit);
     });
 
+    on<UpdateDoctorDataEvent>((event, emit) {
+      updateDoctorData(event, emit);
+    });
+
     on<ChangeCurrentService>((event, emit) {
       changeCurrentService(event, emit);
     });
@@ -100,6 +104,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
     on<SwitchProfileStatusEvent>((event, emit) async {
       await changeNurseProfileStatus(event, emit);
+    });
+
+    on<FetchAllServicesEvent>((event, emit) async {
+      await getAllServiceList(event, emit);
     });
   }
 
@@ -131,10 +139,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   File? license;
   File? certificate;
   File? nurseID;
+  File? doctorID;
   File? associationCard;
   File? relatedJobId;
   File? nurseAvatar;
   NurseEntity? nurse;
+  DoctorEntity? doctor;
   List<String>? languageList;
   List<String>? educationList;
   List<String>? publicationsList;
@@ -152,11 +162,13 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     if (event.avatar != null) nurseAvatar = event.avatar;
     if (event.languageList != null) languageList = event.languageList;
     if (event.educationList != null) educationList = event.educationList;
-    if (event.publicationsList != null)
+    if (event.publicationsList != null) {
       publicationsList = event.publicationsList;
+    }
     if (event.coursesList != null) coursesList = event.coursesList;
-    if (event.emergencyContactsList != null)
+    if (event.emergencyContactsList != null) {
       emergencyContactsList = event.emergencyContactsList;
+    }
     if (event.servicesList != null) servicesList = event.servicesList;
     Timer(const Duration(seconds: 1), () async {
       await UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
@@ -172,6 +184,41 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     });
     _afterUpdateProfile();
     emit(const UpdateNurseDataSuccessState());
+  }
+
+  updateDoctorData(UpdateDoctorDataEvent event, emit) {
+    emit(const ProfileLoadingState());
+    if (event.doctor != null) doctor = event.doctor;
+    if (event.license != null) license = event.license;
+    if (event.certificate != null) certificate = event.certificate;
+    if (event.doctorID != null) doctorID = event.doctorID;
+    if (event.associationCard != null) associationCard = event.associationCard;
+    if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
+    if (event.avatar != null) nurseAvatar = event.avatar;
+    if (event.languageList != null) languageList = event.languageList;
+    if (event.educationList != null) educationList = event.educationList;
+    if (event.publicationsList != null) {
+      publicationsList = event.publicationsList;
+    }
+    if (event.coursesList != null) coursesList = event.coursesList;
+    if (event.emergencyContactsList != null) {
+      emergencyContactsList = event.emergencyContactsList;
+    }
+    if (event.servicesList != null) servicesList = event.servicesList;
+    Timer(const Duration(seconds: 1), () async {
+      await UserServiceRemoteDataSource.updateDoctorOptionsValue(userData: {
+        if (languageList != null) 'languages': languageList,
+        if (educationList != null) 'education': educationList,
+        if (publicationsList != null) 'publications': publicationsList,
+        if (coursesList != null) 'courses': coursesList,
+        if (emergencyContactsList != null)
+          'emergency_contacts': emergencyContactsList,
+        if (servicesList != null && event.servicesList != null)
+          'services': convertServiceToIDS(event.servicesList!),
+      });
+    });
+    _afterUpdateProfile();
+    emit(const UpdateDoctorDataSuccessState());
   }
 
   changeUserPassword(ChangeUserPasswordEvent event, emit) async {
@@ -289,18 +336,22 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   saveUserDate(AuthResponse res) async {
     if (res.user == null) return;
-    if (res.user!.userId == null)
+    if (res.user!.userId == null) {
       await SharedPref()
           .setPreferencesString(Constants.userId, res.user!.userId.toString());
-    if (res.user!.email == null && res.user!.email != "")
+    }
+    if (res.user!.email == null && res.user!.email != "") {
       await SharedPref()
           .setPreferencesString(Constants.email, res.user!.email.toString());
-    if (res.user!.phoneNumber == null && res.user!.phoneNumber != "")
+    }
+    if (res.user!.phoneNumber == null && res.user!.phoneNumber != "") {
       await SharedPref().setPreferencesString(
           Constants.mobile, res.user!.phoneNumber.toString());
-    if (res.user!.userName == null && res.user!.userName != "")
+    }
+    if (res.user!.userName == null && res.user!.userName != "") {
       await SharedPref()
           .setPreferencesString(Constants.name, res.user!.userName.toString());
+    }
   }
 
   /// get all users
@@ -362,10 +413,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   String currentMedicalConditions = "";
   updateCurrentPatientData(UpdateUserPatientDataEvent event, emit) {
     emit(AccountInitialState());
-    if (event.data['publications'] != null)
+    if (event.data['publications'] != null) {
       currentPublication = event.data['publications'];
-    if (event.data['medical_conditions'] != null)
+    }
+    if (event.data['medical_conditions'] != null) {
       currentMedicalConditions = event.data['medical_conditions'];
+    }
     emit(const ProfileSuccessState());
   }
 
@@ -378,8 +431,13 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   }
 
   List<ServicesModel> allServiceList = [];
-  getAllServiceList({String? userType}) async {
+  getAllServiceList(
+      FetchAllServicesEvent event, Emitter<AccountState> emit) async {
     if (!Util.checkUser()) return;
+
+    emit(const ProfileLoadingState());
+
+    String? userType = event.userType;
 
     // Get user_type from current user if not provided
     if (userType == null && currentUser?.userType != null) {
@@ -387,11 +445,30 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       debugPrint("🔍 Using current user type: $userType");
     }
 
-    allServiceList = await UserServiceRemoteDataSource.getAllServicesList(
-        userType: userType);
-
-    debugPrint(
-        "📋 Loaded ${allServiceList.length} services for user_type: ${userType ?? 'all'}");
+    if (userType == 'doctor') {
+      debugPrint("🔍 Fetching SPECIALTIES for doctor");
+      try {
+        var specialties = await SettingsRemoteDataSource.fetchAllSpecialties();
+        allServiceList = specialties
+            .map((s) => ServicesModel(
+                  id: s.id,
+                  value: s.title,
+                  name: s.title,
+                  userType: 'doctor',
+                ))
+            .toList();
+        debugPrint("✅ Loaded ${allServiceList.length} specialties for doctor");
+      } catch (e) {
+        debugPrint("❌ Error fetching specialties: $e");
+        allServiceList = [];
+      }
+    } else {
+      allServiceList = await UserServiceRemoteDataSource.getAllServicesList(
+          userType: userType);
+      debugPrint(
+          "📋 Loaded ${allServiceList.length} services for user_type: ${userType ?? 'all'}");
+    }
+    emit(const ProfileSuccessState());
   }
 
   ServicesModel? currentService;
@@ -422,9 +499,17 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } else {
       servicesList![indexI] = event.item;
     }
-    UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
-      if (servicesList != null) 'services': convertServiceToIDS(servicesList!),
-    });
+    if (Util.isDoctor()) {
+      UserServiceRemoteDataSource.updateDoctorOptionsValue(userData: {
+        if (servicesList != null)
+          'services': convertServiceToIDS(servicesList!),
+      });
+    } else {
+      UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
+        if (servicesList != null)
+          'services': convertServiceToIDS(servicesList!),
+      });
+    }
     emit(const ProfileSuccessState());
   }
 

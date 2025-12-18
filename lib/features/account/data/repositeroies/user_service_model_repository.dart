@@ -11,7 +11,8 @@ import 'package:icare/features/authentication/domain/entities/user_entity.dart';
 class UserServiceModelRepository implements UserServiceRepository {
   final UserServiceRemoteDataSource userServiceRemoteDataSource;
   final NetworkInfo networkInfo;
-  UserServiceModelRepository({required this.userServiceRemoteDataSource, required this.networkInfo});
+  UserServiceModelRepository(
+      {required this.userServiceRemoteDataSource, required this.networkInfo});
 
   @override
   Future<Either<Failure, UserService>> getUserData({int? id}) async {
@@ -38,7 +39,6 @@ class UserServiceModelRepository implements UserServiceRepository {
       return Left(OfflineFailure());
     }
   }
-
 
   @override
   Future<Either<Failure, UserServiceModel>> updateUserProfile(
@@ -71,10 +71,12 @@ class UserServiceModelRepository implements UserServiceRepository {
   }
 
   @override
-  Future<Either<Failure, AuthResponse>> changePassword({required Map<String,dynamic> data}) async{
+  Future<Either<Failure, AuthResponse>> changePassword(
+      {required Map<String, dynamic> data}) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await userServiceRemoteDataSource.changePassword(data: data));
+        return Right(
+            await userServiceRemoteDataSource.changePassword(data: data));
       } on ServerException {
         return Left(ServerFailure());
       }
@@ -82,5 +84,4 @@ class UserServiceModelRepository implements UserServiceRepository {
       return Left(OfflineFailure());
     }
   }
-
 }

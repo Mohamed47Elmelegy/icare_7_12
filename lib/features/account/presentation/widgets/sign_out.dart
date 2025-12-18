@@ -1,4 +1,3 @@
-
 import 'package:icare/core/styles/my_fonts.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
@@ -22,72 +21,67 @@ class SignOut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  BlocListener<AuthBloc,AuthState>(
-        listener: (ctx,state){
-          if(state is LogOutState) {
-            AccountBloc.get(context).currentUser = null;
-            Util.pushPageAndRemoveRoutes(const SplashScreen(), context);
-          }
-        },
-        listenWhen: (ctx,state){
-          return state is LogOutState;
-        },
-        child: BlocBuilder<AuthBloc,AuthState>(
-          builder: (cxt,state){
-            var bloc = AuthBloc.get(cxt);
-            return Container(
-              height: 180.h,
-              width: 400.w,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15)
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return BlocListener<AuthBloc, AuthState>(listener: (ctx, state) {
+      if (state is LogOutState) {
+        AccountBloc.get(context).currentUser = null;
+        Util.pushPageAndRemoveRoutes(const SplashScreen(), context);
+      }
+    }, listenWhen: (ctx, state) {
+      return state is LogOutState;
+    }, child: BlocBuilder<AuthBloc, AuthState>(
+      builder: (cxt, state) {
+        var bloc = AuthBloc.get(cxt);
+        return Container(
+          height: 180.h,
+          width: 400.w,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(15)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CustomText(
+                  text: translate("activity_setting.sure_signout"),
+                  color: kText1,
+                  fontFamily: primaryFontBold,
+                  fontSize: AppStyle.average.sp),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CustomText(
-                      text: translate("activity_setting.sure_signout"),
-                      color: kText1,
-                      fontFamily: primaryFontBold,
-                      fontSize: AppStyle.average.sp),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CustomButton(
-                          height: 30.h,
-                          width: 100.w,
-                          circular: 5,
-                          widget: CustomText(
-                              text: translate("button.yes"),
-                              color: Colors.white,
-                              fontFamily: primaryFontSemiBold,
-                              fontSize: AppStyle.small.sp),
-                          color: DMUtil.getPC(),
-                          onPressed: (){
-                            AccountBloc.get(context).add(const SwitchProfileStatusEvent(isOnline: true));
-                            bloc.add(const LogOutEvent());
-                          }),
-                      CustomButton(
-                          height: 30.h,
-                          width: 100.w,
-                          circular: 5,
-                          widget: CustomText(
-                              text: translate("button.no"),
-                              color: Colors.red,
-                              fontFamily: primaryFontSemiBold,
-                              fontSize: AppStyle.small.sp),
+                  CustomButton(
+                      height: 30.h,
+                      width: 100.w,
+                      circular: 5,
+                      widget: CustomText(
+                          text: translate("button.yes"),
                           color: Colors.white,
-                          sideWidth: 1,
-                          sideColor: Colors.black45,
-                          onPressed: ()=>Navigator.of(context).pop()),
-                    ],
-                  ),
+                          fontFamily: primaryFontSemiBold,
+                          fontSize: AppStyle.small.sp),
+                      color: DMUtil.getPC(),
+                      onPressed: () {
+                        AccountBloc.get(context).add(
+                            const SwitchProfileStatusEvent(isOnline: true));
+                        bloc.add(const LogOutEvent());
+                      }),
+                  CustomButton(
+                      height: 30.h,
+                      width: 100.w,
+                      circular: 5,
+                      widget: CustomText(
+                          text: translate("button.no"),
+                          color: Colors.red,
+                          fontFamily: primaryFontSemiBold,
+                          fontSize: AppStyle.small.sp),
+                      color: Colors.white,
+                      sideWidth: 1,
+                      sideColor: Colors.black45,
+                      onPressed: () => Navigator.of(context).pop()),
                 ],
               ),
-            );
-          },
-        )
-    );
+            ],
+          ),
+        );
+      },
+    ));
   }
 }

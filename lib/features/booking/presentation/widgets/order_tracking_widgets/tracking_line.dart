@@ -7,10 +7,9 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
-
 class TrackingLineWidget extends StatelessWidget {
-  final ORDER_STATUS status ;
-  const TrackingLineWidget({super.key,required this.status});
+  final ORDER_STATUS status;
+  const TrackingLineWidget({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -19,24 +18,31 @@ class TrackingLineWidget extends StatelessWidget {
       children: [
         Column(
           children: [
-            CircleDotsWidget(isEnabled:  status == ORDER_STATUS.PENDING?true:false,isOpacity: status != ORDER_STATUS.PENDING?true:false),
+            CircleDotsWidget(
+                isEnabled: status == ORDER_STATUS.PENDING ? true : false,
+                isOpacity: status != ORDER_STATUS.PENDING ? true : false),
             Container(
               width: 6.w,
               height: 85.h,
               color: DMUtil.getRED().withOpacity(0.6),
             ),
-            CircleDotsWidget(isEnabled:  status == ORDER_STATUS.ONGOING?true:false,isOpacity: status != ORDER_STATUS.ONGOING?true:false),
+            CircleDotsWidget(
+                isEnabled: status == ORDER_STATUS.ONGOING ? true : false,
+                isOpacity: status != ORDER_STATUS.ONGOING ? true : false),
             ///////////////////////////////
             Container(
               width: 6.w,
               height: 85.h,
               color: DMUtil.getRED().withOpacity(0.6),
             ),
-            CircleDotsWidget(isEnabled:  status == ORDER_STATUS.COMPLETED?true:false,isOpacity: status != ORDER_STATUS.COMPLETED?true:false),
-
+            CircleDotsWidget(
+                isEnabled: status == ORDER_STATUS.COMPLETED ? true : false,
+                isOpacity: status != ORDER_STATUS.COMPLETED ? true : false),
           ],
         ),
-        const SizedBox(width: 10,),
+        const SizedBox(
+          width: 10,
+        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,13 +56,17 @@ class TrackingLineWidget extends StatelessWidget {
               color: DMUtil.getD2C(),
               fontSize: AppStyle.small.sp,
             ),
-            SizedBox(height: 62.h,),
+            SizedBox(
+              height: 62.h,
+            ),
             CustomText(
               text: translate("order.ongoing"),
               color: DMUtil.getD2C(),
               fontSize: AppStyle.average.sp,
             ),
-            SizedBox(height: 70.h,),
+            SizedBox(
+              height: 70.h,
+            ),
             CustomText(
               text: translate("order.delivered"),
               color: DMUtil.getD2C(),
@@ -64,7 +74,6 @@ class TrackingLineWidget extends StatelessWidget {
             ),
           ],
         )
-
       ],
     );
   }

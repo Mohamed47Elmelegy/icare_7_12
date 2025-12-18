@@ -14,12 +14,15 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
 
-
 class ServicePriceRowWithModify extends StatelessWidget {
   final int serviceID;
   final String serviceName;
   final String price;
-  const ServicePriceRowWithModify({super.key,required this.serviceID,required this.price,required this.serviceName});
+  const ServicePriceRowWithModify(
+      {super.key,
+      required this.serviceID,
+      required this.price,
+      required this.serviceName});
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +36,11 @@ class ServicePriceRowWithModify extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        BlocBuilder<AccountBloc,AccountState>(
-          builder: (ctx,state){
+        BlocBuilder<AccountBloc, AccountState>(
+          builder: (ctx, state) {
             var bloc = AccountBloc.get(ctx);
-            bool enableUpdateService = bloc.currentModifyService == serviceID ;
-            if(enableUpdateService){
+            bool enableUpdateService = bloc.currentModifyService == serviceID;
+            if (enableUpdateService) {
               return Row(
                 children: [
                   SizedBox(
@@ -51,8 +54,8 @@ class ServicePriceRowWithModify extends StatelessWidget {
                       hintText: " ${translate("icare.le")}",
                       radius: 10,
                       smallPadding: true,
-                      onChanged: (val){},
-                      onFieldSubmitted: (val){},
+                      onChanged: (val) {},
+                      onFieldSubmitted: (val) {},
                       textEditingController: textEditingController,
                       validator: () {},
                       prefixIcon: null,
@@ -61,9 +64,18 @@ class ServicePriceRowWithModify extends StatelessWidget {
                       isLabelError: false,
                     ),
                   ),
-                  const SizedBox(width: 5,),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   InkWell(
-                      onTap: ()=> bloc.add(ModifyCurrentService(item: ServicesModel(id: serviceID,value:  double.tryParse(textEditingController.text.trim())!=null ? textEditingController.text.trim() : price))),
+                      onTap: () => bloc.add(ModifyCurrentService(
+                          item: ServicesModel(
+                              id: serviceID,
+                              value: double.tryParse(
+                                          textEditingController.text.trim()) !=
+                                      null
+                                  ? textEditingController.text.trim()
+                                  : price))),
                       child: CircleAvatar(
                         radius: 10.w,
                         backgroundColor: DMUtil.getWC(),
@@ -72,8 +84,7 @@ class ServicePriceRowWithModify extends StatelessWidget {
                           size: 15.w,
                           color: DMUtil.getPC(),
                         ),
-                      )
-                  ),
+                      )),
                 ],
               );
             }
@@ -85,10 +96,13 @@ class ServicePriceRowWithModify extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   color: DMUtil.getD2C(),
                 ),
-                if(bloc.enableUpdate)...[
-                  const SizedBox(width: 5,),
+                if (bloc.enableUpdate) ...[
+                  const SizedBox(
+                    width: 5,
+                  ),
                   InkWell(
-                      onTap: ()=> bloc.add(EnableModifyCurrentService(item: serviceID)),
+                      onTap: () =>
+                          bloc.add(EnableModifyCurrentService(item: serviceID)),
                       child: CircleAvatar(
                         radius: 10.w,
                         backgroundColor: DMUtil.getWC(),
@@ -97,11 +111,14 @@ class ServicePriceRowWithModify extends StatelessWidget {
                           size: 15.w,
                           color: DMUtil.getPC(),
                         ),
-                      )
+                      )),
+                  const SizedBox(
+                    width: 5,
                   ),
-                  const SizedBox(width: 5,),
                   InkWell(
-                      onTap: ()=> bloc.add(ModifyCurrentService(item: ServicesModel(id: serviceID,value: price),isRemove: true)),
+                      onTap: () => bloc.add(ModifyCurrentService(
+                          item: ServicesModel(id: serviceID, value: price),
+                          isRemove: true)),
                       child: CircleAvatar(
                         radius: 10.w,
                         backgroundColor: DMUtil.getWC(),
@@ -110,8 +127,7 @@ class ServicePriceRowWithModify extends StatelessWidget {
                           size: 15.w,
                           color: DMUtil.getRED(),
                         ),
-                      )
-                  ),
+                      )),
                 ],
               ],
             );
@@ -122,18 +138,22 @@ class ServicePriceRowWithModify extends StatelessWidget {
   }
 }
 
-
-
 class ServicePriceRow extends StatelessWidget {
   final int serviceID;
   final String serviceName;
   final String price;
-  const ServicePriceRow({super.key,required this.serviceID,required this.price,required this.serviceName});
+  const ServicePriceRow(
+      {super.key,
+      required this.serviceID,
+      required this.price,
+      required this.serviceName});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()=> BookingBloc.get(context).add(UpdateBookingServiceListEvent(service: ServicesModel(id: serviceID, value: price,name: serviceName))),
+      onTap: () => BookingBloc.get(context).add(UpdateBookingServiceListEvent(
+          service:
+              ServicesModel(id: serviceID, value: price, name: serviceName))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -149,24 +169,23 @@ class ServicePriceRow extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: DMUtil.getD2C(),
           ),
-
-          BlocBuilder<BookingBloc,BookingState>(
-            builder: (ctx,state){
+          BlocBuilder<BookingBloc, BookingState>(
+            builder: (ctx, state) {
               var bloc = BookingBloc.get(ctx);
-              int serviceIndex = bloc.orderServiceList.indexWhere((element) => element.id==serviceID);
+              int serviceIndex = bloc.orderServiceList
+                  .indexWhere((element) => element.id == serviceID);
               bool selected = serviceIndex != -1;
               return CircleAvatar(
                 radius: 14.w,
-                backgroundColor: selected? DMUtil.getPC() : DMUtil.getWC(),
+                backgroundColor: selected ? DMUtil.getPC() : DMUtil.getWC(),
                 child: Icon(
                   Icons.check,
                   size: 17.w,
-                  color: selected? DMUtil.getWC() : DMUtil.getPC(),
+                  color: selected ? DMUtil.getWC() : DMUtil.getPC(),
                 ),
               );
             },
           ),
-
         ],
       ),
     );

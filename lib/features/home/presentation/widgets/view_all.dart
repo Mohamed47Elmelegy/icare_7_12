@@ -7,17 +7,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ViewAllRow extends StatelessWidget {
   final String title;
   final VoidCallback fn;
-  const ViewAllRow({super.key,required this.title,required this.fn});
+  const ViewAllRow({super.key, required this.title, required this.fn});
 
   @override
   Widget build(BuildContext context) {
-    return  Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CustomText(
           text: title,
           fontWeight: FontWeight.w600,
-          fontSize: AppStyle.large.sp-2.w,
+          fontSize: AppStyle.large.sp - 2.w,
         ),
         ViewAllWidget(fn: fn),
       ],

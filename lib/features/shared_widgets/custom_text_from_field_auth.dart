@@ -1,11 +1,9 @@
-
 // ignore_for_file: must_be_immutable
 
 import 'package:icare/core/styles/my_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icare/core/styles/app_style.dart';
-
 
 class CustomTextFromFieldAuth extends StatelessWidget {
   final String hintText;
@@ -61,23 +59,26 @@ class CustomTextFromFieldAuth extends StatelessWidget {
       child: TextFormField(
         autofocus: false,
         controller: textEditingController,
-        maxLines: maxLines??1,
+        maxLines: maxLines ?? 1,
         validator: (value) => validator(value),
         obscureText: obscureText,
-        enabled: enabled??true,
+        enabled: enabled ?? true,
         cursorColor: cursorColor ?? Colors.white,
         keyboardType: textInputType ?? TextInputType.text,
-        onChanged: (val) =>onChanged==null?debugPrint(""):onChanged!(val),
-        onFieldSubmitted: (val) =>onFieldSubmitted==null?debugPrint(""):onFieldSubmitted!(val),
+        onChanged: (val) =>
+            onChanged == null ? debugPrint("") : onChanged!(val),
+        onFieldSubmitted: (val) =>
+            onFieldSubmitted == null ? debugPrint("") : onFieldSubmitted!(val),
         style: const TextStyle(
           color: Colors.black,
         ),
         decoration: InputDecoration(
           filled: filled,
-          contentPadding: smallPadding==true?
-          const EdgeInsets.symmetric(vertical: 1,horizontal: 2):null,
+          contentPadding: smallPadding == true
+              ? const EdgeInsets.symmetric(vertical: 1, horizontal: 2)
+              : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          focusedBorder:  OutlineInputBorder(
+          focusedBorder: OutlineInputBorder(
             borderSide: const BorderSide(color: Colors.transparent),
             borderRadius: BorderRadius.all(
               Radius.circular(radius),
@@ -106,8 +107,7 @@ class CustomTextFromFieldAuth extends StatelessWidget {
           hintStyle: TextStyle(
               fontSize: AppStyle.small.sp,
               color: Colors.black,
-              fontFamily: primaryFontReg
-          ),
+              fontFamily: primaryFontReg),
           errorStyle: const TextStyle(
             color: Colors.red,
             fontSize: 15,

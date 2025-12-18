@@ -24,22 +24,28 @@ class MaintenanceScreen extends StatefulWidget {
 }
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
-  final TextEditingController firstNameTextEditingController = TextEditingController();
-  final TextEditingController lastNameTextEditingController = TextEditingController();
-  final TextEditingController emailTextEditingController = TextEditingController();
-  final TextEditingController phoneTextEditingController = TextEditingController();
-  final TextEditingController complaintTextEditingController = TextEditingController();
-  final TextEditingController warrantyTextEditingController = TextEditingController();
-  final TextEditingController serialTextEditingController = TextEditingController();
-  final TextEditingController productModuleTextEditingController = TextEditingController();
+  final TextEditingController firstNameTextEditingController =
+      TextEditingController();
+  final TextEditingController lastNameTextEditingController =
+      TextEditingController();
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+  final TextEditingController phoneTextEditingController =
+      TextEditingController();
+  final TextEditingController complaintTextEditingController =
+      TextEditingController();
+  final TextEditingController warrantyTextEditingController =
+      TextEditingController();
+  final TextEditingController serialTextEditingController =
+      TextEditingController();
+  final TextEditingController productModuleTextEditingController =
+      TextEditingController();
   int deviceNumber = 1;
   int brandID = 1;
   File? img;
   var border = OutlineInputBorder(
       borderSide: BorderSide(color: DMUtil.getOpacity()),
-      borderRadius: const BorderRadius.all(Radius.circular(10))
-  );
-
+      borderRadius: const BorderRadius.all(Radius.circular(10)));
 
   @override
   Widget build(BuildContext context) {
@@ -50,54 +56,59 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
         leadingIcon: const BackArrowButton(),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: BlocListener<RootBloc, RootState>(
-          listenWhen: (ctx,state)=> state is MaintenanceSuccessState,
-          listener: (ctx,state) {
-            if(state is MaintenanceSuccessState){
-              firstNameTextEditingController.text = "";
-              lastNameTextEditingController.text = "";
-              emailTextEditingController.text = "";
-              phoneTextEditingController.text = "";
-              productModuleTextEditingController.text = "";
-              complaintTextEditingController.text = "";
-              serialTextEditingController.text = "";
-              warrantyTextEditingController.text = "";
-              img = null;
-              SnackBarBuilder.showFeedBackMessage(context, translate("maintenance.success_msg"), DMUtil.getGreen());
-              setState(() {});
-            }
-          },
-          child: BlocBuilder<RootBloc, RootState>(builder: (ctx, state) {
-            return CustomButton(
-              height: 40.h,
-              width: 200.w,
-              circular: 10,
-              color: DMUtil.getRED(),
-              widget: state is MaintenanceLoadingState
-                  ? const CircularProgressIndicator(color: Colors.white,)
-                  : CustomText(
-                text: translate("button.send"),
-                color: Colors.white,
-                fontSize: AppStyle.average.sp,
-              ),
-              onPressed: () {
-                if(validate()==false)return;
-                String phone = "+966${phoneTextEditingController.text.trim()}";
-                if(validatePhoneInput(phone, context) == false){
-                  return;
-                }
-                if(!emailTextEditingController.text.trim().contains("@")){
-                  SnackBarBuilder.showFeedBackMessage(context, translate("toast.email_invalid"), DMUtil.getRED());
-                  return;
-                }
-              },
-            );
-          }),
-        )
-      ),
+          padding: const EdgeInsets.all(20.0),
+          child: BlocListener<RootBloc, RootState>(
+            listenWhen: (ctx, state) => state is MaintenanceSuccessState,
+            listener: (ctx, state) {
+              if (state is MaintenanceSuccessState) {
+                firstNameTextEditingController.text = "";
+                lastNameTextEditingController.text = "";
+                emailTextEditingController.text = "";
+                phoneTextEditingController.text = "";
+                productModuleTextEditingController.text = "";
+                complaintTextEditingController.text = "";
+                serialTextEditingController.text = "";
+                warrantyTextEditingController.text = "";
+                img = null;
+                SnackBarBuilder.showFeedBackMessage(context,
+                    translate("maintenance.success_msg"), DMUtil.getGreen());
+                setState(() {});
+              }
+            },
+            child: BlocBuilder<RootBloc, RootState>(builder: (ctx, state) {
+              return CustomButton(
+                height: 40.h,
+                width: 200.w,
+                circular: 10,
+                color: DMUtil.getRED(),
+                widget: state is MaintenanceLoadingState
+                    ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                    : CustomText(
+                        text: translate("button.send"),
+                        color: Colors.white,
+                        fontSize: AppStyle.average.sp,
+                      ),
+                onPressed: () {
+                  if (validate() == false) return;
+                  String phone =
+                      "+966${phoneTextEditingController.text.trim()}";
+                  if (validatePhoneInput(phone, context) == false) {
+                    return;
+                  }
+                  if (!emailTextEditingController.text.trim().contains("@")) {
+                    SnackBarBuilder.showFeedBackMessage(context,
+                        translate("toast.email_invalid"), DMUtil.getRED());
+                    return;
+                  }
+                },
+              );
+            }),
+          )),
       body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(
+              horizontal: AppStyle.paddingFromH.w, vertical: 12.h),
           physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +124,9 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                         color: DMUtil.getDC(),
                         fontSize: AppStyle.average.sp,
                       ),
-                      const SizedBox(height: 5,),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       SizedBox(
                         width: 160.w,
                         child: CustomTextFromField(
@@ -139,7 +152,9 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                         color: DMUtil.getDC(),
                         fontSize: AppStyle.average.sp,
                       ),
-                      const SizedBox(height: 5,),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       SizedBox(
                         width: 160.w,
                         child: CustomTextFromField(
@@ -159,17 +174,26 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               CustomText(
                 text: translate("signup.phone"),
                 color: DMUtil.getDC(),
                 fontSize: AppStyle.average.sp,
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               Row(
                 children: [
-                  CustomText(text: "+966", fontSize: AppStyle.small.sp,),
-                  const SizedBox(width: 5,),
+                  CustomText(
+                    text: "+966",
+                    fontSize: AppStyle.small.sp,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   Expanded(
                     child: CustomTextFromField(
                       hintText: "502441695",
@@ -188,13 +212,17 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               CustomText(
                 text: translate("signup.email"),
                 color: DMUtil.getDC(),
                 fontSize: AppStyle.average.sp,
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               CustomTextFromField(
                 hintText: translate("signup.email"),
                 labelText: "",
@@ -209,22 +237,31 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                 isLabelError: false,
                 borderColor: DMUtil.getDC(),
               ),
-              const SizedBox(height: 12,),
-
+              const SizedBox(
+                height: 12,
+              ),
               CustomText(
                 text: translate("maintenance.number_of_maintenance_device"),
                 color: DMUtil.getDC(),
                 fontSize: AppStyle.average.sp,
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               DropdownButtonFormField(
-                icon: Icon(Icons.keyboard_arrow_down,size: 13.w,),
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 13.w,
+                ),
                 decoration: InputDecoration(
-                  focusedBorder:border,
+                  focusedBorder: border,
                   enabledBorder: border,
                   border: border,
-                  hintText: translate("maintenance.number_of_maintenance_device"),
-                  hintStyle: TextStyle(fontSize: AppStyle.verySmall.sp+2, color: DMUtil.getD2C()),
+                  hintText:
+                      translate("maintenance.number_of_maintenance_device"),
+                  hintStyle: TextStyle(
+                      fontSize: AppStyle.verySmall.sp + 2,
+                      color: DMUtil.getD2C()),
                   isDense: true,
                 ),
                 items: <DropdownMenuItem<String>>[
@@ -240,13 +277,17 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                   });
                 },
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               CustomText(
                 text: translate("maintenance.warranty"),
                 color: DMUtil.getDC(),
                 fontSize: AppStyle.average.sp,
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               CustomTextFromField(
                 hintText: translate("maintenance.warranty"),
                 labelText: "",
@@ -259,14 +300,20 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                 obscureText: false,
                 isLabelError: false,
               ),
-              const SizedBox(height: 12,),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
+              const SizedBox(
+                height: 12,
+              ),
               CustomText(
                 text: translate("maintenance.product_module"),
                 color: DMUtil.getDC(),
                 fontSize: AppStyle.average.sp,
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               CustomTextFromField(
                 hintText: translate("maintenance.product_module"),
                 labelText: "",
@@ -279,13 +326,17 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                 obscureText: false,
                 isLabelError: false,
               ),
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               CustomText(
                 text: translate("maintenance.complaints"),
                 color: DMUtil.getDC(),
                 fontSize: AppStyle.average.sp,
               ),
-              const SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               CustomTextFromField(
                 hintText: translate("maintenance.complaints"),
                 labelText: "",
@@ -304,7 +355,9 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                 isStart: false,
                 child: Column(
                   children: [
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     CustomButton(
                       height: 30.h,
                       width: 220.w,
@@ -316,7 +369,10 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                             color: Colors.white,
                             fontSize: AppStyle.average.sp,
                           ),
-                          Icon(Icons.drive_folder_upload_outlined,size: 20.w,),
+                          Icon(
+                            Icons.drive_folder_upload_outlined,
+                            size: 20.w,
+                          ),
                         ],
                       ),
                       color: DMUtil.getRED(),
@@ -348,10 +404,11 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
           )),
     );
   }
-  bool validatePhoneInput(String phone,BuildContext context){
-    if(phone.isNotEmpty){
+
+  bool validatePhoneInput(String phone, BuildContext context) {
+    if (phone.isNotEmpty) {
       String? txt = Util.validatePhone(phone);
-      if(txt!=null){
+      if (txt != null) {
         SnackBarBuilder.showFeedBackMessage(context, txt, DMUtil.getRED());
         return false;
       }
@@ -359,50 +416,79 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
     return true;
   }
 
-  bool validate(){
+  bool validate() {
     if (firstNameTextEditingController.text.trim().isEmpty ||
-        lastNameTextEditingController.text.trim().isEmpty ) {
-      SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), DMUtil.getRED());
+        lastNameTextEditingController.text.trim().isEmpty) {
+      SnackBarBuilder.showFeedBackMessage(
+          context, translate("toast.field_empty"), DMUtil.getRED());
       return false;
     }
     if (firstNameTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("signup.first_name")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("signup.first_name")}",
+          DMUtil.getRED());
       return false;
     }
     if (lastNameTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("signup.last_name")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("signup.last_name")}",
+          DMUtil.getRED());
       return false;
     }
     if (phoneTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("signup.phone")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("signup.phone")}",
+          DMUtil.getRED());
       return false;
     }
     if (emailTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("signup.email")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("signup.email")}",
+          DMUtil.getRED());
       return false;
     }
     if (warrantyTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("maintenance.warranty")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("maintenance.warranty")}",
+          DMUtil.getRED());
       return false;
     }
-    if(brandID==1){
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("store.brand")}", DMUtil.getRED());
+    if (brandID == 1) {
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("store.brand")}",
+          DMUtil.getRED());
       return false;
     }
     if (serialTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("maintenance.serial")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("maintenance.serial")}",
+          DMUtil.getRED());
       return false;
     }
     if (productModuleTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("maintenance.product_module")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("maintenance.product_module")}",
+          DMUtil.getRED());
       return false;
     }
     if (complaintTextEditingController.text.trim().isEmpty) {
-      SnackBarBuilder.showFeedBackMessage(context, "${translate("toast.field_empty")} - ${translate("maintenance.complaints")}", DMUtil.getRED());
+      SnackBarBuilder.showFeedBackMessage(
+          context,
+          "${translate("toast.field_empty")} - ${translate("maintenance.complaints")}",
+          DMUtil.getRED());
       return false;
     }
-    if(img == null){
-      SnackBarBuilder.showFeedBackMessage(context, translate("toast.img_missing"), DMUtil.getRED());
+    if (img == null) {
+      SnackBarBuilder.showFeedBackMessage(
+          context, translate("toast.img_missing"), DMUtil.getRED());
       return false;
     }
     return true;

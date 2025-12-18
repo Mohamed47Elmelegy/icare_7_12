@@ -10,7 +10,8 @@ import 'package:icare/features/shared_widgets/global_widgets.dart';
 
 class AllDoctorSpecialistsScreen extends StatelessWidget {
   const AllDoctorSpecialistsScreen({super.key});
-  static final TextEditingController searchTextEditingController = TextEditingController();
+  static final TextEditingController searchTextEditingController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +40,15 @@ class AllDoctorSpecialistsScreen extends StatelessWidget {
                 height: 45,
                 hintText: translate("app_bar.search"),
                 radius: 10,
-                onChanged: (val) => DoctorBloc.get(context).add(UpdateSearchTxtEvent(txt: val.toString().trim())),
+                onChanged: (val) => DoctorBloc.get(context)
+                    .add(UpdateSearchTxtEvent(txt: val.toString().trim())),
                 onFieldSubmitted: (val) {},
                 textEditingController: searchTextEditingController,
                 validator: () {},
                 prefixIcon: null,
                 obscureText: false,
-                suffixIcon: Icon(Icons.search, color: DMUtil.getPC(), size: 20.w),
+                suffixIcon:
+                    Icon(Icons.search, color: DMUtil.getPC(), size: 20.w),
                 isLabelError: false,
               ),
             ),

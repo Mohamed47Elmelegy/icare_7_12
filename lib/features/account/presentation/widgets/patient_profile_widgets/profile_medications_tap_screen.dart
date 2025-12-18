@@ -21,55 +21,67 @@ class ProfileMedicationsTapScreen extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 10,),
-
+        const SizedBox(
+          height: 10,
+        ),
         CustomText(
           text: "Aspirin",
           fontSize: AppStyle.verySmall.sp,
           color: DMUtil.getD2C(),
         ),
-        SizedBox(height: 3.w,),
+        SizedBox(
+          height: 3.w,
+        ),
         CustomText(
           text: "losartan (ARB)",
           fontSize: AppStyle.verySmall.sp,
           color: DMUtil.getD2C(),
         ),
-        SizedBox(height: 3.w,),
+        SizedBox(
+          height: 3.w,
+        ),
         CustomText(
           text: "linagliptin",
           fontSize: AppStyle.verySmall.sp,
           color: DMUtil.getD2C(),
         ),
         const Divider(),
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         CustomText(
           text: translate("profile.lab_tests"),
           fontSize: AppStyle.small.sp,
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 5,),
-        const RowWithTwoTitle(title1: "Blood Test", title2: "july 18-2017 14:20 Pm"),
+        const SizedBox(
+          height: 5,
+        ),
+        const RowWithTwoTitle(
+            title1: "Blood Test", title2: "july 18-2017 14:20 Pm"),
         const RowWithTwoTitle(title1: "X Ray", title2: "july 12-2017 20:20 Pm"),
-
         const Divider(),
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         CustomText(
           text: translate("profile.publications"),
           fontSize: AppStyle.small.sp,
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 5,),
-        const DotWithTitle(
-            title: "publications",
-            titleWidth: 310,
+        const SizedBox(
+          height: 5,
         ),
-        const SizedBox(height: 100,),
+        const DotWithTitle(
+          title: "publications",
+          titleWidth: 310,
+        ),
+        const SizedBox(
+          height: 100,
+        ),
       ],
     );
   }
 }
-
-
-

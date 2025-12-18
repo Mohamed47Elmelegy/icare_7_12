@@ -1,14 +1,19 @@
-class MessageModel{
-  String? text,senderID,senderName,receiverID,receiverName,uploadID;
-  MessageModel({this.text, this.senderID,this.senderName,this.receiverID,this.receiverName, this.uploadID});
+class MessageModel {
+  String? text, senderID, senderName, receiverID, receiverName, uploadID;
+  MessageModel(
+      {this.text,
+      this.senderID,
+      this.senderName,
+      this.receiverID,
+      this.receiverName,
+      this.uploadID});
 }
 
-class ChatRoom{
+class ChatRoom {
   String? id;
-  String? advisorName,advisorID;
-  String? userName,userID;
-  List<MessageModel>? chatList ;
+  String? advisorName, advisorID;
+  String? userName, userID;
+  List<MessageModel>? chatList;
 
-  ChatRoom({this.id,this.advisorName, this.advisorID, this.chatList});
+  ChatRoom({this.id, this.advisorName, this.advisorID, this.chatList});
 }
-

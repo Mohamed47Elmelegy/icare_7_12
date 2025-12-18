@@ -6,22 +6,28 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class SearchWidget extends StatelessWidget {
   final bool showDrawer;
-  const SearchWidget({super.key,this.showDrawer =true});
-  static TextEditingController searchTextEditingController = TextEditingController();
+  const SearchWidget({super.key, this.showDrawer = true});
+  static TextEditingController searchTextEditingController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        if(showDrawer)
-        InkWell(
-          onTap: ()=> Scaffold.of(context).openDrawer(),
-          child: SvgPicture.asset(AppImages.drawer,colorFilter: ColorFilter.mode(DMUtil.getD2C(), BlendMode.srcIn),width: (10.h + 12.w),),
+        if (showDrawer)
+          InkWell(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: SvgPicture.asset(
+              AppImages.drawer,
+              colorFilter: ColorFilter.mode(DMUtil.getD2C(), BlendMode.srcIn),
+              width: (10.h + 12.w),
+            ),
+          ),
+
+        const SizedBox(
+          width: 10,
         ),
-
-        const SizedBox(width: 10,),
-
 
         // Expanded(
         //   child: Container(
@@ -67,8 +73,6 @@ class SearchWidget extends StatelessWidget {
         //       )
         //   ),
         // ),
-
-
       ],
     );
   }

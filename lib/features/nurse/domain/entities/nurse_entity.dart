@@ -4,7 +4,7 @@ import 'package:icare/features/authentication/domain/entities/user_entity.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/nurse/data/models/review_model.dart';
 
-class NurseEntity extends Equatable{
+class NurseEntity extends Equatable {
   final int id;
   final UserService? userData;
   final String? nurseId;
@@ -13,6 +13,7 @@ class NurseEntity extends Equatable{
   final String? certificate;
   final double? distanceKM;
   final double? distanceM;
+  final int? specialtyId;
 
   final List<ReviewModel>? reviewList;
   final List<String>? languageList;
@@ -20,9 +21,6 @@ class NurseEntity extends Equatable{
   final List<String>? publicationsList;
   final List<String>? coursesList;
   final List<ServicesModel>? servicesList;
-
-
-
 
   const NurseEntity({
     required this.id,
@@ -39,13 +37,14 @@ class NurseEntity extends Equatable{
     this.servicesList,
     this.distanceKM,
     this.distanceM,
-   });
+    this.specialtyId,
+  });
 
   @override
   List<Object?> get props => [id];
 
-
   /// return type text in ui
-  String viewTypeText ()=> "${userData?.userType.toString().toLowerCase()=="nurse"?translate("nurse.nurse"):translate("nurse.assistant")} ".replaceAll("null", "");
-
+  String viewTypeText() =>
+      "${userData?.userType.toString().toLowerCase() == "nurse" ? translate("nurse.nurse") : translate("nurse.assistant")} "
+          .replaceAll("null", "");
 }

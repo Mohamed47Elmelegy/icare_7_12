@@ -14,33 +14,30 @@ class CategoryProductsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DMUtil.getWC(),
-      bottomNavigationBar: const BottomNavBar(isRoot: false,),
-      body: BlocBuilder<CategoriesBloc,CategoriesState>(
-          builder: (ctx,state) {
-            var bloc = CategoriesBloc.get(ctx);
-            if(bloc.currentCategory==null)return const SizedBox.shrink();
-            return Column(
-              children: [
-
-                GlobalAppBar(title: bloc.currentCategory!.title.toString(),leadingIcon: BackArrowButton(
-                  fn: (){
+      bottomNavigationBar: const BottomNavBar(
+        isRoot: false,
+      ),
+      body: BlocBuilder<CategoriesBloc, CategoriesState>(builder: (ctx, state) {
+        var bloc = CategoriesBloc.get(ctx);
+        if (bloc.currentCategory == null) return const SizedBox.shrink();
+        return Column(
+          children: [
+            GlobalAppBar(
+                title: bloc.currentCategory!.title.toString(),
+                leadingIcon: BackArrowButton(
+                  fn: () {
                     Navigator.of(context).pop();
                   },
                 )),
-                const SizedBox(height: 10,),
-                const SearchWidget(showDrawer: false,),
-
-
-
-
-
-
-
-
-              ],
-            );
-          }
-      ),
+            const SizedBox(
+              height: 10,
+            ),
+            const SearchWidget(
+              showDrawer: false,
+            ),
+          ],
+        );
+      }),
     );
   }
 }

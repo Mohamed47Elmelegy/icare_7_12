@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
 import 'package:icare/features/setting/domain/repositories/settings_repository.dart';
 
-class GetAllNotificationsUseCase{
+class GetAllNotificationsUseCase {
   final SettingsRepository settingsRepository;
 
   GetAllNotificationsUseCase({required this.settingsRepository});

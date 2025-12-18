@@ -30,7 +30,8 @@ class VerticalDoctorSpecialistCard extends StatelessWidget {
         Util.pushPage(const DoctorDetails(), context);
       },
       child: Card(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
@@ -68,7 +69,8 @@ class VerticalDoctorSpecialistCard extends StatelessWidget {
                             isEllipsis: true,
                             maxLine: 1,
                           ),
-                          ReviewsWidget(amount: 200, color: DMUtil.getBookButtonColor()),
+                          ReviewsWidget(
+                              amount: 200, color: DMUtil.getBookButtonColor()),
                         ],
                       ),
                     ),
@@ -81,7 +83,8 @@ class VerticalDoctorSpecialistCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: LocationUtil.getDistanceView(doctor.distanceKM, doctor.distanceM),
+                    text: LocationUtil.getDistanceView(
+                        doctor.distanceKM, doctor.distanceM),
                     color: DMUtil.getText(),
                     fontSize: AppStyle.small.sp - 1,
                   ),
@@ -100,7 +103,8 @@ class VerticalDoctorSpecialistCard extends StatelessWidget {
                     ),
                     color: DMUtil.getWC(),
                     onPressed: () {
-                      DoctorBloc.get(context).add(UpdateCurrentDoctorEvent(doctor: doctor));
+                      DoctorBloc.get(context)
+                          .add(UpdateCurrentDoctorEvent(doctor: doctor));
                       Util.pushPage(const DoctorDetails(), context);
                     },
                   ),

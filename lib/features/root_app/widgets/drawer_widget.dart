@@ -14,24 +14,22 @@ class DrawerWidget extends StatelessWidget {
     return Drawer(
       backgroundColor: DMUtil.getWC(),
       width: 240.w,
-      child: SingleChildScrollView(
-        child: BlocBuilder<RootBloc,RootState>(
-          builder: (ctx,state){
-            return Column(
-              children: [
-                MainDrawerSection(ctx: context),
-                // if(bloc.drawerEnum == DrawerEnum.OUR_COMPANY)...[
-                //   OurCompanySection(ctx: context),
-                // ]else if(bloc.drawerEnum == DrawerEnum.PRIVACY)...[
-                //   OurPrivacySection(ctx: context),
-                // ]else ...[
-                //   MainDrawerSection(ctx: context),
-                // ],
-              ],
-            );
-          },
-        )
-      ),
+      child: SingleChildScrollView(child: BlocBuilder<RootBloc, RootState>(
+        builder: (ctx, state) {
+          return Column(
+            children: [
+              MainDrawerSection(ctx: context),
+              // if(bloc.drawerEnum == DrawerEnum.OUR_COMPANY)...[
+              //   OurCompanySection(ctx: context),
+              // ]else if(bloc.drawerEnum == DrawerEnum.PRIVACY)...[
+              //   OurPrivacySection(ctx: context),
+              // ]else ...[
+              //   MainDrawerSection(ctx: context),
+              // ],
+            ],
+          );
+        },
+      )),
     );
   }
 }

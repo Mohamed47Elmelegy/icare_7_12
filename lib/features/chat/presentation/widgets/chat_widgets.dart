@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icare/core/strings/app_images.dart';
@@ -20,18 +19,22 @@ class MessageTile extends StatelessWidget {
       required this.senderName});
   @override
   Widget build(BuildContext context) {
-    return  Directionality(
-      textDirection: Util.getLang()=="ar"?TextDirection.ltr
-          :TextDirection.rtl,
+    return Directionality(
+      textDirection:
+          Util.getLang() == "ar" ? TextDirection.ltr : TextDirection.rtl,
       child: Container(
         padding: EdgeInsets.only(
-            top: 5, bottom: 5, left: sendByMe ? 10 : 10, right: sendByMe ? 10 : 10),
+            top: 5,
+            bottom: 5,
+            left: sendByMe ? 10 : 10,
+            right: sendByMe ? 10 : 10),
         alignment: sendByMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
-              mainAxisAlignment: sendByMe?MainAxisAlignment.end:MainAxisAlignment.start,
+              mainAxisAlignment:
+                  sendByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
                 if (sendByMe == false) ...[
                   Image.asset(
@@ -51,39 +54,39 @@ class MessageTile extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: sendByMe
                             ? const BorderRadius.only(
-                            topLeft: Radius.circular(23),
-                            topRight: Radius.circular(23),
-                            bottomLeft: Radius.circular(23))
+                                topLeft: Radius.circular(23),
+                                topRight: Radius.circular(23),
+                                bottomLeft: Radius.circular(23))
                             : const BorderRadius.only(
-                            topLeft: Radius.circular(23),
-                            topRight: Radius.circular(23),
-                            bottomRight: Radius.circular(23)),
+                                topLeft: Radius.circular(23),
+                                topRight: Radius.circular(23),
+                                bottomRight: Radius.circular(23)),
                         color: sendByMe ? DMUtil.getPC2() : DMUtil.getWC()),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         SizedBox(
-                          height: message.length<60?20.h:65.h,
-                          width: message.length<10?70.w:160.w,
-                          child: SingleChildScrollView(
-                            child: CustomText(
-                              text: message,
-                              color: sendByMe ? DMUtil.getWC() : DMUtil.getPC2(),
-                              fontSize: AppStyle.small.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          )
+                            height: message.length < 60 ? 20.h : 65.h,
+                            width: message.length < 10 ? 70.w : 160.w,
+                            child: SingleChildScrollView(
+                              child: CustomText(
+                                text: message,
+                                color:
+                                    sendByMe ? DMUtil.getWC() : DMUtil.getPC2(),
+                                fontSize: AppStyle.small.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )),
+                        const SizedBox(
+                          height: 5,
                         ),
-                        const SizedBox(height: 5,),
                         CustomText(
                           text: timeShow,
                           color: Colors.black38,
                           fontSize: AppStyle.verySmall.sp - 1,
                         ),
-
                       ],
-                    )
-                ),
+                    )),
                 if (sendByMe) ...[
                   const SizedBox(
                     width: 10,

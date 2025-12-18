@@ -8,27 +8,29 @@ class ItemLineDrawer extends StatelessWidget {
   final String title;
   final VoidCallback fn;
   final Widget? icon;
-  const ItemLineDrawer({super.key,required this.title,required this.fn,this.icon});
+  const ItemLineDrawer(
+      {super.key, required this.title, required this.fn, this.icon});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: fn,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.w,horizontal: 8.w),
-        child: Row(
-          children: [
-            icon ?? const SizedBox.shrink(),
-            const SizedBox(width: 10,),
-            CustomText(
-              text: title,
-              color:DMUtil.getDC(),
-              fontWeight: FontWeight.w600,
-              fontSize: AppStyle.small.sp,
-            ),
-          ],
-        ),
-      )
-    );
+        onTap: fn,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 8.w),
+          child: Row(
+            children: [
+              icon ?? const SizedBox.shrink(),
+              const SizedBox(
+                width: 10,
+              ),
+              CustomText(
+                text: title,
+                color: DMUtil.getDC(),
+                fontWeight: FontWeight.w600,
+                fontSize: AppStyle.small.sp,
+              ),
+            ],
+          ),
+        ));
   }
 }

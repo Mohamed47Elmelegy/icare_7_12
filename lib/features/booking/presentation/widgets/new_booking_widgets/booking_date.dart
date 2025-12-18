@@ -12,23 +12,26 @@ class BookingDateField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 10.w,top: 12.w),
-      padding: EdgeInsets.symmetric(vertical: 12.w,horizontal: 5.w),
+      margin: EdgeInsets.only(bottom: 10.w, top: 12.w),
+      padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 5.w),
       decoration: BoxDecoration(
-          color: DMUtil.getWC(),
-          borderRadius: BorderRadius.circular(10)
-      ),
+          color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
       child: Row(
         children: [
-          Icon(Icons.date_range,color: DMUtil.getPC2(),size: 21.w,),
-          SizedBox(width: 5.w,),
+          Icon(
+            Icons.date_range,
+            color: DMUtil.getPC2(),
+            size: 21.w,
+          ),
+          SizedBox(
+            width: 5.w,
+          ),
           CustomText(
-              text: translate("booking.select_visit_date"),
-              fontSize: AppStyle.small.sp,
+            text: translate("booking.select_visit_date"),
+            fontSize: AppStyle.small.sp,
           ),
         ],
       ),
-
     );
   }
 }

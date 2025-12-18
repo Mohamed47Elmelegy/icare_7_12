@@ -15,32 +15,46 @@ class AdminProfile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 15,),
-        CustomText(
-            text: translate("admin.dashboard"),
-            color: DMUtil.getDC(),
-            fontSize: AppStyle.average.sp+2,
+        const SizedBox(
+          height: 15,
         ),
-        const SizedBox(height: 20,),
-
+        CustomText(
+          text: translate("admin.dashboard"),
+          color: DMUtil.getDC(),
+          fontSize: AppStyle.average.sp + 2,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MainProfileCard(title: translate("admin.appointments"), imgPath: AppImages.appointment, fn: (){}),
-
-            MainProfileCard(title: translate("admin.nurses"), imgPath: AppImages.welcomeSecond, fn: (){}),
-
+            MainProfileCard(
+                title: translate("admin.appointments"),
+                imgPath: AppImages.appointment,
+                fn: () {}),
+            MainProfileCard(
+                title: translate("admin.nurses"),
+                imgPath: AppImages.welcomeSecond,
+                fn: () {}),
           ],
         ),
-        SizedBox(height: 20.w,),
+        SizedBox(
+          height: 20.w,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            MainProfileCard(title: translate("admin.doctors"), imgPath: AppImages.doctor, fn: (){}),
-            MainProfileCard(title: translate("admin.account_settings"), imgPath: AppImages.doctor, fn: (){}),
+            MainProfileCard(
+                title: translate("admin.doctors"),
+                imgPath: AppImages.doctor,
+                fn: () {}),
+            MainProfileCard(
+                title: translate("admin.account_settings"),
+                imgPath: AppImages.doctor,
+                fn: () {}),
           ],
         ),
-
       ],
     );
   }

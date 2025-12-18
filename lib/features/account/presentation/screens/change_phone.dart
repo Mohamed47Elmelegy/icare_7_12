@@ -19,27 +19,28 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/core/utils/sms_api.dart';
 import 'package:icare/features/authentication/presentation/screens/verification_code.dart';
 
-
 class ChangePhone extends StatelessWidget {
   const ChangePhone({super.key});
 
-  static TextEditingController phoneTextEditingController = TextEditingController();
+  static TextEditingController phoneTextEditingController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DMUtil.getWC(),
       appBar: GlobalAppBar(
         backGroundColor: DMUtil.getWC(),
-        title: !Util.checkUser()?"":translate("profile.change_phone"),
+        title: !Util.checkUser() ? "" : translate("profile.change_phone"),
         leadingIcon: const BackArrowButton(),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 20,horizontal: AppStyle.paddingFromH.w),
+        padding: EdgeInsets.symmetric(
+            vertical: 20, horizontal: AppStyle.paddingFromH.w),
         child: Column(
           children: [
-
-
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             CustomText(
               color: DMUtil.getD2C(),
               fontSize: AppStyle.average.sp + 1,
@@ -47,7 +48,9 @@ class ChangePhone extends StatelessWidget {
               fontFamily: primaryFontBold,
               text: translate("profile.enter_main_phone"),
             ),
-            const SizedBox(height: 6,),
+            const SizedBox(
+              height: 6,
+            ),
             SizedBox(
               width: 240.w,
               child: CustomText(
@@ -59,15 +62,15 @@ class ChangePhone extends StatelessWidget {
                 alignCenter: true,
               ),
             ),
-
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             Row(
               children: [
                 Container(
                   height: 50.h,
                   decoration: BoxDecoration(
-                    border: Border.all(width: 0,color: DMUtil.getD2C())
-                  ),
+                      border: Border.all(width: 0, color: DMUtil.getD2C())),
                   alignment: Alignment.center,
                   child: CustomText(
                     text: " +966 ",
@@ -84,7 +87,10 @@ class ChangePhone extends StatelessWidget {
                     textInputType: TextInputType.phone,
                     prefixIcon: null,
                     cursorColor: kPrimary,
-                    suffixIcon:  Icon(Icons.phone,color: DMUtil.getD2C(),),
+                    suffixIcon: Icon(
+                      Icons.phone,
+                      color: DMUtil.getD2C(),
+                    ),
                     obscureText: false,
                     isLabelError: false,
                     hasBorder: true,
@@ -95,9 +101,11 @@ class ChangePhone extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 40,),
-            BlocBuilder<AccountBloc,AccountState>(
-              builder:(ctx,state){
+            const SizedBox(
+              height: 40,
+            ),
+            BlocBuilder<AccountBloc, AccountState>(
+              builder: (ctx, state) {
                 // AccountBloc bloc = AccountBloc.get(ctx);
                 // if(states==FetchStates.FAILED) return const Center(child: Text("an error occurred"),);
                 return Align(
@@ -105,24 +113,39 @@ class ChangePhone extends StatelessWidget {
                       height: 40.h,
                       width: double.infinity,
                       circular: 10,
-                      widget: state is UpdateProfileState && state.response.isLoad==true? const Center(child: CircularProgressIndicator(color: Colors.white,),):
-                      CustomText(
-                        color: Colors.white,
-                        fontSize: AppStyle.average.sp,
-                        fontFamily: primaryFontBold,
-                        text: translate("profile.change_phone"),
-                      ),
+                      widget: state is UpdateProfileState &&
+                              state.response.isLoad == true
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : CustomText(
+                              color: Colors.white,
+                              fontSize: AppStyle.average.sp,
+                              fontFamily: primaryFontBold,
+                              text: translate("profile.change_phone"),
+                            ),
                       color: DMUtil.getRED(),
                       onPressed: () async {
                         String ph = phoneTextEditingController.text.trim();
                         String phone = "+966$ph";
-                        if(Util.validatePhoneInput(phone, context)==false) return;
-                        if(await SmsApi.sendOtp(provider:ph,isEmail: false,ctx: context)){
-                          Util.pushPage(PinCodeVerificationScreen(data: {
-                            'phone':ph,
-                          },isChangePhone: true,), context);
-                        }else{
-                          SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), Colors.red);
+                        if (Util.validatePhoneInput(phone, context) == false) {
+                          return;
+                        }
+                        if (await SmsApi.sendOtp(
+                            provider: ph, isEmail: false, ctx: context)) {
+                          Util.pushPage(
+                              PinCodeVerificationScreen(
+                                data: {
+                                  'phone': ph,
+                                },
+                                isChangePhone: true,
+                              ),
+                              context);
+                        } else {
+                          SnackBarBuilder.showFeedBackMessage(context,
+                              translate("toast.field_empty"), Colors.red);
                         }
                       }),
                 );

@@ -150,7 +150,8 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
       // Filter by userType if provided
       if (event.userType != null && event.userType!.isNotEmpty) {
         list = list.where((doctor) {
-          return doctor.userData?.userType?.toLowerCase() == event.userType!.toLowerCase();
+          return doctor.userData?.userType?.toLowerCase() ==
+              event.userType!.toLowerCase();
         }).toList();
       }
 
@@ -160,7 +161,8 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           if (doctor.servicesList == null || doctor.servicesList!.isEmpty) {
             return false;
           }
-          return doctor.servicesList!.any((service) => event.serviceIds!.contains(service.id));
+          return doctor.servicesList!
+              .any((service) => event.serviceIds!.contains(service.id));
         }).toList();
       }
 
@@ -182,16 +184,19 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
             i.userData!.long != 0.0) {
           var point = LatLng(i.userData!.lat!, i.userData!.long!);
 
-          MarkerId markerId = MarkerId("${i.userData!.isWomen == true ? "isWomen" : "isMan"}-${i.id}");
+          MarkerId markerId = MarkerId(
+              "${i.userData!.isWomen == true ? "isWomen" : "isMan"}-${i.id}");
           Marker marker = Marker(
             markerId: markerId,
             position: point,
             onTap: () {},
             infoWindow: InfoWindow(
-              title: "${i.userData!.userName} ${ReviewModel.calcReviewStar(i.reviewList!)}",
+              title:
+                  "${i.userData!.userName} ${ReviewModel.calcReviewStar(i.reviewList!)}",
               snippet: LocationUtil.getDistanceView(i.distanceKM, i.distanceM),
               onTap: () {
-                DoctorBloc.get(event.ctx).add(UpdateCurrentDoctorEvent(doctor: i));
+                DoctorBloc.get(event.ctx)
+                    .add(UpdateCurrentDoctorEvent(doctor: i));
                 if (event.ctx.mounted) {
                   Util.pushPage(const DoctorDetails(), event.ctx);
                 }
@@ -200,12 +205,16 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
             icon: showAllDoctors
                 ? await BitmapDescriptor.asset(
                     const ImageConfiguration(size: Size(40, 40)),
-                    i.userData!.isWomen == true ? "assets/images/doctor_test.png" : "assets/images/avatar.png")
-                : await LocationUtil.convertImageFileToCustomBitmapDescriptor(i.userData!.image.toString()),
+                    i.userData!.isWomen == true
+                        ? "assets/images/doctor_test.png"
+                        : "assets/images/avatar.png")
+                : await LocationUtil.convertImageFileToCustomBitmapDescriptor(
+                    i.userData!.image.toString()),
           );
 
           markersToAdd.add(marker);
-          markers.addAll({for (var marker in markersToAdd) marker.markerId: marker});
+          markers.addAll(
+              {for (var marker in markersToAdd) marker.markerId: marker});
           await Future.delayed(const Duration(milliseconds: 300));
           if (event.ctx.mounted) {
             AuthBloc.get(event.ctx).add(UpdateMarkersEvent(markers: markers));

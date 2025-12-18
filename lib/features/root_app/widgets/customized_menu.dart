@@ -147,8 +147,9 @@ class CustomizedMenuWidget extends StatelessWidget {
                       BlocBuilder<AccountBloc, AccountState>(
                         builder: (ctx, state) {
                           var bloc = AccountBloc.get(ctx);
-                          if (bloc.currentUser == null)
-                            return SizedBox.shrink();
+                          if (bloc.currentUser == null) {
+                            return const SizedBox.shrink();
+                          }
                           return SizedBox(
                             width: 100.w,
                             child: CustomText(

@@ -16,35 +16,36 @@ class TurnOnNotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        child: Column(
-          children: [
-            SizedBox(height: 50.h,),
-            Expanded(
-              child: SvgPicture.asset(
-                AppImages.turnOnNotification,
-                height: 500.h,
+        body: Align(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 50.h,
+          ),
+          Expanded(
+            child: SvgPicture.asset(
+              AppImages.turnOnNotification,
+              height: 500.h,
+            ),
+          ),
+          CustomButton(
+              height: 40.w,
+              width: 240.w,
+              withShadow: true,
+              widget: CustomText(
+                text: translate("button.next"),
+                fontSize: AppStyle.average.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
-            ),
-
-            CustomButton(
-                height: 40.w,
-                width: 240.w,
-                withShadow: true,
-                widget: CustomText(
-                  text: translate("button.next"),
-                  fontSize: AppStyle.average.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-                color: DMUtil.getPC(),
-                onPressed: ()=> Util.pushPage(const NewExperienceScreen(), context)
-            ),
-            SizedBox(height: 50.h,),
-
-          ],
-        ),
-      )
-    );
+              color: DMUtil.getPC(),
+              onPressed: () =>
+                  Util.pushPage(const NewExperienceScreen(), context)),
+          SizedBox(
+            height: 50.h,
+          ),
+        ],
+      ),
+    ));
   }
 }

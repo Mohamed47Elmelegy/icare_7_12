@@ -16,7 +16,7 @@ class DateFilterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: ()async{
+      onTap: () async {
         final DateTime? dateTime = await showDatePicker(
           context: context,
           initialDate: DateTime.now(),
@@ -47,7 +47,9 @@ class DateFilterWidget extends StatelessWidget {
         width: 87.w,
         height: 23.h,
         // margin:  EdgeInsets.only(top: AppStyle.paddingFromTop.h-10),
-        padding: EdgeInsets.symmetric(horizontal: 8.w,),
+        padding: EdgeInsets.symmetric(
+          horizontal: 8.w,
+        ),
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
@@ -59,7 +61,7 @@ class DateFilterWidget extends StatelessWidget {
             CustomText(
               text: translate("order.by_date"),
               color: Colors.black,
-              fontSize: AppStyle.small.sp-1,
+              fontSize: AppStyle.small.sp - 1,
               fontFamily: primaryFontBold,
               alignCenter: true,
             ),
@@ -70,7 +72,9 @@ class DateFilterWidget extends StatelessWidget {
                   width: 1.3,
                   color: Colors.black,
                 ),
-                const SizedBox(width: 4,),
+                const SizedBox(
+                  width: 4,
+                ),
                 Icon(
                   Icons.arrow_downward,
                   color: Colors.black,

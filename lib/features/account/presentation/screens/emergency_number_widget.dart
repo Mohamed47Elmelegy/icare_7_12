@@ -18,40 +18,50 @@ class EmergencyNumberWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         var currentUser = bloc.currentUser;
-        if(currentUser==null)return const SizedBox.shrink();
+        if (currentUser == null) return const SizedBox.shrink();
         return Column(
           children: [
             AddRowWithTitle(
-              onTap: ()async{
+              onTap: () async {
                 var bloc = AccountBloc.get(context);
                 var res = await CustomDialogs.addNewValue(context);
-                if(res !=null && res != ""){
+                if (res != null && res != "") {
                   bloc.emergencyContactsList ??= [];
-                  int index = bloc.emergencyContactsList!.indexWhere((element) => element == res);
-                  if(index!=-1)return;
-                  if(bloc.emergencyContactsList?.length==2){
-                    return SnackBarBuilder.showFeedBackMessage(context, translate("nurse.you_can_add_just_two_numbers"), DMUtil.getRED());
+                  int index = bloc.emergencyContactsList!
+                      .indexWhere((element) => element == res);
+                  if (index != -1) return;
+                  if (bloc.emergencyContactsList?.length == 2) {
+                    return SnackBarBuilder.showFeedBackMessage(
+                        context,
+                        translate("nurse.you_can_add_just_two_numbers"),
+                        DMUtil.getRED());
                   }
                   bloc.emergencyContactsList!.add(res);
-                  if(Util.isCustomer()){
-                     bloc.add(UpdateProfileEvent(user: {
-                      "emergency_contacts":bloc.emergencyContactsList.toString()
+                  if (Util.isCustomer()) {
+                    bloc.add(UpdateProfileEvent(user: {
+                      "emergency_contacts":
+                          bloc.emergencyContactsList.toString()
                     }));
                     return;
                   }
 
-                  //if current user_type is nurse or assistant 
-                  bloc.add(UpdateNurseDataEvent(emergencyContactsList: bloc.emergencyContactsList));
+                  //if current user_type is nurse or assistant
+                  bloc.add(UpdateNurseDataEvent(
+                      emergencyContactsList: bloc.emergencyContactsList));
                 }
               },
               title: translate("profile.emergency_contacts"),
             ),
-            const SizedBox(height: 10,),
-            const NurseOptionsValueRowAccount(listType: "emergency_contacts",),
+            const SizedBox(
+              height: 10,
+            ),
+            const NurseOptionsValueRowAccount(
+              listType: "emergency_contacts",
+            ),
           ],
         );
       },

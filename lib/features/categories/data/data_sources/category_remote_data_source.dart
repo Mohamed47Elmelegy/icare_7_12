@@ -41,8 +41,7 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
     debugPrint("getAllAllergies ${response.body}");
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
-      List<AllergiesModel> list =
-          body['data'].map<AllergiesModel>((model) {
+      List<AllergiesModel> list = body['data'].map<AllergiesModel>((model) {
         return AllergiesModel.fromJsonAllergies(model);
       }).toList();
       return list;
@@ -51,15 +50,13 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
     }
   }
 
-
   @override
-  Future<List<SliderModel>> getAllSliders() async{
+  Future<List<SliderModel>> getAllSliders() async {
     var response = await client.get(Uri.parse(ApiUrl.SLIDERS_URL));
     // debugPrint("getAllSliders: ${response.body}");
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
-      List<SliderModel> sliders =
-      body['data'].map<SliderModel>((model) {
+      List<SliderModel> sliders = body['data'].map<SliderModel>((model) {
         return SliderModel.fromJson(model);
       }).toList();
       return sliders;
@@ -69,8 +66,9 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
   }
 
   @override
-  Future<List<PublicationsModel>> getAllPublications() async{
-    var response = await client.get(Uri.parse("${ApiUrl.PUBLICATIONS}/${Util.getUserType()}"));
+  Future<List<PublicationsModel>> getAllPublications() async {
+    var response = await client
+        .get(Uri.parse("${ApiUrl.PUBLICATIONS}/${Util.getUserType()}"));
     debugPrint("getAllPublications: ${response.body}");
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
@@ -79,6 +77,4 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
       throw ServerException();
     }
   }
-
-
 }

@@ -20,7 +20,7 @@ class DotWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(
         totalWidth ~/ (dashWidth + emptyWidth),
-            (_) => Container(
+        (_) => Container(
           width: dashWidth,
           height: dashHeight,
           color: dashColor,

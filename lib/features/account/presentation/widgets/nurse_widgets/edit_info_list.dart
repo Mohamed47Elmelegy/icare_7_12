@@ -12,28 +12,28 @@ import 'package:icare/features/authentication/presentation/bloc/auth_state.dart'
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class NurseOptionsValueRow extends StatelessWidget {
   final String listType;
-  const NurseOptionsValueRow({super.key,required this.listType });
+  const NurseOptionsValueRow({super.key, required this.listType});
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<AuthBloc,AuthState>(
-      builder: (ctx,state){
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (ctx, state) {
         var bloc = AuthBloc.get(ctx);
         List<String> list = [];
-        if(listType=="languages" && bloc.languageList!=null){
+        if (listType == "languages" && bloc.languageList != null) {
           list = bloc.languageList!;
-        }else if(listType=="education" && bloc.educationList!=null){
+        } else if (listType == "education" && bloc.educationList != null) {
           list = bloc.educationList!;
-        }else if(listType=="publications" && bloc.publicationsList!=null){
+        } else if (listType == "publications" &&
+            bloc.publicationsList != null) {
           list = bloc.publicationsList!;
-        }else if(listType=="courses" && bloc.coursesList!=null){
+        } else if (listType == "courses" && bloc.coursesList != null) {
           list = bloc.coursesList!;
         }
-        if(list.isEmpty)return const SizedBox.shrink();
-        return  GridView.builder(
+        if (list.isEmpty) return const SizedBox.shrink();
+        return GridView.builder(
           itemCount: list.length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -52,8 +52,7 @@ class NurseOptionsValueRow extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(width: 1))
-                  ),
+                      border: Border(bottom: BorderSide(width: 1))),
                   child: CustomText(
                     text: item,
                     fontSize: AppStyle.small.sp,
@@ -62,57 +61,67 @@ class NurseOptionsValueRow extends StatelessWidget {
                     maxLine: 1,
                   ),
                 ),
-                const SizedBox(width: 10,),
+                const SizedBox(
+                  width: 10,
+                ),
                 InkWell(
-                  onTap: (){
-                    int index = list.indexWhere((element) => element==item);
-                    if(index == -1)return;
+                  onTap: () {
+                    int index = list.indexWhere((element) => element == item);
+                    if (index == -1) return;
                     list.removeAt(index);
-                    if(listType=="languages"){
-                      bloc.add(UpdateNurseRegisterDataEvent(languageList: list));
-                    }else if(listType=="education"){
-                      bloc.add(UpdateNurseRegisterDataEvent(educationList: list));
-                    }else if(listType=="publications"){
-                      bloc.add(UpdateNurseRegisterDataEvent(publicationsList: list));
-                    }else if(listType=="courses"){
+                    if (listType == "languages") {
+                      bloc.add(
+                          UpdateNurseRegisterDataEvent(languageList: list));
+                    } else if (listType == "education") {
+                      bloc.add(
+                          UpdateNurseRegisterDataEvent(educationList: list));
+                    } else if (listType == "publications") {
+                      bloc.add(
+                          UpdateNurseRegisterDataEvent(publicationsList: list));
+                    } else if (listType == "courses") {
                       bloc.add(UpdateNurseRegisterDataEvent(coursesList: list));
                     }
                   },
-                  child: Icon(Icons.remove_circle_outline,color: Colors.red,size: 15.w,),
+                  child: Icon(
+                    Icons.remove_circle_outline,
+                    color: Colors.red,
+                    size: 15.w,
+                  ),
                 )
               ],
             );
           },
         );
       },
-
     );
   }
 }
 
 class NurseOptionsValueRowAccount extends StatelessWidget {
   final String listType;
-  const NurseOptionsValueRowAccount({super.key,required this.listType });
+  const NurseOptionsValueRowAccount({super.key, required this.listType});
 
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         List<String> list = [];
-        if(listType=="languages" && bloc.languageList!=null){
+        if (listType == "languages" && bloc.languageList != null) {
           list = bloc.languageList!;
-        }else if(listType=="education" && bloc.educationList!=null){
+        } else if (listType == "education" && bloc.educationList != null) {
           list = bloc.educationList!;
-        }else if(listType=="publications" && bloc.publicationsList!=null){
+        } else if (listType == "publications" &&
+            bloc.publicationsList != null) {
           list = bloc.publicationsList!;
-        }else if(listType=="courses" && bloc.coursesList!=null){
+        } else if (listType == "courses" && bloc.coursesList != null) {
           list = bloc.coursesList!;
-        }else if(listType=="emergency_contacts" && bloc.emergencyContactsList!=null){
+        } else if (listType == "emergency_contacts" &&
+            bloc.emergencyContactsList != null) {
           list = bloc.emergencyContactsList!;
         }
-        if(list.isEmpty)return const SizedBox.shrink();
-        return  GridView.builder(
+        if (list.isEmpty) return const SizedBox.shrink();
+        return GridView.builder(
           itemCount: list.length,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -130,8 +139,7 @@ class NurseOptionsValueRowAccount extends StatelessWidget {
               children: [
                 Container(
                   decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(width: 1))
-                  ),
+                      border: Border(bottom: BorderSide(width: 1))),
                   child: CustomText(
                     text: item,
                     fontSize: AppStyle.small.sp,
@@ -140,52 +148,70 @@ class NurseOptionsValueRowAccount extends StatelessWidget {
                     maxLine: 1,
                   ),
                 ),
-                SizedBox(width: 10.w,),
-                if(listType=="emergency_contacts")...[
+                SizedBox(
+                  width: 10.w,
+                ),
+                if (listType == "emergency_contacts") ...[
                   InkWell(
-                    onTap: ()=> Util.sendSms(item),
-                    child: Icon(Icons.message_outlined,color: DMUtil.getPC(),size: 18.w,),
+                    onTap: () => Util.sendSms(item),
+                    child: Icon(
+                      Icons.message_outlined,
+                      color: DMUtil.getPC(),
+                      size: 18.w,
+                    ),
                   ),
-                  const SizedBox(width: 10,),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   InkWell(
-                    onTap: ()=> Util.call(item),
-                    child: Icon(Icons.call,color: DMUtil.getPC(),size: 18.w,),
+                    onTap: () => Util.call(item),
+                    child: Icon(
+                      Icons.call,
+                      color: DMUtil.getPC(),
+                      size: 18.w,
+                    ),
                   ),
-                  const SizedBox(width: 15,),
+                  const SizedBox(
+                    width: 15,
+                  ),
                 ],
                 InkWell(
-                  onTap: (){
-                    int index = list.indexWhere((element) => element==item);
-                    if(index == -1)return;
+                  onTap: () {
+                    int index = list.indexWhere((element) => element == item);
+                    if (index == -1) return;
                     list.removeAt(index);
-                    if(listType=="languages"){
+                    if (listType == "languages") {
                       bloc.add(UpdateNurseDataEvent(languageList: list));
-                    }else if(listType=="education"){
+                    } else if (listType == "education") {
                       bloc.add(UpdateNurseDataEvent(educationList: list));
-                    }else if(listType=="publications"){
+                    } else if (listType == "publications") {
                       bloc.add(UpdateNurseDataEvent(publicationsList: list));
-                    }else if(listType=="courses"){
+                    } else if (listType == "courses") {
                       bloc.add(UpdateNurseDataEvent(coursesList: list));
-                    }else if(listType=="emergency_contacts"){
-                      //if current user_type is patient 
-                       if(Util.isCustomer()){
+                    } else if (listType == "emergency_contacts") {
+                      //if current user_type is patient
+                      if (Util.isCustomer()) {
                         bloc.add(UpdateProfileEvent(user: {
-                          "emergency_contacts":bloc.emergencyContactsList.toString()
+                          "emergency_contacts":
+                              bloc.emergencyContactsList.toString()
                         }));
                         return;
                       }
-                      bloc.add(UpdateNurseDataEvent(emergencyContactsList: list));
+                      bloc.add(
+                          UpdateNurseDataEvent(emergencyContactsList: list));
                     }
                   },
-                  child: Icon(Icons.remove_circle_outline,color: Colors.red,size: 15.w,),
+                  child: Icon(
+                    Icons.remove_circle_outline,
+                    color: Colors.red,
+                    size: 15.w,
+                  ),
                 ),
-
               ],
             );
           },
         );
       },
-
     );
   }
 }

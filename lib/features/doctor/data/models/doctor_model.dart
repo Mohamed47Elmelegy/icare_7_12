@@ -22,14 +22,17 @@ class DoctorModel extends DoctorEntity {
     required super.servicesList,
     super.distanceKM,
     super.distanceM,
+    super.specialtyId,
   });
 
   /// Helper function to parse list fields that can be either JSON array or comma-separated string
   static List<String> _parseListField(dynamic field) {
-    if (field == null || field.toString().isEmpty || field.toString() == 'null') {
+    if (field == null ||
+        field.toString().isEmpty ||
+        field.toString() == 'null') {
       return [];
     }
-    
+
     try {
       // Try to parse as JSON array first
       final decoded = jsonDecode(field.toString());
@@ -51,41 +54,52 @@ class DoctorModel extends DoctorEntity {
   }
 
   static DoctorModel fromJson(Map<String, dynamic> json) {
-    List<ServicesModel> list = json['services'] == null || json['services'].toString() == ""
-        ? []
-        : ServicesModel.listModelFromJson(json['services']);
+    List<ServicesModel> list =
+        json['services'] == null || json['services'].toString() == ""
+            ? []
+            : ServicesModel.listModelFromJson(json['services']);
     var doctor = DoctorModel(
       id: json['id'],
-      userData: json['user'] == null ? null : UserServiceModel.fromJson(json['user']),
+      userData:
+          json['user'] == null ? null : UserServiceModel.fromJson(json['user']),
       doctorId: "${ApiUrl.STORAGE_URL}${json['identification_card']}",
       associationCard: "${ApiUrl.STORAGE_URL}${json['association_card']}",
       licence: "${ApiUrl.STORAGE_URL}${json['license_practice']}",
       certificate: "${ApiUrl.STORAGE_URL}${json['graduation_certificate']}",
       reviewList: ReviewModel.listModelFromJson(jsonEncode(json['reviews'])),
-      languageList: json['languages'] == null || json['languages'] == '' || json['languages'].toString() == 'null'
+      languageList: json['languages'] == null ||
+              json['languages'] == '' ||
+              json['languages'].toString() == 'null'
           ? []
           : _parseListField(json['languages']),
-      educationList: json['education'] == null || json['education'] == '' || json['education'].toString() == 'null'
+      educationList: json['education'] == null ||
+              json['education'] == '' ||
+              json['education'].toString() == 'null'
           ? []
           : _parseListField(json['education']),
-      publicationsList:
-          json['publications'] == null || json['publications'] == '' || json['publications'].toString() == 'null'
-              ? []
-              : _parseListField(json['publications']),
-      coursesList: json['courses'] == null || json['courses'] == '' || json['courses'].toString() == 'null'
+      publicationsList: json['publications'] == null ||
+              json['publications'] == '' ||
+              json['publications'].toString() == 'null'
+          ? []
+          : _parseListField(json['publications']),
+      coursesList: json['courses'] == null ||
+              json['courses'] == '' ||
+              json['courses'].toString() == 'null'
           ? []
           : _parseListField(json['courses']),
       servicesList: list,
       distanceKM: double.tryParse(json['distanceKm'] ?? "-1"),
       distanceM: double.tryParse(json['distanceMe'] ?? "-1"),
+      specialtyId: json['specialties_id'],
     );
     return doctor;
   }
 
   static DoctorModel fromJsonUser(Map<String, dynamic> json) {
-    List<ServicesModel> list = json['services'] == null || json['services'].toString() == ""
-        ? []
-        : ServicesModel.listModelFromJson(json['services']);
+    List<ServicesModel> list =
+        json['services'] == null || json['services'].toString() == ""
+            ? []
+            : ServicesModel.listModelFromJson(json['services']);
     return DoctorModel(
       id: json['id'],
       doctorId: "${ApiUrl.STORAGE_URL}${json['identification_card']}",
@@ -93,13 +107,23 @@ class DoctorModel extends DoctorEntity {
       licence: "${ApiUrl.STORAGE_URL}${json['license_practice']}",
       certificate: "${ApiUrl.STORAGE_URL}${json['graduation_certificate']}",
       reviewList: ReviewModel.listModelFromJson(jsonEncode(json['reviews'])),
-      languageList: json['languages'] == null || json['languages'] == '' ? [] : _parseListField(json['languages']),
-      educationList: json['education'] == null || json['education'] == '' ? [] : _parseListField(json['education']),
-      publicationsList: json['publications'] == null || json['publications'] == '' ? [] : _parseListField(json['publications']),
-      coursesList: json['courses'] == null || json['courses'] == '' ? [] : _parseListField(json['courses']),
+      languageList: json['languages'] == null || json['languages'] == ''
+          ? []
+          : _parseListField(json['languages']),
+      educationList: json['education'] == null || json['education'] == ''
+          ? []
+          : _parseListField(json['education']),
+      publicationsList:
+          json['publications'] == null || json['publications'] == ''
+              ? []
+              : _parseListField(json['publications']),
+      coursesList: json['courses'] == null || json['courses'] == ''
+          ? []
+          : _parseListField(json['courses']),
       servicesList: list,
       distanceKM: double.tryParse(json['distanceKm'] ?? "-1"),
       distanceM: double.tryParse(json['distanceMe'] ?? "-1"),
+      specialtyId: json['specialties_id'],
     );
   }
 
@@ -110,5 +134,6 @@ class DoctorModel extends DoctorEntity {
   }
 
   static List<DoctorModel> listModelFromJson(String str) =>
-      List<DoctorModel>.from(json.decode(str).map((x) => DoctorModel.fromJson(x)));
+      List<DoctorModel>.from(
+          json.decode(str).map((x) => DoctorModel.fromJson(x)));
 }

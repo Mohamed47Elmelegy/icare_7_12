@@ -261,6 +261,7 @@
       "missing_city": "من فضلك قم بتحديد مدينة التوصيل الخاصه بك آولا",
       "empty_images": "من فضلك قم بادخال جميع الملفات",
       "image_update": "تم تحديث الصورة",
+      "specialization": "التخصص",
       "background_location": "يجمع icare بيانات الموقع في الخلفية لتمكين تتبع المسار الي المريض .",
       "select_location": "من فضلك قم بتحديد الموقع علي الخريطة",
       "please_rate_service": "من فضلك قم بتقييم خدمة ",
@@ -395,6 +396,7 @@
       "iam": "التسجيل ك",
       "man": "رجل",
       "women": "إمراة",
+      "specialization": "التخصص",
       "terms_conditions_accept": "موافقة علي الشروط والآحكام",
       "must_accept": "يجب ال"
     },

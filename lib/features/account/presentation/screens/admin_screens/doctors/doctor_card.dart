@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DoctorCard extends StatelessWidget {
   final UserService doctor;
-  const DoctorCard({super.key,required this.doctor});
+  const DoctorCard({super.key, required this.doctor});
 
   @override
   Widget build(BuildContext context) {
@@ -18,57 +18,66 @@ class DoctorCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         InkWell(
-          onTap: (){
+          onTap: () {
             // Util.pushPage(const CompanyProfile(isProfileView: false), context);
           },
-          child: Image.asset(AppImages.nurseImg,height: 70.h,width: 70.w,fit: BoxFit.contain,),
+          child: Image.asset(
+            AppImages.nurseImg,
+            height: 70.h,
+            width: 70.w,
+            fit: BoxFit.contain,
+          ),
         ),
-
         Expanded(
           flex: 2,
           child: InkWell(
-            onTap: (){
-              // Util.pushPage(const CompanyProfile(isProfileView: false), context);
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 6.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        text: doctor.userName.toString(),
-                        fontSize: AppStyle.small.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      InkWell(
-                        onTap: (){},
-                        child: Icon(Icons.more_vert,size: 16.w,),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5,),
-                  SizedBox(
-                    width: 150.w,
-                    child: CustomText(
-                      text: "Dentist Frisange - 3 km",
-                      color: DMUtil.getD2C(),
-                      fontSize: AppStyle.small.sp,
-                      isEllipsis: true,
-                      maxLine: 2,
+              onTap: () {
+                // Util.pushPage(const CompanyProfile(isProfileView: false), context);
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          text: doctor.userName.toString(),
+                          fontSize: AppStyle.small.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        InkWell(
+                          onTap: () {},
+                          child: Icon(
+                            Icons.more_vert,
+                            size: 16.w,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10,),
-                  const RateWidget(),
-                ],
-              ),
-            )
-          ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      width: 150.w,
+                      child: CustomText(
+                        text: "Dentist Frisange - 3 km",
+                        color: DMUtil.getD2C(),
+                        fontSize: AppStyle.small.sp,
+                        isEllipsis: true,
+                        maxLine: 2,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const RateWidget(),
+                  ],
+                ),
+              )),
         ),
-
       ],
     );
   }

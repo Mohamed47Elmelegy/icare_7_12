@@ -15,42 +15,53 @@ class GenderRowRequestForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BookingBloc,BookingState>(
-      builder: (ctx,state) {
-        var bloc = BookingBloc.get(ctx);
-        return Row(
-          children: [
-            InkWell(
-              onTap: ()=> bloc.add(const UpdateRequestFormDataEvent(data: {'gender':'male'})),
-              child: Row(
-                children: [
-                  SelectedCircle(selected: bloc.gender=='male',selectedColor: kPrimary,),
-                  const SizedBox(width: 10,),
-                  CustomText(
-                    text: translate("profile.male"),
-                    fontSize: AppStyle.small.sp,
-                  ),
-                ],
-              ),
+    return BlocBuilder<BookingBloc, BookingState>(builder: (ctx, state) {
+      var bloc = BookingBloc.get(ctx);
+      return Row(
+        children: [
+          InkWell(
+            onTap: () => bloc.add(
+                const UpdateRequestFormDataEvent(data: {'gender': 'male'})),
+            child: Row(
+              children: [
+                SelectedCircle(
+                  selected: bloc.gender == 'male',
+                  selectedColor: kPrimary,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                CustomText(
+                  text: translate("profile.male"),
+                  fontSize: AppStyle.small.sp,
+                ),
+              ],
             ),
-            const SizedBox(width: 20,),
-            InkWell(
-              onTap: ()=> bloc.add(const UpdateRequestFormDataEvent(data: {'gender':'female'})),
-              child: Row(
-                children: [
-                  SelectedCircle(selected: bloc.gender=='female',selectedColor: kPrimary,),
-                  const SizedBox(width: 10,),
-                  CustomText(
-                    text: translate("profile.female"),
-                    fontSize: AppStyle.small.sp,
-                  ),
-                ],
-              ),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          InkWell(
+            onTap: () => bloc.add(
+                const UpdateRequestFormDataEvent(data: {'gender': 'female'})),
+            child: Row(
+              children: [
+                SelectedCircle(
+                  selected: bloc.gender == 'female',
+                  selectedColor: kPrimary,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                CustomText(
+                  text: translate("profile.female"),
+                  fontSize: AppStyle.small.sp,
+                ),
+              ],
             ),
-
-          ],
-        );
-      }
-    );
+          ),
+        ],
+      );
+    });
   }
 }

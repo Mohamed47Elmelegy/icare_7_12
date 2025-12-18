@@ -27,12 +27,14 @@ class RequestButton extends StatelessWidget {
         var bloc = DoctorBloc.get(ctx);
         if (bloc.currentDoctor == null) return const SizedBox.shrink();
         return BlocListener<BookingBloc, BookingState>(
-          listenWhen: (ctx, state) => state is AssignOrderSuccessfullyState || state is OrderErrorState,
+          listenWhen: (ctx, state) =>
+              state is AssignOrderSuccessfullyState || state is OrderErrorState,
           listener: (ctx, state) {
             if (state is AssignOrderSuccessfullyState) {
               Util.pushPage(const MainBookingScreen(), context);
             } else if (state is OrderErrorState) {
-              SnackBarBuilder.showFeedBackMessage(context, state.errors, DMUtil.getRED());
+              SnackBarBuilder.showFeedBackMessage(
+                  context, state.errors, DMUtil.getRED());
             }
           },
           child: BlocBuilder<BookingBloc, BookingState>(
@@ -41,36 +43,50 @@ class RequestButton extends StatelessWidget {
               if (state is SendNewBookingRequestLoadingState) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: CircularProgressIndicator(backgroundColor: DMUtil.getPC()),
+                  child: CircularProgressIndicator(
+                      backgroundColor: DMUtil.getPC()),
                 );
               }
-              bool userHasSelectedService = bookingBloc.orderServiceList.isNotEmpty;
+              bool userHasSelectedService =
+                  bookingBloc.orderServiceList.isNotEmpty;
               return CustomButton(
                 height: 40.h,
                 width: 180.w,
                 widget: CustomText(
-                  text: userHasSelectedService ? translate("doctor.request") : translate("icare.select_service_first"),
+                  text: userHasSelectedService
+                      ? translate("doctor.request")
+                      : translate("icare.select_service_first"),
                   fontSize: AppStyle.average.sp,
-                  color: userHasSelectedService ? DMUtil.getWC() : DMUtil.getPC(),
+                  color:
+                      userHasSelectedService ? DMUtil.getWC() : DMUtil.getPC(),
                 ),
                 color: userHasSelectedService ? DMUtil.getPC() : DMUtil.getWC(),
                 sideWidth: userHasSelectedService ? 0 : 1,
-                sideColor: userHasSelectedService ? Colors.transparent : DMUtil.getD2C(),
+                sideColor: userHasSelectedService
+                    ? Colors.transparent
+                    : DMUtil.getD2C(),
                 onPressed: () async {
                   if (!Util.checkUser()) {
-                    return SnackBarBuilder.showFeedBackMessage(context, translate("toast.login"), DMUtil.getRED());
+                    return SnackBarBuilder.showFeedBackMessage(
+                        context, translate("toast.login"), DMUtil.getRED());
                   }
                   if (!userHasSelectedService) {
                     return SnackBarBuilder.showFeedBackMessage(
-                        context, translate("icare.select_service_first"), DMUtil.getPC());
+                        context,
+                        translate("icare.select_service_first"),
+                        DMUtil.getPC());
                   }
 
-                  final res =
-                      await Util.pushPage(MapScreen(isSet: true, title: translate('profile.confirm_current_location')), context);
+                  final res = await Util.pushPage(
+                      MapScreen(
+                          isSet: true,
+                          title: translate('profile.confirm_current_location')),
+                      context);
                   if (res != null && res is LocationMapEntity) {
                     bookingBloc.add(AddOrderEvent(
                         context: context,
-                        payment: const PaymentOption(paymentEnum: PaymentEnum.CASH),
+                        payment:
+                            const PaymentOption(paymentEnum: PaymentEnum.CASH),
                         orderData: {
                           'doctor_id': bloc.currentDoctor?.id,
                           'lat': res.lat.toString(),

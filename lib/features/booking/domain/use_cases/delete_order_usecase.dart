@@ -8,6 +8,6 @@ class CancelOrderUseCase {
   const CancelOrderUseCase({required this.orderRepository});
 
   Future<Either<Failure, bool>> call({required int orderId}) async {
-     return await orderRepository.cancelOrder(orderID: orderId);
+    return await orderRepository.cancelOrder(orderID: orderId);
   }
 }

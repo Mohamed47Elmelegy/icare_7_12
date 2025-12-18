@@ -18,15 +18,19 @@ class CompletedBookingMenuWidget extends StatelessWidget {
   final Booking item;
   final NurseEntity orderNurse;
   final UserService currentUser;
-  const CompletedBookingMenuWidget({super.key,required this.item,required this.orderNurse,required this.currentUser});
+  const CompletedBookingMenuWidget(
+      {super.key,
+      required this.item,
+      required this.orderNurse,
+      required this.currentUser});
 
   @override
   Widget build(BuildContext context) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 5),
-        child: Row(
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Row(
         children: [
-          if(currentUser.userType.toString().toLowerCase()=="customer")...[
+          if (currentUser.userType.toString().toLowerCase() == "customer") ...[
             PopupMenuButton(
               icon: Icon(
                 Icons.info_outline,
@@ -36,42 +40,47 @@ class CompletedBookingMenuWidget extends StatelessWidget {
               itemBuilder: (_) => <PopupMenuItem<String>>[
                 PopupMenuItem<String>(
                   value: 'rate',
-                  child: CustomText(text: translate("icare.rate_nurse"), fontSize: AppStyle.small.sp),
+                  child: CustomText(
+                      text: translate("icare.rate_nurse"),
+                      fontSize: AppStyle.small.sp),
                 ),
               ],
               onSelected: (val) {
-                NurseBloc.get(context).add(UpdateCurrentNurseEvent(nurse: orderNurse));
-                if(val.toString().trim()=="rate"){
+                NurseBloc.get(context)
+                    .add(UpdateCurrentNurseEvent(nurse: orderNurse));
+                if (val.toString().trim() == "rate") {
                   showModalBottomSheet(
                     context: context,
                     useRootNavigator: true,
                     isScrollControlled: true,
                     useSafeArea: true,
                     backgroundColor: Colors.transparent,
-                    shape:  const RoundedRectangleBorder(
-                      borderRadius:  BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25)),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          topRight: Radius.circular(25)),
                     ),
-                    builder: (ctx){
+                    builder: (ctx) {
                       return const RateNurseBottomSheet();
                     },
                   );
                 }
               },
             ),
-          ]else...[
+          ] else ...[
             ReviewsWidget(amount: 150, color: DMUtil.getReviewColor()),
           ],
-          SizedBox(width: 20.w,),
+          SizedBox(
+            width: 20.w,
+          ),
           CustomText(
             text: "${translate("order.order_has_done")} ✓",
             color: DMUtil.getPC4(),
             fontWeight: FontWeight.bold,
-            fontSize: AppStyle.verySmall.sp-3,
+            fontSize: AppStyle.verySmall.sp - 3,
           ),
         ],
-            ),
-      );
+      ),
+    );
   }
-
- 
 }

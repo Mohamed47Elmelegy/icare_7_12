@@ -18,22 +18,24 @@ class SecondScreen extends StatelessWidget {
           AppImages.welcomeSecond,
           height: 250.h,
         ),
-        const SizedBox(height: 50,),
+        const SizedBox(
+          height: 50,
+        ),
         CustomText(
           text: translate("icare.welcome_f"),
           fontSize: AppStyle.large.sp,
           color: DMUtil.getText(),
           fontWeight: FontWeight.w600,
         ),
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         CustomText(
           text: translate("icare.welcome_f"),
-          fontSize: AppStyle.average.sp-2,
+          fontSize: AppStyle.average.sp - 2,
           color: DMUtil.getPC2(),
           fontWeight: FontWeight.w600,
         ),
-
-
       ],
     );
   }

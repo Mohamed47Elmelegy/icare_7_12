@@ -16,37 +16,33 @@ class GetStartedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DMUtil.getWC(),
-      body: Align(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 1,
-              child: SvgPicture.asset(AppImages.logoSvg),
-            ),
-
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 40.w),
-              child: CustomButton(
-                  height: 40.w,
-                  width: 240.w,
-                  withShadow: true,
-                  widget: CustomText(
-                    text: translate("app_bar.get_started"),
-                    fontSize: AppStyle.average.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                  color: DMUtil.getPC(),
-                  onPressed: ()=> Util.pushPage(const WelcomeScreen(), context)
+        backgroundColor: DMUtil.getWC(),
+        body: Align(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 1,
+                child: SvgPicture.asset(AppImages.logoSvg),
               ),
-            ),
-
-
-          ],
-        ),
-      )
-    );
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 40.w),
+                child: CustomButton(
+                    height: 40.w,
+                    width: 240.w,
+                    withShadow: true,
+                    widget: CustomText(
+                      text: translate("app_bar.get_started"),
+                      fontSize: AppStyle.average.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    color: DMUtil.getPC(),
+                    onPressed: () =>
+                        Util.pushPage(const WelcomeScreen(), context)),
+              ),
+            ],
+          ),
+        ));
   }
 }

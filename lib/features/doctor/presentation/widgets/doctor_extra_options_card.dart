@@ -17,7 +17,9 @@ class ExtraDoctorOptionsCard extends StatelessWidget {
       builder: (ctx, state) {
         var bloc = DoctorBloc.get(ctx);
         var currentDoctor = bloc.currentDoctor;
-        if (currentDoctor == null || currentDoctor.userData == null) return const SizedBox.shrink();
+        if (currentDoctor == null || currentDoctor.userData == null) {
+          return const SizedBox.shrink();
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -63,7 +65,8 @@ class SmallDoctorBoxValues extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = isRate ? 10 : 5;
     return Row(
-      mainAxisAlignment: isRate ? MainAxisAlignment.center : MainAxisAlignment.end,
+      mainAxisAlignment:
+          isRate ? MainAxisAlignment.center : MainAxisAlignment.end,
       children: [
         const SmallDoctorProfileCards(title: "10K", subTitle: "patients"),
         SizedBox(width: width.w),

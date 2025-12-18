@@ -8,32 +8,37 @@ import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 class ProfileTapsScreens extends StatelessWidget {
   final bool? isNurseEditMode;
   final GlobalKey<TodayMonitoringVitalsState>? vitalsKey;
-  const ProfileTapsScreens({super.key, this.isNurseEditMode=false, this.vitalsKey});
+  const ProfileTapsScreens(
+      {super.key, this.isNurseEditMode = false, this.vitalsKey});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         int currentTap = bloc.currentProfileTapsIndex;
-        if(state is FetchProfileDataState && state.response.isLoad==true)return Padding(padding: const EdgeInsets.all(20),child: CircularProgressIndicator(color: DMUtil.getPC(),),);
-        if(currentTap==0) {
-          return PersonalTapScreen(isNurseEditMode: isNurseEditMode,);
-        }else if(currentTap==1){
-         return const ProfileMedicationsTapScreen();
-        }else{
-         return ReportTapScreen(isNurseEditMode: isNurseEditMode, vitalsKey: vitalsKey);
+        if (state is FetchProfileDataState && state.response.isLoad == true) {
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: CircularProgressIndicator(
+              color: DMUtil.getPC(),
+            ),
+          );
+        }
+        if (currentTap == 0) {
+          return PersonalTapScreen(
+            isNurseEditMode: isNurseEditMode,
+          );
+        } else if (currentTap == 1) {
+          return const ProfileMedicationsTapScreen();
+        } else {
+          return ReportTapScreen(
+              isNurseEditMode: isNurseEditMode, vitalsKey: vitalsKey);
         }
       },
     );
   }
 }
-
-
-
-

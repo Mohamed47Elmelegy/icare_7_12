@@ -9,32 +9,39 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class LocationTypeViewWidget extends StatelessWidget {
   final LocationEntity locationEntity;
-  const LocationTypeViewWidget({super.key,required this.locationEntity});
+  const LocationTypeViewWidget({super.key, required this.locationEntity});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
       margin: const EdgeInsets.symmetric(horizontal: 10),
       alignment: Alignment.center,
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
-          color: DMUtil.getRED()
-      ),
+          color: DMUtil.getRED()),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.home_outlined,color: DMUtil.getWC(),size: AppStyle.average.w+1,),
-          const SizedBox(width: 5,),
+          Icon(
+            Icons.home_outlined,
+            color: DMUtil.getWC(),
+            size: AppStyle.average.w + 1,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
           Padding(
-            padding: EdgeInsets.only(top: Util.getLang()=="ar"?3:0),
+            padding: EdgeInsets.only(top: Util.getLang() == "ar" ? 3 : 0),
             child: CustomText(
-              text: locationEntity.locationType=="home"?translate("map.home"):translate("map.work"),
+              text: locationEntity.locationType == "home"
+                  ? translate("map.home")
+                  : translate("map.work"),
               fontWeight: FontWeight.w600,
               alignCenter: true,
               color: DMUtil.getWC(),
-              fontSize: AppStyle.small.sp-2,
+              fontSize: AppStyle.small.sp - 2,
             ),
           ),
         ],

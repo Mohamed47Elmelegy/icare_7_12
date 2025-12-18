@@ -19,28 +19,40 @@ class LocationCardWidget extends StatelessWidget {
   final bool currentLocation;
   final bool isAdd;
   final bool isOrderPage;
-  const LocationCardWidget({super.key, required this.locationEntity,required this.currentLocation,this.isAdd = false,this.isOrderPage = false});
+  const LocationCardWidget(
+      {super.key,
+      required this.locationEntity,
+      required this.currentLocation,
+      this.isAdd = false,
+      this.isOrderPage = false});
 
   @override
   Widget build(BuildContext context) {
-    var txt = locationEntity.type=="shipping"?translate("map.shipping_not_found"):translate("map.billing_not_found");
+    var txt = locationEntity.type == "shipping"
+        ? translate("map.shipping_not_found")
+        : translate("map.billing_not_found");
     return InkWell(
-      onTap: ()=> LocationsBloc.get(context).add(UpdateCurrentLocationEvent(location: locationEntity)),
+      onTap: () => LocationsBloc.get(context)
+          .add(UpdateCurrentLocationEvent(location: locationEntity)),
       child: Container(
-        padding: isOrderPage ? EdgeInsets.zero: EdgeInsets.symmetric(vertical: 10.h, horizontal: 5.w),
+        padding: isOrderPage
+            ? EdgeInsets.zero
+            : EdgeInsets.symmetric(vertical: 10.h, horizontal: 5.w),
         decoration: BoxDecoration(
-          color: DMUtil.getWC(),
-          // border: isOrderPage? Border.all(width: 0,color: Colors.transparent):Border.all(width: 1,color: currentLocation?DMUtil.getRED():DMUtil.getD2C()),
-          borderRadius: BorderRadius.circular(4),
+            color: DMUtil.getWC(),
+            // border: isOrderPage? Border.all(width: 0,color: Colors.transparent):Border.all(width: 1,color: currentLocation?DMUtil.getRED():DMUtil.getD2C()),
+            borderRadius: BorderRadius.circular(4),
             boxShadow: [
-              if(isOrderPage==false)
-              BoxShadow(
-                blurRadius: 1.0,
-                offset: const Offset(0.05, 0.05),
-                spreadRadius: 2.2,
-                color: currentLocation? DMUtil.getRED().withOpacity(0.5) :DMUtil.getBackGround() ,
-              ),
-              if(!currentLocation && DMUtil.currentThemeIsDark())
+              if (isOrderPage == false)
+                BoxShadow(
+                  blurRadius: 1.0,
+                  offset: const Offset(0.05, 0.05),
+                  spreadRadius: 2.2,
+                  color: currentLocation
+                      ? DMUtil.getRED().withOpacity(0.5)
+                      : DMUtil.getBackGround(),
+                ),
+              if (!currentLocation && DMUtil.currentThemeIsDark())
                 const BoxShadow(
                   color: Colors.grey,
                   blurRadius: 2.0, // soften the shadow
@@ -50,21 +62,24 @@ class LocationCardWidget extends StatelessWidget {
                     0.01, // Move to bottom 10 Vertically
                   ),
                 )
-            ]
-        ),
+            ]),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            CircleDotsWidget(isEnabled: currentLocation ,),
+            CircleDotsWidget(
+              isEnabled: currentLocation,
+            ),
             // Icon(Icons.location_on,color: DMUtil.getD2C(),),
-            const SizedBox(width: 5,),
+            const SizedBox(
+              width: 5,
+            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: isOrderPage?270.w: 300.w,
+                  width: isOrderPage ? 270.w : 300.w,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,23 +87,32 @@ class LocationCardWidget extends StatelessWidget {
                       Row(
                         children: [
                           CustomText(
-                            text:isAdd ? txt : locationEntity.address1.toString(),
+                            text: isAdd
+                                ? txt
+                                : locationEntity.address1.toString(),
                             color: DMUtil.getDC(),
                             fontWeight: FontWeight.w600,
-                            fontSize: AppStyle.average.sp-2,
+                            fontSize: AppStyle.average.sp - 2,
                             maxLine: 3,
                           ),
-                          if(locationEntity.locationType!=null &&
-                              locationEntity.locationType!="" &&
-                              locationEntity.type=="local"
-                          )
-                            LocationTypeViewWidget(locationEntity: locationEntity),
+                          if (locationEntity.locationType != null &&
+                              locationEntity.locationType != "" &&
+                              locationEntity.type == "local")
+                            LocationTypeViewWidget(
+                                locationEntity: locationEntity),
                         ],
                       ),
                       InkWell(
-                        onTap: () => Util.pushPage(AddNewLocationScreen(locationEntity: isAdd ? null : locationEntity,type: locationEntity.type,), context),
+                        onTap: () => Util.pushPage(
+                            AddNewLocationScreen(
+                              locationEntity: isAdd ? null : locationEntity,
+                              type: locationEntity.type,
+                            ),
+                            context),
                         child: CustomText(
-                          text: isAdd? translate("map.set_location") :translate("button.edit"),
+                          text: isAdd
+                              ? translate("map.set_location")
+                              : translate("button.edit"),
                           color: DMUtil.getD2C(),
                           fontSize: AppStyle.average.sp,
                         ),
@@ -96,19 +120,25 @@ class LocationCardWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 7,),
-                if(locationEntity.address1.isNotEmpty)
-                SmallLineLocationData(
-                  title: translate("profile.city"),
-                  value: locationEntity.address1,
+                const SizedBox(
+                  height: 7,
                 ),
-                const SizedBox(height: 5,),
-                if(locationEntity.phone.isNotEmpty)
-                SmallLineLocationData(
-                  title: translate("profile.mobile"),
-                  value: locationEntity.phone,
+                if (locationEntity.address1.isNotEmpty)
+                  SmallLineLocationData(
+                    title: translate("profile.city"),
+                    value: locationEntity.address1,
+                  ),
+                const SizedBox(
+                  height: 5,
                 ),
-                const SizedBox(height: 5,),
+                if (locationEntity.phone.isNotEmpty)
+                  SmallLineLocationData(
+                    title: translate("profile.mobile"),
+                    value: locationEntity.phone,
+                  ),
+                const SizedBox(
+                  height: 5,
+                ),
               ],
             ),
           ],
@@ -123,9 +153,7 @@ class SmallLineLocationData extends StatelessWidget {
   final String value;
   final bool smallCard;
   const SmallLineLocationData(
-      {super.key, this.title,
-      required this.value,
-      this.smallCard = false});
+      {super.key, this.title, required this.value, this.smallCard = false});
 
   @override
   Widget build(BuildContext context) {
@@ -136,17 +164,19 @@ class SmallLineLocationData extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          if(title!=null)
-          SizedBox(
-            // width: 80.w,
-            child: CustomText(
-              text: title.toString(),
-              color: DMUtil.getDC(),
-              fontWeight: FontWeight.w400,
-              fontSize: AppStyle.small.sp,
+          if (title != null)
+            SizedBox(
+              // width: 80.w,
+              child: CustomText(
+                text: title.toString(),
+                color: DMUtil.getDC(),
+                fontWeight: FontWeight.w400,
+                fontSize: AppStyle.small.sp,
+              ),
             ),
+          const SizedBox(
+            width: 10,
           ),
-          const SizedBox(width: 10,),
           Expanded(
             child: CustomText(
               text: value,

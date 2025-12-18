@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class LocationsState{
+abstract class LocationsState {
   const LocationsState();
 }
+
 class LocationsInitialState extends LocationsState {}
 
-class LocationsSuccessfullyState extends LocationsState{
+class LocationsSuccessfullyState extends LocationsState {
   const LocationsSuccessfullyState();
 }
 
-class UpdateCurrentLocationSuccessfullyState extends LocationsState{
+class UpdateCurrentLocationSuccessfullyState extends LocationsState {
   const UpdateCurrentLocationSuccessfullyState();
 }
 
-
-class LocationsFailedState extends LocationsState{
+class LocationsFailedState extends LocationsState {
   const LocationsFailedState();
 }
 
-class LocationsLoadingState extends LocationsState{
+class LocationsLoadingState extends LocationsState {
   const LocationsLoadingState();
 }

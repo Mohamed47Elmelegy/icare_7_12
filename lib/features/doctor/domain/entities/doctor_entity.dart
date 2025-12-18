@@ -13,6 +13,7 @@ class DoctorEntity extends Equatable {
   final String? certificate;
   final double? distanceKM;
   final double? distanceM;
+  final int? specialtyId;
 
   final List<ReviewModel>? reviewList;
   final List<String>? languageList;
@@ -36,11 +37,13 @@ class DoctorEntity extends Equatable {
     this.servicesList,
     this.distanceKM,
     this.distanceM,
+    this.specialtyId,
   });
 
   @override
   List<Object?> get props => [id];
 
   /// return type text in ui
-  String viewTypeText() => "${translate("doctor.doctor")} ".replaceAll("null", "");
+  String viewTypeText() =>
+      "${translate("doctor.doctor")} ".replaceAll("null", "");
 }

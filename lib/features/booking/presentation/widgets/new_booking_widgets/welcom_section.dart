@@ -27,7 +27,7 @@ class BookingWelcomeSection extends StatelessWidget {
             CustomText(
               text: translate("toast.welcome_back"),
               color: DMUtil.getDC(),
-              fontSize: AppStyle.average.sp+2,
+              fontSize: AppStyle.average.sp + 2,
               fontWeight: FontWeight.w600,
             ),
           ],

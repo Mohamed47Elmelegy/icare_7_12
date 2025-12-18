@@ -7,21 +7,23 @@ import 'package:icare/features/nurse/data/models/nurse_model.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 
 abstract class NursesRemoteDataSourceImpl {
-  Future<List<NurseEntity>> getAllNurses({required Map<String,dynamic> data});
-  Future<bool> rateNurse({required Map<String,dynamic> data});
+  Future<List<NurseEntity>> getAllNurses({required Map<String, dynamic> data});
+  Future<bool> rateNurse({required Map<String, dynamic> data});
 }
 
 class NursesRemoteDataSource implements NursesRemoteDataSourceImpl {
   final http.Client client;
   NursesRemoteDataSource({required this.client});
   @override
-  Future<List<NurseEntity>> getAllNurses({required Map<String,dynamic> data}) async {
-    var response = await client.get(Uri.parse("${ApiUrl.nurses}/${data['page']}"),headers: ApiUrl.headerAuth);
+  Future<List<NurseEntity>> getAllNurses(
+      {required Map<String, dynamic> data}) async {
+    var response = await client.get(
+        Uri.parse("${ApiUrl.nurses}/${data['page']}"),
+        headers: ApiUrl.headerAuth);
     debugPrint("getAllNurses?page=${data['page']}  ${response.body}");
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
-      List<NurseEntity> list =
-          body['data'].map<NurseModel>((model) {
+      List<NurseEntity> list = body['data'].map<NurseModel>((model) {
         return NurseModel.fromJson(model);
       }).toList();
       return list;
@@ -31,8 +33,8 @@ class NursesRemoteDataSource implements NursesRemoteDataSourceImpl {
   }
 
   @override
-  Future<bool> rateNurse({required Map<String,dynamic> data}) async {
-    var response = await client.post(Uri.parse(ApiUrl.RATE_NURSE),body: data);
+  Future<bool> rateNurse({required Map<String, dynamic> data}) async {
+    var response = await client.post(Uri.parse(ApiUrl.RATE_NURSE), body: data);
     debugPrint("rateNurse ${response.body}");
     if (response.statusCode == 200) {
       final decodedData = json.decode(response.body);
@@ -41,5 +43,4 @@ class NursesRemoteDataSource implements NursesRemoteDataSourceImpl {
       throw ServerException();
     }
   }
-
 }

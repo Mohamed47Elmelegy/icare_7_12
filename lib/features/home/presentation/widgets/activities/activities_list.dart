@@ -9,10 +9,12 @@ class ActivitiesList extends StatelessWidget {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (ctx,index){
+      itemBuilder: (ctx, index) {
         return const ActivityCard();
       },
-      separatorBuilder: (ctx,index)=> const SizedBox(height: 15,),
+      separatorBuilder: (ctx, index) => const SizedBox(
+        height: 15,
+      ),
       itemCount: 3,
     );
   }

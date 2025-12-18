@@ -12,20 +12,32 @@ class ProfileTaps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         return Container(
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: DMUtil.getBackGroundTaps()
-          ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: DMUtil.getBackGroundTaps()),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TapWidget(title: translate("profile.personal"), index: 0,selected: bloc.currentProfileTapsIndex==0,fn: ()=> bloc.add(const SwitchProfileTapsEvent(index: 0)),),
-              TapWidget(title: translate("profile.medications"), index: 1,selected: bloc.currentProfileTapsIndex==1,fn: ()=> bloc.add(const SwitchProfileTapsEvent(index: 1))),
-              TapWidget(title: translate("profile.tracking_reports"), index: 2,selected: bloc.currentProfileTapsIndex==2,fn: ()=> bloc.add(const SwitchProfileTapsEvent(index: 2))),
+              TapWidget(
+                title: translate("profile.personal"),
+                index: 0,
+                selected: bloc.currentProfileTapsIndex == 0,
+                fn: () => bloc.add(const SwitchProfileTapsEvent(index: 0)),
+              ),
+              TapWidget(
+                  title: translate("profile.medications"),
+                  index: 1,
+                  selected: bloc.currentProfileTapsIndex == 1,
+                  fn: () => bloc.add(const SwitchProfileTapsEvent(index: 1))),
+              TapWidget(
+                  title: translate("profile.tracking_reports"),
+                  index: 2,
+                  selected: bloc.currentProfileTapsIndex == 2,
+                  fn: () => bloc.add(const SwitchProfileTapsEvent(index: 2))),
             ],
           ),
         );
@@ -33,7 +45,3 @@ class ProfileTaps extends StatelessWidget {
     );
   }
 }
-
-
-
-

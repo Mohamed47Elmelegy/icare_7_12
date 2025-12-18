@@ -6,20 +6,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RequestDetails extends StatelessWidget {
   final String txt;
-  const RequestDetails({super.key,required this.txt});
+  const RequestDetails({super.key, required this.txt});
 
-  static final TextEditingController caseDescTextEditingController = TextEditingController();
+  static final TextEditingController caseDescTextEditingController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      margin: EdgeInsets.only(bottom: 10.w,),
-      // padding: EdgeInsets.symmetric(vertical: 12.w,horizontal: 5.w),
-      decoration: BoxDecoration(
-          color: DMUtil.getWC(),
-          borderRadius: BorderRadius.circular(10)
-      ),
-      child: CustomText(text: txt, fontSize: AppStyle.average.sp,maxLine: 10,)
-    );
+        width: double.infinity,
+        margin: EdgeInsets.only(
+          bottom: 10.w,
+        ),
+        // padding: EdgeInsets.symmetric(vertical: 12.w,horizontal: 5.w),
+        decoration: BoxDecoration(
+            color: DMUtil.getWC(), borderRadius: BorderRadius.circular(10)),
+        child: CustomText(
+          text: txt,
+          fontSize: AppStyle.average.sp,
+          maxLine: 10,
+        ));
   }
 }

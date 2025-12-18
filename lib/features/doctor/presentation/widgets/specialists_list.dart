@@ -1,6 +1,5 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
-import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctor_state.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/doctor/presentation/widgets/vertical_specialist_card.dart';
@@ -17,18 +16,30 @@ class VerticalDoctorSpecialistsList extends StatelessWidget {
     return BlocBuilder<DoctorBloc, DoctorState>(
       builder: (ctx, state) {
         var bloc = ctx.read<DoctorBloc>();
-        if (state is FetchAllDoctorsLoadingState) return const Center(child: CircularProgressIndicator(color: kPrimary));
-        if (state is! FetchAllDoctorsLoadingState && bloc.doctorsList.isEmpty) return const EmptyDataWidget();
+        if (state is FetchAllDoctorsLoadingState) {
+          return const Center(
+              child: CircularProgressIndicator(color: kPrimary));
+        }
+        if (state is! FetchAllDoctorsLoadingState && bloc.doctorsList.isEmpty) {
+          return const EmptyDataWidget();
+        }
         var list = bloc.doctorsList;
         if (bloc.searchText != '') {
           list = bloc.doctorsList
-              .where((v) => v.userData != null && v.userData!.userName.toString().toLowerCase().trim().startsWith(bloc.searchText.toLowerCase()))
+              .where((v) =>
+                  v.userData != null &&
+                  v.userData!.userName
+                      .toString()
+                      .toLowerCase()
+                      .trim()
+                      .startsWith(bloc.searchText.toLowerCase()))
               .toList();
         }
         return Scrollbar(
           child: ListView.separated(
             itemCount: list.length,
-            padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w, vertical: 70.h),
+            padding: EdgeInsets.symmetric(
+                horizontal: AppStyle.paddingFromH.w, vertical: 70.h),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
@@ -37,7 +48,8 @@ class VerticalDoctorSpecialistsList extends StatelessWidget {
               if (item.userData == null) return const SizedBox.shrink();
               return VerticalDoctorSpecialistCard(doctor: item);
             },
-            separatorBuilder: (BuildContext context, int index) => SizedBox(height: list[index].userData == null ? 0 : 5.w),
+            separatorBuilder: (BuildContext context, int index) =>
+                SizedBox(height: list[index].userData == null ? 0 : 5.w),
           ),
         );
       },

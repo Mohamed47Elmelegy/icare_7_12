@@ -15,24 +15,35 @@ class LocationsEmpty extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 100,),
-
-          Image.asset(AppImages.logo,height: 30.h,fit: BoxFit.cover,),
-          Image.asset(AppImages.logo,height: 120.h,fit: BoxFit.cover,),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 100,
+          ),
+          Image.asset(
+            AppImages.logo,
+            height: 30.h,
+            fit: BoxFit.cover,
+          ),
+          Image.asset(
+            AppImages.logo,
+            height: 120.h,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
           CustomText(
               text: translate("location.empty_locations"),
               color: kPrimary,
               fontWeight: FontWeight.w700,
-              fontSize: AppStyle.average.sp
-          ),
+              fontSize: AppStyle.average.sp),
           CustomText(
               text: translate("location.add_current_location"),
               color: kPrimary,
               fontWeight: FontWeight.w500,
-              fontSize: AppStyle.small.sp
+              fontSize: AppStyle.small.sp),
+          const SizedBox(
+            height: 10,
           ),
-          const SizedBox(height: 10,),
         ],
       ),
     );

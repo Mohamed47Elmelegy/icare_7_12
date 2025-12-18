@@ -12,7 +12,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class AllergiesListDropDown extends StatelessWidget {
   final double width;
-  const AllergiesListDropDown({super.key,this.width = 110});
+  const AllergiesListDropDown({super.key, this.width = 110});
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +21,12 @@ class AllergiesListDropDown extends StatelessWidget {
       decoration: BoxDecoration(
           color: DMUtil.getWC(),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1,color:  DMUtil.getOpacity())
-      ),
-      child: BlocBuilder<CategoriesBloc,CategoriesState>(
-        builder: (ctx,state){
+          border: Border.all(width: 1, color: DMUtil.getOpacity())),
+      child: BlocBuilder<CategoriesBloc, CategoriesState>(
+        builder: (ctx, state) {
           var bloc = CategoriesBloc.get(ctx);
           var list = bloc.allAllergies;
-          if(list.isEmpty)return const SizedBox.shrink();
+          if (list.isEmpty) return const SizedBox.shrink();
           var currentItem = bloc.currentAllergies;
           return DropdownButton<AllergiesModel>(
             value: null,
@@ -37,7 +36,9 @@ class AllergiesListDropDown extends StatelessWidget {
             hint: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: CustomText(
-                text:currentItem==null? translate("profile.allergies") : currentItem.value,
+                text: currentItem == null
+                    ? translate("profile.allergies")
+                    : currentItem.value,
                 fontSize: AppStyle.small.sp,
                 color: DMUtil.getD2C(),
               ),
@@ -45,14 +46,16 @@ class AllergiesListDropDown extends StatelessWidget {
             isExpanded: true,
             style: TextStyle(color: DMUtil.getD2C()),
             underline: const SizedBox(),
-            onChanged: (AllergiesModel? newValue) => bloc.add(ChangeCurrentAllergies(item: newValue!)),
-            items: list.map<DropdownMenuItem<AllergiesModel>>((AllergiesModel item) {
+            onChanged: (AllergiesModel? newValue) =>
+                bloc.add(ChangeCurrentAllergies(item: newValue!)),
+            items: list
+                .map<DropdownMenuItem<AllergiesModel>>((AllergiesModel item) {
               return DropdownMenuItem<AllergiesModel>(
-                  value: item,
-                  child: CustomText(
-                    text: item.value.toString(),
-                    fontSize: AppStyle.small.sp,
-                  ),
+                value: item,
+                child: CustomText(
+                  text: item.value.toString(),
+                  fontSize: AppStyle.small.sp,
+                ),
               );
             }).toList(),
           );

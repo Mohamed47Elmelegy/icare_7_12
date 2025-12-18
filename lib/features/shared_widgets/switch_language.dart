@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SwitchLanguageWidget extends StatelessWidget {
   final bool isRegisterNurse;
-  const SwitchLanguageWidget({super.key,this.isRegisterNurse = false});
+  const SwitchLanguageWidget({super.key, this.isRegisterNurse = false});
 
   @override
   Widget build(BuildContext context) {
@@ -15,19 +15,24 @@ class SwitchLanguageWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
-          onPressed: ()=> Util.changeLang(ctx: context,isLogin: true,isRegisterNurse: isRegisterNurse,lang: "ar"),
+          onPressed: () => Util.changeLang(
+              ctx: context,
+              isLogin: true,
+              isRegisterNurse: isRegisterNurse,
+              lang: "ar"),
           child: CustomText(
             text: "عربي",
             fontSize: AppStyle.average.sp,
-            color: Util.getLang()=="ar"?DMUtil.getWC():DMUtil.getText2(),
+            color: Util.getLang() == "ar" ? DMUtil.getWC() : DMUtil.getText2(),
           ),
         ),
         TextButton(
-          onPressed: ()=> Util.changeLang(ctx: context,isLogin: true,lang: "en_US"),
+          onPressed: () =>
+              Util.changeLang(ctx: context, isLogin: true, lang: "en_US"),
           child: CustomText(
             text: "English",
             fontSize: AppStyle.average.sp,
-            color: Util.getLang()!="ar"?DMUtil.getWC():DMUtil.getText2(),
+            color: Util.getLang() != "ar" ? DMUtil.getWC() : DMUtil.getText2(),
           ),
         ),
       ],

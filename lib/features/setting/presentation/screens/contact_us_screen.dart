@@ -13,9 +13,6 @@ import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 
-
-
-
 class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
 
@@ -24,14 +21,20 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreenState extends State<ContactScreen> {
-  final TextEditingController firstNameTextEditingController = TextEditingController();
-  final TextEditingController lastNameTextEditingController = TextEditingController();
-  final TextEditingController emailTextEditingController = TextEditingController();
-  final TextEditingController phoneTextEditingController = TextEditingController();
-  final TextEditingController subjectTextEditingController = TextEditingController();
-  final TextEditingController contentTextEditingController = TextEditingController();
+  final TextEditingController firstNameTextEditingController =
+      TextEditingController();
+  final TextEditingController lastNameTextEditingController =
+      TextEditingController();
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+  final TextEditingController phoneTextEditingController =
+      TextEditingController();
+  final TextEditingController subjectTextEditingController =
+      TextEditingController();
+  final TextEditingController contentTextEditingController =
+      TextEditingController();
 
-  bool loading  = false;
+  bool loading = false;
   @override
   void initState() {
     dropDownMenu = getDropDownMenu();
@@ -44,12 +47,12 @@ class _ContactScreenState extends State<ContactScreen> {
       backgroundColor: Colors.white,
       appBar: GlobalAppBar(
         title: translate("activity_setting.contact_us"),
-        leadingIcon:  const BackArrowButton(),
+        leadingIcon: const BackArrowButton(),
         icon: null,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 30),
-        child:  Column(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -70,7 +73,9 @@ class _ContactScreenState extends State<ContactScreen> {
                     isLabelError: false,
                   ),
                 ),
-                const SizedBox(width: 10,),
+                const SizedBox(
+                  width: 10,
+                ),
                 SizedBox(
                   width: 154.w,
                   child: CustomTextFromField(
@@ -88,7 +93,9 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             SizedBox(
               height: 50.h,
               child: CustomTextFromField(
@@ -105,11 +112,18 @@ class _ContactScreenState extends State<ContactScreen> {
                   obscureText: false,
                   isLabelError: false),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Row(
               children: [
-                CustomText(text: "+966", fontSize: AppStyle.small.sp,),
-                const SizedBox(width: 5,),
+                CustomText(
+                  text: "+966",
+                  fontSize: AppStyle.small.sp,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
                 Expanded(
                   // width: 280.w,
                   child: CustomTextFromField(
@@ -129,34 +143,41 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Container(
               height: 50.h,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(width: 1,color: DMUtil.getOpacity()),
+                border: Border.all(width: 1, color: DMUtil.getOpacity()),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child:  DropdownButton(
+              child: DropdownButton(
                 isExpanded: true,
-                style: TextStyle(color: DMUtil.getD2C(), fontSize: 12.sp,),
+                style: TextStyle(
+                  color: DMUtil.getD2C(),
+                  fontSize: 12.sp,
+                ),
                 hint: CustomText(
                   text: translate("activity_setting.select_subject"),
                   fontSize: 12.sp,
                   color: Colors.black,
                 ),
-                onChanged:(val){
+                onChanged: (val) {
                   setState(() {
                     subject = val.toString();
                   });
                 },
                 icon: const Icon(Icons.keyboard_arrow_down),
-                items:  dropDownMenu,
+                items: dropDownMenu,
                 value: subject,
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             CustomTextFromField(
                 hintText: translate("activity_setting.message_title"),
                 labelText: translate("activity_setting.message_title"),
@@ -169,7 +190,9 @@ class _ContactScreenState extends State<ContactScreen> {
                 suffixIcon: const SizedBox(),
                 obscureText: false,
                 isLabelError: false),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             SizedBox(
               height: 100.h,
               child: CustomTextFromField(
@@ -186,32 +209,34 @@ class _ContactScreenState extends State<ContactScreen> {
                   obscureText: false,
                   isLabelError: false),
             ),
-
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             MaterialButton(
-              onPressed: ()async{
+              onPressed: () async {
                 setState(() {
                   loading = true;
                 });
-                if(emailTextEditingController.text.trim().isNotEmpty&&
-                    firstNameTextEditingController.text.trim().isNotEmpty&&
-                    lastNameTextEditingController.text.trim().isNotEmpty&&
-                    subjectTextEditingController.text.trim().isNotEmpty&&
-                    contentTextEditingController.text.trim().isNotEmpty&&
-                    phoneTextEditingController.text.trim().isNotEmpty
-                ){
-                  String phone = "+966${phoneTextEditingController.text.trim()}";
-                  if(validatePhoneInput(phone, context) == false){
+                if (emailTextEditingController.text.trim().isNotEmpty &&
+                    firstNameTextEditingController.text.trim().isNotEmpty &&
+                    lastNameTextEditingController.text.trim().isNotEmpty &&
+                    subjectTextEditingController.text.trim().isNotEmpty &&
+                    contentTextEditingController.text.trim().isNotEmpty &&
+                    phoneTextEditingController.text.trim().isNotEmpty) {
+                  String phone =
+                      "+966${phoneTextEditingController.text.trim()}";
+                  if (validatePhoneInput(phone, context) == false) {
                     setState(() {
                       loading = false;
                     });
                     return;
                   }
-                  if(!emailTextEditingController.text.trim().contains("@")){
+                  if (!emailTextEditingController.text.trim().contains("@")) {
                     setState(() {
                       loading = false;
                     });
-                    SnackBarBuilder.showFeedBackMessage(context, translate("toast.email_invalid"), DMUtil.getRED());
+                    SnackBarBuilder.showFeedBackMessage(context,
+                        translate("toast.email_invalid"), DMUtil.getRED());
                     return;
                   }
                   final res = await SendGmail.sendContactUs(
@@ -220,26 +245,30 @@ class _ContactScreenState extends State<ContactScreen> {
                       firstNameTextEditingController.text.trim(),
                       lastNameTextEditingController.text.trim(),
                       phone,
-                      emailTextEditingController.text.trim(), subject);
+                      emailTextEditingController.text.trim(),
+                      subject);
                   setState(() {
                     loading = false;
                   });
-                  if(res){
+                  if (res) {
                     emailTextEditingController.text = "";
                     firstNameTextEditingController.text = "";
                     lastNameTextEditingController.text = "";
                     contentTextEditingController.text = "";
                     subjectTextEditingController.text = "";
                     phoneTextEditingController.text = "";
-                    SnackBarBuilder.showFeedBackMessage(context, translate("toast.gmail_send"), DMUtil.getGreen());
-                  }else{
-                    SnackBarBuilder.showFeedBackMessage(context, translate("toast.oops"), Colors.red);
+                    SnackBarBuilder.showFeedBackMessage(context,
+                        translate("toast.gmail_send"), DMUtil.getGreen());
+                  } else {
+                    SnackBarBuilder.showFeedBackMessage(
+                        context, translate("toast.oops"), Colors.red);
                   }
-                }else{
+                } else {
                   setState(() {
                     loading = false;
                   });
-                  SnackBarBuilder.showFeedBackMessage(context, translate("toast.field_empty"), Colors.red);
+                  SnackBarBuilder.showFeedBackMessage(
+                      context, translate("toast.field_empty"), Colors.red);
                 }
               },
               height: 32.w,
@@ -248,12 +277,16 @@ class _ContactScreenState extends State<ContactScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: loading? const CircularProgressIndicator(color: Colors.white,) : CustomText(
-                text: translate("button.send").toUpperCase(),
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 16.w,
-              ),
+              child: loading
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : CustomText(
+                      text: translate("button.send").toUpperCase(),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.w,
+                    ),
             ),
             const SizedBox(
               height: 30,
@@ -264,10 +297,10 @@ class _ContactScreenState extends State<ContactScreen> {
     );
   }
 
-  bool validatePhoneInput(String phone,BuildContext context){
-    if(phone.isNotEmpty){
+  bool validatePhoneInput(String phone, BuildContext context) {
+    if (phone.isNotEmpty) {
       String? txt = Util.validatePhone(phone);
-      if(txt!=null){
+      if (txt != null) {
         SnackBarBuilder.showFeedBackMessage(context, txt, DMUtil.getRED());
         return false;
       }
@@ -298,4 +331,3 @@ class _ContactScreenState extends State<ContactScreen> {
     return itemsMarketKind;
   }
 }
-

@@ -13,15 +13,16 @@ import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
 
 class ServicesListDropDown extends StatelessWidget {
   final double width;
-  const ServicesListDropDown({super.key,this.width = 110});
-  static final TextEditingController textEditingController = TextEditingController();
+  const ServicesListDropDown({super.key, this.width = 110});
+  static final TextEditingController textEditingController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc,AccountState>(
-      builder: (ctx,state){
+    return BlocBuilder<AccountBloc, AccountState>(
+      builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
         var list = bloc.allServiceList;
-        if(list.isEmpty)return const SizedBox.shrink();
+        if (list.isEmpty) return const SizedBox.shrink();
         var currentItem = bloc.currentService;
         // currentItem ??= list.first;
         return Column(
@@ -31,8 +32,7 @@ class ServicesListDropDown extends StatelessWidget {
               decoration: BoxDecoration(
                   color: DMUtil.getWC(),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1,color:  DMUtil.getOpacity())
-              ),
+                  border: Border.all(width: 1, color: DMUtil.getOpacity())),
               child: DropdownButton<ServicesModel>(
                 value: null,
                 icon: const Icon(Icons.arrow_drop_down),
@@ -41,7 +41,9 @@ class ServicesListDropDown extends StatelessWidget {
                 hint: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: CustomText(
-                    text:currentItem==null? translate("icare.select_service"): currentItem.value,
+                    text: currentItem == null
+                        ? translate("icare.select_service")
+                        : currentItem.value,
                     fontSize: AppStyle.small.sp,
                     color: DMUtil.getD2C(),
                   ),
@@ -49,8 +51,10 @@ class ServicesListDropDown extends StatelessWidget {
                 isExpanded: true,
                 style: TextStyle(color: DMUtil.getD2C()),
                 underline: const SizedBox(),
-                onChanged: (ServicesModel? newValue) => bloc.add(ChangeCurrentService(item: newValue!)),
-                items: list.map<DropdownMenuItem<ServicesModel>>((ServicesModel item) {
+                onChanged: (ServicesModel? newValue) =>
+                    bloc.add(ChangeCurrentService(item: newValue!)),
+                items: list
+                    .map<DropdownMenuItem<ServicesModel>>((ServicesModel item) {
                   return DropdownMenuItem<ServicesModel>(
                     value: item,
                     child: CustomText(
@@ -61,9 +65,10 @@ class ServicesListDropDown extends StatelessWidget {
                 }).toList(),
               ),
             ),
-
-            if(currentItem!=null)...[
-              const SizedBox(height: 10,),
+            if (currentItem != null) ...[
+              const SizedBox(
+                height: 10,
+              ),
               CustomTextFromField(
                 hasBorder: true,
                 borderWidth: 1,
@@ -72,17 +77,18 @@ class ServicesListDropDown extends StatelessWidget {
                 height: 45,
                 hintText: translate("icare.select_price"),
                 radius: 10,
-                onChanged: (val)=> bloc.add(ChangeCurrentService(item: currentItem,txt: val.toString().trim())),
-                onFieldSubmitted: (val){},
+                onChanged: (val) => bloc.add(ChangeCurrentService(
+                    item: currentItem, txt: val.toString().trim())),
+                onFieldSubmitted: (val) {},
                 textEditingController: textEditingController,
                 validator: () {},
                 prefixIcon: null,
                 obscureText: false,
                 isLabelError: false,
               ),
-
-              const SizedBox(height: 20,),
-
+              const SizedBox(
+                height: 20,
+              ),
             ],
           ],
         );

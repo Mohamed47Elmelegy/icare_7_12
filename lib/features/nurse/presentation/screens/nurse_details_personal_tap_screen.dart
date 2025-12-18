@@ -9,7 +9,6 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-
 class NurseDetailsPersonalTapScreen extends StatelessWidget {
   const NurseDetailsPersonalTapScreen({super.key});
 
@@ -24,19 +23,21 @@ class NurseDetailsPersonalTapScreen extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 5,),
+        const SizedBox(
+          height: 5,
+        ),
         const NurseLanguagesRow(),
         const Divider(),
-
         CustomText(
           text: translate("nurse.education"),
           fontSize: AppStyle.small.sp,
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 5,),
+        const SizedBox(
+          height: 5,
+        ),
         const NurseEducationSection(),
-
         const Divider(),
         CustomText(
           text: translate("nurse.experience_year"),
@@ -44,20 +45,26 @@ class NurseDetailsPersonalTapScreen extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 5,),
+        const SizedBox(
+          height: 5,
+        ),
         const NursePublicationSection(),
-
-
-        const Divider(height: 15,),
+        const Divider(
+          height: 15,
+        ),
         CustomText(
           text: translate("nurse.courses"),
           fontSize: AppStyle.small.sp,
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-        const SizedBox(height: 5,),
+        const SizedBox(
+          height: 5,
+        ),
         const NurseCoursesSection(),
-        SizedBox(height: 80.h,),
+        SizedBox(
+          height: 80.h,
+        ),
       ],
     );
   }

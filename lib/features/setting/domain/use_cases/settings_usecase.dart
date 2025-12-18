@@ -16,8 +16,6 @@ class GetTermsUseCase {
   }
 }
 
-
-
 class GetRefundPolicyUseCase {
   final SettingsRepository refundPolicyRepository;
 
@@ -28,7 +26,6 @@ class GetRefundPolicyUseCase {
   }
 }
 
-
 class GetPrivacyUseCase {
   final SettingsRepository privacyRepository;
 
@@ -38,7 +35,6 @@ class GetPrivacyUseCase {
     return await privacyRepository.getPrivacyData();
   }
 }
-
 
 class GetAboutUsUseCase {
   final SettingsRepository aboutUsRepository;

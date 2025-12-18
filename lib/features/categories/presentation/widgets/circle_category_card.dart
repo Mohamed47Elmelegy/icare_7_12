@@ -11,32 +11,47 @@ import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
 class CircleCategoryCard extends StatelessWidget {
   final CategoriesEntity item;
-  const CircleCategoryCard({super.key,required this.item});
+  const CircleCategoryCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        CategoriesBloc.get(context).add(ChangeCategoriesEvent(categoriesModel: item));
+      onTap: () {
+        CategoriesBloc.get(context)
+            .add(ChangeCategoriesEvent(categoriesModel: item));
         Util.pushPage(const CategoryProductsScreen(), context);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if(DMUtil.currentThemeIsDark() && item.darkIcon!=null && item.darkIcon.toString().trim()!="")...[
-            SvgPicture.network(item.darkIcon!,height: 50.h,fit: BoxFit.contain,),
-          ]else if(!DMUtil.currentThemeIsDark() && item.lightIcon!=null && item.lightIcon.toString().trim()!="")...[
-            SvgPicture.network(item.lightIcon!,height: 50.h,fit: BoxFit.contain,),
-          ]else ...[
-            SvgIconWidget(iconUrl: item.iconPath,),
+          if (DMUtil.currentThemeIsDark() &&
+              item.darkIcon != null &&
+              item.darkIcon.toString().trim() != "") ...[
+            SvgPicture.network(
+              item.darkIcon!,
+              height: 50.h,
+              fit: BoxFit.contain,
+            ),
+          ] else if (!DMUtil.currentThemeIsDark() &&
+              item.lightIcon != null &&
+              item.lightIcon.toString().trim() != "") ...[
+            SvgPicture.network(
+              item.lightIcon!,
+              height: 50.h,
+              fit: BoxFit.contain,
+            ),
+          ] else ...[
+            SvgIconWidget(
+              iconUrl: item.iconPath,
+            ),
           ],
-
-          const SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           SizedBox(
-            height: 30.h+12.w,
+            height: 30.h + 12.w,
             width: 60.w,
             child: CustomText(
               text: item.title.toString(),

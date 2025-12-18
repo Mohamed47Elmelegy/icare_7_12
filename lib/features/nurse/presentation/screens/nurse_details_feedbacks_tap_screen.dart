@@ -11,7 +11,6 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/features/shared_widgets/rate_widget.dart';
 import 'package:icare/features/shared_widgets/review.dart';
 
-
 class NurseDetailsFeedBacksTapScreen extends StatelessWidget {
   const NurseDetailsFeedBacksTapScreen({super.key});
 
@@ -20,7 +19,6 @@ class NurseDetailsFeedBacksTapScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         CustomText(
           text: translate("icare.rate"),
           fontSize: AppStyle.small.sp,
@@ -28,29 +26,31 @@ class NurseDetailsFeedBacksTapScreen extends StatelessWidget {
           color: DMUtil.getDC(),
         ),
         const RateWidget(),
-
-        const Divider(height: 10,),
-
-
-        BlocBuilder<NurseBloc,NurseState>(
-          builder: (ctx,state){
+        const Divider(
+          height: 10,
+        ),
+        BlocBuilder<NurseBloc, NurseState>(
+          builder: (ctx, state) {
             var bloc = NurseBloc.get(ctx);
             var nurse = bloc.currentNurse;
-            if(nurse == null || nurse.reviewList==null)return const SizedBox.shrink();
+            if (nurse == null || nurse.reviewList == null) {
+              return const SizedBox.shrink();
+            }
             return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               itemCount: nurse.reviewList!.length,
               physics: const NeverScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              separatorBuilder: (ctx,index)=> const SizedBox(height: 10,),
-              itemBuilder: (ctx,index){
+              separatorBuilder: (ctx, index) => const SizedBox(
+                height: 10,
+              ),
+              itemBuilder: (ctx, index) {
                 var item = nurse.reviewList![index];
                 return Card(
                   margin: EdgeInsets.zero,
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))
-                  ),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(
@@ -67,7 +67,7 @@ class NurseDetailsFeedBacksTapScreen extends StatelessWidget {
                           title: item.txt.toString(),
                           titleWidth: 240,
                         ),
-                        ReviewWidgetView(rate: item.ratingValue??1),
+                        ReviewWidgetView(rate: item.ratingValue ?? 1),
                       ],
                     ),
                   ),
@@ -76,8 +76,9 @@ class NurseDetailsFeedBacksTapScreen extends StatelessWidget {
             );
           },
         ),
-
-        const SizedBox(height: 20,),
+        const SizedBox(
+          height: 20,
+        ),
       ],
     );
   }

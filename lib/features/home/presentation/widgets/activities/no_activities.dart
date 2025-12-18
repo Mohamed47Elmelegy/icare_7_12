@@ -15,14 +15,15 @@ class NoActivitiesWidget extends StatelessWidget {
     return Row(
       children: [
         CustomText(
-            text: translate("icare.not_activities"),
-            fontWeight: FontWeight.w600,
-            fontSize: AppStyle.small.sp,
+          text: translate("icare.not_activities"),
+          fontWeight: FontWeight.w600,
+          fontSize: AppStyle.small.sp,
         ),
-
-        const SizedBox(width: 5,),
+        const SizedBox(
+          width: 5,
+        ),
         InkWell(
-          onTap: ()=> Util.pushPage(const AllSpecialistsScreen(), context),
+          onTap: () => Util.pushPage(const AllSpecialistsScreen(), context),
           child: Row(
             children: [
               CustomText(
@@ -31,7 +32,10 @@ class NoActivitiesWidget extends StatelessWidget {
                 fontSize: AppStyle.small.sp,
                 color: DMUtil.getPC(),
               ),
-              Icon(Icons.add,color: DMUtil.getPC(),),
+              Icon(
+                Icons.add,
+                color: DMUtil.getPC(),
+              ),
             ],
           ),
         ),

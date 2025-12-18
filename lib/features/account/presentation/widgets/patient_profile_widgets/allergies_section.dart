@@ -18,20 +18,25 @@ class AllergiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10,),
+        const SizedBox(
+          height: 10,
+        ),
         CustomText(
           text: translate("profile.allergies"),
           fontSize: AppStyle.small.sp,
           fontWeight: FontWeight.w600,
           color: DMUtil.getDC(),
         ),
-
-        const SizedBox(height: 5,),
-        BlocBuilder<AccountBloc,AccountState>(
-          builder: (ctx,state){
+        const SizedBox(
+          height: 5,
+        ),
+        BlocBuilder<AccountBloc, AccountState>(
+          builder: (ctx, state) {
             var bloc = AccountBloc.get(ctx);
             var user = bloc.currentUser;
-            if(user==null||user.allergiesList==null)return const SizedBox.shrink();
+            if (user == null || user.allergiesList == null) {
+              return const SizedBox.shrink();
+            }
             var list = user.allergiesList;
             return Column(
               children: [
@@ -49,19 +54,20 @@ class AllergiesSection extends StatelessWidget {
                   ),
                   itemBuilder: (BuildContext context, int index) {
                     var item = list[index];
-                    return DotWithTitleAllergies(title: item.value, titleWidth: 60,);
+                    return DotWithTitleAllergies(
+                      title: item.value,
+                      titleWidth: 60,
+                    );
                   },
                 ),
-                SizedBox(height: 20.w,),
-                if(bloc.enableUpdate)
-                  const AddNewAllergiesWidget(),
-
-
+                SizedBox(
+                  height: 20.w,
+                ),
+                if (bloc.enableUpdate) const AddNewAllergiesWidget(),
               ],
             );
           },
         ),
-
       ],
     );
   }

@@ -12,14 +12,14 @@ class FaqsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RootBloc,RootState>(
-      builder: (ctx,state){
+    return BlocBuilder<RootBloc, RootState>(
+      builder: (ctx, state) {
         var list = [];
-        if(list.isEmpty)return const SizedBox.shrink();
+        if (list.isEmpty) return const SizedBox.shrink();
         return ListView.separated(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(10),
-          itemBuilder: (ctx,index){
+          itemBuilder: (ctx, index) {
             var item = list[index];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,52 +28,55 @@ class FaqsListWidget extends StatelessWidget {
                     text: item.title.toString(),
                     color: DMUtil.getD2C(),
                     fontWeight: FontWeight.w600,
-                    fontSize: AppStyle.average.sp+2
+                    fontSize: AppStyle.average.sp + 2),
+                const SizedBox(
+                  height: 10,
                 ),
-                const SizedBox(height: 10,),
-                if(item.faqList!=null && item.faqList!.isNotEmpty)
-                ListView.separated(
+                if (item.faqList != null && item.faqList!.isNotEmpty)
+                  ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (ctx,index){
+                    itemBuilder: (ctx, index) {
                       var smallItem = item.faqList![index];
                       return Card(
-                        elevation: 3,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))
-                        ),
-                        child: ExpansionTile(
-                          collapsedIconColor: DMUtil.getDC(),
-                          iconColor: DMUtil.getRED(),
-                          title: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 6.w),
-                            child: CustomText(
+                          elevation: 3,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          child: ExpansionTile(
+                            collapsedIconColor: DMUtil.getDC(),
+                            iconColor: DMUtil.getRED(),
+                            title: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 6.w),
+                              child: CustomText(
                                 text: smallItem.title.toString(),
                                 color: DMUtil.getDC(),
                                 fontSize: AppStyle.small.sp,
                                 maxLine: 3,
-                            ),
-                          ),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: CustomText(
-                                  text: smallItem.content.toString(),
-                                  color: DMUtil.getD2C(),
-                                  fontSize: AppStyle.average.sp
                               ),
                             ),
-                          ],
-                        )
-                      );
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: CustomText(
+                                    text: smallItem.content.toString(),
+                                    color: DMUtil.getD2C(),
+                                    fontSize: AppStyle.average.sp),
+                              ),
+                            ],
+                          ));
                     },
-                    separatorBuilder: (ctx,index) => SizedBox(height: 10.w,),
+                    separatorBuilder: (ctx, index) => SizedBox(
+                      height: 10.w,
+                    ),
                     itemCount: item.faqList!.length,
-                )
+                  )
               ],
             );
           },
-          separatorBuilder: (ctx,state)=> const SizedBox(height: 30,),
+          separatorBuilder: (ctx, state) => const SizedBox(
+            height: 30,
+          ),
           itemCount: list.length,
         );
       },

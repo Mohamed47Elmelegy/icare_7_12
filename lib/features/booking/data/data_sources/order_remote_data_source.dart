@@ -71,10 +71,12 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     var headers = ApiUrl.headerAuth;
 
     // Required fields
-    if (data['status'] != null)
+    if (data['status'] != null) {
       request.fields['status'] = data['status'].toString();
-    if (data['booking_id'] != null)
+    }
+    if (data['booking_id'] != null) {
       request.fields['booking_id'] = data['booking_id'].toString();
+    }
 
     // // Optional patient vitals fields (sent only when completing booking)
     // if(data['heart_rate']!=null)request.fields['heart_rate'] = data['heart_rate'].toString();

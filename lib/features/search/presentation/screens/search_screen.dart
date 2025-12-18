@@ -5,6 +5,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
@@ -32,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
         // Reload services when provider type changes
         if (state is ProviderTypeSelectedState) {
           final accountBloc = context.read<AccountBloc>();
-          accountBloc.getAllServiceList(userType: state.providerType);
+          accountBloc.add(FetchAllServicesEvent(userType: state.providerType));
           debugPrint("🔄 Reloading services for: ${state.providerType}");
         }
 
@@ -167,23 +168,28 @@ class _SearchScreenState extends State<SearchScreen> {
                                 onPressed: isLoading
                                     ? null
                                     : () {
-                                        final searchBloc = SearchBloc.get(context);
+                                        final searchBloc =
+                                            SearchBloc.get(context);
 
                                         // Validate that provider type is selected (required)
-                                        if (searchBloc.selectedProviderType == null) {
+                                        if (searchBloc.selectedProviderType ==
+                                            null) {
                                           SnackBarBuilder.showFeedBackMessage(
                                             context,
-                                            translate("search.please_select_provider_type"),
+                                            translate(
+                                                "search.please_select_provider_type"),
                                             Colors.orange,
                                           );
                                           return;
                                         }
 
                                         // Validate that at least one service is selected (required)
-                                        if (searchBloc.selectedServices.isEmpty) {
+                                        if (searchBloc
+                                            .selectedServices.isEmpty) {
                                           SnackBarBuilder.showFeedBackMessage(
                                             context,
-                                            translate("search.please_select_service"),
+                                            translate(
+                                                "search.please_select_service"),
                                             Colors.orange,
                                           );
                                           return;
@@ -194,8 +200,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                             searchBloc.getCurrentFilters();
 
                                         // Trigger search
-                                        searchBloc.add(
-                                            SearchByFiltersEvent(filters: filters));
+                                        searchBloc.add(SearchByFiltersEvent(
+                                            filters: filters));
                                       },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: DMUtil.getPC(),
@@ -213,13 +219,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                         width: 24.w,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2.5,
-                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
                                             DMUtil.getWC(),
                                           ),
                                         ),
                                       )
                                     : Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Icon(
                                             Icons.search,
@@ -256,7 +264,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const AllProvidersScreen(),
+                                    builder: (context) =>
+                                        const AllProvidersScreen(),
                                   ),
                                 );
                               },

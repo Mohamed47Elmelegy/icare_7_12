@@ -17,15 +17,25 @@ class NurseProfileScreen extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       child: Column(
         children: [
-          ProfileCardInfo(title: translate("profile.my_account"),img: AppImages.nurseImg,enableBackIcon: false,enableEditIcon: true,),
+          ProfileCardInfo(
+            title: translate("profile.my_account"),
+            img: AppImages.nurseImg,
+            enableBackIcon: false,
+            enableEditIcon: true,
+          ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w,vertical: 10),
+            padding: EdgeInsets.symmetric(
+                horizontal: AppStyle.paddingFromH.w, vertical: 10),
             child: const Column(
               children: [
                 ExtraOptionsNurseCardProfile(),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 NurseDetailsTaps(),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 NurseProfileScreens(),
               ],
             ),
@@ -35,6 +45,3 @@ class NurseProfileScreen extends StatelessWidget {
     );
   }
 }
-
-
-
