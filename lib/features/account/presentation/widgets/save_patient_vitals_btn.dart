@@ -14,16 +14,20 @@ import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
+import 'package:icare/features/account/presentation/bloc/account_state.dart';
 
 class SavePatientVitalsAndCompleteBookingBtn extends StatefulWidget {
   final Booking booking;
   final GlobalKey<TodayMonitoringVitalsState> vitalsKey;
   final VoidCallback? onCompleted;
+  final String
+      healthcareProviderId; // Original nurse/doctor ID before context switch
 
   const SavePatientVitalsAndCompleteBookingBtn({
     super.key,
     required this.booking,
     required this.vitalsKey,
+    required this.healthcareProviderId,
     this.onCompleted,
   });
 
@@ -35,76 +39,153 @@ class SavePatientVitalsAndCompleteBookingBtn extends StatefulWidget {
 class _SavePatientVitalsAndCompleteBookingBtnState
     extends State<SavePatientVitalsAndCompleteBookingBtn> {
   bool _isProcessing = false;
+  bool _waitingForProfileUpdate = false;
+  bool _waitingForMedicalReport = false;
+  Map<String, String>? _pendingVitalValues;
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BookingBloc, BookingState>(
+    return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
-        if (!_isProcessing) return;
+        print("🔵 [COMPLETE ORDER] AccountBloc State: ${state.runtimeType}");
+        print(
+            "🔵 [COMPLETE ORDER] _waitingForProfileUpdate: $_waitingForProfileUpdate");
+        print(
+            "🔵 [COMPLETE ORDER] _waitingForMedicalReport: $_waitingForMedicalReport");
 
-        if (state is UpdateOrderSuccessfullyState) {
-          // Success - show message and call completion callback
-          SnackBarBuilder.showFeedBackMessage(
-            context,
-            translate("order.order_completed_successfully"),
-            DMUtil.getGreen(),
-          );
-
-          setState(() => _isProcessing = false);
-
-          if (widget.onCompleted != null) {
-            widget.onCompleted!();
+        // Handle profile update states ONLY if waiting for profile update
+        if (state is UpdateProfileState && _waitingForProfileUpdate) {
+          print(
+              "🟢 [STEP 2] Profile Update State - isSuccess: ${state.response.isSuccess}, isFailed: ${state.response.isFailed}");
+          if (state.response.isSuccess == true) {
+            // Profile updated successfully, now create medical report
+            print("✅ [STEP 2] Profile updated successfully!");
+            _waitingForProfileUpdate = false;
+            _createMedicalReport();
+          } else if (state.response.isFailed == true) {
+            // Profile update failed
+            print("❌ [STEP 2] Profile update FAILED: ${state.response.msg}");
+            _waitingForProfileUpdate = false;
+            setState(() => _isProcessing = false);
+            SnackBarBuilder.showFeedBackMessage(
+              context,
+              state.response.msg ?? translate("toast.oops"),
+              DMUtil.getRED(),
+            );
           }
-        } else if (state is OrderErrorState) {
-          // Error - show error message
+        } else if (state is MedicalReportCreatedState) {
+          print("🟡 [DEBUG STEP 3] Received MedicalReportCreatedState");
+          print(
+              "🟡 [DEBUG STEP 3] _waitingForMedicalReport = $_waitingForMedicalReport");
+          if (!_waitingForMedicalReport) {
+            print(
+                "❌ [DEBUG STEP 3] SKIPPED! _waitingForMedicalReport is FALSE");
+            return;
+          }
+          // Medical report created successfully, now update order
+          print("✅ [STEP 3] Medical report created successfully!");
+          _waitingForMedicalReport = false;
+          print("🔄 [DEBUG STEP 3] Calling _submitOrderUpdate()...");
+          _submitOrderUpdate();
+          print("✅ [DEBUG STEP 3] _submitOrderUpdate() called!");
+        } else if (state is MedicalReportErrorState) {
+          if (!_waitingForMedicalReport) return;
+          // Medical report creation failed
+          print("❌ [STEP 3] Medical report creation FAILED: ${state.error}");
+          _waitingForMedicalReport = false;
+          setState(() => _isProcessing = false);
           SnackBarBuilder.showFeedBackMessage(
             context,
-            state.errors,
+            state.error,
             DMUtil.getRED(),
           );
-
-          setState(() => _isProcessing = false);
         }
       },
-      builder: (context, state) {
-        return Container(
-          color: Colors.transparent,
-          padding: const EdgeInsets.all(10),
-          child: CustomButton(
-            height: 34.w,
-            width: 250.w,
-            widget: _isProcessing
-                ? SizedBox(
-                    height: 20.w,
-                    width: 20.w,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        DMUtil.getWC(),
+      child: BlocConsumer<BookingBloc, BookingState>(
+        listener: (context, state) {
+          print("🔵 [COMPLETE ORDER] BookingBloc State: ${state.runtimeType}");
+          print("🔵 [COMPLETE ORDER] _isProcessing: $_isProcessing");
+
+          if (!_isProcessing) return;
+
+          if (state is UpdateOrderSuccessfullyState) {
+            // Success - show message and call completion callback
+            print("✅ [STEP 4] Order updated to COMPLETED successfully!");
+            SnackBarBuilder.showFeedBackMessage(
+              context,
+              translate("order.order_completed_successfully"),
+              DMUtil.getGreen(),
+            );
+
+            setState(() => _isProcessing = false);
+
+            if (widget.onCompleted != null) {
+              print("🔄 [STEP 5] Calling onCompleted callback...");
+              widget.onCompleted!();
+            }
+          } else if (state is OrderErrorState) {
+            // Error - show error message
+            print("❌ [STEP 4] Order update FAILED: ${state.errors}");
+            SnackBarBuilder.showFeedBackMessage(
+              context,
+              state.errors,
+              DMUtil.getRED(),
+            );
+
+            setState(() => _isProcessing = false);
+          }
+        },
+        builder: (context, state) {
+          return Container(
+            color: Colors.transparent,
+            padding: const EdgeInsets.all(10),
+            child: CustomButton(
+              height: 34.w,
+              width: 250.w,
+              widget: _isProcessing
+                  ? SizedBox(
+                      height: 20.w,
+                      width: 20.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          DMUtil.getWC(),
+                        ),
                       ),
+                    )
+                  : CustomText(
+                      text: "Save & Complete",
+                      fontSize: AppStyle.small.sp,
+                      fontWeight: FontWeight.w600,
+                      color: DMUtil.getWC(),
                     ),
-                  )
-                : CustomText(
-                    text: "Save & Complete",
-                    fontSize: AppStyle.small.sp,
-                    fontWeight: FontWeight.w600,
-                    color: DMUtil.getWC(),
-                  ),
-            color: DMUtil.getPC(),
-            onPressed: _isProcessing ? null : _handleSaveAndComplete,
-          ),
-        );
-      },
+              color: DMUtil.getPC(),
+              onPressed: _isProcessing ? null : _handleSaveAndComplete,
+            ),
+          );
+        },
+      ),
     );
   }
 
   void _handleSaveAndComplete() async {
+    print("\n🚀 [STEP 1] Starting Complete Order Flow...");
+    print("📋 [STEP 1] Booking ID: ${widget.booking.orderId}");
+    print("👤 [STEP 1] Patient ID: ${widget.booking.userId}");
+    print("🏥 [STEP 1] Healthcare Provider ID: ${widget.healthcareProviderId}");
+
     final vitalsState = widget.vitalsKey.currentState;
-    if (vitalsState == null) return;
+    if (vitalsState == null) {
+      print("❌ [STEP 1] Vitals state is NULL!");
+      return;
+    }
 
     final vitalValues = vitalsState.getVitalValues();
+    print("💉 [STEP 1] Vital Values: $vitalValues");
 
     if (vitalValues.values.any((element) => element.isEmpty)) {
+      print(
+          "❌ [STEP 1] Validation FAILED - Some vitals are empty: $vitalValues");
       SnackBarBuilder.showFeedBackMessage(
         context,
         translate("toast.empty"),
@@ -113,7 +194,9 @@ class _SavePatientVitalsAndCompleteBookingBtnState
       return;
     }
 
+    print("✅ [STEP 1] Validation PASSED - All vitals filled");
     setState(() => _isProcessing = true);
+    _pendingVitalValues = vitalValues;
 
     // Save patient profile updates (Medical Conditions & Publications)
     final accountBloc = AccountBloc.get(context);
@@ -122,27 +205,75 @@ class _SavePatientVitalsAndCompleteBookingBtnState
     if (accountBloc.currentMedicalConditions.isNotEmpty) {
       profileUpdates['medical_conditions'] =
           accountBloc.currentMedicalConditions;
+      print(
+          "📝 [STEP 1] Adding medical conditions: ${accountBloc.currentMedicalConditions}");
     }
 
     if (accountBloc.currentPublication.isNotEmpty) {
       profileUpdates['publications'] = accountBloc.currentPublication;
+      print(
+          "📝 [STEP 1] Adding publications: ${accountBloc.currentPublication}");
     }
 
-    if (profileUpdates.isNotEmpty) {
-      accountBloc.add(UpdateProfileEvent(user: profileUpdates));
-    }
+    // Add vitals to profile updates to satisfy backend requirement
+    profileUpdates.addAll(vitalValues);
+    // Set 'profile' flag to '1' to trigger the profile update section in the data source
+    profileUpdates['profile'] = '1';
+    // CRITICAL: Set user_id to the PATIENT'S ID so we update the patient, not the nurse
+    profileUpdates['user_id'] = widget.booking.userId.toString();
 
-    // Update order status to COMPLETED with vital signs data
-    BookingBloc.get(context).add(UpdateOrderEvent(
-      data: {
-        'booking_id': widget.booking.orderId.toString(),
-        'status': 'COMPLETED',
-        'heart_rate': vitalValues['heart_rate'],
-        'blood_pressure': vitalValues['blood_pressure'],
-        'height': vitalValues['height'],
-        'weight': vitalValues['weight'],
-        'pulse_rate': vitalValues['pulse_rate'],
-      },
-    ));
+    // Always trigger profile update first
+    _waitingForProfileUpdate = true;
+    print("🔄 [STEP 2] Updating profile with data: $profileUpdates");
+    accountBloc.add(UpdateProfileEvent(user: profileUpdates));
+  }
+
+  void _createMedicalReport() {
+    print("\n🔄 [STEP 3] Creating Medical Report...");
+    if (_pendingVitalValues == null) {
+      print("❌ [STEP 3] _pendingVitalValues is NULL!");
+      return;
+    }
+    final vitalValues = _pendingVitalValues!;
+
+    final reportData = {
+      'patient_id': widget.booking.userId.toString(),
+      'created_by': widget.healthcareProviderId,
+      'heartRate': vitalValues['heart_rate'],
+      'bloodPressure': vitalValues['blood_pressure'],
+      'height': vitalValues['height'],
+      'weight': vitalValues['weight'],
+      'pulseRate': vitalValues['pulse_rate'],
+      'description': 'Follow-up report - ${DateTime.now().toString()}',
+    };
+
+    print("📋 [STEP 3] Medical Report Data: $reportData");
+
+    _waitingForMedicalReport = true;
+    AccountBloc.get(context).add(CreateMedicalReportEvent(data: reportData));
+  }
+
+  void _submitOrderUpdate() {
+    print("\n🔄 [STEP 4] Updating Order Status to COMPLETED...");
+    if (_pendingVitalValues == null) {
+      print("❌ [STEP 4] _pendingVitalValues is NULL!");
+      return;
+    }
+    final vitalValues = _pendingVitalValues!;
+
+    final orderData = {
+      'booking_id': widget.booking.orderId.toString(),
+      'status': 'COMPLETED',
+      'heart_rate': vitalValues['heart_rate'],
+      'blood_pressure': vitalValues['blood_pressure'],
+      'height': vitalValues['height'],
+      'weight': vitalValues['weight'],
+      'pulse_rate': vitalValues['pulse_rate'],
+    };
+
+    print("📋 [STEP 4] Order Update Data: $orderData");
+    print("🎯 [STEP 4] Setting status to: COMPLETED");
+
+    BookingBloc.get(context).add(UpdateOrderEvent(data: orderData));
   }
 }

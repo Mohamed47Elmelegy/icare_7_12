@@ -148,3 +148,18 @@ class EnableModifyCurrentService extends AccountEvent {
     required this.item,
   });
 }
+
+/// Medical Reports Section
+class CreateMedicalReportEvent extends AccountEvent {
+  final Map<String, dynamic> data;
+  final File? prescriptionImage;
+  const CreateMedicalReportEvent({
+    required this.data,
+    this.prescriptionImage,
+  });
+}
+
+class FetchPatientMedicalReportsEvent extends AccountEvent {
+  final String patientId;
+  const FetchPatientMedicalReportsEvent({required this.patientId});
+}

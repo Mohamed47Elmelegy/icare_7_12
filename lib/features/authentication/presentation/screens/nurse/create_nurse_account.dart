@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:icare/features/authentication/presentation/widgets/gender_row.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/nurse_type.dart';
-import 'package:icare/features/authentication/presentation/widgets/nurse/specialty_drop_down.dart';
 import 'package:path/path.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
@@ -99,7 +98,7 @@ class CreateNurseAccountScreen extends StatelessWidget {
                 if (bloc.avatar == null) {
                   SnackBarBuilder.showFeedBackMessage(
                       context, translate("toast.img_missing"), Colors.red);
-                  return false;
+                  return;
                 }
                 if (validateForm(context: context, bloc: bloc)) {
                   bloc.add(UpdateNurseRegisterDataEvent(
@@ -114,6 +113,7 @@ class CreateNurseAccountScreen extends StatelessWidget {
 
                   // Navigate to appropriate screen based on user type
                   if (bloc.isDoctor) {
+                    // No need to check specialties - will be set after login
                     Util.pushPage(
                         const CompleteDoctorRegisterDataScreen(), context);
                   } else {
@@ -237,20 +237,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                       SizedBox(
                         height: 10.w,
                       ),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (ctx, state) {
-                          var bloc = AuthBloc.get(ctx);
-                          if (bloc.isDoctor) {
-                            return Column(
-                              children: [
-                                const SpecialtyListDropDown(),
-                                SizedBox(height: 10.w),
-                              ],
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
+                      // Specialty selection removed - will be set from account settings after login
+                      // Similar to how nurses set their services after registration
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (ctx, state) {
                           var bloc = AuthBloc.get(ctx);
@@ -647,8 +635,11 @@ class CreateNurseAccountScreen extends StatelessWidget {
           certificateTextEditingController.text.isEmpty) {
         return false;
       }
-      if (bloc.isDoctor && relatedJobCardTextEditingController.text.isEmpty) {
-        return false;
+      if (bloc.isDoctor) {
+        // Specialty validation removed - will be set after login
+        if (relatedJobCardTextEditingController.text.isEmpty) {
+          return false;
+        }
       }
     } else {
       if (relatedJobCardTextEditingController.text.isEmpty) return false;

@@ -22,7 +22,7 @@ class _OrderScreenState extends State<OrderScreen>
   void initState() {
     super.initState();
     tabController = TabController(vsync: this, length: 2);
-    NotificationsUtils.pushNotificationListener(context);
+    NotificationsUtils.pushNotificationListener();
   }
 
   @override

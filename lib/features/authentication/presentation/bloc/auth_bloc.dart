@@ -187,11 +187,46 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const EnableRegisterPhoneSuccessState());
   }
 
+  // register(emit, RegisterEvent event) async {
+  //   emit(const RegisterLoadingState());
+  //   try {
+  //     var res = await registerUserServiceUseCase(userData: event.user);
+  //     if (emit.isDone) return;
+  //     res.fold((l) {
+  //       resMsg = l.toString();
+  //       emit(RegisterFailedState(
+  //           response: AuthResponse(msg: resMsg, isFailed: true)));
+  //     }, (data) {
+  //       resMsg = data.msg.toString();
+  //       if (data.isSuccess == true) {
+  //         // Don't auto-login, instead emit pending state
+  //         // User needs admin approval before accessing the app
+  //         emit(RegistrationPendingState(
+  //             message: translate("auth.pending_approval_message")));
+  //       } else {
+  //         emit(RegisterFailedState(
+  //             response: AuthResponse(msg: resMsg, isFailed: true)));
+  //       }
+  //     });
+  //   } catch (e) {
+  //     debugPrint("registerError: $e");
+  //     if (!emit.isDone) {
+  //       emit(RegisterFailedState(
+  //           response: AuthResponse(msg: resMsg, isFailed: true)));
+  //     }
+  //   }
+  // }
   register(emit, RegisterEvent event) async {
     emit(const RegisterLoadingState());
+
+    // ✅ تحقق من user_type قبل التسجيل
+    String userType = event.user['user_type'] ?? 'customer';
+    debugPrint("📝 Registering as: $userType");
+
     try {
       var res = await registerUserServiceUseCase(userData: event.user);
       if (emit.isDone) return;
+
       res.fold((l) {
         resMsg = l.toString();
         emit(RegisterFailedState(
@@ -199,10 +234,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }, (data) {
         resMsg = data.msg.toString();
         if (data.isSuccess == true) {
-          // Don't auto-login, instead emit pending state
-          // User needs admin approval before accessing the app
-          emit(RegistrationPendingState(
-              message: translate("auth.pending_approval_message")));
+          // ✅ تحقق من نوع المستخدم
+          if (userType == 'nurse' ||
+              userType == 'doctor' ||
+              userType == 'assistant') {
+            // Nurse/Doctor needs admin approval
+            emit(RegistrationPendingState(
+                message: translate("auth.pending_approval_message")));
+          } else {
+            // Customer can login directly
+            emit(RegisterSuccessfullyState(
+                response: AuthResponse(msg: resMsg, isSuccess: true)));
+          }
         } else {
           emit(RegisterFailedState(
               response: AuthResponse(msg: resMsg, isFailed: true)));
@@ -311,7 +354,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   /// nurse section
-  bool isNurse = true;
+  bool isNurse = false;
   bool isDoctor = false;
   switchNurseType(SwitchNurseTypeEvent event, emit) async {
     emit(const EnableAuthButtonLoadingState());
@@ -319,7 +362,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     isDoctor = event.isDoctor ?? false;
     if (isDoctor && (specialtyList == null || specialtyList!.isEmpty)) {
       try {
+        debugPrint("🔄 Loading specialties...");
         specialtyList = await SettingsRemoteDataSource.fetchAllSpecialties();
+        debugPrint("✅ Loaded ${specialtyList?.length ?? 0} specialties");
         // Convert to simple map list for dropdown
         specialtiesList = specialtyList
             ?.map((s) => {
@@ -327,8 +372,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   'name': s.title, // SpecialtyModel uses 'title' not 'name'
                 })
             .toList();
+        debugPrint(
+            "✅ Converted to ${specialtiesList?.length ?? 0} specialty items");
       } catch (e) {
-        debugPrint("Error fetching specialties: $e");
+        debugPrint("❌ Error fetching specialties: $e");
+        specialtyList = [];
+        specialtiesList = [];
       }
     }
     if (emit.isDone) return;

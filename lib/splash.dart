@@ -43,11 +43,18 @@ class _SplashScreenState extends State<SplashScreen> {
       // }
 
       if (Util.checkUser()) {
-        // if(!Util.isCustomer()){
-        // if (mounted) Util.pushPageAndRemoveRoutes(const PlansWidget(), context);
-        // }else{
-        //   if(mounted)Util.pushPageAndRemoveRoutes(const RootScreen(), context);
-        // }
+        // Check verification status for professionals
+        bool isVerified = await Util.checkUserVerificationStatus(context);
+        if (!isVerified) {
+          // User is pending approval, redirect to login
+          debugPrint("⚠️ User pending approval, redirecting to login");
+          if (mounted) {
+            Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
+            Util.pushPage(const LoginScreen(), context);
+          }
+          return;
+        }
+        // User is verified or is a customer, proceed to home
         if (mounted) Util.pushPageAndRemoveRoutes(const RootScreen(), context);
       } else {
         if (Util.getUserType() != 'null' && Util.getUserType() != '') {

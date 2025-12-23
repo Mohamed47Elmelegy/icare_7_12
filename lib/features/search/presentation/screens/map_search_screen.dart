@@ -11,6 +11,8 @@ import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctor_event.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
@@ -18,10 +20,13 @@ import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/features/nurse/presentation/screens/nurse_details_screen.dart';
+import 'package:icare/features/doctor/presentation/screens/doctor_details_screen.dart';
 import 'package:icare/core/utils/small_fun.dart';
+import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
-import 'package:icare/core/utils/map_utils/nurse_marker_manager.dart';
-import 'package:icare/core/utils/map_utils/nurse_progressive_loader.dart';
+import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
+import 'package:icare/core/utils/map_utils/searchable_marker_manager.dart';
+import 'package:icare/core/utils/map_utils/searchable_progressive_loader.dart';
 
 class MapSearchScreen extends StatefulWidget {
   final String? longitude, latitude;
@@ -45,13 +50,14 @@ class MapScreenState extends State<MapSearchScreen> {
   String selectedAddress = "";
 
   // 🎯 Clean Architecture: Utils handle business logic
-  late final NurseMarkerManager _markerManager;
-  late final NurseProgressiveLoader _progressiveLoader;
+  late final SearchableMarkerManager _markerManager;
+  late final SearchableProgressiveLoader _progressiveLoader;
 
   Timer? _updateTimer;
   bool _isUpdating = false;
 
   late NurseBloc nurseBloc;
+  late DoctorBloc doctorBloc;
   late RootBloc rootBloc;
   late AuthBloc authBloc;
   late SearchBloc searchBloc;
@@ -59,8 +65,9 @@ class MapScreenState extends State<MapSearchScreen> {
   @override
   void initState() {
     super.initState();
-    _markerManager = NurseMarkerManager();
-    _progressiveLoader = NurseProgressiveLoader(markerManager: _markerManager);
+    _markerManager = SearchableMarkerManager();
+    _progressiveLoader =
+        SearchableProgressiveLoader(markerManager: _markerManager);
     _setUp();
   }
 
@@ -69,6 +76,7 @@ class MapScreenState extends State<MapSearchScreen> {
     super.didChangeDependencies();
 
     nurseBloc = NurseBloc.get(context);
+    doctorBloc = DoctorBloc.get(context);
     rootBloc = RootBloc.get(context);
     authBloc = AuthBloc.get(context);
     searchBloc = SearchBloc.get(context);
@@ -94,15 +102,18 @@ class MapScreenState extends State<MapSearchScreen> {
       body: BlocListener<SearchBloc, SearchState>(
         listener: (context, searchState) async {
           if (searchState is SearchSuccessState) {
+            final entityType = searchState.results.isNotEmpty
+                ? "${searchState.results.first.providerType}s"
+                : "providers";
             debugPrint(
-                "🔍 Search results received: ${searchState.results.length} nurses");
+                "🔍 Search results received: ${searchState.results.length} $entityType");
 
             // Clear old markers before loading new ones
             _markerManager.clearMarkers();
 
             // Use Progressive Loader to create markers
             await _progressiveLoader.loadProgressively(
-              nurses: searchState.results,
+              entities: searchState.results,
               onMarkerTap: _onMarkerTap,
               onUpdate: () {
                 if (mounted) {
@@ -150,11 +161,18 @@ class MapScreenState extends State<MapSearchScreen> {
     );
   }
 
-  // 🎯 Handle marker tap
-  void _onMarkerTap(MarkerId markerId, NurseEntity nurse) {
-    nurseBloc.add(UpdateCurrentNurseEvent(nurse: nurse));
-    if (mounted) {
-      Util.pushPage(const NurseDetails(), context);
+  // 🎯 Handle marker tap - Navigate to correct details screen based on provider type
+  void _onMarkerTap(MarkerId markerId, SearchableEntity entity) {
+    if (entity is NurseEntity) {
+      nurseBloc.add(UpdateCurrentNurseEvent(nurse: entity));
+      if (mounted) {
+        Util.pushPage(const NurseDetails(), context);
+      }
+    } else if (entity is DoctorEntity) {
+      doctorBloc.add(UpdateCurrentDoctorEvent(doctor: entity));
+      if (mounted) {
+        Util.pushPage(const DoctorDetails(), context);
+      }
     }
   }
 
@@ -178,11 +196,14 @@ class MapScreenState extends State<MapSearchScreen> {
     final currentState = searchBloc.state;
 
     if (currentState is SearchSuccessState) {
+      final entityType = currentState.results.isNotEmpty
+          ? "${currentState.results.first.providerType}s"
+          : "providers";
       debugPrint(
-          "🔄 Periodic refresh: Updating ${currentState.results.length} nurses...");
+          "🔄 Periodic refresh: Updating ${currentState.results.length} $entityType...");
 
       await _progressiveLoader.loadProgressively(
-        nurses: currentState.results,
+        entities: currentState.results,
         onMarkerTap: _onMarkerTap,
         onUpdate: () {
           if (mounted) {

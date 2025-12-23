@@ -35,6 +35,8 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
         if (state is UpdateOrderSuccessfullyState) {
           SnackBarBuilder.showFeedBackMessage(
               context, translate('toast.complete_order'), Colors.green);
+          // Navigate back after completing the order
+          Navigator.of(context).pop();
         } else if (state is OrderErrorState) {
           SnackBarBuilder.showFeedBackMessage(
               context, state.errors.toString(), Colors.red);

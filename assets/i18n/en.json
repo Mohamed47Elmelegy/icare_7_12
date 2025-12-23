@@ -74,7 +74,10 @@
 		"destination": "Destination",
 		"on_map": "On Map",
 		"accept": "Accept",
-		"reject": "Reject"
+		"reject": "Reject",
+		"new_booking_request": "New Booking Request",
+		"order_accepted": "Order Accepted",
+		"order_refused": "Order Refused"
 	},
 	"admin": {
 		"general": "General",

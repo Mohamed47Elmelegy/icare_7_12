@@ -5,6 +5,7 @@ import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/screens/admin_profile.dart';
 import 'package:icare/features/account/presentation/screens/nurse/nurse_profile.dart';
 import 'package:icare/features/account/presentation/screens/patient_profile.dart';
+import 'package:icare/features/account/presentation/screens/doctor/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/widgets/account_before_auth.dart';
@@ -41,6 +42,9 @@ class ProfileScreen extends StatelessWidget {
                                   .toString()
                                   .toLowerCase()) ...[
                         const NurseProfileScreen(),
+                      ] else if (Util.getUserType() ==
+                          UserEnum.DOCTOR.name.toString().toLowerCase()) ...[
+                        const DoctorProfileScreen(),
                       ] else if (Util.getUserType() ==
                           UserEnum.ADMIN.name.toString().toLowerCase()) ...[
                         const AdminProfile(),

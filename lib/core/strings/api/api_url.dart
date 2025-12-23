@@ -80,7 +80,11 @@ class ApiUrl {
   static const String SLIDERS_URL = '${BASE_URL}sliders/all';
   static const String CATEGORIES_URL = '${BASE_URL}categories/all';
   static const String ALLERGIES = '${BASE_URL}allergies';
-  static const String SERVICES = '${BASE_URL}service/list';
+
+  // Role-based service endpoints
+  static const String NURSE_SERVICES = '${BASE_URL}nurse/service/list';
+  static const String ASSISTANT_SERVICES = '${BASE_URL}assistant/service/list';
+  static const String SERVICES = '${BASE_URL}service/list'; // Fallback
 
   //order
   static const String ADD_ORDER = '${BASE_URL}orders/store';
@@ -96,6 +100,10 @@ class ApiUrl {
   //publications
   static const String PUBLICATIONS =
       '${BASE_URL}publications'; //publications/{type}
+
+  //medical reports
+  static const String MEDICAL_REPORTS = '${BASE_URL}medical-reports';
+  static const String PATIENT_MEDICAL_REPORTS = '${BASE_URL}patient';
 
   //settings
   static const String GOVERNORATES = '${BASE_URL}governorates';

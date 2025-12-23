@@ -8,6 +8,7 @@ import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/core/utils/set_notification.dart';
 import 'package:icare/core/utils/small_fun.dart';
+import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/booking/data/models/order_model.dart';
 import 'package:icare/features/booking/data/models/order_response.dart';
 
@@ -49,8 +50,23 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     debugPrint("addOrder: ${response.body}");
     var decodedData = jsonDecode(response.body);
     if (decodedData['success'] == true) {
+      // Show local notification to patient
       SetNotification.showNotification(
           title: "", msg: translate("toast.order_send"));
+
+      // Send notification to nurse
+      if (data['nurse_id'] != null) {
+        try {
+          await UserServiceRemoteDataSource.sendNotification(data: {
+            'user_id': data['nurse_id'].toString(),
+            'msg': translate("notification.new_booking_request"),
+          });
+          debugPrint("✅ Notification sent to nurse: ${data['nurse_id']}");
+        } catch (e) {
+          debugPrint("❌ Failed to send notification to nurse: $e");
+        }
+      }
+
       return OrderResponse(
           state: true,
           msg: decodedData['message'] ?? "",
@@ -79,16 +95,21 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     }
 
     // // Optional patient vitals fields (sent only when completing booking)
-    if (data['heart_rate'] != null)
+    if (data['heart_rate'] != null) {
       request.fields['heart_rate'] = data['heart_rate'].toString();
-    if (data['blood_pressure'] != null)
+    }
+    if (data['blood_pressure'] != null) {
       request.fields['blood_pressure'] = data['blood_pressure'].toString();
-    if (data['height'] != null)
+    }
+    if (data['height'] != null) {
       request.fields['height'] = data['height'].toString();
-    if (data['weight'] != null)
+    }
+    if (data['weight'] != null) {
       request.fields['weight'] = data['weight'].toString();
-    if (data['pulse_rate'] != null)
+    }
+    if (data['pulse_rate'] != null) {
       request.fields['pulse_rate'] = data['pulse_rate'].toString();
+    }
 
     request.headers.addAll(headers);
     var streamedResponse = await request.send();

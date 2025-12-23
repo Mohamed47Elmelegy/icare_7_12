@@ -8,6 +8,7 @@ import 'package:icare/features/categories/domain/entities/slider_entity.dart';
 abstract class CategoryRepository {
   Future<Either<Failure, List<CategoriesEntity>>> getAllCategories();
   Future<Either<Failure, List<AllergiesModel>>> getAllAllergies();
+  Future<Either<Failure, List<String>>> getPatientAllergies(String userId);
   Future<Either<Failure, List<PublicationsModel>>> getAllPublications();
   Future<Either<Failure, List<SliderEntity>>> getAllSliders();
 }

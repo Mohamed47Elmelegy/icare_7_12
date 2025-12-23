@@ -40,6 +40,11 @@ class NotificationsList extends StatelessWidget {
             var seenOrderIds = <String>{};
 
             for (var item in bloc.notificationList) {
+              // Skip request-type notifications (offers)
+              if (item.type == 'request') {
+                continue;
+              }
+
               if (item.type == 'order') {
                 var booking =
                     bookingBloc.getBookingByOrderId(item.orderID.toString());

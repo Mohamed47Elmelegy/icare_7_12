@@ -7,7 +7,7 @@ import 'package:icare/features/nurse/data/models/review_model.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 
 class NurseModel extends NurseEntity {
-  const NurseModel(
+  NurseModel(
       {required super.id,
       super.userData,
       required super.nurseId,
@@ -22,7 +22,10 @@ class NurseModel extends NurseEntity {
       required super.servicesList,
       super.distanceKM,
       super.distanceM,
-      super.specialtyId});
+      super.specialtyId,
+      super.verificationStatus,
+      super.type,
+      super.userId});
 
   /// Helper function to parse list fields that can be either JSON array or comma-separated string
   static List<String> _parseListField(dynamic field) {
@@ -65,15 +68,25 @@ class NurseModel extends NurseEntity {
       associationCard: "${ApiUrl.STORAGE_URL}${json['association_card']}",
       licence: "${ApiUrl.STORAGE_URL}${json['license_practice']}",
       certificate: "${ApiUrl.STORAGE_URL}${json['graduation_certificate']}",
-      reviewList: ReviewModel.listModelFromJson(jsonEncode(json['reviews'])),
+      reviewList: (json['reviews'] == null ||
+              json['reviews'] == '' ||
+              json['reviews'].toString() == 'null')
+          ? []
+          : ReviewModel.listModelFromJson(jsonEncode(json['reviews'])),
       languageList: _parseListField(json['languages']),
       educationList: _parseListField(json['education']),
       publicationsList: _parseListField(json['publications']),
       coursesList: _parseListField(json['courses']),
       servicesList: list,
-      distanceKM: double.tryParse(json['distanceKm'] ?? "-1"),
-      distanceM: double.tryParse(json['distanceMe'] ?? "-1"),
-      specialtyId: json['specialties_id'],
+      distanceKM: double.tryParse(json['distanceKm']?.toString() ?? "-1"),
+      distanceM: double.tryParse(json['distanceMe']?.toString() ?? "-1"),
+      specialtyId: json['specialties_id']?.toString(),
+      verificationStatus: json['verification_status'] != null
+          ? int.tryParse(json['verification_status'].toString())
+          : null,
+      userId: json['user_id'] != null
+          ? int.tryParse(json['user_id'].toString())
+          : null,
     );
     return nurse;
   }
@@ -89,7 +102,11 @@ class NurseModel extends NurseEntity {
       associationCard: "${ApiUrl.STORAGE_URL}${json['association_card']}",
       licence: "${ApiUrl.STORAGE_URL}${json['license_practice']}",
       certificate: "${ApiUrl.STORAGE_URL}${json['graduation_certificate']}",
-      reviewList: ReviewModel.listModelFromJson(jsonEncode(json['reviews'])),
+      reviewList: (json['reviews'] == null ||
+              json['reviews'] == '' ||
+              json['reviews'].toString() == 'null')
+          ? []
+          : ReviewModel.listModelFromJson(jsonEncode(json['reviews'])),
       languageList: json['languages'] == null || json['languages'] == ''
           ? []
           : jsonDecode(json['languages']).cast<String>().toList(),
@@ -104,9 +121,15 @@ class NurseModel extends NurseEntity {
           ? []
           : jsonDecode(json['courses']).cast<String>().toList(),
       servicesList: list,
-      distanceKM: double.tryParse(json['distanceKm'] ?? "-1"),
-      distanceM: double.tryParse(json['distanceMe'] ?? "-1"),
-      specialtyId: json['specialties_id'],
+      distanceKM: double.tryParse(json['distanceKm']?.toString() ?? "-1"),
+      distanceM: double.tryParse(json['distanceMe']?.toString() ?? "-1"),
+      specialtyId: json['specialties_id']?.toString(),
+      verificationStatus: json['verification_status'] != null
+          ? int.tryParse(json['verification_status'].toString())
+          : null,
+      userId: json['user_id'] != null
+          ? int.tryParse(json['user_id'].toString())
+          : null,
     );
   }
 

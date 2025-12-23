@@ -2,11 +2,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
-import 'package:icare/features/nurse/data/models/nurse_model.dart';
 import 'package:icare/features/search/data/models/search_filter_model.dart';
+import 'package:icare/features/search/data/models/searchable_model_factory.dart';
+import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 
 abstract class SearchRemoteDataSource {
-  Future<List<NurseModel>> searchByFilters({
+  Future<List<SearchableEntity>> searchByFilters({
     required SearchFilterModel filters,
   });
 }
@@ -17,7 +18,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   SearchRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<List<NurseModel>> searchByFilters({
+  Future<List<SearchableEntity>> searchByFilters({
     required SearchFilterModel filters,
   }) async {
     try {
@@ -26,7 +27,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       // Why: Backend filters at radius level, we need more data to find results at different distances
       const int maxPages = 3; // Fetch up to 3 pages (~60-100 results)
       const int minResultsTarget = 50; // Stop early if we have enough results
-      List<NurseModel> allResults = [];
+      List<SearchableEntity> allResults = [];
 
       final double requestedRadius = filters.searchRadius ?? 20.0;
       print(
@@ -117,8 +118,13 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
               break;
             }
 
-            List<NurseModel> pageResults = dataList.map<NurseModel>((model) {
-              return NurseModel.fromJson(model);
+            List<SearchableEntity> pageResults =
+                dataList.map<SearchableEntity>((model) {
+              return SearchableModelFactory.fromJson(
+                model,
+                filters.userType ??
+                    'nurse', // Default to nurse if not specified
+              );
             }).toList();
 
             allResults.addAll(pageResults);

@@ -29,6 +29,14 @@ class OrderModel extends Booking {
       super.lng,
       super.date,
       super.file,
+      super.heartRate,
+      super.bloodPressure,
+      super.height,
+      super.weight,
+      super.pulseRate,
+      super.mobile,
+      super.userImage,
+      super.patientAllergies,
       super.nurseCanEditPatientProfile});
 
   static OrderModel fromJson(Map<String, dynamic> jsonObject) {
@@ -51,10 +59,19 @@ class OrderModel extends Booking {
       totalPrice:
           double.tryParse((jsonObject['total_price'] ?? "0.0").toString()) ??
               0.0,
-      nurseCanEditPatientProfile:
-          jsonObject['nurse_can_edit_patient'].toString() == '2',
+      nurseCanEditPatientProfile: true,
       lat: double.tryParse((jsonObject['lat'] ?? '0').toString()) ?? 0.0,
       lng: double.tryParse((jsonObject['lng'] ?? '0').toString()) ?? 0.0,
+      heartRate: jsonObject['heart_rate']?.toString() ?? "",
+      bloodPressure: jsonObject['blood_pressure']?.toString() ?? "",
+      height: jsonObject['height']?.toString() ?? "",
+      weight: jsonObject['weight']?.toString() ?? "",
+      pulseRate: jsonObject['pulse_rate']?.toString() ?? "",
+      mobile: jsonObject['user_phone']?.toString() ?? "",
+      userImage: jsonObject['user_image']?.toString() ?? "",
+      patientAllergies: jsonObject['allergies'] != null
+          ? List<String>.from(jsonObject['allergies'].map((x) => x.toString()))
+          : [],
     );
   }
 

@@ -33,6 +33,14 @@ class Booking extends Equatable {
   final bool? nurseCanEditPatientProfile;
 
   final String? file;
+  final String? heartRate;
+  final String? bloodPressure;
+  final String? height;
+  final String? weight;
+  final String? pulseRate;
+  final String? mobile;
+  final String? userImage;
+  final List<String>? patientAllergies;
 
   // final String rejectedReason;
 
@@ -65,6 +73,14 @@ class Booking extends Equatable {
       this.day,
       this.hours,
       this.file,
+      this.heartRate,
+      this.bloodPressure,
+      this.height,
+      this.weight,
+      this.pulseRate,
+      this.mobile,
+      this.userImage,
+      this.patientAllergies,
       this.nurseCanEditPatientProfile});
 
   @override
@@ -81,6 +97,14 @@ class Booking extends Equatable {
         paymentMethod,
         lat,
         lng,
+        heartRate,
+        bloodPressure,
+        height,
+        weight,
+        pulseRate,
+        mobile,
+        userImage,
+        patientAllergies,
         // rejectedReason
       ];
 }

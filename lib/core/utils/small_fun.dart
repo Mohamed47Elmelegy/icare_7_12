@@ -78,6 +78,63 @@ class Util {
     }
   }
 
+  /// Check if user is verified (for professionals) or is a customer
+  /// Returns true if user can access the app, false if pending approval
+  static Future<bool> checkUserVerificationStatus(BuildContext context) async {
+    try {
+      // Customers don't need verification
+      if (isCustomer()) {
+        debugPrint("✅ User is customer, no verification needed");
+        return true;
+      }
+
+      // For professionals (nurse/doctor/assistant), check verification status
+      debugPrint("🔍 Checking verification status for professional user...");
+
+      // Fetch user data from backend
+      final result =
+          await AccountBloc.get(context).getUserServiceUseCase.call();
+
+      return result.fold(
+        (failure) {
+          debugPrint("❌ Failed to fetch user data: $failure");
+          // On error, clear session and require re-login
+          SharedPref().clearPreferences();
+          return false;
+        },
+        (user) {
+          int? verificationStatus;
+
+          // Check verification status based on user type
+          if (isNurse() || isAssistant()) {
+            verificationStatus = user.nurse?.verificationStatus;
+            debugPrint(
+                "🏥 Nurse/Assistant verification status: $verificationStatus");
+          } else if (isDoctor()) {
+            verificationStatus = user.doctor?.verificationStatus;
+            debugPrint("👨‍⚕️ Doctor verification status: $verificationStatus");
+          }
+
+          // If status is 0 (Pending), clear session and deny access
+          if (verificationStatus == 0) {
+            debugPrint("⏳ User is pending approval, clearing session...");
+            SharedPref().clearPreferences();
+            return false;
+          }
+
+          // If status is 1 (Approved) or null, allow access
+          debugPrint("✅ User is verified or status is null, allowing access");
+          return true;
+        },
+      );
+    } catch (e) {
+      debugPrint("❌ Error checking verification status: $e");
+      // On error, clear session and require re-login
+      SharedPref().clearPreferences();
+      return false;
+    }
+  }
+
   static goToStore() async {
     if (Platform.isIOS) {
       return await openUrl("", externalApp: true);

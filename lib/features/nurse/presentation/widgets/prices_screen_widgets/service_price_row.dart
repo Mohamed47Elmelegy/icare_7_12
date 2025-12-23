@@ -5,6 +5,7 @@ import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
+import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
@@ -90,28 +91,31 @@ class ServicePriceRowWithModify extends StatelessWidget {
             }
             return Row(
               children: [
-                CustomText(
-                  text: "$price ${translate("icare.le")}",
-                  fontSize: AppStyle.small.sp,
-                  fontWeight: FontWeight.w600,
-                  color: DMUtil.getD2C(),
-                ),
-                if (bloc.enableUpdate) ...[
-                  const SizedBox(
-                    width: 5,
+                if (!Util.isDoctor())
+                  CustomText(
+                    text: "$price ${translate("icare.le")}",
+                    fontSize: AppStyle.small.sp,
+                    fontWeight: FontWeight.w600,
+                    color: DMUtil.getD2C(),
                   ),
-                  InkWell(
-                      onTap: () =>
-                          bloc.add(EnableModifyCurrentService(item: serviceID)),
-                      child: CircleAvatar(
-                        radius: 10.w,
-                        backgroundColor: DMUtil.getWC(),
-                        child: Icon(
-                          Icons.edit,
-                          size: 15.w,
-                          color: DMUtil.getPC(),
-                        ),
-                      )),
+                if (bloc.enableUpdate) ...[
+                  if (!Util.isDoctor()) ...[
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    InkWell(
+                        onTap: () => bloc
+                            .add(EnableModifyCurrentService(item: serviceID)),
+                        child: CircleAvatar(
+                          radius: 10.w,
+                          backgroundColor: DMUtil.getWC(),
+                          child: Icon(
+                            Icons.edit,
+                            size: 15.w,
+                            color: DMUtil.getPC(),
+                          ),
+                        )),
+                  ],
                   const SizedBox(
                     width: 5,
                   ),

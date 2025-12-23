@@ -43,7 +43,9 @@ class UserServiceModel extends UserService {
     if (fromJson['emergency_contacts'] != null &&
         fromJson['emergency_contacts'] != '') {
       var emergencyContactsRaw = fromJson['emergency_contacts'];
-      if (fromJson['user_type'] == 'customer') {
+      // Only process if it's a string and user is customer
+      if (fromJson['user_type'] == 'customer' &&
+          emergencyContactsRaw is String) {
         emergencyContactsRaw = emergencyContactsRaw.replaceAllMapped(
             RegExp(r'\b(\d+)\b'), // For any numbers
             (match) => '"${match.group(0)}"' // Enclose them in quotes
@@ -85,7 +87,9 @@ class UserServiceModel extends UserService {
       doctor: fromJson['doctor'] == null ||
               fromJson['doctor'].toString() == '' ||
               fromJson['doctor'].toString() == 'null'
-          ? null
+          ? (fromJson['user_type'] == 'doctor'
+              ? DoctorModel.fromJsonUser(fromJson)
+              : null)
           : DoctorModel.fromJsonUser(fromJson['doctor']),
       distanceKM: double.tryParse(fromJson['distanceKm'] ?? "-1"),
       distanceM: double.tryParse(fromJson['distanceMe'] ?? "-1"),

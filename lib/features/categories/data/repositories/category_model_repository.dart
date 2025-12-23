@@ -41,6 +41,21 @@ class CategoryModelRepository implements CategoryRepository {
   }
 
   @override
+  Future<Either<Failure, List<String>>> getPatientAllergies(
+      String userId) async {
+    if (await networkInfo.isConnected()) {
+      try {
+        return Right(
+            await categoryRemoteDataSource.getPatientAllergies(userId));
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, List<SliderEntity>>> getAllSliders() async {
     if (await networkInfo.isConnected()) {
       try {

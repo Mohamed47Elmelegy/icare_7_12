@@ -8,7 +8,10 @@ import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
-import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart'; // Added import
+import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
+import 'package:icare/features/account/domain/entities/medical_report_entity.dart';
+import 'package:icare/features/account/domain/usecases/create_medical_report_usecase.dart';
+import 'package:icare/features/account/domain/usecases/get_patient_medical_reports_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -32,6 +35,9 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   GetAllNotificationsUseCase getAllNotificationsUseCase;
   GetAllUsersUseCase getAllUsersUseCase;
   UpdateProfileStatusUseCase updateProfileStatusUseCase;
+  CreateMedicalReportUseCase createMedicalReportUseCase;
+  GetPatientMedicalReportsUseCase getPatientMedicalReportsUseCase;
+
   AccountBloc({
     required this.getUserServiceUseCase,
     required this.updateUserServiceUseCase,
@@ -39,6 +45,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     required this.getAllNotificationsUseCase,
     required this.getAllUsersUseCase,
     required this.updateProfileStatusUseCase,
+    required this.createMedicalReportUseCase,
+    required this.getPatientMedicalReportsUseCase,
   }) : super(AccountInitialState()) {
     on<UpdateProfileEvent>((event, emit) async {
       await updateProfile(event, emit);
@@ -108,6 +116,14 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
     on<FetchAllServicesEvent>((event, emit) async {
       await getAllServiceList(event, emit);
+    });
+
+    on<CreateMedicalReportEvent>((event, emit) async {
+      await createMedicalReport(event, emit);
+    });
+
+    on<FetchPatientMedicalReportsEvent>((event, emit) async {
+      await fetchPatientMedicalReports(event, emit);
     });
   }
 
@@ -322,6 +338,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           }
 
           _afterUpdateProfile();
+          add(const FetchAllServicesEvent());
           emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
           await saveUserDate(
               AuthResponse(user: data, isSuccess: true, msg: resMsg));
@@ -439,10 +456,15 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
     String? userType = event.userType;
 
-    // Get user_type from current user if not provided
-    if (userType == null && currentUser?.userType != null) {
-      userType = currentUser!.userType;
-      debugPrint("🔍 Using current user type: $userType");
+    // Get user_type from current user or nurse profile if not provided
+    if (userType == null) {
+      if (currentUser?.nurse?.type != null) {
+        userType = currentUser!.nurse!.type;
+        debugPrint("🔍 Using specific NURSE type: $userType");
+      } else if (currentUser?.userType != null) {
+        userType = currentUser!.userType;
+        debugPrint("🔍 Using generic user type: $userType");
+      }
     }
 
     if (userType == 'doctor') {
@@ -457,7 +479,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
                   userType: 'doctor',
                 ))
             .toList();
-        debugPrint("✅ Loaded ${allServiceList.length} specialties for doctor");
+        debugPrint(
+            "✅ Loaded ${allServiceList.length} specialties for doctor as services");
       } catch (e) {
         debugPrint("❌ Error fetching specialties: $e");
         allServiceList = [];
@@ -554,5 +577,53 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     debugPrint("✅ Switched to user ID: $id, type: $userType");
     // Note: ApiUrl.headerAuth is now a dynamic getter that will automatically
     // use the updated user ID and token from SharedPreferences
+  }
+
+  /// Medical Reports Section
+  List<MedicalReportEntity> patientMedicalReports = [];
+
+  createMedicalReport(CreateMedicalReportEvent event, emit) async {
+    emit(const MedicalReportLoadingState());
+    try {
+      var res = await createMedicalReportUseCase(
+        data: event.data,
+        prescriptionImage: event.prescriptionImage,
+      );
+      res.fold(
+        (l) {
+          debugPrint("❌ Create Medical Report Failed: $l");
+          emit(MedicalReportErrorState(error: l.toString()));
+        },
+        (data) {
+          debugPrint("✅ Medical Report Created: ${data.id}");
+          emit(const MedicalReportCreatedState());
+        },
+      );
+    } catch (e) {
+      debugPrint("❌ Create Medical Report Error: $e");
+      emit(MedicalReportErrorState(error: e.toString()));
+    }
+  }
+
+  fetchPatientMedicalReports(
+      FetchPatientMedicalReportsEvent event, emit) async {
+    emit(const MedicalReportLoadingState());
+    try {
+      var res = await getPatientMedicalReportsUseCase(event.patientId);
+      res.fold(
+        (l) {
+          debugPrint("❌ Fetch Medical Reports Failed: $l");
+          emit(MedicalReportErrorState(error: l.toString()));
+        },
+        (data) {
+          debugPrint("✅ Fetched ${data.length} Medical Reports");
+          patientMedicalReports = data;
+          emit(const MedicalReportsLoadedState());
+        },
+      );
+    } catch (e) {
+      debugPrint("❌ Fetch Medical Reports Error: $e");
+      emit(MedicalReportErrorState(error: e.toString()));
+    }
   }
 }

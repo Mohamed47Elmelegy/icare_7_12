@@ -232,9 +232,15 @@ class BookingRowActions extends StatelessWidget {
             floatingActionButton: SavePatientVitalsAndCompleteBookingBtn(
               booking: item,
               vitalsKey: vitalsKey,
+              healthcareProviderId:
+                  (orderNurse.userData?.userId ?? orderNurse.userId)
+                          ?.toString() ??
+                      '', // Pass the nurse/doctor user ID with fallback
               onCompleted: () async {
                 await _afterEditPatient(context, accountBloc, orderNurse,
                     pop: true);
+                // Go back to the previous screen (bookings list)
+                if (context.mounted) Navigator.of(context).pop();
               },
             ),
             body: SingleChildScrollView(

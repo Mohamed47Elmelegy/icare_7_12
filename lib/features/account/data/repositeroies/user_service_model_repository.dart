@@ -84,4 +84,19 @@ class UserServiceModelRepository implements UserServiceRepository {
       return Left(OfflineFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, UserServiceModel>> getUserFullData(
+      {required String userId}) async {
+    if (await networkInfo.isConnected()) {
+      try {
+        return Right(await userServiceRemoteDataSource.fetchUserFullData(
+            userId: userId));
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
 }

@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/authentication/presentation/widgets/already_have_account.dart';
@@ -88,7 +87,10 @@ class RegisterScreen extends StatelessWidget {
                     'name': nameTextEditingController.text.trim(),
                     'email': email,
                     'phone': phone,
-                    'password': passwordTextEditingController.text.trim(),
+                    // Remove null characters and validate password
+                    'password': passwordTextEditingController.text
+                        .trim()
+                        .replaceAll('\u0000', ''), // Remove null characters
                   };
 
                   registerData['city'] = locationsBloc.city;
@@ -101,7 +103,7 @@ class RegisterScreen extends StatelessWidget {
                     registerData['address'] =
                         "${locationsBloc.currentCheckOutLocation!.address1} ${locationsBloc.currentCheckOutLocation!.address2}";
                   }
-                  registerData['country_code'] = '';
+                  registerData['country_code'] = '+20'; // Egyptian country code
                   registerData['status'] = 'online';
                   registerData['is_male'] = authBloc.isWomen ? "0" : "1";
 
@@ -147,8 +149,7 @@ class RegisterScreen extends StatelessWidget {
                       registerData['courses'] =
                           jsonEncode(authBloc.coursesList);
                     }
-                  } else if (authBloc.isNurse ||
-                      Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
+                  } else if (authBloc.isNurse) {
                     registerData['user_type'] =
                         authBloc.isNurse ? "nurse" : "assistant";
                     if (authBloc.license != null) {

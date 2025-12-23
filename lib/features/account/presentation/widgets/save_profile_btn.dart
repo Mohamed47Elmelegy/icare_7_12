@@ -34,6 +34,15 @@ class SaveProfileBtn extends StatelessWidget {
       child: BlocBuilder<AccountBloc, AccountState>(
         builder: (ctx, state) {
           var bloc = AccountBloc.get(ctx);
+
+          // Hide button when viewing Reports tab (index 2) for patients
+          // Only nurses can edit medical conditions
+          if (bloc.currentProfileTapsIndex == 2 &&
+              !Util.isNurse() &&
+              !Util.isAssistant()) {
+            return const SizedBox.shrink();
+          }
+
           // if(bloc.enableUpdate==false && bloc.enableUpdateImg==false)return const SizedBox.shrink();
           if (state is UpdateProfileState && state.response.isLoad == true) {
             return const CircularProgressIndicator();
@@ -61,6 +70,11 @@ class SaveProfileBtn extends StatelessWidget {
                   return;
                 }
                 if (Util.isNurse() || Util.isAssistant() || Util.isDoctor()) {
+                  // Safeguard for Doctor: Ensure priceTxt is set from service value if null
+                  if (Util.isDoctor() && bloc.currentService != null) {
+                    bloc.priceTxt = bloc.currentService!.value;
+                  }
+
                   if (bloc.currentService != null && bloc.priceTxt != null) {
                     bloc.servicesList ??= [];
                     var item = ServicesModel(

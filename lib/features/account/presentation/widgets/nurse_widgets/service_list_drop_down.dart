@@ -1,5 +1,6 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
+import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
@@ -51,8 +52,11 @@ class ServicesListDropDown extends StatelessWidget {
                 isExpanded: true,
                 style: TextStyle(color: DMUtil.getD2C()),
                 underline: const SizedBox(),
-                onChanged: (ServicesModel? newValue) =>
-                    bloc.add(ChangeCurrentService(item: newValue!)),
+                onChanged: (ServicesModel? newValue) {
+                  bloc.add(ChangeCurrentService(
+                      item: newValue!,
+                      txt: Util.isDoctor() ? newValue.value.toString() : null));
+                },
                 items: list
                     .map<DropdownMenuItem<ServicesModel>>((ServicesModel item) {
                   return DropdownMenuItem<ServicesModel>(
@@ -65,7 +69,7 @@ class ServicesListDropDown extends StatelessWidget {
                 }).toList(),
               ),
             ),
-            if (currentItem != null) ...[
+            if (currentItem != null && !Util.isDoctor()) ...[
               const SizedBox(
                 height: 10,
               ),

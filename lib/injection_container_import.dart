@@ -44,6 +44,11 @@ import 'package:icare/features/account/domain/repositories/user_service_reposito
 import 'package:icare/features/account/domain/use_cases/change_password_usercase.dart';
 import 'package:icare/features/account/domain/use_cases/get_user_service_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/update_user_usecase.dart';
+import 'package:icare/features/account/domain/usecases/create_medical_report_usecase.dart';
+import 'package:icare/features/account/domain/usecases/get_patient_medical_reports_usecase.dart';
+import 'package:icare/features/account/domain/repositories/medical_reports_repository.dart';
+import 'package:icare/features/account/data/repositories/medical_reports_repository_impl.dart';
+import 'package:icare/features/account/data/data_sources/medical_reports_remote_data_source.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/authentication/data/data_sources/authentication_data_source.dart';
 import 'package:icare/features/authentication/data/repositories/auth_service_model_repository.dart';
@@ -57,6 +62,8 @@ import 'package:icare/features/booking/domain/repositories/oder_repository.dart'
 import 'package:icare/features/booking/domain/use_cases/add_order_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/delete_order_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/get_all_order_usecase.dart';
+import 'package:icare/features/booking/domain/use_cases/get_patient_details_usecase.dart';
+import 'package:icare/features/booking/presentation/bloc/booking_nurse/booking_nurse_cubit.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
 

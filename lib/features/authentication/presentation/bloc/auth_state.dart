@@ -53,6 +53,8 @@ class RegisterLoadingState extends AuthState {
 class SocialSuccessfullyState extends AuthState {
   final AuthResponse response;
   const SocialSuccessfullyState({required this.response});
+  @override
+  List<Object> get props => [response];
 }
 
 class SocialFailedState extends AuthState {

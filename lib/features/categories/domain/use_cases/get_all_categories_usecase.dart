@@ -26,6 +26,16 @@ class GetAllAllergiesUseCase {
   }
 }
 
+class GetPatientAllergiesUseCase {
+  final CategoryRepository categoryRepository;
+
+  GetPatientAllergiesUseCase({required this.categoryRepository});
+
+  Future<Either<Failure, List<String>>> call(String userId) async {
+    return await categoryRepository.getPatientAllergies(userId);
+  }
+}
+
 class GetAllPublicationsUseCase {
   final CategoryRepository categoryRepository;
 

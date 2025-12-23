@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
+import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/nurse/presentation/widgets/vertical_specialist_card.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
@@ -78,14 +79,14 @@ class AllProvidersScreen extends StatelessWidget {
               );
             }
 
-            // Remove duplicates based on nurse ID
-            final uniqueResults = <int, NurseEntity>{};
-            for (var nurse in state.results) {
-              if (nurse.userData?.userId != null) {
-                uniqueResults[nurse.userData!.userId!] = nurse;
+            // Remove duplicates based on provider ID
+            final uniqueResults = <int, SearchableEntity>{};
+            for (var provider in state.results) {
+              if (provider.userData?.userId != null) {
+                uniqueResults[provider.userData!.userId!] = provider;
               }
             }
-            final uniqueNurses = uniqueResults.values.toList();
+            final uniqueProviders = uniqueResults.values.toList();
 
             return RefreshIndicator(
               onRefresh: () async {
@@ -120,7 +121,7 @@ class AllProvidersScreen extends StatelessWidget {
                       children: [
                         CustomText(
                           text:
-                              '${translate("search.found")} ${uniqueNurses.length} ${translate("search.results")}',
+                              '${translate("search.found")} ${uniqueProviders.length} ${translate("search.results")}',
                           fontSize: AppStyle.average.sp,
                           fontWeight: FontWeight.w600,
                           color: DMUtil.getPC(),
@@ -142,12 +143,20 @@ class AllProvidersScreen extends StatelessWidget {
                         vertical: 10.h,
                       ),
                       physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: uniqueNurses.length,
+                      itemCount: uniqueProviders.length,
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 10.h),
                       itemBuilder: (context, index) {
-                        final nurse = uniqueNurses[index];
-                        return VerticalSpecialistCard(nurse: nurse);
+                        final provider = uniqueProviders[index];
+
+                        // Type check and cast to NurseEntity
+                        if (provider is NurseEntity) {
+                          return VerticalSpecialistCard(nurse: provider);
+                        }
+
+                        // TODO: Handle DoctorEntity with a DoctorCard widget
+                        // For now, return an empty container for non-nurse providers
+                        return const SizedBox.shrink();
                       },
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
+import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 
 @immutable
 abstract class SearchState extends Equatable {
@@ -15,7 +15,7 @@ class SearchInitialState extends SearchState {}
 class SearchLoadingState extends SearchState {}
 
 class SearchSuccessState extends SearchState {
-  final List<NurseEntity> results;
+  final List<SearchableEntity> results;
 
   const SearchSuccessState({required this.results});
 

@@ -33,7 +33,9 @@ Future<void> init() async {
       changePasswordUseCase: sl(),
       getAllNotificationsUseCase: sl(),
       getAllUsersUseCase: sl(),
-      updateProfileStatusUseCase: sl()));
+      updateProfileStatusUseCase: sl(),
+      createMedicalReportUseCase: sl(),
+      getPatientMedicalReportsUseCase: sl()));
   sl.registerLazySingleton(
       () => GetAllUsersUseCase(userServiceRepository: sl()));
   sl.registerLazySingleton(
@@ -46,12 +48,21 @@ Future<void> init() async {
       () => ChangePasswordUseCase(userServiceRepository: sl()));
   sl.registerLazySingleton(
       () => GetAllNotificationsUseCase(settingsRepository: sl()));
+  sl.registerLazySingleton(() => CreateMedicalReportUseCase(repository: sl()));
+  sl.registerLazySingleton(
+      () => GetPatientMedicalReportsUseCase(repository: sl()));
 
   sl.registerLazySingleton<UserServiceRepository>(() =>
       UserServiceModelRepository(
           networkInfo: sl(), userServiceRemoteDataSource: sl()));
   sl.registerLazySingleton<UserServiceRemoteDataSource>(
       () => UserServiceRemoteDataSource(client: sl()));
+
+  // Medical Reports Repository
+  sl.registerLazySingleton<MedicalReportsRepository>(
+      () => MedicalReportsRepositoryImpl(remoteDataSource: sl()));
+  sl.registerLazySingleton<MedicalReportsRemoteDataSource>(
+      () => MedicalReportsRemoteDataSourceImpl(client: sl()));
 
   /// order module
   sl.registerFactory(() => BookingBloc(
@@ -60,6 +71,10 @@ Future<void> init() async {
       updateOrderUseCase: sl(),
       sendRequestUseCase: sl()));
   sl.registerLazySingleton(() => GetAllOrderUseCase(orderRepository: sl()));
+  sl.registerLazySingleton(() => GetPatientDetailsUseCase(sl()));
+  // Register as singleton to preserve cache across app
+  sl.registerLazySingleton(
+      () => BookingNurseCubit(getPatientDetailsUseCase: sl()));
   sl.registerLazySingleton(() => AddOrderUseCase(orderRepository: sl()));
   sl.registerLazySingleton(() => CancelOrderUseCase(orderRepository: sl()));
   sl.registerLazySingleton(() => UpdateOrderUseCase(orderRepository: sl()));
@@ -110,6 +125,8 @@ Future<void> init() async {
       () => GetAllCategoryUseCase(categoryRepository: sl()));
   sl.registerLazySingleton(
       () => GetAllAllergiesUseCase(categoryRepository: sl()));
+  sl.registerLazySingleton(
+      () => GetPatientAllergiesUseCase(categoryRepository: sl()));
   sl.registerLazySingleton(
       () => GetAllSlidersUseCase(categoryRepository: sl()));
   sl.registerLazySingleton(

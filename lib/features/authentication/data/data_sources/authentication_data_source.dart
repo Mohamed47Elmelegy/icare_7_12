@@ -76,6 +76,132 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
   }
 
   @override
+  // Future<AuthResponse> registerUser(
+  //   Map<String, dynamic> userData, {
+  //   bool social = false,
+  // }) async {
+
+  //   try {
+  //     var request =
+  //         http.MultipartRequest('POST', Uri.parse(ApiUrl.REGISTER_URL));
+
+  //     debugPrint("send register user data: $userData");
+  //     request.fields['device_info'] = jsonEncode(await ApiUrl.secureData());
+  //     if (userData['user_type'] == null || userData['user_type'] == "") {
+  //       userData['user_type'] = "customer";
+  //     }
+  //     var headers = ApiUrl.headerAuth;
+  //     if (userData['name'] != null) request.fields['name'] = userData['name'];
+  //     if (userData['email'] != null) {
+  //       request.fields['email'] = userData['email'];
+  //     }
+  //     if (userData['phone'] != null) {
+  //       request.fields['phone'] = userData['phone'];
+  //     }
+  //     request.fields['user_type'] = userData['user_type'] == null
+  //         ? "customer"
+  //         : userData['user_type']
+  //             .toString()
+  //             .trim()
+  //             .replaceAll("null", "customer");
+  //     if (userData['city'] != null) request.fields['city'] = userData['city'];
+  //     if (userData['governorate'] != null) {
+  //       request.fields['governorate'] = userData['governorate'];
+  //     }
+  //     if (userData['address'] != null) {
+  //       request.fields['address'] = userData['address'];
+  //     }
+  //     if (userData['latitude'] != null) {
+  //       request.fields['latitude'] = userData['latitude'].toString();
+  //     }
+  //     if (userData['longitude'] != null) {
+  //       request.fields['longitude'] = userData['longitude'].toString();
+  //     }
+  //     if (userData['country_code'] != null) {
+  //       request.fields['country_code'] = userData['country_code'];
+  //     }
+  //     if (userData['status'] != null) {
+  //       request.fields['status'] = userData['status'];
+  //     }
+  //     if (userData['password'] != null) {
+  //       request.fields['password'] = userData['password'];
+  //     }
+  //     if (userData['is_male'] != null) {
+  //       request.fields['is_male'] = userData['is_male'];
+  //     }
+  //     if (userData['specialties_id'] != null) {
+  //       request.fields['specialties_id'] =
+  //           userData['specialties_id'].toString();
+  //     }
+
+  //     if (userData['languages'] != null) {
+  //       request.fields['languages'] = userData['languages'];
+  //     }
+  //     if (userData['education'] != null) {
+  //       request.fields['education'] = userData['education'];
+  //     }
+  //     if (userData['publications'] != null) {
+  //       request.fields['publications'] = userData['publications'];
+  //     }
+  //     if (userData['courses'] != null) {
+  //       request.fields['courses'] = userData['courses'];
+  //     }
+
+  //     if (userData['license'] != null) {
+  //       var file = await http.MultipartFile.fromPath(
+  //           'license_practice', userData['license'].path);
+  //       request.files.add(file);
+  //     }
+  //     if (userData['certificate'] != null) {
+  //       var file = await http.MultipartFile.fromPath(
+  //           'graduation_certificate', userData['certificate'].path);
+  //       request.files.add(file);
+  //     }
+  //     if (userData['nurseID'] != null) {
+  //       var file = await http.MultipartFile.fromPath(
+  //           'identification_card', userData['nurseID'].path);
+  //       request.files.add(file);
+  //     }
+  //     if (userData['associationCard'] != null) {
+  //       var file = await http.MultipartFile.fromPath(
+  //           'association_card', userData['associationCard'].path);
+  //       request.files.add(file);
+  //     }
+  //     if (userData['related_job_id'] != null) {
+  //       var file = await http.MultipartFile.fromPath(
+  //           'related_job_id', userData['related_job_id'].path);
+  //       request.files.add(file);
+  //     }
+  //     if (userData['avatar'] != null) {
+  //       var file = await http.MultipartFile.fromPath(
+  //           'avatar', userData['avatar'].path);
+  //       request.files.add(file);
+  //     }
+  //     request.headers.addAll(headers);
+  //     var streamedResponse = await request.send();
+  //     var res = await http.Response.fromStream(streamedResponse);
+  //     debugPrint("registerUser: ${res.body}");
+  //     var decodedData = jsonDecode(res.body);
+  //     if (decodedData['status']) {
+  //       await Util.saveLocalData(decodedData);
+  //       SetNotification.showNotification(
+  //           title: "", msg: translate("toast.welcome"));
+  //       return AuthResponse(
+  //           user: UserServiceModel.fromJson(decodedData['user']),
+  //           msg: translate("toast.signup"),
+  //           isSuccess: true);
+  //     } else if (decodedData.toString().contains("already")) {
+  //       return AuthResponse(
+  //           user: null, msg: translate("toast.user_exist"), isFailed: true);
+  //     }
+  //     return AuthResponse(
+  //         user: null, msg: translate("toast.oops"), isFailed: true);
+  //   } catch (e) {
+  //     return AuthResponse(
+  //         user: null, msg: translate("toast.oops"), isFailed: true);
+  //   }
+  // }
+  @override
   Future<AuthResponse> registerUser(
     Map<String, dynamic> userData, {
     bool social = false,
@@ -84,120 +210,127 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
       var request =
           http.MultipartRequest('POST', Uri.parse(ApiUrl.REGISTER_URL));
 
-      debugPrint("send register user data: $userData");
+      debugPrint("📤 send register user data: $userData");
+
+      // ✅ تأكد من user_type
+      String userType = userData['user_type'] ?? 'customer';
+      if (userType.isEmpty || userType == 'null') {
+        userType = 'customer';
+      }
+
+      debugPrint("👤 Registering as user_type: $userType");
+
+      // Add device info
       request.fields['device_info'] = jsonEncode(await ApiUrl.secureData());
-      if (userData['user_type'] == null || userData['user_type'] == "") {
-        userData['user_type'] = "customer";
-      }
-      var headers = ApiUrl.headerAuth;
+
+      // ✅ Required fields
+      request.fields['user_type'] = userType;
       if (userData['name'] != null) request.fields['name'] = userData['name'];
-      if (userData['email'] != null) {
+      if (userData['email'] != null)
         request.fields['email'] = userData['email'];
-      }
-      if (userData['phone'] != null) {
+      if (userData['phone'] != null)
         request.fields['phone'] = userData['phone'];
-      }
-      request.fields['user_type'] = userData['user_type'] == null
-          ? "customer"
-          : userData['user_type']
-              .toString()
-              .trim()
-              .replaceAll("null", "customer");
-      if (userData['city'] != null) request.fields['city'] = userData['city'];
-      if (userData['governorate'] != null) {
-        request.fields['governorate'] = userData['governorate'];
-      }
-      if (userData['address'] != null) {
-        request.fields['address'] = userData['address'];
-      }
-      if (userData['latitude'] != null) {
-        request.fields['latitude'] = userData['latitude'].toString();
-      }
-      if (userData['longitude'] != null) {
-        request.fields['longitude'] = userData['longitude'].toString();
-      }
-      if (userData['country_code'] != null) {
-        request.fields['country_code'] = userData['country_code'];
-      }
-      if (userData['status'] != null) {
-        request.fields['status'] = userData['status'];
-      }
-      if (userData['password'] != null) {
+      if (userData['password'] != null)
         request.fields['password'] = userData['password'];
-      }
-      if (userData['is_male'] != null) {
-        request.fields['is_male'] = userData['is_male'];
-      }
-      if (userData['specialties_id'] != null) {
+
+      // ✅ Optional fields
+      if (userData['city'] != null) request.fields['city'] = userData['city'];
+      if (userData['governorate'] != null)
+        request.fields['governorate'] = userData['governorate'];
+      if (userData['address'] != null)
+        request.fields['address'] = userData['address'];
+      if (userData['latitude'] != null)
+        request.fields['latitude'] = userData['latitude'].toString();
+      if (userData['longitude'] != null)
+        request.fields['longitude'] = userData['longitude'].toString();
+      if (userData['country_code'] != null)
+        request.fields['country_code'] = userData['country_code'];
+      if (userData['status'] != null)
+        request.fields['status'] = userData['status'];
+      if (userData['is_male'] != null)
+        request.fields['is_male'] = userData['is_male'].toString();
+      if (userData['specialties_id'] != null)
         request.fields['specialties_id'] =
             userData['specialties_id'].toString();
-      }
 
-      if (userData['languages'] != null) {
+      // Nurse/Doctor additional data
+      if (userData['languages'] != null)
         request.fields['languages'] = userData['languages'];
-      }
-      if (userData['education'] != null) {
+      if (userData['education'] != null)
         request.fields['education'] = userData['education'];
-      }
-      if (userData['publications'] != null) {
+      if (userData['publications'] != null)
         request.fields['publications'] = userData['publications'];
-      }
-      if (userData['courses'] != null) {
+      if (userData['courses'] != null)
         request.fields['courses'] = userData['courses'];
-      }
 
+      // ✅ Files (only if provided)
       if (userData['license'] != null) {
-        var file = await http.MultipartFile.fromPath(
-            'license_practice', userData['license'].path);
-        request.files.add(file);
+        request.files.add(await http.MultipartFile.fromPath(
+            'license_practice', userData['license'].path));
       }
       if (userData['certificate'] != null) {
-        var file = await http.MultipartFile.fromPath(
-            'graduation_certificate', userData['certificate'].path);
-        request.files.add(file);
+        request.files.add(await http.MultipartFile.fromPath(
+            'graduation_certificate', userData['certificate'].path));
       }
       if (userData['nurseID'] != null) {
-        var file = await http.MultipartFile.fromPath(
-            'identification_card', userData['nurseID'].path);
-        request.files.add(file);
+        request.files.add(await http.MultipartFile.fromPath(
+            'identification_card', userData['nurseID'].path));
       }
       if (userData['associationCard'] != null) {
-        var file = await http.MultipartFile.fromPath(
-            'association_card', userData['associationCard'].path);
-        request.files.add(file);
+        request.files.add(await http.MultipartFile.fromPath(
+            'association_card', userData['associationCard'].path));
       }
       if (userData['related_job_id'] != null) {
-        var file = await http.MultipartFile.fromPath(
-            'related_job_id', userData['related_job_id'].path);
-        request.files.add(file);
+        request.files.add(await http.MultipartFile.fromPath(
+            'related_job_id', userData['related_job_id'].path));
       }
       if (userData['avatar'] != null) {
-        var file = await http.MultipartFile.fromPath(
-            'avatar', userData['avatar'].path);
-        request.files.add(file);
+        request.files.add(await http.MultipartFile.fromPath(
+            'avatar', userData['avatar'].path));
       }
-      request.headers.addAll(headers);
+
+      request.headers.addAll(ApiUrl.headerAuth);
+
       var streamedResponse = await request.send();
       var res = await http.Response.fromStream(streamedResponse);
-      debugPrint("registerUser: ${res.body}");
+
+      debugPrint("✅ registerUser response: ${res.body}");
+
       var decodedData = jsonDecode(res.body);
-      if (decodedData['status']) {
-        await Util.saveLocalData(decodedData);
-        SetNotification.showNotification(
-            title: "", msg: translate("toast.welcome"));
+
+      // ✅ Check both 'status' and 'success'
+      bool isSuccess =
+          (decodedData['status'] == true) || (decodedData['success'] == true);
+
+      if (isSuccess) {
+        // ✅ Only save data for customers
+        if (userType == 'customer') {
+          await Util.saveLocalData(decodedData);
+          SetNotification.showNotification(
+              title: "", msg: translate("toast.welcome"));
+        } else {
+          // Nurse/Doctor - pending approval
+          SetNotification.showNotification(
+              title: "", msg: translate("auth.registration_pending"));
+        }
+
         return AuthResponse(
             user: UserServiceModel.fromJson(decodedData['user']),
             msg: translate("toast.signup"),
             isSuccess: true);
-      } else if (decodedData.toString().contains("already")) {
+      } else if (res.body.contains("already") ||
+          res.body.contains("duplicate")) {
         return AuthResponse(
             user: null, msg: translate("toast.user_exist"), isFailed: true);
+      } else {
+        // Return the actual error message from backend
+        String errorMsg = decodedData['message'] ?? translate("toast.oops");
+        return AuthResponse(user: null, msg: errorMsg, isFailed: true);
       }
-      return AuthResponse(
-          user: null, msg: translate("toast.oops"), isFailed: true);
     } catch (e) {
+      debugPrint("❌ registerUser error: $e");
       return AuthResponse(
-          user: null, msg: translate("toast.oops"), isFailed: true);
+          user: null, msg: "${translate("toast.oops")}: $e", isFailed: true);
     }
   }
 

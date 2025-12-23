@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:icare/core/utils/navigator_key.dart';
 import 'package:icare/core/utils/set_notification.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
-import 'package:icare/features/shared_widgets/custom_dialogs.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationsUtils {
@@ -26,7 +26,12 @@ class NotificationsUtils {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  static void pushNotificationListener(BuildContext context) async {
+  static bool _isListenerSetup = false;
+
+  static void pushNotificationListener() async {
+    if (_isListenerSetup) return;
+    _isListenerSetup = true;
+
     if (!Platform.isIOS) {
       if (Util.isCustomer()) {
         await FirebaseMessaging.instance.subscribeToTopic('patient');
@@ -52,14 +57,20 @@ class NotificationsUtils {
       if (event.notification == null || event.notification!.body == null) {
         return;
       }
-      checkNotification(context, event);
+      checkNotification(event);
     }).onError((err) {
       debugPrint("FirebaseMessaging onMessage: $err");
     });
   }
 
-  static checkNotification(context, RemoteMessage event) {
+  static checkNotification(RemoteMessage event) {
     try {
+      final context = navigatorKey.currentContext;
+      if (context == null) {
+        debugPrint("❌ checkNotification: Context is null");
+        return;
+      }
+
       if (event.notification!.body!.contains("request") ||
           event.notification!.body!.contains("حجز") ||
           event.notification!.body!.contains("الحجز")) {

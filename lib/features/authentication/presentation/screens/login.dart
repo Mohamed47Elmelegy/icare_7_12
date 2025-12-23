@@ -233,8 +233,10 @@ class LoginScreen extends StatelessWidget {
                               // SnackBarBuilder.showFeedBackMessage(context, translate("toast.wait"), Colors.green);
                               var phone =
                                   phoneTextEditingController.text.trim();
-                              var password =
-                                  passTextEditingController.text.trim();
+                              var password = passTextEditingController.text
+                                  .trim()
+                                  .replaceAll(
+                                      '\u0000', ''); // Remove null characters
                               if (validateForm()) {
                                 var data = {
                                   'phone': phone,

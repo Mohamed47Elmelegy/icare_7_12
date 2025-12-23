@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    NotificationsUtils.pushNotificationListener(context);
+    NotificationsUtils.pushNotificationListener();
     // Timer(const Duration(seconds: 2), () {
     //   if (mounted) CustomDialogs.patientGiveAccessToEditProfile(context);
     // });

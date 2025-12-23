@@ -22,9 +22,12 @@ class ReviewModel {
     );
   }
 
-  static List<ReviewModel> listModelFromJson(String str) =>
-      List<ReviewModel>.from(
-          json.decode(str).map((x) => ReviewModel.fromJson(x)));
+  static List<ReviewModel> listModelFromJson(String str) {
+    if (str == "" || str == "null") return [];
+    final decoded = json.decode(str);
+    if (decoded == null || decoded is! List) return [];
+    return List<ReviewModel>.from(decoded.map((x) => ReviewModel.fromJson(x)));
+  }
 
   static calcReviewStar(List<ReviewModel>? list) {
     if (list == null || list.isEmpty) {

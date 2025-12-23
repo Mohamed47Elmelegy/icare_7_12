@@ -16,6 +16,7 @@ abstract class UserServiceRemoteDataSourceImpl {
   Future<bool> updateProfileStatus({required Map<String, dynamic> userData});
   Future<AuthResponse> changePassword({required Map<String, dynamic> data});
   Future<List<UserServiceModel>> getAllUsers();
+  Future<UserServiceModel> fetchUserFullData({required String userId});
 }
 
 class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
@@ -85,6 +86,14 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
         if (userData['longitude'] != null) 'longitude': userData['longitude'],
         if (userData['remember_token'] != null)
           'remember_token': userData['remember_token'],
+        if (userData['heart_rate'] != null)
+          'heart_rate': userData['heart_rate'],
+        if (userData['blood_pressure'] != null)
+          'blood_pressure': userData['blood_pressure'],
+        if (userData['height'] != null) 'height': userData['height'],
+        if (userData['weight'] != null) 'weight': userData['weight'],
+        if (userData['pulse_rate'] != null)
+          'pulse_rate': userData['pulse_rate'],
       };
       var response = await client.post(
           Uri.parse("${ApiUrl.UPDATE_USER_PROFILE}/${ApiUrl.headerAuth['ID']}"),
@@ -226,13 +235,17 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
   static Future<List<ServicesModel>> getAllServicesList(
       {String? userType}) async {
     try {
-      // Build URL with user_type parameter if provided
-      String url = ApiUrl.SERVICES;
-      if (userType != null && userType.isNotEmpty) {
-        url = '$url?user_type=$userType';
-        debugPrint("🔍 Fetching services for user_type: $userType");
+      // Use role-based endpoints
+      String url;
+      if (userType == 'nurse') {
+        url = ApiUrl.NURSE_SERVICES;
+        debugPrint("🔍 Fetching services for NURSE");
+      } else if (userType == 'assistant') {
+        url = ApiUrl.ASSISTANT_SERVICES;
+        debugPrint("🔍 Fetching services for ASSISTANT");
       } else {
-        debugPrint("🔍 Fetching ALL services (no user_type filter)");
+        url = ApiUrl.SERVICES;
+        debugPrint("🔍 Fetching services (fallback endpoint)");
       }
 
       var response = await http.get(Uri.parse(url), headers: ApiUrl.headerAuth);
@@ -247,13 +260,12 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
         debugPrint(
             "✅ Loaded ${services.length} services${userType != null ? " for $userType" : ""}");
 
-        // Debug: Show first 3 services with their user_type
+        // Debug: Show first 3 services
         if (services.isNotEmpty) {
           debugPrint("📋 First few services:");
           for (var i = 0; i < services.length && i < 3; i++) {
             var service = services[i];
-            debugPrint(
-                "   ${i + 1}. ${service.value} (ID: ${service.id}, user_type: ${service.userType ?? 'not set'})");
+            debugPrint("   ${i + 1}. ${service.value} (ID: ${service.id})");
           }
         }
 
@@ -338,10 +350,20 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     var decodedData = json.decode(response.body);
     if (decodedData['success']) {
       var body = json.decode(response.body);
-      return UserServiceModel.fromJson(body['data']['user'][0]);
+      var userDataList = body['data']['user'];
+      if (userDataList is List && userDataList.isNotEmpty) {
+        return UserServiceModel.fromJson(userDataList[0]);
+      } else {
+        throw ServerException();
+      }
     } else {
       throw ServerException();
     }
+  }
+
+  @override
+  Future<UserServiceModel> fetchUserFullData({required String userId}) async {
+    return getUserFullData(userId);
   }
 
   static Future<bool> sendNotification(

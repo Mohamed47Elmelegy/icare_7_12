@@ -11,6 +11,7 @@ import 'package:icare/features/setting/data/models/privacy_model.dart';
 import 'package:icare/features/setting/data/models/refund_policy_model.dart';
 import 'package:icare/features/setting/data/models/terms_model.dart';
 import 'package:icare/features/setting/data/models/specialty_model.dart';
+import 'package:icare/features/categories/data/models/allergies.dart';
 
 abstract class SettingsRemoteDataSourceImpl {
   Future<List<AboutUsModel>> getAboutUsData();
@@ -106,12 +107,33 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
   }
 
   static Future<List<SpecialtyModel>> fetchAllSpecialties() async {
-    var response = await http.get(Uri.parse(ApiUrl.SPECIALTIES));
+    var response = await http.get(
+      Uri.parse(ApiUrl.SPECIALTIES),
+      headers: ApiUrl.headerAuth,
+    );
     debugPrint("fetchAllSpecialties: ${response.body}");
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
       if (decodedData['status']) {
         return SpecialtyModel.listFromJson(jsonEncode(decodedData['data']));
+      }
+      return [];
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<AllergiesModel>> fetchAllAllergies() async {
+    var response = await http.get(
+      Uri.parse(ApiUrl.ALLERGIES),
+      headers: ApiUrl.headerAuth,
+    );
+    debugPrint("fetchAllAllergies: ${response.body}");
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+      if (decodedData['status']) {
+        return AllergiesModel.listModelFromJson(
+            jsonEncode(decodedData['data']));
       }
       return [];
     } else {

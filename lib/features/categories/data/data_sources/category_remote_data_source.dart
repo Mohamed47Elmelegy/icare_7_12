@@ -12,6 +12,7 @@ import 'package:icare/features/categories/data/models/slider_model.dart';
 abstract class CategoryRemoteDataSourceImpl {
   Future<List<CategoriesModel>> getAllCategory();
   Future<List<AllergiesModel>> getAllAllergies();
+  Future<List<String>> getPatientAllergies(String userId);
   Future<List<PublicationsModel>> getAllPublications();
   Future<List<SliderModel>> getAllSliders();
 }
@@ -45,6 +46,32 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
         return AllergiesModel.fromJsonAllergies(model);
       }).toList();
       return list;
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<List<String>> getPatientAllergies(String userId) async {
+    var response = await client.get(
+      Uri.parse(ApiUrl.ALLERGIES),
+      headers: {
+        'Content-Type': 'application/json',
+        'ID': userId,
+        'lat': Util.getLatitude().toString(),
+        'long': Util.getLongitude().toString(),
+        if (Util.checkUser()) 'Authorization': 'Bearer ${Util.getToken()}',
+      },
+    );
+    debugPrint("getPatientAllergies for user $userId: ${response.body}");
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      if (body['data'] != null && body['data'] is List) {
+        return List<String>.from(
+          body['data'].map((model) => model['value']?.toString() ?? ''),
+        );
+      }
+      return [];
     } else {
       throw ServerException();
     }

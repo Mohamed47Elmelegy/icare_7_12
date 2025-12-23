@@ -3,6 +3,8 @@ import 'package:icare/core/error/failure.dart';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
 import 'package:icare/features/authentication/domain/entities/user_entity.dart';
 
+import '../../../authentication/data/models/user_service_model.dart';
+
 abstract class UserServiceRepository {
   Future<Either<Failure, UserService>> getUserData();
   Future<Either<Failure, List<UserService>>> getAllUsers();
@@ -12,4 +14,6 @@ abstract class UserServiceRepository {
       Map<String, dynamic> userData);
   Future<Either<Failure, bool>> updateProfileStatus(
       Map<String, dynamic> userData);
+  Future<Either<Failure, UserServiceModel>> getUserFullData(
+      {required String userId});
 }

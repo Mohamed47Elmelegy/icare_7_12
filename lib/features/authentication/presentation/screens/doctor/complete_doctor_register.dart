@@ -16,6 +16,7 @@ import 'package:icare/features/authentication/presentation/bloc/auth_state.dart'
 import 'package:icare/features/authentication/presentation/screens/login.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/add_btn_row.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/app_bar_nurse_create_account.dart';
+import 'package:icare/features/authentication/presentation/widgets/nurse/specialty_drop_down.dart';
 import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_dialogs.dart';
@@ -70,8 +71,19 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
           builder: (ctx, state) {
             var bloc = AuthBloc.get(ctx);
             if (state is LogInLoadingState || state is RegisterLoadingState) {
-              return CircularProgressIndicator(
-                backgroundColor: DMUtil.getPC(),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(
+                    backgroundColor: DMUtil.getPC(),
+                  ),
+                  SizedBox(height: 10.h),
+                  CustomText(
+                    text: "جاري رفع المستندات...",
+                    fontSize: AppStyle.small.sp,
+                    color: DMUtil.getD2C(),
+                  ),
+                ],
               );
             }
             return CustomButton(
@@ -97,15 +109,19 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
               ),
               color: DMUtil.getPC(),
               onPressed: () async {
-                // Validate required fields
-                if (bloc.selectedSpecialtyId == null) {
+                // ✅ Validate required files first
+                if (bloc.license == null ||
+                    bloc.certificate == null ||
+                    bloc.nurseID == null) {
                   SnackBarBuilder.showFeedBackMessage(
                     context,
-                    "يرجى اختيار التخصص",
+                    "يرجى رفع جميع المستندات المطلوبة (الترخيص، الشهادة، بطاقة الهوية)",
                     Colors.red,
                   );
                   return;
                 }
+
+                // Specialty validation removed - will be set after login
 
                 if (bloc.checkNurseRegisterInfoCompleted() == false) {
                   SnackBarBuilder.showFeedBackMessage(
@@ -144,7 +160,7 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                 // Add doctor-specific data
                 registerData['user_type'] = 'doctor';
 
-                // Add specialty (required for doctors)
+                // ✅ Add specialty if selected (optional)
                 if (bloc.selectedSpecialtyId != null) {
                   registerData['specialties_id'] = bloc.selectedSpecialtyId;
                 }
@@ -215,100 +231,24 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                     color: DMUtil.getD2C(),
                   ),
                   SizedBox(height: 10.h),
-                  CustomText(
-                    text: "يرجى اختيار التخصص وإكمال البيانات المهنية",
-                    fontSize: AppStyle.small.sp,
-                    color: DMUtil.getD2C().withValues(alpha: 0.7),
-                  ),
-                  SizedBox(height: 20.h),
+                  // CustomText(
+                  //   text:
+                  //       "يرجى إكمال البيانات المهنية (يمكنك إضافة التخصص لاحقاً من الحساب)",
+                  //   fontSize: AppStyle.small.sp,
+                  //   color: DMUtil.getD2C().withValues(alpha: 0.7),
+                  // ),
+                  // SizedBox(height: 20.h),
 
-                  // Specialty Dropdown
-                  CustomText(
-                    text: "التخصص *",
-                    fontSize: AppStyle.average.sp,
-                    fontWeight: FontWeight.w600,
-                    color: DMUtil.getD2C(),
-                  ),
-                  SizedBox(height: 8.h),
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      var bloc = AuthBloc.get(context);
-
-                      if (bloc.specialtiesList == null ||
-                          bloc.specialtiesList!.isEmpty) {
-                        return Container(
-                          padding: EdgeInsets.all(15.w),
-                          decoration: BoxDecoration(
-                            color: DMUtil.getWC(),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: DMUtil.getD2C().withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 20.w,
-                                height: 20.w,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DMUtil.getPC(),
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                              CustomText(
-                                text: "جاري تحميل التخصصات...",
-                                fontSize: AppStyle.small.sp,
-                                color: DMUtil.getD2C(),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        decoration: BoxDecoration(
-                          color: DMUtil.getWC(),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: DMUtil.getD2C().withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: DropdownButton<int>(
-                          value: bloc.selectedSpecialtyId,
-                          hint: CustomText(
-                            text: "اختر التخصص",
-                            fontSize: AppStyle.average.sp,
-                            color: DMUtil.getD2C().withValues(alpha: 0.5),
-                          ),
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          items: bloc.specialtiesList!.map((specialty) {
-                            return DropdownMenuItem<int>(
-                              value: specialty['id'],
-                              child: CustomText(
-                                text: specialty['name'] ?? '',
-                                fontSize: AppStyle.average.sp,
-                                color: DMUtil.getD2C(),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            bloc.add(UpdateSpecialtyEvent(
-                              specialtyId: value,
-                              specialty: bloc.specialtyList!.firstWhere(
-                                (s) => s.id == value,
-                              ),
-                            ));
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-
-                  Divider(height: 30.w),
+                  // // Specialty Selection (Optional)
+                  // CustomText(
+                  //   text: "التخصص (اختياري)",
+                  //   fontSize: AppStyle.average.sp,
+                  //   fontWeight: FontWeight.w600,
+                  //   color: DMUtil.getD2C(),
+                  // ),
+                  // SizedBox(height: 10.h),
+                  // const SpecialtyListDropDown(),
+                  // SizedBox(height: 20.h),
 
                   // Languages
                   AddRowWithTitle(

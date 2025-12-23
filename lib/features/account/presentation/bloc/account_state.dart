@@ -58,3 +58,21 @@ class UpdateNurseDataSuccessState extends AccountState {
 class UpdateDoctorDataSuccessState extends AccountState {
   const UpdateDoctorDataSuccessState();
 }
+
+/// Medical Reports States
+class MedicalReportLoadingState extends AccountState {
+  const MedicalReportLoadingState();
+}
+
+class MedicalReportCreatedState extends AccountState {
+  const MedicalReportCreatedState();
+}
+
+class MedicalReportsLoadedState extends AccountState {
+  const MedicalReportsLoadedState();
+}
+
+class MedicalReportErrorState extends AccountState {
+  final String error;
+  const MedicalReportErrorState({required this.error});
+}

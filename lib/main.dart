@@ -2,6 +2,7 @@
 // import 'package:background_locator/background_locator.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:icare/core/utils/location/location_util.dart';
+import 'package:icare/core/utils/navigator_key.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart';
 import 'package:icare/features/chat/presentation/bloc/chat_bloc.dart';
@@ -94,6 +95,7 @@ class MyApp extends StatelessWidget {
                   },
                   title: 'Icare',
                   home: const SplashScreen(),
+                  navigatorKey: navigatorKey,
                 ),
               ),
             ));
@@ -104,8 +106,17 @@ class MyApp extends StatelessWidget {
 // 1123876422
 // 1123876422
 //email : tesstt@gmail.com
+//new nurse
+// 1032659871
 
 // sign with patient
 
 // 01123876427
 // 01123876427
+
+
+
+  //1155878955
+
+
+///1010697528

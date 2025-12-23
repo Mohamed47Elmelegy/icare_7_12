@@ -158,8 +158,9 @@ class NotificationListCard extends StatelessWidget {
           var bloc = BookingBloc.get(context);
           var booking = bloc.getBookingByOrderId(item.orderID.toString());
 
-          if (booking == null && item.type == 'order')
+          if (booking == null && item.type == 'order') {
             return const SizedBox.shrink();
+          }
 
           return _buildCard(context, booking);
         },

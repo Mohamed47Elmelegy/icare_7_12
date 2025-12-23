@@ -88,10 +88,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         area: event.bookingData['area'] ?? currentBooking?.area.toString(),
         date: event.bookingData['date'] ?? currentBooking?.date.toString(),
         desc: event.bookingData['desc'] ?? currentBooking?.desc.toString());
-    if (patientDocument != null)
+    if (patientDocument != null) {
       patientDocument = File(event.bookingData['patientDocument']);
-    if (patientDocument2 != null)
+    }
+    if (patientDocument2 != null) {
       patientDocument2 = File(event.bookingData['patientDocument2']);
+    }
     emit(OrderSuccessfullyState());
   }
 
@@ -191,12 +193,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   updateOrder(UpdateOrderEvent event, emit) async {
     emit(OrderLoadingState());
     try {
+      debugPrint("🚀 Updating Order: ${event.data}");
       var res = await updateOrderUseCase(
         data: event.data,
       );
       res.fold((l) {
+        debugPrint("❌ Update Order Failed (Left): $l");
         emit(OrderErrorState(errors: l.toString()));
       }, (data) {
+        debugPrint(
+            "✅ Update Order Result (Right): state=${data.state}, msg=${data.msg}");
         if (data.state == true) {
           if (event.data['status'] == 'CANCELLED') {
             emit(RefuesdOrderSuccessfullyState());
@@ -204,6 +210,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
             emit(UpdateOrderSuccessfullyState());
           }
         } else {
+          debugPrint("❌ Update Order Failed (Response False): ${data.msg}");
           emit(OrderErrorState(errors: data.msg.toString()));
         }
       });
@@ -300,15 +307,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     return checkIndex != -1;
   }
 
-  //check if booking is ongooing and nurse can not edit
-  bool checkIfExistBookingOngoingAndNurseCanNotEdit() {
-    int checkIndex = bookingList.indexWhere((element) =>
-        OrderModel.getStatusViewCheck(element.status.toString()) ==
-            ORDER_STATUS.ONGOING &&
-        element.nurseCanEditPatientProfile == false);
-    return checkIndex != -1;
-  }
-
   /// Helper methods for booking actions
   Booking? getBookingByOrderId(String? orderId) {
     try {
@@ -370,27 +368,37 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   updateRequestForm(UpdateRequestFormDataEvent event, emit) {
     emit(const UpdateBookingRequestFormInitialState());
-    if (event.data['full_name'] != null)
+    if (event.data['full_name'] != null) {
       formData['full_name'] = event.data['full_name'].toString();
-    if (event.data['phone'] != null)
+    }
+    if (event.data['phone'] != null) {
       formData['phone'] = event.data['phone'].toString();
-    if (event.data['main_medical'] != null)
+    }
+    if (event.data['main_medical'] != null) {
       formData['main_medical'] = event.data['main_medical'].toString();
-    if (event.data['national_id'] != null)
+    }
+    if (event.data['national_id'] != null) {
       formData['national_id'] = event.data['national_id'].toString();
-    if (event.data['more_info'] != null)
+    }
+    if (event.data['more_info'] != null) {
       formData['more_info'] = event.data['more_info'].toString();
+    }
 
-    if (event.data['range_number'] != null)
+    if (event.data['range_number'] != null) {
       rangeNumber = event.data['range_number'].toString();
-    if (event.data['date_val'] != null)
+    }
+    if (event.data['date_val'] != null) {
       dateVal = event.data['date_val'].toString();
-    if (event.data['movment_level'] != null)
+    }
+    if (event.data['movment_level'] != null) {
       movmentLevel = event.data['movment_level'].toString();
-    if (event.data['need_to'] != null)
+    }
+    if (event.data['need_to'] != null) {
       needTO = event.data['need_to'].toString();
-    if (event.data['more_need'] != null)
+    }
+    if (event.data['more_need'] != null) {
       moreNeed = event.data['more_need'].toString();
+    }
     if (event.data['gender'] != null) gender = event.data['gender'].toString();
     emit(const UpdateBookingRequestFormSuccessfullyState());
   }
