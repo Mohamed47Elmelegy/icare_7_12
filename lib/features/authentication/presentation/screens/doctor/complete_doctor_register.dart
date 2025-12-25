@@ -16,7 +16,6 @@ import 'package:icare/features/authentication/presentation/bloc/auth_state.dart'
 import 'package:icare/features/authentication/presentation/screens/login.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/add_btn_row.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/app_bar_nurse_create_account.dart';
-import 'package:icare/features/authentication/presentation/widgets/nurse/specialty_drop_down.dart';
 import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_dialogs.dart';

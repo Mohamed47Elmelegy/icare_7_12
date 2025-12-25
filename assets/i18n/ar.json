@@ -231,7 +231,7 @@
       "field_empty": "من فضلك قم بادخال جميع الحقول",
       "wait": "انتظر من فضلك",
       "login": "من فضلك قم بالتسجيل أولا",
-      "signup": " تم تسجيل الدخول بنجاح ",
+      "signup": "تم التسجيل بنجاح برجاء التواصل على الواتساب لتفعيل الحساب",
       "internet": "من فضلك افحص  الإتصال بالإنترنت",
       "user_exist": "!انت مسجل بالفعل معنا",
       "user_not_exist": " المستخدم غير مسجل من قبل",
@@ -277,7 +277,7 @@
       "wrong_payment": "عملية خاطئة",
       "no_internet_connection": "انت غير متصل بالانترنت!",
       "location_mis": "من فضلك قم بتحديد موقع التوصيل",
-      "user_banned": "لم يتم تفعيل الحساب ",
+      "user_banned": "لم يتم تفعيل الحساب برجاء التواصل على الواتساب لتفعيل الحساب",
       "success_msg": "تم ارسال الطلب بنجاح"
     },
     "search": {
@@ -342,10 +342,10 @@
       "enter_phone": "ادخل رقم الهاتف لارسال كود التحقق",
       "remember_me": "تذكرني",
       "phone_not_registered": "الرقم ليس مسجل",
-      "phone_is_wrong": "يجب ان يكون رقم الجوال يبدا ب 9665+"
+      "phone_is_wrong": "يجب ان يكون رقم الجوال يبدا ب 20+"
     },
     "auth": {
-      "pending_approval_message": "تم إرسال طلب التسجيل الخاص بك بنجاح. سيتم مراجعته من قبل الإدارة وسيتم التواصل معك قريباً.",
+      "pending_approval_message": "تم التسجيل بنجاح برجاء التواصل على الواتساب لتفعيل الحساب",
       "registration_success_title": "تم التسجيل بنجاح!",
       "registration_pending": "طلبك قيد المراجعة",
       "account_under_review": "حسابك قيد المراجعة من قبل الإدارة",
@@ -824,5 +824,11 @@
         "1": "You have pushed the button one time.",
         "else": "You have pushed the button {{value}} times."
       }
+    },
+    "report": {
+      "description": "الوصف",
+      "enter_description": "أدخل الوصف...",
+      "prescription": "الروشته",
+      "tap_to_upload": "اضغط للرفع"
     }
   }

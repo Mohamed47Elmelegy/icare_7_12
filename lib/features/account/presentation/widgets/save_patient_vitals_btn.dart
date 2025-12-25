@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -236,6 +237,21 @@ class _SavePatientVitalsAndCompleteBookingBtnState
     }
     final vitalValues = _pendingVitalValues!;
 
+    // Get description and image from the widget state
+    String description = '';
+    File? prescriptionImage;
+
+    final vitalsState = widget.vitalsKey.currentState;
+    if (vitalsState != null) {
+      description = vitalsState.getDescription();
+      prescriptionImage = vitalsState.getPrescriptionImage();
+    }
+
+    // Fallback if description is empty
+    if (description.isEmpty) {
+      description = 'Follow-up report - ${DateTime.now().toString()}';
+    }
+
     final reportData = {
       'patient_id': widget.booking.userId.toString(),
       'created_by': widget.healthcareProviderId,
@@ -244,13 +260,19 @@ class _SavePatientVitalsAndCompleteBookingBtnState
       'height': vitalValues['height'],
       'weight': vitalValues['weight'],
       'pulseRate': vitalValues['pulse_rate'],
-      'description': 'Follow-up report - ${DateTime.now().toString()}',
+      'description': description,
     };
 
     print("📋 [STEP 3] Medical Report Data: $reportData");
+    if (prescriptionImage != null) {
+      print("📸 [STEP 3] Attaching prescription image");
+    }
 
     _waitingForMedicalReport = true;
-    AccountBloc.get(context).add(CreateMedicalReportEvent(data: reportData));
+    AccountBloc.get(context).add(CreateMedicalReportEvent(
+      data: reportData,
+      prescriptionImage: prescriptionImage,
+    ));
   }
 
   void _submitOrderUpdate() {

@@ -226,42 +226,57 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
       // ✅ Required fields
       request.fields['user_type'] = userType;
       if (userData['name'] != null) request.fields['name'] = userData['name'];
-      if (userData['email'] != null)
+      if (userData['email'] != null) {
         request.fields['email'] = userData['email'];
-      if (userData['phone'] != null)
+      }
+      if (userData['phone'] != null) {
         request.fields['phone'] = userData['phone'];
-      if (userData['password'] != null)
+      }
+      if (userData['password'] != null) {
         request.fields['password'] = userData['password'];
+      }
 
       // ✅ Optional fields
       if (userData['city'] != null) request.fields['city'] = userData['city'];
-      if (userData['governorate'] != null)
+      if (userData['governorate'] != null) {
         request.fields['governorate'] = userData['governorate'];
-      if (userData['address'] != null)
+      }
+      if (userData['address'] != null) {
         request.fields['address'] = userData['address'];
-      if (userData['latitude'] != null)
+      }
+      if (userData['latitude'] != null) {
         request.fields['latitude'] = userData['latitude'].toString();
-      if (userData['longitude'] != null)
+      }
+      if (userData['longitude'] != null) {
         request.fields['longitude'] = userData['longitude'].toString();
-      if (userData['country_code'] != null)
+      }
+      if (userData['country_code'] != null) {
         request.fields['country_code'] = userData['country_code'];
-      if (userData['status'] != null)
+      }
+      if (userData['status'] != null) {
         request.fields['status'] = userData['status'];
-      if (userData['is_male'] != null)
+      }
+      if (userData['is_male'] != null) {
         request.fields['is_male'] = userData['is_male'].toString();
-      if (userData['specialties_id'] != null)
+      }
+      if (userData['specialties_id'] != null) {
         request.fields['specialties_id'] =
             userData['specialties_id'].toString();
+      }
 
       // Nurse/Doctor additional data
-      if (userData['languages'] != null)
+      if (userData['languages'] != null) {
         request.fields['languages'] = userData['languages'];
-      if (userData['education'] != null)
+      }
+      if (userData['education'] != null) {
         request.fields['education'] = userData['education'];
-      if (userData['publications'] != null)
+      }
+      if (userData['publications'] != null) {
         request.fields['publications'] = userData['publications'];
-      if (userData['courses'] != null)
+      }
+      if (userData['courses'] != null) {
         request.fields['courses'] = userData['courses'];
+      }
 
       // ✅ Files (only if provided)
       if (userData['license'] != null) {
@@ -311,7 +326,7 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         } else {
           // Nurse/Doctor - pending approval
           SetNotification.showNotification(
-              title: "", msg: translate("auth.registration_pending"));
+              title: "", msg: translate("toast.signup"));
         }
 
         return AuthResponse(

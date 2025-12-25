@@ -404,7 +404,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     res.fold((l) {
       emit(const FetchNotificationsFailedState());
     }, (data) {
-      notificationList = data.reversed.toList();
+      notificationList = data.toList();
       emit(const FetchNotificationsSuccessfullyState());
     });
     // }catch(e){

@@ -7,8 +7,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-import 'package:icare/features/booking/domain/entities/order.dart';
+import 'package:icare/features/authentication/presentation/widgets/upload_widget.dart';
+import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
+import 'package:path/path.dart';
 import 'package:icare/features/account/domain/entities/medical_report_entity.dart';
+import 'package:icare/features/booking/domain/entities/order.dart';
+import 'dart:io';
+import 'package:icare/core/utils/upload_document.dart';
+
+import '../../../../../core/utils/small_fun.dart';
+import 'package:icare/core/styles/my_colors.dart';
 
 class TodayMonitoringVitals extends StatefulWidget {
   final bool isNurseEditMode;
@@ -31,6 +39,9 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
   late TextEditingController heightController;
   late TextEditingController weightController;
   late TextEditingController pulseRateController;
+  late TextEditingController descriptionController;
+  late TextEditingController prescriptionImageNameController;
+  File? prescriptionImage;
 
   @override
   void initState() {
@@ -42,6 +53,8 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
       heightController = TextEditingController(text: "");
       weightController = TextEditingController(text: "");
       pulseRateController = TextEditingController(text: "");
+      descriptionController = TextEditingController(text: "");
+      prescriptionImageNameController = TextEditingController(text: "");
     } else {
       print(
           "DEBUG: TodayMonitoringVitals received latestBooking: ${widget.latestBooking?.orderId}");
@@ -58,6 +71,8 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
           TextEditingController(text: widget.latestBooking?.weight ?? "");
       pulseRateController =
           TextEditingController(text: widget.latestBooking?.pulseRate ?? "");
+      descriptionController = TextEditingController(text: "");
+      prescriptionImageNameController = TextEditingController(text: "");
     }
   }
 
@@ -68,6 +83,8 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
     heightController.dispose();
     weightController.dispose();
     pulseRateController.dispose();
+    descriptionController.dispose();
+    prescriptionImageNameController.dispose();
     super.dispose();
   }
 
@@ -80,6 +97,14 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
       'weight': weightController.text,
       'pulse_rate': pulseRateController.text,
     };
+  }
+
+  String getDescription() {
+    return descriptionController.text;
+  }
+
+  File? getPrescriptionImage() {
+    return prescriptionImage;
   }
 
   @override
@@ -158,6 +183,88 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
             ),
           ],
         ),
+        if (widget.isNurseEditMode) ...[
+          SizedBox(height: 20.h),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: CustomText(
+              text: translate("report.description"),
+              fontSize: AppStyle.small.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          TextField(
+            controller: descriptionController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: translate("report.enter_description"),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: BorderSide(
+                  color: DMUtil.getD2C().withOpacity(0.3),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: BorderSide(
+                  color: DMUtil.getD2C().withOpacity(0.3),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: BorderSide(
+                  color: DMUtil.getPC(),
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20.h),
+          SizedBox(height: 20.h),
+          Stack(
+            alignment: Util.getLang() != "ar"
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            children: [
+              CustomTextFromField(
+                hasBorder: true,
+                borderWidth: 1,
+                borderColor: DMUtil.getD2C(),
+                labelText: '',
+                height: 46,
+                hintText: translate("report.prescription"),
+                radius: 10,
+                onChanged: (val) {},
+                onFieldSubmitted: (val) {},
+                textEditingController: prescriptionImageNameController,
+                cursorColor: kPrimary,
+                enabled: false,
+                validator: () {},
+                prefixIcon: null,
+                obscureText: false,
+                suffixIcon: null,
+                isLabelError: false,
+              ),
+              InkWell(
+                onTap: () async {
+                  final res = await getImage(ctx: context);
+                  if (res != null) {
+                    final file = await cropImage(res);
+                    if (file != null) {
+                      setState(() {
+                        prescriptionImage = file;
+                        prescriptionImageNameController.text =
+                            basename(file.path);
+                      });
+                    }
+                  }
+                },
+                child: const UploadWidget(),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }

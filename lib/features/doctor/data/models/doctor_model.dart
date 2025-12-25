@@ -103,9 +103,7 @@ class DoctorModel extends DoctorEntity {
         servicesList: list,
         distanceKM: double.tryParse(json['distanceKm']?.toString() ?? "-1"),
         distanceM: double.tryParse(json['distanceMe']?.toString() ?? "-1"),
-        specialtyId: json['specialties_id'] != null
-            ? json['specialties_id'].toString()
-            : null,
+        specialtyId: json['specialties_id']?.toString(),
         verificationStatus: json['verification_status'] != null
             ? int.tryParse(json['verification_status'].toString())
             : null,
@@ -152,9 +150,7 @@ class DoctorModel extends DoctorEntity {
       servicesList: list,
       distanceKM: double.tryParse(json['distanceKm'] ?? "-1"),
       distanceM: double.tryParse(json['distanceMe'] ?? "-1"),
-      specialtyId: json['specialties_id'] != null
-          ? json['specialties_id'].toString()
-          : null,
+      specialtyId: json['specialties_id']?.toString(),
       verificationStatus: json['verification_status'] != null
           ? int.tryParse(json['verification_status'].toString())
           : null,

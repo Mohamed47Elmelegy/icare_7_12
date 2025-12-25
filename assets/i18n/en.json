@@ -233,7 +233,7 @@
 		"field_empty": "Please enter all fields",
 		"wait": "please wait ..",
 		"login": "please log in first ",
-		"signup": " successfully log in ",
+		"signup": " Registration successful, please contact WhatsApp to activate account ",
 		"internet": "please check your connection with the internet ",
 		"user_exist": " You have signed up before ",
 		"user_not_exist": " user not found  ",
@@ -346,7 +346,7 @@
 		"phone_is_wrong": "Phone number must beginning with +9665"
 	},
 	"auth": {
-		"pending_approval_message": "Your registration request has been submitted successfully. It will be reviewed by the administration and you will be contacted soon.",
+		"pending_approval_message": "Registration successful, please contact WhatsApp to activate account",
 		"registration_success_title": "Registration Successful!",
 		"registration_pending": "Your Request is Under Review",
 		"account_under_review": "Your account is under review by the administration",
@@ -823,5 +823,11 @@
 			"1": "You have pushed the button one time.",
 			"else": "You have pushed the button {{value}} times."
 		}
+	},
+	"report": {
+		"description": "Description",
+		"enter_description": "Enter description...",
+		"prescription": "Prescription",
+		"tap_to_upload": "Tap to upload"
 	}
 }

@@ -138,7 +138,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     res.fold((l) {
       emit(OrderErrorState(errors: l.toString()));
     }, (data) {
-      bookingList = data.reversed.toList();
+      bookingList = data.toList();
       _executeTracking();
       emit(OrderSuccessfullyState());
     });

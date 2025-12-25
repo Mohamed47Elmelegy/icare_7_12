@@ -22,7 +22,32 @@ class ServicesModel {
     );
   }
 
-  static List<ServicesModel> listModelFromJson(String str) =>
-      List<ServicesModel>.from(
-          json.decode(str).map((x) => ServicesModel.fromJson(x)));
+  static List<ServicesModel> listModelFromJson(dynamic data) {
+    if (data == null) return [];
+
+    List<dynamic> parsedList = [];
+    if (data is String) {
+      if (data.isEmpty || data == 'null') return [];
+      try {
+        parsedList = json.decode(data);
+      } catch (e) {
+        return [];
+      }
+    } else if (data is List) {
+      parsedList = data;
+    } else {
+      return [];
+    }
+
+    return parsedList.map((x) {
+      if (x is Map<String, dynamic>) {
+        return ServicesModel.fromJson(x);
+      } else if (x is int) {
+        return ServicesModel(id: x, value: "");
+      } else if (x is String) {
+        return ServicesModel(id: int.tryParse(x) ?? 0, value: "");
+      }
+      return const ServicesModel(id: 0, value: "");
+    }).toList();
+  }
 }
