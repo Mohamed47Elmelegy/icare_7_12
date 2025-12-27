@@ -51,3 +51,8 @@ class SendBookingRequestFialedState extends BookingState {
   final String msg;
   const SendBookingRequestFialedState({required this.msg});
 }
+
+class OngoingBookingsLoadedState extends BookingState {
+  final List<dynamic> ongoingBookings;
+  const OngoingBookingsLoadedState({required this.ongoingBookings});
+}

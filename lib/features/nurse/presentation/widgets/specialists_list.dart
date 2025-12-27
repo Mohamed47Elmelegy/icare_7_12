@@ -1,6 +1,9 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
+import 'package:icare/features/booking/presentation/bloc/order_event.dart';
+import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_state.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/nurse/presentation/widgets/vertical_specialist_card.dart';
@@ -9,8 +12,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class VerticalSpecialistsList extends StatelessWidget {
+class VerticalSpecialistsList extends StatefulWidget {
   const VerticalSpecialistsList({super.key});
+
+  @override
+  State<VerticalSpecialistsList> createState() =>
+      _VerticalSpecialistsListState();
+}
+
+class _VerticalSpecialistsListState extends State<VerticalSpecialistsList> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch ongoing bookings when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        BookingBloc.get(context).add(const GetOngoingBookingsEvent());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +73,23 @@ class VerticalSpecialistsList extends StatelessWidget {
 
           return aDistance.compareTo(bDistance);
         });
+
+        // Remove duplicates based on user ID
+        final uniqueNurses = <int, NurseEntity>{};
+        for (var nurse in list) {
+          if (nurse.userData?.userId != null) {
+            uniqueNurses[nurse.userData!.userId!] = nurse;
+          }
+        }
+        list = uniqueNurses.values.toList();
+
+        // Filter out specialists with ongoing bookings
+        final bookingBloc = BookingBloc.get(context);
+        final bookedIds = bookingBloc.getOngoingBookedProviderIds();
+        if (bookedIds.isNotEmpty) {
+          list = list.where((nurse) => !bookedIds.contains(nurse.id)).toList();
+        }
+
         return Scrollbar(
           child: ListView.separated(
             itemCount: list.length,

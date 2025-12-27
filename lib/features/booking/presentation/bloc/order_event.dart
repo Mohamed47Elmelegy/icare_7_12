@@ -79,3 +79,7 @@ class UpdateRequestFormDataEvent extends BookingEvent {
 class SendRequestDataEvent extends BookingEvent {
   const SendRequestDataEvent();
 }
+
+class GetOngoingBookingsEvent extends BookingEvent {
+  const GetOngoingBookingsEvent();
+}

@@ -7,6 +7,10 @@ import 'package:icare/features/booking/domain/entities/order.dart';
 
 abstract class OrderRepository {
   Future<Either<Failure, List<Booking>>> getAllOrders();
+
+  /// Get all ongoing bookings (PENDING or ONGOING status) for current user
+  Future<Either<Failure, List<Booking>>> getOngoingBookings();
+
   Future<Either<Failure, OrderResponse>> addOrder(
       {required Map<String, dynamic> data});
   Future<Either<Failure, OrderResponse>> updateOrder(

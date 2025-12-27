@@ -1,5 +1,7 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
+import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
+import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctor_state.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/doctor/presentation/widgets/vertical_specialist_card.dart';
@@ -8,8 +10,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class VerticalDoctorSpecialistsList extends StatelessWidget {
+class VerticalDoctorSpecialistsList extends StatefulWidget {
   const VerticalDoctorSpecialistsList({super.key});
+
+  @override
+  State<VerticalDoctorSpecialistsList> createState() =>
+      _VerticalDoctorSpecialistsListState();
+}
+
+class _VerticalDoctorSpecialistsListState
+    extends State<VerticalDoctorSpecialistsList> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch ongoing bookings when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<BookingBloc>().add(const GetOngoingBookingsEvent());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +68,15 @@ class VerticalDoctorSpecialistsList extends StatelessWidget {
 
           return aDistance.compareTo(bDistance);
         });
+
+        // Filter out specialists with ongoing bookings
+        final bookingBloc = context.read<BookingBloc>();
+        final bookedIds = bookingBloc.getOngoingBookedProviderIds();
+        if (bookedIds.isNotEmpty) {
+          list =
+              list.where((doctor) => !bookedIds.contains(doctor.id)).toList();
+        }
+
         return Scrollbar(
           child: ListView.separated(
             itemCount: list.length,

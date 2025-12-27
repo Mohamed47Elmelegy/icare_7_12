@@ -65,7 +65,8 @@
 		"medical_record": "Medical Records",
 		"select_service_first": "select service first",
 		"nurse_is_busy": "nurse is not available now",
-		"nurse_does_not_offer_service": "This provider does not offer the selected service"
+		"nurse_does_not_offer_service": "This provider does not offer the selected service",
+		"ongoing_booking_exists": "You have an ongoing booking, please complete it first"
 	},
 	"notification": {
 		"patient": "Patient",

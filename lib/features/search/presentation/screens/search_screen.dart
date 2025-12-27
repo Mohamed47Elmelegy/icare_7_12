@@ -106,14 +106,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   // Service Selector
                   const ServiceSelector(),
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 10.h),
 
                   // Divider
                   Divider(
                     color: DMUtil.getD2C().withOpacity(0.2),
                     height: 1,
                   ),
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 10.h),
 
                   // // Location Search Field
                   // CustomTextFromField(
@@ -141,17 +141,12 @@ class _SearchScreenState extends State<SearchScreen> {
                   // ),
                   // SizedBox(height: 15.h),
 
-                  // Divider
-                  Divider(
-                    color: DMUtil.getD2C().withOpacity(0.2),
-                    height: 1,
-                  ),
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 10.h),
 
                   // Provider Type Selector
                   ProviderTypeSelector(
                       selectedColor: DMUtil.getPC(), txtColor: DMUtil.getD2C()),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 15.h),
 
                   // Search Button
                   BlocBuilder<SearchBloc, SearchState>(

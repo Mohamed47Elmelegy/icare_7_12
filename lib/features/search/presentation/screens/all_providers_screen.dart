@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
+import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
+import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/nurse/presentation/widgets/vertical_specialist_card.dart';
@@ -13,8 +15,24 @@ import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 
-class AllProvidersScreen extends StatelessWidget {
+class AllProvidersScreen extends StatefulWidget {
   const AllProvidersScreen({super.key});
+
+  @override
+  State<AllProvidersScreen> createState() => _AllProvidersScreenState();
+}
+
+class _AllProvidersScreenState extends State<AllProvidersScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch ongoing bookings when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        BookingBloc.get(context).add(const GetOngoingBookingsEvent());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +104,24 @@ class AllProvidersScreen extends StatelessWidget {
                 uniqueResults[provider.userData!.userId!] = provider;
               }
             }
-            final uniqueProviders = uniqueResults.values.toList();
+            var uniqueProviders = uniqueResults.values.toList();
+
+            // Filter out specialists with ongoing bookings
+            final bookingBloc = BookingBloc.get(context);
+            final bookedIds = bookingBloc.getOngoingBookedProviderIds();
+            if (bookedIds.isNotEmpty) {
+              uniqueProviders = uniqueProviders.where((provider) {
+                final providerId = provider.userData?.userId;
+                return providerId == null || !bookedIds.contains(providerId);
+              }).toList();
+            }
 
             return RefreshIndicator(
               onRefresh: () async {
-                // Refresh search results
+                // Refresh ongoing bookings and search results
+                final bookingBloc = BookingBloc.get(context);
+                bookingBloc.add(const GetOngoingBookingsEvent());
+
                 final searchBloc = SearchBloc.get(context);
                 final filters = searchBloc.getCurrentFilters();
                 searchBloc.add(

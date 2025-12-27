@@ -210,6 +210,15 @@ class VerticalSpecialistCard extends StatelessWidget {
                                         DMUtil.getPC());
                                   }
 
+                                  // ✅ Validation 3: Check for ongoing bookings
+                                  if (bookingBloc.hasOngoingBooking()) {
+                                    return SnackBarBuilder.showFeedBackMessage(
+                                        context,
+                                        translate(
+                                            "icare.ongoing_booking_exists"),
+                                        DMUtil.getRED());
+                                  }
+
                                   // Match selected services with nurse's prices
                                   final accountBloc = AccountBloc.get(context);
 

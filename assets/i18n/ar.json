@@ -64,7 +64,8 @@
       "medical_record": "السجل الطبي",
       "select_service_first": "حدد الخدمات أولا",
       "nurse_is_busy": "الممرض غير متاح الأن",
-      "nurse_does_not_offer_service": "الممرض لا يقدم الخدمة المطلوبة"
+      "nurse_does_not_offer_service": "الممرض لا يقدم الخدمة المطلوبة",
+      "ongoing_booking_exists": "لديك حجز جاري حالياً، يرجى إنهاؤه أولاً"
     },
     "notification": {
       "patient": "المريض",

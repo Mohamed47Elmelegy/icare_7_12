@@ -5,6 +5,7 @@ import 'package:icare/core/utils/location/exec_location.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/booking/data/models/order_model.dart';
 import 'package:icare/features/booking/domain/use_cases/get_all_order_usecase.dart';
+import 'package:icare/features/booking/domain/use_cases/get_ongoing_bookings_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/send_request_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/update_order_usecase.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
@@ -20,6 +21,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   AddOrderUseCase addOrderUseCase;
   GetAllOrderUseCase getAllOrderUseCase;
+  GetOngoingBookingsUseCase getOngoingBookingsUseCase;
   UpdateOrderUseCase updateOrderUseCase;
 
   SendRequestUseCase sendRequestUseCase;
@@ -27,6 +29,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   BookingBloc(
       {required this.addOrderUseCase,
       required this.getAllOrderUseCase,
+      required this.getOngoingBookingsUseCase,
       required this.updateOrderUseCase,
       required this.sendRequestUseCase})
       : super(OrderInitialState()) {
@@ -41,6 +44,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<AddOrderEvent>((event, emit) async {
       await addNewOrder(event, emit);
       await getAllOrder(emit);
+      await getOngoingBookings(
+          emit); // Refresh ongoing bookings after adding new order
     });
 
     on<UpdateOrderEvent>((event, emit) async {
@@ -71,6 +76,10 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
     on<SendRequestDataEvent>((event, emit) async {
       await sendRequestFn(event, emit);
+    });
+
+    on<GetOngoingBookingsEvent>((event, emit) async {
+      await getOngoingBookings(emit);
     });
   }
   static BookingBloc get(BuildContext context) => BlocProvider.of(context);
@@ -337,6 +346,39 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       // No active booking found for this nurse
       return false;
     }
+  }
+
+  /// Get ongoing bookings for current user
+  List<Booking> ongoingBookingsList = [];
+
+  getOngoingBookings(emit) async {
+    if (!Util.checkUser()) return;
+    emit(OrderLoadingState());
+    var res = await getOngoingBookingsUseCase();
+    res.fold((l) {
+      emit(OrderErrorState(errors: l.toString()));
+    }, (data) {
+      ongoingBookingsList = data.toList();
+      emit(OngoingBookingsLoadedState(ongoingBookings: data));
+    });
+  }
+
+  /// Get list of provider IDs that have ongoing bookings with current user
+  List<int> getOngoingBookedProviderIds() {
+    return ongoingBookingsList
+        .map((booking) => booking.nurseID ?? -1)
+        .where((id) => id != -1)
+        .toList();
+  }
+
+  /// Check if current user has any ongoing booking
+  bool hasOngoingBooking() {
+    return ongoingBookingsList.isNotEmpty;
+  }
+
+  /// Get details of first ongoing booking for error message
+  Booking? getOngoingBookingDetails() {
+    return ongoingBookingsList.isNotEmpty ? ongoingBookingsList.first : null;
   }
 
   void acceptOrder(Booking booking) {

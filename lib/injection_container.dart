@@ -67,10 +67,13 @@ Future<void> init() async {
   /// order module
   sl.registerFactory(() => BookingBloc(
       getAllOrderUseCase: sl(),
+      getOngoingBookingsUseCase: sl(),
       addOrderUseCase: sl(),
       updateOrderUseCase: sl(),
       sendRequestUseCase: sl()));
   sl.registerLazySingleton(() => GetAllOrderUseCase(orderRepository: sl()));
+  sl.registerLazySingleton(
+      () => GetOngoingBookingsUseCase(orderRepository: sl()));
   sl.registerLazySingleton(() => GetPatientDetailsUseCase(sl()));
   // Register as singleton to preserve cache across app
   sl.registerLazySingleton(
