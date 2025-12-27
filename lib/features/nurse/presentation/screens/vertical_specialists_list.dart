@@ -136,7 +136,16 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
                 height: 45,
                 hintText: translate("app_bar.search"),
                 radius: 10,
-                onChanged: (val) => onSearch(val.toString().trim()),
+                onChanged: (val) {
+                  final trimmedVal = val.toString().trim();
+                  if (_tabController.index == 0) {
+                    NurseBloc.get(context)
+                        .add(nurse_event.UpdateSearchTxtEvent(txt: trimmedVal));
+                  } else {
+                    context.read<doctor_bloc.DoctorBloc>().add(
+                        doctor_event.UpdateSearchTxtEvent(txt: trimmedVal));
+                  }
+                },
                 onFieldSubmitted: (val) {},
                 textEditingController:
                     AllSpecialistsScreen.searchTextEditingController,

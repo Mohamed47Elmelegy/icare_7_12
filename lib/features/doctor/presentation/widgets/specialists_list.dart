@@ -35,6 +35,19 @@ class VerticalDoctorSpecialistsList extends StatelessWidget {
                       .startsWith(bloc.searchText.toLowerCase()))
               .toList();
         }
+
+        // Sort by distance (nearest first)
+        list.sort((a, b) {
+          // Handle null or invalid distances - put them at the end
+          final aDistance = (a.distanceKM != null && a.distanceKM != -1)
+              ? a.distanceKM!
+              : double.infinity;
+          final bDistance = (b.distanceKM != null && b.distanceKM != -1)
+              ? b.distanceKM!
+              : double.infinity;
+
+          return aDistance.compareTo(bDistance);
+        });
         return Scrollbar(
           child: ListView.separated(
             itemCount: list.length,

@@ -17,10 +17,43 @@ import 'package:permission_handler/permission_handler.dart';
 
 class LocationUtil {
   static String getDistanceView(double? km, double? m) {
-    String distance = '';
-    if (km != -1 && km != null) distance = "$km" 'km';
-    if (m != -1 && m != null) distance = "$distance $m" 'm';
-    return distance;
+    // Handle invalid or null values
+    if ((km == null || km == -1) && (m == null || m == -1)) {
+      return '';
+    }
+
+    // If we have kilometers value
+    if (km != null && km != -1 && km > 0) {
+      // If less than 1 km, show in meters
+      if (km < 1) {
+        int meters = (km * 1000).round();
+        return '${meters}m';
+      }
+
+      // If exactly a whole number (e.g., 2.0 km), show without decimals
+      if (km == km.roundToDouble()) {
+        return '${km.toInt()}km';
+      }
+
+      // Otherwise show with one decimal place (e.g., 1.2km, 5.3km)
+      return '${km.toStringAsFixed(1)}km';
+    }
+
+    // Fallback: if only meters value is available
+    if (m != null && m != -1) {
+      int meters = m.round();
+      // If more than 1000m, convert to km
+      if (meters >= 1000) {
+        double kilometers = meters / 1000;
+        if (kilometers == kilometers.roundToDouble()) {
+          return '${kilometers.toInt()}km';
+        }
+        return '${kilometers.toStringAsFixed(1)}km';
+      }
+      return '${meters}m';
+    }
+
+    return '';
   }
 
   static String calcDistance(

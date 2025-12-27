@@ -58,6 +58,49 @@ class NurseEntity extends SearchableEntity {
     this.userId,
   });
 
+  /// Create a copy of this entity with updated fields
+  NurseEntity copyWith({
+    int? id,
+    UserService? userData,
+    String? nurseId,
+    String? associationCard,
+    String? licence,
+    String? certificate,
+    List<ReviewModel>? reviewList,
+    List<String>? languageList,
+    List<String>? educationList,
+    List<String>? publicationsList,
+    List<String>? coursesList,
+    List<ServicesModel>? servicesList,
+    double? distanceKM,
+    double? distanceM,
+    String? specialtyId,
+    int? verificationStatus,
+    String? type,
+    int? userId,
+  }) {
+    return NurseEntity(
+      id: id ?? this.id,
+      userData: userData ?? this.userData,
+      nurseId: nurseId ?? this.nurseId,
+      associationCard: associationCard ?? this.associationCard,
+      licence: licence ?? this.licence,
+      certificate: certificate ?? this.certificate,
+      reviewList: reviewList ?? this.reviewList,
+      languageList: languageList ?? this.languageList,
+      educationList: educationList ?? this.educationList,
+      publicationsList: publicationsList ?? this.publicationsList,
+      coursesList: coursesList ?? this.coursesList,
+      servicesList: servicesList ?? this.servicesList,
+      distanceKM: distanceKM ?? this.distanceKM,
+      distanceM: distanceM ?? this.distanceM,
+      specialtyId: specialtyId ?? this.specialtyId,
+      verificationStatus: verificationStatus ?? this.verificationStatus,
+      type: type ?? this.type,
+      userId: userId ?? this.userId,
+    );
+  }
+
   @override
   List<Object?> get props => [id];
 

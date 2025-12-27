@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/error/failure.dart';
 import 'package:icare/core/network/network.dart';
+import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/search/data/data_sources/search_remote_data_source.dart';
 import 'package:icare/features/search/data/models/search_filter_model.dart';
 import 'package:icare/features/search/domain/entities/search_filter_entity.dart';
@@ -62,8 +63,20 @@ class SearchRepositoryImpl implements SearchRepository {
               final double distanceInKm = distanceInMeters / 1000;
 
               if (distanceInKm <= maxRadius) {
+                // Create a new entity with updated distance
+                SearchableEntity updatedEntity = entity;
+
+                // Use copyWith for NurseEntity to update distance
+                if (entity is NurseEntity) {
+                  updatedEntity = entity.copyWith(
+                    distanceKM: distanceInKm,
+                    distanceM: distanceInMeters.toInt().toDouble(),
+                  );
+                }
+                // TODO: Add similar copyWith for DoctorEntity when implemented
+
                 entitiesWithDistances
-                    .add(_EntityWithDistance(entity, distanceInKm));
+                    .add(_EntityWithDistance(updatedEntity, distanceInKm));
               }
             }
           }
