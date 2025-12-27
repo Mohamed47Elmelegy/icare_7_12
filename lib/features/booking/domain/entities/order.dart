@@ -32,6 +32,12 @@ class Booking extends Equatable {
   final String? hours;
   final bool? nurseCanEditPatientProfile;
 
+  // Geofencing fields for order completion validation
+  final double? nurseCurrentLat;
+  final double? nurseCurrentLng;
+  final DateTime? arrivedAtPatientTime;
+  final double? distanceToPatient;
+
   final String? file;
   final String? heartRate;
   final String? bloodPressure;
@@ -81,7 +87,11 @@ class Booking extends Equatable {
       this.mobile,
       this.userImage,
       this.patientAllergies,
-      this.nurseCanEditPatientProfile});
+      this.nurseCanEditPatientProfile,
+      this.nurseCurrentLat,
+      this.nurseCurrentLng,
+      this.arrivedAtPatientTime,
+      this.distanceToPatient});
 
   @override
   List<Object?> get props => [

@@ -23,6 +23,8 @@ class SavePatientVitalsAndCompleteBookingBtn extends StatefulWidget {
   final VoidCallback? onCompleted;
   final String
       healthcareProviderId; // Original nurse/doctor ID before context switch
+  final Map<String, dynamic>?
+      nurseLocation; // Nurse's GPS location for geofencing
 
   const SavePatientVitalsAndCompleteBookingBtn({
     super.key,
@@ -30,6 +32,7 @@ class SavePatientVitalsAndCompleteBookingBtn extends StatefulWidget {
     required this.vitalsKey,
     required this.healthcareProviderId,
     this.onCompleted,
+    this.nurseLocation,
   });
 
   @override
@@ -292,6 +295,18 @@ class _SavePatientVitalsAndCompleteBookingBtnState
       'weight': vitalValues['weight'],
       'pulse_rate': vitalValues['pulse_rate'],
     };
+
+    // Add nurse location for geofencing audit
+    if (widget.nurseLocation != null) {
+      orderData['nurse_latitude'] =
+          widget.nurseLocation!['latitude'].toString();
+      orderData['nurse_longitude'] =
+          widget.nurseLocation!['longitude'].toString();
+      orderData['distance_to_patient'] =
+          widget.nurseLocation!['distance'].toString();
+      print(
+          "📍 [STEP 4] Nurse Location: Lat=${orderData['nurse_latitude']}, Lng=${orderData['nurse_longitude']}, Distance=${orderData['distance_to_patient']}m");
+    }
 
     print("📋 [STEP 4] Order Update Data: $orderData");
     print("🎯 [STEP 4] Setting status to: COMPLETED");

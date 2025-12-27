@@ -111,6 +111,18 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
       request.fields['pulse_rate'] = data['pulse_rate'].toString();
     }
 
+    // Geofencing fields for order completion validation
+    if (data['nurse_latitude'] != null) {
+      request.fields['nurse_latitude'] = data['nurse_latitude'].toString();
+    }
+    if (data['nurse_longitude'] != null) {
+      request.fields['nurse_longitude'] = data['nurse_longitude'].toString();
+    }
+    if (data['distance_to_patient'] != null) {
+      request.fields['distance_to_patient'] =
+          data['distance_to_patient'].toString();
+    }
+
     request.headers.addAll(headers);
     var streamedResponse = await request.send();
     var res = await http.Response.fromStream(streamedResponse);

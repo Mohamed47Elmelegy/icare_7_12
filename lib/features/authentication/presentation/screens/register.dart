@@ -207,7 +207,7 @@ class RegisterScreen extends StatelessWidget {
             if (state is RegistrationPendingState) {
               // Clear password for security
               passwordTextEditingController.text = "";
-              // Show success message
+              // Show pending approval message for nurse/doctor/assistant
               SnackBarBuilder.showFeedBackMessage(
                   context, state.message, Colors.green);
               // Navigate to login screen with pending flag
@@ -215,10 +215,10 @@ class RegisterScreen extends StatelessWidget {
                   const LoginScreen(fromRegistration: true), context);
             } else if (state is RegisterSuccessfullyState &&
                 state.response.isSuccess == true) {
-              // Legacy success case (if backend returns success)
+              // Show registration success message for customer
               passwordTextEditingController.text = "";
-              SnackBarBuilder.showFeedBackMessage(
-                  context, bloc.resMsg, Colors.green);
+              SnackBarBuilder.showFeedBackMessage(context,
+                  translate("auth.pending_approval_message"), Colors.green);
               Util.pushPageAndRemoveRoutes(
                   const LoginScreen(fromRegistration: true), context);
             } else if (state is RegisterFailedState) {

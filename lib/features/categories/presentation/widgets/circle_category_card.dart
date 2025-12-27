@@ -33,6 +33,15 @@ class CircleCategoryCard extends StatelessWidget {
               item.darkIcon!,
               height: 50.h,
               fit: BoxFit.contain,
+              placeholderBuilder: (context) => SizedBox(
+                height: 50.h,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              errorBuilder: (context, error, stackTrace) => SvgIconWidget(
+                iconUrl: item.iconPath,
+              ),
             ),
           ] else if (!DMUtil.currentThemeIsDark() &&
               item.lightIcon != null &&
@@ -41,6 +50,15 @@ class CircleCategoryCard extends StatelessWidget {
               item.lightIcon!,
               height: 50.h,
               fit: BoxFit.contain,
+              placeholderBuilder: (context) => SizedBox(
+                height: 50.h,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              errorBuilder: (context, error, stackTrace) => SvgIconWidget(
+                iconUrl: item.iconPath,
+              ),
             ),
           ] else ...[
             SvgIconWidget(

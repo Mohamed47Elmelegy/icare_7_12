@@ -289,6 +289,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                           listener: (ctx, state) {
                             var bloc = AuthBloc.get(ctx);
                             if (state is RegistrationPendingState) {
+                              // Show pending approval message for nurse/doctor/assistant
                               SnackBarBuilder.showFeedBackMessage(
                                   context, state.message, Colors.green);
                               Util.pushPageAndRemoveRoutes(
@@ -296,8 +297,11 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                                   context);
                             } else if (state is RegisterSuccessfullyState &&
                                 state.response.isSuccess == true) {
+                              // Show registration success message for customer
                               SnackBarBuilder.showFeedBackMessage(
-                                  context, bloc.resMsg, Colors.green);
+                                  context,
+                                  translate("auth.pending_approval_message"),
+                                  Colors.green);
                               Util.pushPageAndRemoveRoutes(
                                   const LoginScreen(fromRegistration: true),
                                   context);

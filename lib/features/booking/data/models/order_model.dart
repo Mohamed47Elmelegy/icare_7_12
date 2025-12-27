@@ -1,6 +1,7 @@
 import 'package:icare/core/strings/enum/order_enum.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
+import 'package:icare/core/strings/api/api_url.dart';
 
 class OrderModel extends Booking {
   const OrderModel(
@@ -37,7 +38,11 @@ class OrderModel extends Booking {
       super.mobile,
       super.userImage,
       super.patientAllergies,
-      super.nurseCanEditPatientProfile});
+      super.nurseCanEditPatientProfile,
+      super.nurseCurrentLat,
+      super.nurseCurrentLng,
+      super.arrivedAtPatientTime,
+      super.distanceToPatient});
 
   static OrderModel fromJson(Map<String, dynamic> jsonObject) {
     return OrderModel(
@@ -51,9 +56,11 @@ class OrderModel extends Booking {
       shippingAddress: jsonObject['address'] ?? "",
       userId: int.tryParse((jsonObject['user_id'] ?? "0").toString()) ??
           int.parse("0"),
-      userName: jsonObject['user_name'] ?? "",
-      userGender:
-          jsonObject['user_gender'].toString() == '1' ? 'male' : 'female',
+      userName: jsonObject['user']?['name'] ?? jsonObject['user_name'] ?? "",
+      userGender: (jsonObject['user']?['is_male'].toString() == '1' ||
+              jsonObject['user_gender'].toString() == '1')
+          ? 'male'
+          : 'female',
       nurseName: jsonObject['nurse_name'] ?? "",
       nurseID: int.parse((jsonObject['nurse_id'] ?? "0").toString()),
       totalPrice:
@@ -67,12 +74,21 @@ class OrderModel extends Booking {
       height: jsonObject['height']?.toString() ?? "",
       weight: jsonObject['weight']?.toString() ?? "",
       pulseRate: jsonObject['pulse_rate']?.toString() ?? "",
-      mobile: jsonObject['user_phone']?.toString() ?? "",
-      userImage: jsonObject['user_image']?.toString() ?? "",
+      mobile: jsonObject['user']?['phone']?.toString() ??
+          jsonObject['user_phone']?.toString() ??
+          "",
+      userImage: getImage(jsonObject['user']?['avatar']?.toString() ??
+          jsonObject['user_image']?.toString()),
       patientAllergies: jsonObject['allergies'] != null
           ? List<String>.from(jsonObject['allergies'].map((x) => x.toString()))
           : [],
     );
+  }
+
+  static String getImage(String? image) {
+    if (image == null || image == "" || image == "uploads/all/") return "";
+    if (image.startsWith("http")) return image;
+    return ApiUrl.STORAGE_URL + image;
   }
 
   static getStatus(String val) {

@@ -65,7 +65,16 @@
       "select_service_first": "حدد الخدمات أولا",
       "nurse_is_busy": "الممرض غير متاح الأن",
       "nurse_does_not_offer_service": "الممرض لا يقدم الخدمة المطلوبة",
-      "ongoing_booking_exists": "لديك حجز جاري حالياً، يرجى إنهاؤه أولاً"
+      "ongoing_booking_exists": "لديك حجز جاري حالياً، يرجى إنهاؤه أولاً",
+      "calculating": "جاري الحساب",
+      "just_now": "الآن",
+      "minutes_ago": "دقيقة مضت",
+      "hours_ago": "ساعة مضت",
+      "patient_location_not_available": "موقع المريض غير متاح",
+      "gps_accuracy_too_low": "دقة GPS منخفضة جداً ({accuracy}م). يرجى الانتظار للحصول على إشارة أفضل",
+      "too_far_from_patient": "بعيد جداً عن موقع المريض ({distance}م). يجب أن تكون ضمن {required}م",
+      "move_closer_to_patient": "أنت على بعد {distance}م. يرجى الاقتراب من موقع المريض (ضمن {required}م)",
+      "wait_at_location": "يرجى الانتظار {minutes} دقيقة أخرى في موقع المريض"
     },
     "notification": {
       "patient": "المريض",
@@ -225,6 +234,9 @@
       "search": "بحث",
       "add": "اضف"
     },
+    "general": {
+      "ok": "حسناً"
+    },
     "toast": {
       "give_access_success": "تم اعطاء الصلاحية بنجاج",
       "welcome_back": "اهلا بعودتك",
@@ -346,11 +358,12 @@
       "phone_is_wrong": "يجب ان يكون رقم الجوال يبدا ب 20+"
     },
     "auth": {
-      "pending_approval_message": "تم التسجيل بنجاح برجاء التواصل على الواتساب لتفعيل الحساب",
+      "pending_approval_message": "تم التسجيل بنجاح، يرجى التواصل من خلال الواتساب لتفعيل الحساب",
       "registration_success_title": "تم التسجيل بنجاح!",
       "registration_pending": "طلبك قيد المراجعة",
       "account_under_review": "حسابك قيد المراجعة من قبل الإدارة",
-      "contact_admin": "يرجى التواصل مع الإدارة للاستفسار عن حالة طلبك"
+      "contact_admin": "يرجى التواصل مع الإدارة للاستفسار عن حالة طلبك",
+      "login_success": "تم تسجيل الدخول بنجاح"
     },
     "signup": {
       "complete": "اكمل التسجيل",
@@ -775,7 +788,11 @@
       "take_photo": "التقط صورة",
       "order_process": "نحن نعمل على معالجة طلبك",
       "shipping_to": "الشحن الي ",
-      "order_completed_successfully": "تم إكمال الطلب بنجاح"
+      "order_completed_successfully": "تم إكمال الطلب بنجاح",
+      "location_required": "الموقع مطلوب",
+      "current_distance": "المسافة الحالية",
+      "required_distance": "المسافة المطلوبة",
+      "patient_location": "موقع المريض"
     },
     "map": {
       "directions": "اتجاهات",

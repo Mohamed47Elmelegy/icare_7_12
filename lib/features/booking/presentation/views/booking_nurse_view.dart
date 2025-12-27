@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
-import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/dot_with_title.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
 import 'package:icare/features/booking/presentation/widgets/booking_info_column.dart';
 import 'package:icare/features/booking/presentation/widgets/booking_info_row.dart';
 import 'package:icare/features/booking/presentation/widgets/booking_row_actions.dart';
+import 'package:icare/features/booking/presentation/widgets/real_time_distance_tracker.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/core/utils/small_fun.dart';
@@ -262,22 +262,18 @@ class _PatientInfoCard extends StatelessWidget {
               ],
             ),
 
-          // Distance row
+          // Distance row - Real-time tracking
           if (item.lat != null &&
               item.lat != 0 &&
               item.lng != null &&
               item.lng != 0)
             Column(
               children: [
-                BookingInfoColumn(
-                  label: translate("icare.distance"),
-                  value: LocationUtil.calcDistance(
-                    startLatitude: item.lat!,
-                    startLongitude: item.lng!,
-                    endLatitude: Util.getLatitude(),
-                    endLongitude: Util.getLongitude(),
-                  ),
-                  isFullWidth: true,
+                RealTimeDistanceTracker(
+                  patientLat: item.lat!,
+                  patientLng: item.lng!,
+                  bookingStatus: item.status,
+                  enableAutoUpdate: true,
                 ),
                 SizedBox(height: 12.h),
               ],

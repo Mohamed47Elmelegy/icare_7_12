@@ -227,6 +227,9 @@
 		"search": "search",
 		"add": "Add"
 	},
+	"general": {
+		"ok": "OK"
+	},
 	"toast": {
 		"give_access_success": "Successfully give access",
 		"welcome_back": "Welcome Back",
@@ -771,7 +774,10 @@
 		"take_photo": "take a photo",
 		"order_process": "We are working on processing your request",
 		"shipping_to": "Shipping to",
-		"order_completed_successfully": "Order completed successfully"
+		"order_completed_successfully": "Order completed successfully",
+		"location_required": "Location Required",
+		"current_distance": "Current Distance",
+		"required_distance": "Required Distance"
 	},
 	"support": {
 		"title": "Support"

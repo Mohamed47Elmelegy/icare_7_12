@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
+import 'package:icare/core/utils/order_completion_validator.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
@@ -209,6 +211,174 @@ class BookingRowActions extends StatelessWidget {
   }
 
   Future<void> _handleValuesWrapper(BuildContext context) async {
+    // Step 1: Get nurse's current location
+    try {
+      // Show loading indicator
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      // Get current position - FORCE FRESH LOCATION (no cache)
+      Position nursePosition = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 15),
+          // Force fresh location on Android
+          distanceFilter: 0,
+        ),
+      );
+
+      // Verify location is fresh (not older than 30 seconds)
+      final locationAge = DateTime.now().difference(nursePosition.timestamp);
+      if (locationAge.inSeconds > 30) {
+        debugPrint(
+            '⚠️ Location is cached (${locationAge.inSeconds}s old). Retrying...');
+
+        // Try again to get fresh location
+        nursePosition = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 15),
+          ),
+        );
+      }
+
+      debugPrint(
+          '📍 Fresh location obtained: ${nursePosition.latitude}, ${nursePosition.longitude}');
+      debugPrint('🕐 Location timestamp: ${nursePosition.timestamp}');
+      debugPrint('📏 Location accuracy: ${nursePosition.accuracy}m');
+
+      // Close loading dialog
+      if (context.mounted) Navigator.of(context).pop();
+
+      // Step 2: Validate location using OrderCompletionValidator
+      final validationResult =
+          await OrderCompletionValidator.validateCompletion(
+        booking: item,
+        nursePosition: nursePosition,
+      );
+
+      // Step 3: Handle validation result
+      if (!validationResult.isValid) {
+        // Show error dialog with distance information
+        if (context.mounted) {
+          _showLocationErrorDialog(
+            context: context,
+            message: validationResult.message ?? 'Location validation failed',
+            distance: validationResult.distance,
+          );
+        }
+        return; // Stop execution - don't allow completion
+      }
+
+      // Step 4: Location validated - proceed with order completion
+      debugPrint(
+          '✅ Location validated. Distance: ${validationResult.distance?.toInt()}m');
+
+      // Store nurse location for backend
+      final nurseLocation = {
+        'latitude': nursePosition.latitude,
+        'longitude': nursePosition.longitude,
+        'distance': validationResult.distance,
+      };
+
+      // Navigate to edit patient profile
+      await _proceedToPatientProfile(context, nurseLocation);
+    } catch (e) {
+      // Close loading dialog if still open
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Handle location errors
+      if (context.mounted) {
+        String errorMessage =
+            'Unable to get your location. Please check GPS settings.';
+
+        if (e.toString().contains('Location services are disabled')) {
+          errorMessage = 'Please enable location services to complete orders.';
+        } else if (e.toString().contains('denied')) {
+          errorMessage =
+              'Location permission denied. Please grant permission in settings.';
+        }
+
+        _showLocationErrorDialog(
+          context: context,
+          message: errorMessage,
+        );
+      }
+      debugPrint('❌ Location error: $e');
+    }
+  }
+
+  void _showLocationErrorDialog({
+    required BuildContext context,
+    required String message,
+    double? distance,
+  }) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: CustomText(
+          text: translate('order.location_required'),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              text: message,
+              fontSize: 14,
+            ),
+            if (distance != null) ...[
+              SizedBox(height: 12.h),
+              CustomText(
+                text:
+                    '${translate('order.current_distance')}: ${OrderCompletionValidator.formatDistance(distance)}',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: DMUtil.getPC(),
+              ),
+              SizedBox(height: 8.h),
+              CustomText(
+                text:
+                    '${translate('order.required_distance')}: ${OrderCompletionValidator.STRICT_RANGE_METERS.toInt()}m',
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          CustomButton(
+            height: 32.h,
+            width: 80.w,
+            color: DMUtil.getPC(),
+            circular: 8,
+            widget: CustomText(
+              text: translate('general.ok'),
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _proceedToPatientProfile(
+    BuildContext context,
+    Map<String, dynamic> nurseLocation,
+  ) async {
     // Navigate directly to edit patient profile without permission check
     var accountBloc = AccountBloc.get(context);
     await accountBloc.switchCurrentUserWithPatientProfile(
@@ -236,6 +406,7 @@ class BookingRowActions extends StatelessWidget {
                   (orderNurse.userData?.userId ?? orderNurse.userId)
                           ?.toString() ??
                       '', // Pass the nurse/doctor user ID with fallback
+              nurseLocation: nurseLocation, // Pass nurse location
               onCompleted: () async {
                 await _afterEditPatient(context, accountBloc, orderNurse,
                     pop: true);

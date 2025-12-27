@@ -20,6 +20,16 @@ class SvgIconWidget extends StatelessWidget {
               height: 29.h,
               colorFilter:
                   ColorFilter.mode(DMUtil.getBCIcon(), BlendMode.srcIn),
+              placeholderBuilder: (context) => SizedBox(
+                height: 29.h,
+                child: const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+              errorBuilder: (context, error, stackTrace) => Image.asset(
+                AppImages.logo,
+                height: 29.h,
+              ),
             ),
     );
   }
