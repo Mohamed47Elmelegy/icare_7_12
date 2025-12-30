@@ -13,7 +13,8 @@ import 'package:icare/features/search/presentation/bloc/search_state.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
 class ServiceSelector extends StatelessWidget {
-  const ServiceSelector({super.key});
+  final ExpansibleController? controller;
+  const ServiceSelector({super.key, this.controller});
 
   String _getProviderTypeText(String? type) {
     if (type == null || type.isEmpty) return "";
@@ -96,6 +97,7 @@ class ServiceSelector extends StatelessWidget {
                   ),
 
                 ExpansionTile(
+                  controller: controller,
                   backgroundColor: Colors.transparent,
                   collapsedBackgroundColor: Colors.transparent,
                   initiallyExpanded: false,

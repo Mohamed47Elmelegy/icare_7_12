@@ -1,5 +1,5 @@
 import 'package:icare/core/strings/app_images.dart';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';

@@ -66,7 +66,8 @@
 		"select_service_first": "select service first",
 		"nurse_is_busy": "nurse is not available now",
 		"nurse_does_not_offer_service": "This provider does not offer the selected service",
-		"ongoing_booking_exists": "You have an ongoing booking, please complete it first"
+		"ongoing_booking_exists": "You have an ongoing booking with {nurseName}, please complete it first",
+		"ongoing_booking_exists_generic": "You have ongoing bookings, please check 'My Bookings' and complete or cancel them first"
 	},
 	"notification": {
 		"patient": "Patient",

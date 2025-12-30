@@ -26,6 +26,9 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final ExpansibleController _expansionTileController =
+      ExpansibleController();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SearchBloc, SearchState>(
@@ -105,7 +108,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Service Selector
-                  const ServiceSelector(),
+                  ServiceSelector(controller: _expansionTileController),
                   SizedBox(height: 10.h),
 
                   // Divider
@@ -197,6 +200,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                         // Trigger search
                                         searchBloc.add(SearchByFiltersEvent(
                                             filters: filters));
+
+                                        // Close the service dropdown if open
+                                        if (_expansionTileController
+                                            .isExpanded) {
+                                          _expansionTileController.collapse();
+                                        }
                                       },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: DMUtil.getPC(),

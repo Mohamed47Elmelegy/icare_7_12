@@ -79,7 +79,7 @@ class OrderCardDetails extends StatelessWidget {
                 }
                 userImage = (patientData?.image != null &&
                         patientData!.image!.isNotEmpty)
-                    ? patientData!.image!
+                    ? patientData.image!
                     : (item.userImage ?? "");
               }
 

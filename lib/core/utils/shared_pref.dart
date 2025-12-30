@@ -1,4 +1,4 @@
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPref {

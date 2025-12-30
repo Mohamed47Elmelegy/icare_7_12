@@ -6,7 +6,7 @@ import 'package:icare/features/authentication/domain/use_cases/social_login_user
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
 import 'package:icare/features/authentication/domain/use_cases/login_user_usecase.dart';

@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/strings/api/api_url.dart';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/send_gmail.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:flutter/material.dart';

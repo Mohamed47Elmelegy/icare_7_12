@@ -209,11 +209,15 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       res.fold((l) {
         debugPrint("❌ Update Order Failed (Left): $l");
         emit(OrderErrorState(errors: l.toString()));
-      }, (data) {
+      }, (data) async {
         debugPrint(
             "✅ Update Order Result (Right): state=${data.state}, msg=${data.msg}");
         if (data.state == true) {
-          if (event.data['status'] == 'CANCELLED') {
+          // Refresh ongoing bookings after update
+          debugPrint("🔄 Refreshing ongoing bookings after order update...");
+          await getOngoingBookings(emit);
+
+          if (event.data['status'] == 'Cancelled') {
             emit(RefuesdOrderSuccessfullyState());
           } else {
             emit(UpdateOrderSuccessfullyState());
@@ -353,32 +357,53 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   getOngoingBookings(emit) async {
     if (!Util.checkUser()) return;
+    debugPrint("🔄 BookingBloc: Fetching ongoing bookings...");
     emit(OrderLoadingState());
     var res = await getOngoingBookingsUseCase();
     res.fold((l) {
+      debugPrint("❌ BookingBloc: Failed to fetch ongoing bookings: $l");
       emit(OrderErrorState(errors: l.toString()));
     }, (data) {
       ongoingBookingsList = data.toList();
+      debugPrint(
+          "✅ BookingBloc: Fetched ${ongoingBookingsList.length} ongoing bookings");
+      for (var booking in ongoingBookingsList) {
+        debugPrint(
+            "   📦 Booking ID: ${booking.orderId}, Nurse ID: ${booking.nurseID}, Status: ${booking.status}");
+      }
       emit(OngoingBookingsLoadedState(ongoingBookings: data));
     });
   }
 
   /// Get list of provider IDs that have ongoing bookings with current user
   List<int> getOngoingBookedProviderIds() {
-    return ongoingBookingsList
+    final ids = ongoingBookingsList
         .map((booking) => booking.nurseID ?? -1)
         .where((id) => id != -1)
         .toList();
+    debugPrint("🔍 BookingBloc: Extracted provider IDs: $ids");
+    return ids;
   }
 
   /// Check if current user has any ongoing booking
   bool hasOngoingBooking() {
+    debugPrint("🔍 Checking ongoing bookings...");
+    debugPrint(
+        "   📦 ongoingBookingsList.length: ${ongoingBookingsList.length}");
+    for (var booking in ongoingBookingsList) {
+      debugPrint(
+          "   - Booking ID: ${booking.orderId}, Status: ${booking.status}, Nurse: ${booking.nurseName}");
+    }
     return ongoingBookingsList.isNotEmpty;
   }
 
   /// Get details of first ongoing booking for error message
   Booking? getOngoingBookingDetails() {
-    return ongoingBookingsList.isNotEmpty ? ongoingBookingsList.first : null;
+    final booking =
+        ongoingBookingsList.isNotEmpty ? ongoingBookingsList.first : null;
+    debugPrint(
+        "🔍 Getting ongoing booking details: ${booking?.orderId}, Nurse: ${booking?.nurseName}");
+    return booking;
   }
 
   void acceptOrder(Booking booking) {
@@ -394,7 +419,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     add(UpdateOrderEvent(
       data: {
         'booking_id': booking.orderId.toString(),
-        'status': 'CANCELLED',
+        'status': 'Cancelled',
       },
     ));
   }

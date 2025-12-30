@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 
 class SpecialtyModel {

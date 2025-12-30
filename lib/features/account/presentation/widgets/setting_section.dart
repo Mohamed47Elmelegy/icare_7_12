@@ -1,4 +1,4 @@
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';

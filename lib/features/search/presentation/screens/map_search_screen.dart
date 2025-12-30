@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';

@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/strings/app_images.dart';
 import 'package:http/http.dart' as http;
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:path_provider/path_provider.dart';

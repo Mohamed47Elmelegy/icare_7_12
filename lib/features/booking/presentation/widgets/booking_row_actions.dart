@@ -226,9 +226,9 @@ class BookingRowActions extends StatelessWidget {
 
       // Get current position - FORCE FRESH LOCATION (no cache)
       Position nursePosition = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(
+        locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 15),
+          timeLimit: Duration(seconds: 15),
           // Force fresh location on Android
           distanceFilter: 0,
         ),

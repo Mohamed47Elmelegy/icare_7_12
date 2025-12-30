@@ -15,7 +15,7 @@ import 'package:icare/features/account/domain/usecases/get_patient_medical_repor
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/account/domain/use_cases/change_password_usercase.dart';
 import 'package:icare/features/account/domain/use_cases/get_user_service_usecase.dart';

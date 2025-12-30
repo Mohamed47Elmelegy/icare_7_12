@@ -10,11 +10,11 @@ const String OFFLINE_FAILURE_MESSAGE = 'بعد اذنك تأكد من اتصال
 
 String mapFailureToMessage(Failure failure) {
   switch (failure.runtimeType) {
-    case ServerFailure:
+    case const (ServerFailure):
       return SERVER_FAILURE_MESSAGE;
-    case EmptyCacheFailure:
+    case const (EmptyCacheFailure):
       return EMPTY_FAILURE_MESSAGE;
-    case OfflineFailure:
+    case const (OfflineFailure):
       return OFFLINE_FAILURE_MESSAGE;
     default:
       return 'خطأ غير متوقع حاول مجددا';

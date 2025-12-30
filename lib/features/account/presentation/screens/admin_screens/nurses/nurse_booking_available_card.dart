@@ -10,7 +10,15 @@ import 'package:flutter_translate/flutter_translate.dart';
 
 class NurseBookingAvailableCard extends StatelessWidget {
   final UserService nurse;
-  const NurseBookingAvailableCard({super.key, required this.nurse});
+  final bool isBusy;
+  final VoidCallback? onTap;
+
+  const NurseBookingAvailableCard({
+    super.key,
+    required this.nurse,
+    this.isBusy = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +41,22 @@ class NurseBookingAvailableCard extends StatelessWidget {
           flex: 2,
           child: InkWell(
               onTap: () {
-                // Util.pushPage(const CompanyProfile(isProfileView: false), context);
+                if (isBusy) {
+                  // Show message that nurse is unavailable with their name
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${translate("nurse.unavailable_booking_message")} ${nurse.userName}',
+                      ),
+                      backgroundColor: DMUtil.getRED(),
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                  return;
+                }
+                if (onTap != null) {
+                  onTap!();
+                }
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 6.w),
@@ -51,35 +74,31 @@ class NurseBookingAvailableCard extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text.rich(
-                                  TextSpan(
-                                      text: "${translate("nurse.status")}: ",
-                                      style: TextStyle(
-                                        fontSize: AppStyle.verySmall.sp + 1,
-                                        color: DMUtil.getGreen(),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: translate("nurse.busy"),
-                                          style: TextStyle(
-                                            color: DMUtil.getGreen(),
-                                            fontSize: AppStyle.verySmall.sp,
-                                          ),
+                            if (isBusy)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text.rich(
+                                    TextSpan(
+                                        text: "${translate("nurse.status")}: ",
+                                        style: TextStyle(
+                                          fontSize: AppStyle.verySmall.sp + 1,
+                                          color: DMUtil.getRED(),
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ]),
-                                ),
-                                CustomText(
-                                  text: "${translate("nurse.assigned")} lara",
-                                  fontSize: AppStyle.verySmall.sp,
-                                  color: DMUtil.getGreen(),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
+                                        children: [
+                                          TextSpan(
+                                            text:
+                                                translate("nurse.unavailable"),
+                                            style: TextStyle(
+                                              color: DMUtil.getRED(),
+                                              fontSize: AppStyle.verySmall.sp,
+                                            ),
+                                          ),
+                                        ]),
+                                  ),
+                                ],
+                              ),
                             SizedBox(
                               width: 10.w,
                             ),

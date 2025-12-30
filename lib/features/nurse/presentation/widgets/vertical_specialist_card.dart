@@ -210,14 +210,46 @@ class VerticalSpecialistCard extends StatelessWidget {
                                         DMUtil.getPC());
                                   }
 
-                                  // ✅ Validation 3: Check for ongoing bookings
+                                  // ✅ Validation 3: Refresh ongoing bookings first
+                                  debugPrint(
+                                      "🔄 Refreshing ongoing bookings before validation...");
+                                  bookingBloc
+                                      .add(const GetOngoingBookingsEvent());
+
+                                  // Wait a bit for state to update
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 300));
+
+                                  // Check for ongoing bookings after refresh
                                   if (bookingBloc.hasOngoingBooking()) {
+                                    final ongoingBooking =
+                                        bookingBloc.getOngoingBookingDetails();
+                                    final nurseName = ongoingBooking?.nurseName;
+
+                                    // Use generic message if nurse name is empty or null
+                                    if (nurseName == null ||
+                                        nurseName.trim().isEmpty) {
+                                      debugPrint(
+                                          "❌ User has ${bookingBloc.ongoingBookingsList.length} ongoing booking(s) but nurse name is missing");
+                                      return SnackBarBuilder.showFeedBackMessage(
+                                          context,
+                                          translate(
+                                              "icare.ongoing_booking_exists_generic"),
+                                          DMUtil.getRED());
+                                    }
+
+                                    debugPrint(
+                                        "❌ User has ongoing booking with: $nurseName");
                                     return SnackBarBuilder.showFeedBackMessage(
                                         context,
                                         translate(
-                                            "icare.ongoing_booking_exists"),
+                                            "icare.ongoing_booking_exists",
+                                            args: {"nurseName": nurseName}),
                                         DMUtil.getRED());
                                   }
+
+                                  debugPrint(
+                                      "✅ No ongoing bookings, proceeding with booking...");
 
                                   // Match selected services with nurse's prices
                                   final accountBloc = AccountBloc.get(context);
@@ -322,7 +354,7 @@ class VerticalSpecialistCard extends StatelessWidget {
                                   debugPrint(
                                       "🎯 ==========================================");
 
-                                  // ✅ Validation 3: Check if any services were matched
+                                  // ✅ Validation 4: Check if any services were matched
                                   if (bookingBloc.orderServiceList.isEmpty) {
                                     return SnackBarBuilder.showFeedBackMessage(
                                         context,

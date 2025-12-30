@@ -1,4 +1,4 @@
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/styles/my_colors.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:flutter/material.dart';

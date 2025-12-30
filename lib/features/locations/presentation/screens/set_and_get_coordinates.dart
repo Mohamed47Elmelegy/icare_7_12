@@ -8,7 +8,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:icare/core/strings/constant.dart';
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/core/utils/shared_pref.dart';
