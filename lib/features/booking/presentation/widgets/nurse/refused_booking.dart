@@ -32,7 +32,7 @@ class RefusedBookingRequestBtn extends StatelessWidget {
           onPressed: () => BookingBloc.get(context).add(UpdateOrderEvent(
             data: {
               'booking_id': orderID,
-              'status': 'Cancelled',
+              'status': 'CANCELLED',
             },
           )),
         );

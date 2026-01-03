@@ -133,8 +133,13 @@ class ChatClient {
           if (res) debugPrint("chatRoomUpdatedSuccessfully...");
         }
       });
-      UserServiceRemoteDataSource.sendNotification(
-          data: {'msg': msg, 'user_id': model.receiverID});
+      UserServiceRemoteDataSource.sendNotification(data: {
+        'msg': msg,
+        'user_id': model.receiverID,
+        // 'roomID': roomID,
+        // 'senderName': model.senderName,
+        // 'type': 'chat'
+      });
     } catch (e) {
       debugPrint("addCategoryErrorClient: $e");
       res = false;

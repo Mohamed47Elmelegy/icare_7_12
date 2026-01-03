@@ -12,7 +12,7 @@ class NotificationStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = booking.status == 'Cancelled'
+    final color = booking.status == 'CANCELLED'
         ? Colors.red
         : booking.status == 'PENDING'
             ? Colors.orange

@@ -741,7 +741,7 @@
       "refused": "تم رفض الطلب",
       "no_orders": "لا يوجد طلبات حالية",
       "delivery_on": "قيد التوصيل",
-      "complete_order": "تم الانتهاء من الحجز",
+      "complete_order": "إنهاء الطلب",
       "cancel_order": "الغاء الطلب",
       "order_location": "موقع الطلب",
       "order_has_done": "تم انهاء الطلب",

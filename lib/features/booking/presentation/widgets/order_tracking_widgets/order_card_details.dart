@@ -2,6 +2,8 @@
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
+import 'package:icare/features/booking/data/models/order_model.dart';
+import 'package:icare/core/strings/enum/order_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -174,48 +176,56 @@ class OrderCardDetails extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            InkWell(
-                              onTap: () async {
-                                try {
-                                  final trackingNurse =
-                                      await UserServiceRemoteDataSource
-                                          .getUserFullData(
-                                    orderNurse.userData!.userId.toString(),
-                                  );
-                                  Util.pushPage(
-                                    MapScreen(
-                                      isSet: true,
-                                      title: trackingNurse.userName.toString(),
-                                      latitude: trackingNurse.lat.toString(),
-                                      longitude: trackingNurse.long.toString(),
-                                      userID: trackingNurse.userId.toString(),
-                                      userImg: trackingNurse.image,
-                                    ),
-                                    context,
-                                  );
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(translate("toast.oops"))),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w, vertical: 4.h),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: DMUtil.getD2C().withOpacity(0.3)),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: CustomText(
-                                  text: translate("order.on_map"),
-                                  fontSize: AppStyle.verySmall.sp - 1,
-                                  color: DMUtil.getD2C().withOpacity(0.6),
-                                  fontWeight: FontWeight.w500,
+                            // On Map button - only show for non-completed bookings
+                            if (item.status != null &&
+                                OrderModel.getStatusViewCheck(item.status!) !=
+                                    ORDER_STATUS.COMPLETED)
+                              InkWell(
+                                onTap: () async {
+                                  try {
+                                    final trackingNurse =
+                                        await UserServiceRemoteDataSource
+                                            .getUserFullData(
+                                      orderNurse.userData!.userId.toString(),
+                                    );
+                                    Util.pushPage(
+                                      MapScreen(
+                                        isSet: true,
+                                        title:
+                                            trackingNurse.userName.toString(),
+                                        latitude: trackingNurse.lat.toString(),
+                                        longitude:
+                                            trackingNurse.long.toString(),
+                                        userID: trackingNurse.userId.toString(),
+                                        userImg: trackingNurse.image,
+                                      ),
+                                      context,
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content:
+                                              Text(translate("toast.oops"))),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 4.h),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color:
+                                            DMUtil.getD2C().withOpacity(0.3)),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: CustomText(
+                                    text: translate("order.on_map"),
+                                    fontSize: AppStyle.verySmall.sp - 1,
+                                    color: DMUtil.getD2C().withOpacity(0.6),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),

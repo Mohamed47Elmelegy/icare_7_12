@@ -396,7 +396,7 @@ class NotificationListCard extends StatelessWidget {
               ),
             ),
           ] else if (booking != null && booking.status == 'REFUESD') ...[
-            // Show cancelled status for refused bookings
+            // Show CANCELLED status for refused bookings
             Container(
               padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
               decoration: BoxDecoration(

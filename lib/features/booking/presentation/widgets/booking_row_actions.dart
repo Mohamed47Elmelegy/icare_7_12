@@ -64,36 +64,44 @@ class BookingRowActions extends StatelessWidget {
               // Call button
               Expanded(
                 child: CustomButton(
-                  height: 24.h,
+                  height: 20.h,
                   width: double.infinity,
                   color: Colors.transparent,
                   sideColor: DMUtil.getPC(),
                   sideWidth: 1,
-                  circular: 20,
-                  widget: CustomText(
-                    text: translate("order.call"),
-                    fontSize: AppStyle.small.sp,
-                    color: DMUtil.getPC(),
-                    fontWeight: FontWeight.w500,
+                  circular: 16,
+                  widget: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: CustomText(
+                      text: translate("order.call"),
+                      fontSize: AppStyle.verySmall.sp,
+                      color: DMUtil.getPC(),
+                      fontWeight: FontWeight.w500,
+                      maxLine: 1,
+                    ),
                   ),
                   onPressed: () => _handleCall(context),
                 ),
               ),
               // Chat button
-              SizedBox(width: 16.w),
+              SizedBox(width: 6.w),
               Expanded(
                 child: CustomButton(
-                  height: 24.h,
+                  height: 20.h,
                   width: double.infinity,
                   color: Colors.transparent,
                   sideColor: DMUtil.getPC(),
                   sideWidth: 1,
-                  circular: 20,
-                  widget: CustomText(
-                    text: translate("profile.chat"),
-                    fontSize: AppStyle.small.sp,
-                    color: DMUtil.getPC(),
-                    fontWeight: FontWeight.w500,
+                  circular: 16,
+                  widget: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: CustomText(
+                      text: translate("profile.chat"),
+                      fontSize: AppStyle.verySmall.sp,
+                      color: DMUtil.getPC(),
+                      fontWeight: FontWeight.w500,
+                      maxLine: 1,
+                    ),
                   ),
                   onPressed: () => _handleChat(context),
                 ),
@@ -109,55 +117,67 @@ class BookingRowActions extends StatelessWidget {
             // Call button
             Expanded(
               child: CustomButton(
-                height: 24.h,
+                height: 20.h,
                 width: double.infinity,
                 color: Colors.transparent,
                 sideColor: DMUtil.getPC(),
                 sideWidth: 1,
-                circular: 20,
-                widget: CustomText(
-                  text: translate("order.call"),
-                  fontSize: AppStyle.small.sp,
-                  color: DMUtil.getPC(),
-                  fontWeight: FontWeight.w500,
+                circular: 16,
+                widget: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: CustomText(
+                    text: translate("order.call"),
+                    fontSize: AppStyle.verySmall.sp,
+                    color: DMUtil.getPC(),
+                    fontWeight: FontWeight.w500,
+                    maxLine: 1,
+                  ),
                 ),
                 onPressed: () => _handleCall(context),
               ),
             ),
-            SizedBox(width: 8.w),
+            SizedBox(width: 6.w),
             // Chat button
             Expanded(
               child: CustomButton(
-                height: 24.h,
+                height: 20.h,
                 width: double.infinity,
                 color: Colors.transparent,
                 sideColor: DMUtil.getPC(),
                 sideWidth: 1,
-                circular: 20,
-                widget: CustomText(
-                  text: translate("profile.chat"),
-                  fontSize: AppStyle.small.sp,
-                  color: DMUtil.getPC(),
-                  fontWeight: FontWeight.w500,
+                circular: 16,
+                widget: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: CustomText(
+                    text: translate("profile.chat"),
+                    fontSize: AppStyle.verySmall.sp,
+                    color: DMUtil.getPC(),
+                    fontWeight: FontWeight.w500,
+                    maxLine: 1,
+                  ),
                 ),
                 onPressed: () => _handleChat(context),
               ),
             ),
-            SizedBox(width: 8.w),
+            SizedBox(width: 6.w),
             // Finish Order button (Navigate to Edit Patient)
             Expanded(
               child: CustomButton(
-                height: 24.h,
+                height: 20.h,
                 width: double.infinity,
                 color: Colors.transparent,
                 sideColor: DMUtil.getPC(),
                 sideWidth: 1,
-                circular: 20,
-                widget: CustomText(
-                  text: translate("order.complete_order"),
-                  fontSize: AppStyle.small.sp,
-                  color: DMUtil.getPC(),
-                  fontWeight: FontWeight.w500,
+                circular: 16,
+                widget: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: CustomText(
+                    text: translate("order.complete_order"),
+                    fontSize: AppStyle.verySmall.sp,
+                    color: DMUtil.getPC(),
+                    fontWeight: FontWeight.w500,
+                    maxLine: 1,
+                  ),
                 ),
                 onPressed: () => _handleValuesWrapper(context),
               ),

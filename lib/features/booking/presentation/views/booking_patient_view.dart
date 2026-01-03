@@ -4,6 +4,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
+import 'package:icare/features/booking/data/models/order_model.dart';
+import 'package:icare/core/strings/enum/order_enum.dart';
 import 'package:icare/features/booking/presentation/widgets/booking_description.dart';
 import 'package:icare/features/booking/presentation/widgets/booking_info_column.dart';
 import 'package:icare/features/booking/presentation/widgets/booking_info_row.dart';
@@ -174,56 +176,59 @@ class _NurseInfoCard extends StatelessWidget {
               ],
             ),
 
-          // On Map button
-          InkWell(
-            onTap: () async {
-              try {
-                final trackingNurse =
-                    await UserServiceRemoteDataSource.getUserFullData(
-                  orderNurse.userData!.userId.toString(),
-                );
-                Util.pushPage(
-                  MapScreen(
-                    isSet: true,
-                    title: trackingNurse.userName.toString(),
-                    latitude: trackingNurse.lat.toString(),
-                    longitude: trackingNurse.long.toString(),
-                    userID: trackingNurse.userId.toString(),
-                    userImg: trackingNurse.image,
-                  ),
-                  context,
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(translate("toast.oops"))),
-                );
-              }
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                border: Border.all(color: DMUtil.getD2C().withOpacity(0.3)),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.location_on_outlined,
-                    size: 16.w,
-                    color: DMUtil.getPC(),
-                  ),
-                  SizedBox(width: 6.w),
-                  CustomText(
-                    text: translate("order.on_map"),
-                    fontSize: AppStyle.small.sp,
-                    color: DMUtil.getPC(),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ],
+          // On Map button - only show for non-completed bookings
+          if (item.status != null &&
+              OrderModel.getStatusViewCheck(item.status!) !=
+                  ORDER_STATUS.COMPLETED)
+            InkWell(
+              onTap: () async {
+                try {
+                  final trackingNurse =
+                      await UserServiceRemoteDataSource.getUserFullData(
+                    orderNurse.userData!.userId.toString(),
+                  );
+                  Util.pushPage(
+                    MapScreen(
+                      isSet: true,
+                      title: trackingNurse.userName.toString(),
+                      latitude: trackingNurse.lat.toString(),
+                      longitude: trackingNurse.long.toString(),
+                      userID: trackingNurse.userId.toString(),
+                      userImg: trackingNurse.image,
+                    ),
+                    context,
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(translate("toast.oops"))),
+                  );
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  border: Border.all(color: DMUtil.getD2C().withOpacity(0.3)),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 16.w,
+                      color: DMUtil.getPC(),
+                    ),
+                    SizedBox(width: 6.w),
+                    CustomText(
+                      text: translate("order.on_map"),
+                      fontSize: AppStyle.small.sp,
+                      color: DMUtil.getPC(),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

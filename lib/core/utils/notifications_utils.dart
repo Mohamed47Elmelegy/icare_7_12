@@ -51,10 +51,29 @@ class NotificationsUtils {
     }
 
     FirebaseMessaging.onMessage.listen((event) {
-      SetNotification.showFlutterNotification(
-          RemoteMessage(notification: event.notification!));
+      // عرض الإشعار إذا كان موجود
+      if (event.notification != null) {
+        SetNotification.showFlutterNotification(
+            RemoteMessage(notification: event.notification!));
+      } else {
+        // إذا لم يكن هناك notification payload، أنشئ واحد من البيانات
+        debugPrint("📨 Received message without notification payload");
+        debugPrint("📨 Data: ${event.data}");
+        
+        // عرض إشعار محلي باستخدام البيانات المتوفرة
+        if (event.data.isNotEmpty) {
+          String title = event.data['senderName'] ?? 'رسالة جديدة';
+          String body = event.data['msg'] ?? event.data['message'] ?? '';
+          
+          SetNotification.showNotification(title: title, msg: body);
+        }
+      }
 
       if (event.notification == null || event.notification!.body == null) {
+        // حتى لو مفيش notification، نفذ checkNotification للتحديثات
+        if (event.data.isNotEmpty) {
+          checkNotification(event);
+        }
         return;
       }
       checkNotification(event);
@@ -71,12 +90,25 @@ class NotificationsUtils {
         return;
       }
 
+      // معالجة إشعارات الحجز
       if (event.notification!.body!.contains("request") ||
           event.notification!.body!.contains("حجز") ||
           event.notification!.body!.contains("الحجز")) {
         debugPrint("update all orders");
         BookingBloc.get(context).add(const FetchAllOrderEvent());
         AccountBloc.get(context).add(const FetchAllNotificationsEvent());
+      }
+
+       // ✨ معالجة إشعارات الدردشة
+      if (event.data['type'] == 'chat' ||
+          event.notification!.body!.contains("رسالة") ||
+          event.notification!.title!.contains("رسالة")) {
+        debugPrint("📨 Chat notification received");
+        debugPrint("💬 Message: ${event.data['message']}");
+        debugPrint("👤 Sender: ${event.data['senderName']}");
+        debugPrint("🏠 Room ID: ${event.data['roomID']}");
+
+        //  يمكن إضافة تحديث قائمة الدردشات هنا إذا لزم الأمر
       }
 
       // if (event.notification!.body!.contains("صلاحية") ||
@@ -114,7 +146,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  debugPrint('Handling a background message ${message.messageId}');
+  debugPrint('📨 Handling a background message ${message.messageId}');
+  debugPrint('📨 Notification type: ${message.data['type']}');
+
+  // معالجة إشعارات الدردشة في الخلفية
+  if (message.data['type'] == 'chat') {
+    debugPrint('💬 Chat message in background: ${message.data['message']}');
+    debugPrint('👤 From: ${message.data['senderName']}');
+  }
 }
 
 // if #available(iOS 10.0, *) {

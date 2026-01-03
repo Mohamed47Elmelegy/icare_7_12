@@ -217,7 +217,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           debugPrint("🔄 Refreshing ongoing bookings after order update...");
           await getOngoingBookings(emit);
 
-          if (event.data['status'] == 'Cancelled') {
+          if (event.data['status'] == 'CANCELLED') {
             emit(RefuesdOrderSuccessfullyState());
           } else {
             emit(UpdateOrderSuccessfullyState());
@@ -419,7 +419,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     add(UpdateOrderEvent(
       data: {
         'booking_id': booking.orderId.toString(),
-        'status': 'Cancelled',
+        'status': 'CANCELLED',
       },
     ));
   }
