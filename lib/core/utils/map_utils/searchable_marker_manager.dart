@@ -66,6 +66,17 @@ class SearchableMarkerManager extends GenericMarkerManager<SearchableEntity> {
     if (serviceIds.isEmpty) return markers;
 
     return filterMarkers((entity) {
+      // Check if it's a doctor (using specific logic or check if providerType is 'doctor')
+      if (entity.providerType.toLowerCase() == 'doctor') {
+        if (entity.specialtyId == null) return false;
+
+        final specialtyIdInt = int.tryParse(entity.specialtyId!);
+        if (specialtyIdInt == null) return false;
+
+        return serviceIds.contains(specialtyIdInt);
+      }
+
+      // For nurses/others, check servicesList
       if (entity.servicesList == null) return false;
       return entity.servicesList!
           .any((service) => serviceIds.contains(service.id));

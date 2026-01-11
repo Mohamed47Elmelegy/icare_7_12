@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:http/http.dart' as http;
+import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/core/utils/notifications_utils.dart';
 import 'package:icare/core/utils/set_notification.dart';
+import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
 import 'package:icare/features/authentication/data/models/user_service_model.dart';
@@ -63,9 +65,25 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         }
 
         UserServiceModel user = UserServiceModel.fromJson(bodyData['user']);
-        await Util.saveLocalData(bodyData);
-        SetNotification.showNotification(
-            title: "", msg: translate("toast.welcome"));
+
+        // ✅ Only save data for customers immediately
+        // For professionals (nurse/doctor/assistant), data will be saved AFTER verification check
+        String userType =
+            bodyData['user']['user_type']?.toString().toLowerCase() ??
+                'customer';
+        if (userType == 'customer') {
+          await Util.saveLocalData(bodyData);
+          SetNotification.showNotification(
+              title: "", msg: translate("toast.welcome"));
+        } else {
+          // For professionals, save user_type and user_id temporarily for verification check
+          await SharedPref().setPreferencesString(
+              Constants.userId, bodyData['user']['id'].toString());
+          await SharedPref().setPreferencesString(Constants.userType, userType);
+          debugPrint(
+              "⏳ Professional user login - data will be saved after verification");
+        }
+
         return AuthResponse(user: user, msg: translate("toast.signup"));
       } else {
         return AuthResponse(user: null, msg: translate("toast.oops"));
@@ -75,132 +93,6 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
     }
   }
 
-  @override
-  // Future<AuthResponse> registerUser(
-  //   Map<String, dynamic> userData, {
-  //   bool social = false,
-  // }) async {
-
-  //   try {
-  //     var request =
-  //         http.MultipartRequest('POST', Uri.parse(ApiUrl.REGISTER_URL));
-
-  //     debugPrint("send register user data: $userData");
-  //     request.fields['device_info'] = jsonEncode(await ApiUrl.secureData());
-  //     if (userData['user_type'] == null || userData['user_type'] == "") {
-  //       userData['user_type'] = "customer";
-  //     }
-  //     var headers = ApiUrl.headerAuth;
-  //     if (userData['name'] != null) request.fields['name'] = userData['name'];
-  //     if (userData['email'] != null) {
-  //       request.fields['email'] = userData['email'];
-  //     }
-  //     if (userData['phone'] != null) {
-  //       request.fields['phone'] = userData['phone'];
-  //     }
-  //     request.fields['user_type'] = userData['user_type'] == null
-  //         ? "customer"
-  //         : userData['user_type']
-  //             .toString()
-  //             .trim()
-  //             .replaceAll("null", "customer");
-  //     if (userData['city'] != null) request.fields['city'] = userData['city'];
-  //     if (userData['governorate'] != null) {
-  //       request.fields['governorate'] = userData['governorate'];
-  //     }
-  //     if (userData['address'] != null) {
-  //       request.fields['address'] = userData['address'];
-  //     }
-  //     if (userData['latitude'] != null) {
-  //       request.fields['latitude'] = userData['latitude'].toString();
-  //     }
-  //     if (userData['longitude'] != null) {
-  //       request.fields['longitude'] = userData['longitude'].toString();
-  //     }
-  //     if (userData['country_code'] != null) {
-  //       request.fields['country_code'] = userData['country_code'];
-  //     }
-  //     if (userData['status'] != null) {
-  //       request.fields['status'] = userData['status'];
-  //     }
-  //     if (userData['password'] != null) {
-  //       request.fields['password'] = userData['password'];
-  //     }
-  //     if (userData['is_male'] != null) {
-  //       request.fields['is_male'] = userData['is_male'];
-  //     }
-  //     if (userData['specialties_id'] != null) {
-  //       request.fields['specialties_id'] =
-  //           userData['specialties_id'].toString();
-  //     }
-
-  //     if (userData['languages'] != null) {
-  //       request.fields['languages'] = userData['languages'];
-  //     }
-  //     if (userData['education'] != null) {
-  //       request.fields['education'] = userData['education'];
-  //     }
-  //     if (userData['publications'] != null) {
-  //       request.fields['publications'] = userData['publications'];
-  //     }
-  //     if (userData['courses'] != null) {
-  //       request.fields['courses'] = userData['courses'];
-  //     }
-
-  //     if (userData['license'] != null) {
-  //       var file = await http.MultipartFile.fromPath(
-  //           'license_practice', userData['license'].path);
-  //       request.files.add(file);
-  //     }
-  //     if (userData['certificate'] != null) {
-  //       var file = await http.MultipartFile.fromPath(
-  //           'graduation_certificate', userData['certificate'].path);
-  //       request.files.add(file);
-  //     }
-  //     if (userData['nurseID'] != null) {
-  //       var file = await http.MultipartFile.fromPath(
-  //           'identification_card', userData['nurseID'].path);
-  //       request.files.add(file);
-  //     }
-  //     if (userData['associationCard'] != null) {
-  //       var file = await http.MultipartFile.fromPath(
-  //           'association_card', userData['associationCard'].path);
-  //       request.files.add(file);
-  //     }
-  //     if (userData['related_job_id'] != null) {
-  //       var file = await http.MultipartFile.fromPath(
-  //           'related_job_id', userData['related_job_id'].path);
-  //       request.files.add(file);
-  //     }
-  //     if (userData['avatar'] != null) {
-  //       var file = await http.MultipartFile.fromPath(
-  //           'avatar', userData['avatar'].path);
-  //       request.files.add(file);
-  //     }
-  //     request.headers.addAll(headers);
-  //     var streamedResponse = await request.send();
-  //     var res = await http.Response.fromStream(streamedResponse);
-  //     debugPrint("registerUser: ${res.body}");
-  //     var decodedData = jsonDecode(res.body);
-  //     if (decodedData['status']) {
-  //       await Util.saveLocalData(decodedData);
-  //       SetNotification.showNotification(
-  //           title: "", msg: translate("toast.welcome"));
-  //       return AuthResponse(
-  //           user: UserServiceModel.fromJson(decodedData['user']),
-  //           msg: translate("toast.signup"),
-  //           isSuccess: true);
-  //     } else if (decodedData.toString().contains("already")) {
-  //       return AuthResponse(
-  //           user: null, msg: translate("toast.user_exist"), isFailed: true);
-  //     }
-  //     return AuthResponse(
-  //         user: null, msg: translate("toast.oops"), isFailed: true);
-  //   } catch (e) {
-  //     return AuthResponse(
-  //         user: null, msg: translate("toast.oops"), isFailed: true);
-  //   }
-  // }
   @override
   Future<AuthResponse> registerUser(
     Map<String, dynamic> userData, {

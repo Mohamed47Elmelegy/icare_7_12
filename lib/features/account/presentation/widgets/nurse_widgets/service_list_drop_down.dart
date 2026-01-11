@@ -22,7 +22,14 @@ class ServicesListDropDown extends StatelessWidget {
     return BlocBuilder<AccountBloc, AccountState>(
       builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
-        var list = bloc.allServiceList;
+
+        // Check if user is doctor to use specialties list
+        bool isDoctor = Util.isDoctor();
+
+        // Get the appropriate list based on user type
+        List<dynamic> list =
+            isDoctor ? bloc.allSpecialtiesList : bloc.allServiceList;
+
         if (list.isEmpty) return const SizedBox.shrink();
         var currentItem = bloc.currentService;
         // currentItem ??= list.first;
@@ -34,7 +41,7 @@ class ServicesListDropDown extends StatelessWidget {
                   color: DMUtil.getWC(),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(width: 1, color: DMUtil.getOpacity())),
-              child: DropdownButton<ServicesModel>(
+              child: DropdownButton<dynamic>(
                 value: null,
                 icon: const Icon(Icons.arrow_drop_down),
                 elevation: 10,
@@ -43,7 +50,9 @@ class ServicesListDropDown extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: CustomText(
                     text: currentItem == null
-                        ? translate("icare.select_service")
+                        ? translate(isDoctor
+                            ? "home.specialities"
+                            : "icare.select_service")
                         : currentItem.value,
                     fontSize: AppStyle.small.sp,
                     color: DMUtil.getD2C(),
@@ -52,17 +61,31 @@ class ServicesListDropDown extends StatelessWidget {
                 isExpanded: true,
                 style: TextStyle(color: DMUtil.getD2C()),
                 underline: const SizedBox(),
-                onChanged: (ServicesModel? newValue) {
+                onChanged: (dynamic newValue) {
+                  // Convert specialty to service model for doctor
+                  ServicesModel serviceModel;
+                  if (isDoctor) {
+                    serviceModel = ServicesModel(
+                      id: newValue.id,
+                      value: newValue.title,
+                      name: newValue.title,
+                      userType: 'doctor',
+                    );
+                  } else {
+                    serviceModel = newValue as ServicesModel;
+                  }
+
                   bloc.add(ChangeCurrentService(
-                      item: newValue!,
-                      txt: Util.isDoctor() ? newValue.value.toString() : null));
+                      item: serviceModel,
+                      txt: isDoctor ? serviceModel.value.toString() : null));
                 },
-                items: list
-                    .map<DropdownMenuItem<ServicesModel>>((ServicesModel item) {
-                  return DropdownMenuItem<ServicesModel>(
+                items: list.map<DropdownMenuItem<dynamic>>((dynamic item) {
+                  String displayText =
+                      isDoctor ? item.title : item.value.toString();
+                  return DropdownMenuItem<dynamic>(
                     value: item,
                     child: CustomText(
-                      text: item.value.toString(),
+                      text: displayText,
                       fontSize: AppStyle.small.sp,
                     ),
                   );

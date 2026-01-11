@@ -26,8 +26,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final ExpansibleController _expansionTileController =
-      ExpansibleController();
+  final ExpansibleController _expansionTileController = ExpansibleController();
 
   @override
   Widget build(BuildContext context) {

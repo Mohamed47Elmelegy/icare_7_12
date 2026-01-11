@@ -3,7 +3,7 @@ import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icare/features/account/presentation/screens/doctor/doctor_profile_personal_tap_screen.dart';
-import 'package:icare/features/account/presentation/screens/nurse/nurse_profile_prices_tap_screen.dart'; // Reusing modified version
+import 'package:icare/features/account/presentation/screens/doctor/doctor_profile_specialties_tap_screen.dart';
 import 'package:icare/features/doctor/presentation/screens/doctor_details_feedbacks_tap_screen.dart';
 
 class DoctorProfileScreens extends StatelessWidget {
@@ -18,9 +18,8 @@ class DoctorProfileScreens extends StatelessWidget {
         if (currentTap == 0) {
           return const DoctorProfilePersonalTapScreen();
         } else if (currentTap == 1) {
-          // Reusing NurseProfilePricesTapScreen which we modified to handle Doctors (hiding prices)
-          // Ideally we would rename it or wrap it, but reusing is fine as verified.
-          return const NurseProfilePricesTapScreen();
+          // ✅ Using dedicated doctor specialty screen
+          return const DoctorProfileSpecialtiesTapScreen();
         } else {
           return const DoctorDetailsFeedBacksTapScreen();
         }

@@ -37,7 +37,7 @@ class AllergiesListDropDown extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: CustomText(
                 text: currentItem == null
-                    ? translate("profile.allergies")
+                    ? translate("doctor.allergies")
                     : currentItem.value,
                 fontSize: AppStyle.small.sp,
                 color: DMUtil.getD2C(),

@@ -295,6 +295,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       'address': orderData['address'] ?? '',
       'lat': orderData['lat'] ?? '',
       'lng': orderData['long'] ?? '', // ✅ Fixed: 'long' → 'lng'
+      'doctor_id': orderData['doctor_id'], // ✅ Added: Ensure doctor_id is sent
       'current_status':
           'PENDING' // ✅ Fixed: Use 'current_status' as per backend API
     };
@@ -302,6 +303,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     debugPrint("📤 Sending order data to API:");
     debugPrint("   - user_id: ${data['user_id']}");
     debugPrint("   - nurse_id: ${data['nurse_id']}");
+    debugPrint("   - doctor_id: ${data['doctor_id']}"); // ✅ Debug print added
     debugPrint("   - desc: ${data['desc']}");
     debugPrint("   - address: ${data['address']}");
     debugPrint("   - lat: ${data['lat']}");
@@ -404,6 +406,27 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     debugPrint(
         "🔍 Getting ongoing booking details: ${booking?.orderId}, Nurse: ${booking?.nurseName}");
     return booking;
+  }
+
+  /// Check if user has an active booking (ONGOING or PENDING) with a specific provider
+  bool hasActiveBookingWithProvider(int providerId) {
+    try {
+      final existingBooking = ongoingBookingsList.firstWhere(
+        (booking) {
+          final status =
+              OrderModel.getStatusViewCheck(booking.status.toString());
+          // Check for matching provider ID and active status
+          return (booking.nurseID == providerId) &&
+              (status == ORDER_STATUS.ONGOING ||
+                  status == ORDER_STATUS.PENDING);
+        },
+      );
+      debugPrint(
+          "⚠️ Found existing active booking with provider $providerId: ID ${existingBooking.orderId}");
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   void acceptOrder(Booking booking) {

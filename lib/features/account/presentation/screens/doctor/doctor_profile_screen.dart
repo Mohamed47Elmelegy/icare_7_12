@@ -29,17 +29,6 @@ class DoctorProfileScreen extends StatelessWidget {
                 horizontal: AppStyle.paddingFromH.w, vertical: 10),
             child: const Column(
               children: [
-                // Reusing Nurse Extra Options for now. Verify if safe.
-                // It shows "Emerg" button and stats. Stats might be from "NurseEntity", checking "ExtraOptionsNurseCardProfile" content again.
-                // It checks "bloc.currentUser". If currentUser.nurse is used, it might fail.
-                // ExtraOptionsNurseCardProfile uses "bloc.currentUser" then "currentNurse".
-                // Let's create a Doctor version if needed, but for now I'll comment it out or create Doctor version if I have time.
-                // Actually, ExtraOptionsNurseCardProfile uses bloc.currentUser.
-                // It renders "Emerg" button using bloc.emergencyContactsList.
-                // It renders stats (SmallProfileCards) - hardcoded in the file?
-                // Step 257: SmallProfileCards are hardcoded "10K patients", "5 years".
-                // So it's safe to use visually, but labels are hardcoded.
-                // Ideally I should create DoctorExtraOptionsCardProfile, but I'll reuse for now and fix if needed.
                 ExtraOptionsNurseCardProfile(),
                 SizedBox(
                   height: 10,

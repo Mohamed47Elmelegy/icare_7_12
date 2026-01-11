@@ -164,7 +164,8 @@
       "education": "التعليم",
       "languages": "اللغات",
       "subscribe_plans": "خطط الاشتراك",
-      "subscribe": "اشترك الان"
+      "subscribe": "اشترك الان",
+      "specialities": "التخصصات"
     },
     "booking": {
       "edit_patient_profile": "تعديل بروفايل المريض",
@@ -291,7 +292,8 @@
       "wrong_payment": "عملية خاطئة",
       "no_internet_connection": "انت غير متصل بالانترنت!",
       "location_mis": "من فضلك قم بتحديد موقع التوصيل",
-      "user_banned": "لم يتم تفعيل الحساب برجاء التواصل على الواتساب لتفعيل الحساب",
+      "user_banned": "تم حظر حسابك، يرجى التواصل مع الإدارة",
+      "account_not_approved": "حسابك قيد المراجعة، يرجى التواصل على الواتساب لتفعيل الحساب",
       "success_msg": "تم ارسال الطلب بنجاح"
     },
     "search": {

@@ -15,28 +15,50 @@ class DoctorPricesListWidget extends StatelessWidget {
       builder: (ctx, state) {
         var bloc = DoctorBloc.get(ctx);
         var currentDoctor = bloc.currentDoctor;
-        if (currentDoctor == null || currentDoctor.servicesList == null) {
+
+        if (currentDoctor == null) {
           return const SizedBox.shrink();
         }
-        var list = currentDoctor.servicesList;
-        if (list!.isEmpty) return const EmptyDataWidget();
+
+        // For doctors, we display their specialty as the "service"
+        // Since doctors have only one specialty, we show a single item list
+        var specialtyId = currentDoctor.specialtyId;
+
+        if (specialtyId == null) {
+          return const EmptyDataWidget();
+        }
+
+        // Get specialty name from AccountBloc
+        var accountBloc = AccountBloc.get(context);
+        String specialtyName = "";
+
+        try {
+          var specialty = accountBloc.allSpecialtiesList.firstWhere(
+            (element) => element.id.toString() == specialtyId,
+            orElse: () => accountBloc.allSpecialtiesList.firstWhere(
+              (element) => element.id == int.tryParse(specialtyId ?? "0"),
+            ),
+          );
+          specialtyName = specialty.title;
+        } catch (e) {
+          // If not found in list, fallback or keep empty
+        }
+
         return ListView.separated(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (ctx, index) {
-            var item = list[index];
-            var mainList = AccountBloc.get(context).allServiceList;
-            int ind = mainList.indexWhere((element) => item.id == element.id);
-            if (ind == -1) return const SizedBox.shrink();
             return DoctorServicePriceRow(
-              serviceID: mainList[ind].id,
-              serviceName: mainList[ind].value.toString(),
-              price: item.value.toString(),
+              serviceID: int.tryParse(specialtyId) ?? 0,
+              serviceName:
+                  specialtyName.isNotEmpty ? specialtyName : "Doctor Visit",
+              price:
+                  "0", // Doctors usually don't have a fixed price in this app structure yet, or it's negotiated
             );
           },
           separatorBuilder: (ctx, index) => const SizedBox(height: 10),
-          itemCount: list.length,
+          itemCount: 1, // Only 1 specialty
         );
       },
     );

@@ -9,7 +9,9 @@ import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/booking/presentation/bloc/order_state.dart';
 import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
+import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/nurse/presentation/widgets/vertical_specialist_card.dart';
+import 'package:icare/features/doctor/presentation/widgets/vertical_specialist_card.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
 import 'package:icare/features/search/presentation/bloc/search_state.dart';
@@ -202,10 +204,12 @@ class _AllProvidersScreenState extends State<AllProvidersScreen> {
                             // Type check and cast to NurseEntity
                             if (provider is NurseEntity) {
                               return VerticalSpecialistCard(nurse: provider);
+                            } else if (provider is DoctorEntity) {
+                              return VerticalDoctorSpecialistCard(
+                                  doctor: provider);
                             }
 
-                            // TODO: Handle DoctorEntity with a DoctorCard widget
-                            // For now, return an empty container for non-nurse providers
+                            // Return empty container for unknown types
                             return const SizedBox.shrink();
                           },
                         ),

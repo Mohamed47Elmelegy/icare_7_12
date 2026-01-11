@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +9,7 @@ import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/categories/data/models/services.dart';
+import 'package:icare/features/setting/domain/entities/specialty_entity.dart'; // ✅ ADDED
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
@@ -21,12 +20,8 @@ class SaveProfileBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
-        if (state is UpdateNurseDataSuccessState ||
-            state is UpdateDoctorDataSuccessState) {
-          Timer(const Duration(seconds: 2), () {
-            AccountBloc.get(context).add(const FetchProfileDataEvent());
-          });
-        }
+        // ✅ No need to fetch again - Optimistic Update already updated local state
+        // Removed Timer + FetchProfileDataEvent to prevent infinite loop
       },
       listenWhen: (previous, current) =>
           current is UpdateNurseDataSuccessState ||
@@ -85,8 +80,13 @@ class SaveProfileBtn extends StatelessWidget {
                     if (index != -1) bloc.servicesList!.removeAt(index);
                     bloc.servicesList!.add(item);
                     if (Util.isDoctor()) {
+                      // ✅ Convert ServicesModel to SpecialtyEntity for Doctor
+                      bloc.selectedSpecialty = SpecialtyEntity(
+                        id: item.id,
+                        title: item.value ?? '',
+                      );
                       bloc.add(UpdateDoctorDataEvent(
-                          servicesList: bloc.servicesList!));
+                          selectedSpecialty: bloc.selectedSpecialty));
                     } else {
                       bloc.add(UpdateNurseDataEvent(
                           servicesList: bloc.servicesList!));

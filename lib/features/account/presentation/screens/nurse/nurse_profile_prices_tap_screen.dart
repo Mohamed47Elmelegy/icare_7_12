@@ -32,13 +32,45 @@ class NurseProfilePricesTapScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (ctx, index) {
                     var item = list[index];
-                    int ind = bloc.allServiceList
-                        .indexWhere((element) => item.id == element.id);
-                    if (ind == -1) return const SizedBox.shrink();
+
+                    // Check if user is doctor to use specialties list
+                    bool isDoctor = bloc.currentUser?.userType == 'doctor';
+
+                    String serviceName;
+                    int serviceID;
+                    bool isSelected = false;
+
+                    if (isDoctor) {
+                      // For doctors, find in specialties list
+                      int ind = bloc.allSpecialtiesList
+                          .indexWhere((element) => item.id == element.id);
+                      if (ind == -1) return const SizedBox.shrink();
+                      serviceID = bloc.allSpecialtiesList[ind].id;
+                      serviceName = bloc.allSpecialtiesList[ind].title;
+
+                      // Check if this specialty is currently selected
+                      isSelected = bloc.selectedSpecialty?.id == serviceID;
+                    } else {
+                      // For nurses, find in services list
+                      int ind = bloc.allServiceList
+                          .indexWhere((element) => item.id == element.id);
+
+                      if (ind == -1) {
+                        serviceID = item.id;
+                        serviceName = item.value.toString();
+                      } else {
+                        serviceID = bloc.allServiceList[ind].id;
+                        serviceName = bloc.allServiceList[ind].value.toString();
+                      }
+                    }
+
                     return ServicePriceRowWithModify(
-                      serviceID: bloc.allServiceList[ind].id,
-                      serviceName: bloc.allServiceList[ind].value.toString(),
+                      serviceID: serviceID,
+                      serviceName: serviceName,
                       price: item.value.toString(),
+                      isSelected: isDoctor
+                          ? isSelected
+                          : null, // Only show selection for doctors
                     );
                   },
                   separatorBuilder: (ctx, index) => Divider(

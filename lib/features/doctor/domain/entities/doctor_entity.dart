@@ -33,8 +33,6 @@ class DoctorEntity extends SearchableEntity {
   @override
   final List<String>? coursesList;
   @override
-  final List<ServicesModel>? servicesList;
-
   DoctorEntity({
     required this.id,
     required this.userData,
@@ -47,7 +45,6 @@ class DoctorEntity extends SearchableEntity {
     this.educationList,
     this.publicationsList,
     this.coursesList,
-    this.servicesList,
     this.distanceKM,
     this.distanceM,
     this.specialtyId,
@@ -64,4 +61,7 @@ class DoctorEntity extends SearchableEntity {
   @override
   String viewTypeText() =>
       "${translate("doctor.doctor")} ".replaceAll("null", "");
+
+  @override
+  List<ServicesModel>? get servicesList => null;
 }

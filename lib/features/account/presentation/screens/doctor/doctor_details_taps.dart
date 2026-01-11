@@ -31,14 +31,13 @@ class DoctorDetailsTaps extends StatelessWidget {
                 fn: () => bloc.add(const SwitchProfileTapsEvent(index: 0)),
               ),
               TapWidget(
-                title: translate("home.specialities"),
+                title: translate("doctor.specialities"),
                 index: 1,
                 selected: bloc.currentProfileTapsIndex == 1,
                 fn: () => bloc.add(const SwitchProfileTapsEvent(index: 1)),
               ),
               TapWidget(
-                title: translate(
-                    "nurse.feedbacks"), // Using nurse translation or generic if available
+                title: translate("doctor.feedbacks"),
                 index: 2,
                 selected: bloc.currentProfileTapsIndex == 2,
                 fn: () {

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:icare/features/setting/domain/entities/city_entity.dart';
+import 'package:icare/features/setting/domain/entities/governorate_entity.dart';
 
 class CityModel {
   final int id;
@@ -30,6 +32,31 @@ class CityModel {
               : jsonObject['longitude']),
       governorateID:
           int.parse((jsonObject['governorate_id'] ?? "0").toString()),
+    );
+  }
+}
+
+/// Extension for mapping CityModel to domain entities
+extension CityModelMapper on CityModel {
+  /// Maps to CityEntity (for cities list)
+  CityEntity toCityEntity() {
+    return CityEntity(
+      id: id,
+      title: title,
+      governorateId: governorateID,
+      latitude: latitude,
+      longitude: longitude,
+    );
+  }
+
+  /// Maps to GovernorateEntity (for governorates list)
+  /// Note: CityModel is reused for governorates in the API
+  GovernorateEntity toGovernorateEntity() {
+    return GovernorateEntity(
+      id: id,
+      title: title,
+      latitude: latitude,
+      longitude: longitude,
     );
   }
 }

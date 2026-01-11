@@ -1,14 +1,17 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/update_nurse_options_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/update_doctor_options_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/get_services_usecase.dart';
+import 'package:icare/core/services/service_to_api_converter.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
+import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
-import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
+import 'package:icare/features/setting/domain/use_cases/get_specialties_usecase.dart';
 import 'package:icare/features/account/domain/entities/medical_report_entity.dart';
 import 'package:icare/features/account/domain/usecases/create_medical_report_usecase.dart';
 import 'package:icare/features/account/domain/usecases/get_patient_medical_reports_usecase.dart';
@@ -37,6 +40,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   UpdateProfileStatusUseCase updateProfileStatusUseCase;
   CreateMedicalReportUseCase createMedicalReportUseCase;
   GetPatientMedicalReportsUseCase getPatientMedicalReportsUseCase;
+  UpdateNurseOptionsUseCase updateNurseOptionsUseCase;
+  UpdateDoctorOptionsUseCase updateDoctorOptionsUseCase;
+  GetServicesUseCase getServicesUseCase;
+  GetSpecialtiesUseCase getSpecialtiesUseCase;
 
   AccountBloc({
     required this.getUserServiceUseCase,
@@ -47,6 +54,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     required this.updateProfileStatusUseCase,
     required this.createMedicalReportUseCase,
     required this.getPatientMedicalReportsUseCase,
+    required this.updateNurseOptionsUseCase,
+    required this.updateDoctorOptionsUseCase,
+    required this.getServicesUseCase,
+    required this.getSpecialtiesUseCase,
   }) : super(AccountInitialState()) {
     on<UpdateProfileEvent>((event, emit) async {
       await updateProfile(event, emit);
@@ -90,12 +101,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     });
 
     /// nurse section
-    on<UpdateNurseDataEvent>((event, emit) {
-      updateNurseData(event, emit);
+    on<UpdateNurseDataEvent>((event, emit) async {
+      await updateNurseData(event, emit);
     });
 
-    on<UpdateDoctorDataEvent>((event, emit) {
-      updateDoctorData(event, emit);
+    on<UpdateDoctorDataEvent>((event, emit) async {
+      await updateDoctorData(event, emit);
     });
 
     on<ChangeCurrentService>((event, emit) {
@@ -106,8 +117,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       enableModifyService(event, emit);
     });
 
-    on<ModifyCurrentService>((event, emit) {
-      modifyCurrentService(event, emit);
+    on<ModifyCurrentService>((event, emit) async {
+      await modifyCurrentService(event, emit);
     });
 
     on<SwitchProfileStatusEvent>((event, emit) async {
@@ -166,28 +177,36 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   List<String>? publicationsList;
   List<String>? coursesList;
   List<String>? emergencyContactsList;
-  List<ServicesModel>? servicesList;
-  updateNurseData(UpdateNurseDataEvent event, emit) {
-    emit(const ProfileLoadingState());
-    if (event.nurse != null) nurse = event.nurse;
-    if (event.license != null) license = event.license;
-    if (event.certificate != null) certificate = event.certificate;
-    if (event.nurseID != null) nurseID = event.nurseID;
-    if (event.associationCard != null) associationCard = event.associationCard;
-    if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
-    if (event.avatar != null) nurseAvatar = event.avatar;
-    if (event.languageList != null) languageList = event.languageList;
-    if (event.educationList != null) educationList = event.educationList;
-    if (event.publicationsList != null) {
-      publicationsList = event.publicationsList;
-    }
-    if (event.coursesList != null) coursesList = event.coursesList;
-    if (event.emergencyContactsList != null) {
-      emergencyContactsList = event.emergencyContactsList;
-    }
-    if (event.servicesList != null) servicesList = event.servicesList;
-    Timer(const Duration(seconds: 1), () async {
-      await UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
+  List<ServicesModel>? servicesList; // ✅ For Nurse/Assistant ONLY
+  SpecialtyEntity? selectedSpecialty; // ✅ For Doctor ONLY
+  Future<void> updateNurseData(
+      UpdateNurseDataEvent event, Emitter<AccountState> emit) async {
+    try {
+      emit(const ProfileLoadingState());
+
+      // Update local state
+      if (event.nurse != null) nurse = event.nurse;
+      if (event.license != null) license = event.license;
+      if (event.certificate != null) certificate = event.certificate;
+      if (event.nurseID != null) nurseID = event.nurseID;
+      if (event.associationCard != null) {
+        associationCard = event.associationCard;
+      }
+      if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
+      if (event.avatar != null) nurseAvatar = event.avatar;
+      if (event.languageList != null) languageList = event.languageList;
+      if (event.educationList != null) educationList = event.educationList;
+      if (event.publicationsList != null) {
+        publicationsList = event.publicationsList;
+      }
+      if (event.coursesList != null) coursesList = event.coursesList;
+      if (event.emergencyContactsList != null) {
+        emergencyContactsList = event.emergencyContactsList;
+      }
+      if (event.servicesList != null) servicesList = event.servicesList;
+
+      // Call use case
+      final result = await updateNurseOptionsUseCase(options: {
         if (languageList != null) 'languages': languageList,
         if (educationList != null) 'education': educationList,
         if (publicationsList != null) 'publications': publicationsList,
@@ -195,46 +214,80 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         if (emergencyContactsList != null)
           'emergency_contacts': emergencyContactsList,
         if (servicesList != null && event.servicesList != null)
-          'services': convertServiceToIDS(event.servicesList!),
+          'services': ServiceToApiConverter.convertServicesToPayload(
+              event.servicesList!),
       });
-    });
-    _afterUpdateProfile();
-    emit(const UpdateNurseDataSuccessState());
+
+      // Handle result - emit states synchronously
+      result.fold(
+        (failure) {
+          if (!emit.isDone) emit(const ProfileFailedState());
+        },
+        (success) {
+          _afterUpdateProfile();
+          if (!emit.isDone) emit(const UpdateNurseDataSuccessState());
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ updateNurseData error: $e');
+      if (!emit.isDone) emit(const ProfileFailedState());
+    }
   }
 
-  updateDoctorData(UpdateDoctorDataEvent event, emit) {
-    emit(const ProfileLoadingState());
-    if (event.doctor != null) doctor = event.doctor;
-    if (event.license != null) license = event.license;
-    if (event.certificate != null) certificate = event.certificate;
-    if (event.doctorID != null) doctorID = event.doctorID;
-    if (event.associationCard != null) associationCard = event.associationCard;
-    if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
-    if (event.avatar != null) nurseAvatar = event.avatar;
-    if (event.languageList != null) languageList = event.languageList;
-    if (event.educationList != null) educationList = event.educationList;
-    if (event.publicationsList != null) {
-      publicationsList = event.publicationsList;
-    }
-    if (event.coursesList != null) coursesList = event.coursesList;
-    if (event.emergencyContactsList != null) {
-      emergencyContactsList = event.emergencyContactsList;
-    }
-    if (event.servicesList != null) servicesList = event.servicesList;
-    Timer(const Duration(seconds: 1), () async {
-      await UserServiceRemoteDataSource.updateDoctorOptionsValue(userData: {
+  Future<void> updateDoctorData(
+      UpdateDoctorDataEvent event, Emitter<AccountState> emit) async {
+    try {
+      emit(const ProfileLoadingState());
+
+      // Update local state
+      if (event.doctor != null) doctor = event.doctor;
+      if (event.license != null) license = event.license;
+      if (event.certificate != null) certificate = event.certificate;
+      if (event.doctorID != null) doctorID = event.doctorID;
+      if (event.associationCard != null) {
+        associationCard = event.associationCard;
+      }
+      if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
+      if (event.avatar != null) nurseAvatar = event.avatar;
+      if (event.languageList != null) languageList = event.languageList;
+      if (event.educationList != null) educationList = event.educationList;
+      if (event.publicationsList != null) {
+        publicationsList = event.publicationsList;
+      }
+      if (event.coursesList != null) coursesList = event.coursesList;
+      if (event.emergencyContactsList != null) {
+        emergencyContactsList = event.emergencyContactsList;
+      }
+      if (event.selectedSpecialty != null) {
+        selectedSpecialty = event.selectedSpecialty;
+      }
+
+      // Call use case
+      final result = await updateDoctorOptionsUseCase(options: {
         if (languageList != null) 'languages': languageList,
         if (educationList != null) 'education': educationList,
         if (publicationsList != null) 'publications': publicationsList,
         if (coursesList != null) 'courses': coursesList,
         if (emergencyContactsList != null)
           'emergency_contacts': emergencyContactsList,
-        if (servicesList != null && event.servicesList != null)
-          'services': convertServiceToIDS(event.servicesList!),
+        // ✅ FIX: Send single specialty ID for doctors (not services array)
+        if (selectedSpecialty != null) 'specialties_id': selectedSpecialty!.id,
       });
-    });
-    _afterUpdateProfile();
-    emit(const UpdateDoctorDataSuccessState());
+
+      // Handle result - emit states synchronously
+      result.fold(
+        (failure) {
+          if (!emit.isDone) emit(const ProfileFailedState());
+        },
+        (success) {
+          _afterUpdateProfile();
+          if (!emit.isDone) emit(const UpdateDoctorDataSuccessState());
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ updateDoctorData error: $e');
+      if (!emit.isDone) emit(const ProfileFailedState());
+    }
   }
 
   changeUserPassword(ChangeUserPasswordEvent event, emit) async {
@@ -325,6 +378,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
             publicationsList = nurse.publicationsList;
             coursesList = nurse.coursesList;
             servicesList = nurse.servicesList;
+            debugPrint(
+                "✅ Loaded nurse data: languages=${languageList?.length}, services=${servicesList?.length}");
           }
 
           // Load doctor data if exists
@@ -334,7 +389,20 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
             educationList = doctor.educationList;
             publicationsList = doctor.publicationsList;
             coursesList = doctor.coursesList;
-            servicesList = doctor.servicesList;
+            // ⚠️ Doctors don't have servicesList, they have specialtyId
+            debugPrint(
+                "✅ Loaded doctor data: languages=${languageList?.length}, specialty=${doctor.specialtyId}");
+
+            // Load specialty if available
+            if (doctor.specialtyId != null) {
+              selectedSpecialty = SpecialtyEntity(
+                id: int.tryParse(doctor.specialtyId!) ?? 0,
+                title: '', // Will be populated from allSpecialtiesList
+              );
+              debugPrint("✅ Doctor specialty ID: ${doctor.specialtyId}");
+            }
+          } else if (currentUser!.userType == 'doctor') {
+            debugPrint("❌ Doctor object is NULL for user_type=doctor!");
           }
 
           _afterUpdateProfile();
@@ -448,6 +516,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   }
 
   List<ServicesModel> allServiceList = [];
+  List<SpecialtyEntity> allSpecialtiesList = [];
   getAllServiceList(
       FetchAllServicesEvent event, Emitter<AccountState> emit) async {
     if (!Util.checkUser()) return;
@@ -469,27 +538,44 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
     if (userType == 'doctor') {
       debugPrint("🔍 Fetching SPECIALTIES for doctor");
-      try {
-        var specialties = await SettingsRemoteDataSource.fetchAllSpecialties();
-        allServiceList = specialties
-            .map((s) => ServicesModel(
-                  id: s.id,
-                  value: s.title,
-                  name: s.title,
-                  userType: 'doctor',
-                ))
-            .toList();
-        debugPrint(
-            "✅ Loaded ${allServiceList.length} specialties for doctor as services");
-      } catch (e) {
-        debugPrint("❌ Error fetching specialties: $e");
-        allServiceList = [];
-      }
+      final result = await getSpecialtiesUseCase();
+      result.fold(
+        (failure) {
+          debugPrint("❌ Error fetching specialties");
+          allSpecialtiesList = [];
+        },
+        (specialties) {
+          allSpecialtiesList = specialties;
+          debugPrint(
+              "✅ Loaded ${allSpecialtiesList.length} specialties for doctor");
+
+          // Update selectedSpecialty title if we have a specialty ID but no title
+          if (selectedSpecialty != null && selectedSpecialty!.title.isEmpty) {
+            final matchingSpecialty = allSpecialtiesList.firstWhere(
+              (spec) => spec.id == selectedSpecialty!.id,
+              orElse: () => const SpecialtyEntity(id: 0, title: ''),
+            );
+            if (matchingSpecialty.id != 0) {
+              selectedSpecialty = matchingSpecialty;
+              debugPrint(
+                  "✅ Updated specialty title: ${selectedSpecialty!.title}");
+            }
+          }
+        },
+      );
     } else {
-      allServiceList = await UserServiceRemoteDataSource.getAllServicesList(
-          userType: userType);
-      debugPrint(
-          "📋 Loaded ${allServiceList.length} services for user_type: ${userType ?? 'all'}");
+      final result = await getServicesUseCase(userType: userType);
+      result.fold(
+        (failure) {
+          debugPrint("❌ Error fetching services");
+          allServiceList = [];
+        },
+        (services) {
+          allServiceList = services;
+          debugPrint(
+              "📋 Loaded ${allServiceList.length} services for user_type: ${userType ?? 'all'}");
+        },
+      );
     }
     emit(const ProfileSuccessState());
   }
@@ -510,41 +596,73 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     emit(const ProfileSuccessState());
   }
 
-  modifyCurrentService(ModifyCurrentService event, emit) {
-    emit(AccountInitialState());
-    currentModifyService = null;
-    if (servicesList == null) return;
-    int indexI =
-        servicesList!.indexWhere((element) => element.id == event.item.id);
-    if (event.isRemove == true) {
-      if (indexI == -1) return;
-      servicesList!.removeAt(indexI);
-    } else {
-      servicesList![indexI] = event.item;
-    }
-    if (Util.isDoctor()) {
-      UserServiceRemoteDataSource.updateDoctorOptionsValue(userData: {
-        if (servicesList != null)
-          'services': convertServiceToIDS(servicesList!),
-      });
-    } else {
-      UserServiceRemoteDataSource.updateNurseOptionsValue(userData: {
-        if (servicesList != null)
-          'services': convertServiceToIDS(servicesList!),
-      });
-    }
-    emit(const ProfileSuccessState());
-  }
+  Future<void> modifyCurrentService(
+      ModifyCurrentService event, Emitter<AccountState> emit) async {
+    try {
+      emit(AccountInitialState());
+      currentModifyService = null;
 
-  convertServiceToIDS(List<ServicesModel> listP) {
-    var list = [];
-    for (var i in listP) {
-      list.add({
-        'id': i.id,
-        'value': i.value,
-      });
+      servicesList ??= [];
+
+      // ✅ FIX: Doctors can only have ONE specialty
+      if (Util.isDoctor()) {
+        if (event.isRemove == true) {
+          selectedSpecialty = null;
+        } else {
+          // Convert ServicesModel to SpecialtyEntity
+          selectedSpecialty = SpecialtyEntity(
+            id: event.item.id,
+            title: event.item.value ?? '',
+          );
+        }
+
+        final result = await updateDoctorOptionsUseCase(options: {
+          if (selectedSpecialty != null)
+            'specialties_id': selectedSpecialty!.id,
+        });
+
+        result.fold(
+          (failure) {
+            if (!emit.isDone) emit(const ProfileFailedState());
+          },
+          (success) {
+            if (!emit.isDone) emit(const ProfileSuccessState());
+          },
+        );
+      } else {
+        // Nurses/Assistants: keep existing multi-select logic
+        int indexI =
+            servicesList!.indexWhere((element) => element.id == event.item.id);
+        if (event.isRemove == true) {
+          if (indexI == -1) return;
+          servicesList!.removeAt(indexI);
+        } else {
+          if (indexI != -1) {
+            servicesList![indexI] = event.item;
+          } else {
+            servicesList!.add(event.item);
+          }
+        }
+
+        final result = await updateNurseOptionsUseCase(options: {
+          if (servicesList != null)
+            'services':
+                ServiceToApiConverter.convertServicesToPayload(servicesList!),
+        });
+
+        result.fold(
+          (failure) {
+            if (!emit.isDone) emit(const ProfileFailedState());
+          },
+          (success) {
+            if (!emit.isDone) emit(const ProfileSuccessState());
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ modifyCurrentService error: $e');
+      if (!emit.isDone) emit(const ProfileFailedState());
     }
-    return list;
   }
 
   bool isOnline = false;

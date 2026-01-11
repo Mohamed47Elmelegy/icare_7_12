@@ -30,9 +30,22 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
         headers: ApiUrl.headerAuth);
     debugPrint("getUserData: ${response.body}");
     var decodedData = json.decode(response.body);
+
     if (decodedData['success']) {
       var body = json.decode(response.body);
-      return UserServiceModel.fromJson(body['data']['user'][0]);
+      var userData = body['data']['user'][0];
+
+      // ✅ Debug logging للتشخيص
+      debugPrint("🔍 user_type: ${userData['user_type']}");
+      debugPrint("🔍 Has 'nurse' key: ${userData.containsKey('nurse')}");
+      debugPrint("🔍 Has 'doctor' key: ${userData.containsKey('doctor')}");
+
+      if (userData['user_type'] == 'doctor') {
+        debugPrint("🔍 doctor object: ${userData['doctor']}");
+        debugPrint("🔍 specialties_id in root: ${userData['specialties_id']}");
+      }
+
+      return UserServiceModel.fromJson(userData);
     } else {
       throw ServerException();
     }
@@ -205,7 +218,9 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       if (userData['courses'] != null) 'courses': userData['courses'],
       if (userData['emergency_contacts'] != null)
         'emergency_contacts': userData['emergency_contacts'],
-      if (userData['services'] != null) 'specialties': userData['services'],
+      // ✅ FIX: Send single specialty ID (integer) instead of array
+      if (userData['specialties_id'] != null)
+        'specialties_id': userData['specialties_id'],
     };
     var response = await http.post(Uri.parse(ApiUrl.UPDATE_DOCTOR_DATA),
         body: json.encode(data), headers: ApiUrl.headerAuth);
@@ -259,15 +274,6 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
             ServicesModel.listModelFromJson(jsonEncode(decodedData['data']));
         debugPrint(
             "✅ Loaded ${services.length} services${userType != null ? " for $userType" : ""}");
-
-        // Debug: Show first 3 services
-        if (services.isNotEmpty) {
-          debugPrint("📋 First few services:");
-          for (var i = 0; i < services.length && i < 3; i++) {
-            var service = services[i];
-            debugPrint("   ${i + 1}. ${service.value} (ID: ${service.id})");
-          }
-        }
 
         return services;
       } else {

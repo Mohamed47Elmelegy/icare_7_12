@@ -19,11 +19,15 @@ class ServicePriceRowWithModify extends StatelessWidget {
   final int serviceID;
   final String serviceName;
   final String price;
-  const ServicePriceRowWithModify(
-      {super.key,
-      required this.serviceID,
-      required this.price,
-      required this.serviceName});
+  final bool? isSelected; // For doctors: shows if this specialty is selected
+
+  const ServicePriceRowWithModify({
+    super.key,
+    required this.serviceID,
+    required this.price,
+    required this.serviceName,
+    this.isSelected, // Optional: only used for doctors
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +95,16 @@ class ServicePriceRowWithModify extends StatelessWidget {
             }
             return Row(
               children: [
+                // Show checkmark for selected specialty (doctors only)
+                if (isSelected == true)
+                  Padding(
+                    padding: EdgeInsets.only(right: 8.w),
+                    child: Icon(
+                      Icons.check_circle,
+                      size: 20.w,
+                      color: DMUtil.getPC(),
+                    ),
+                  ),
                 if (!Util.isDoctor())
                   CustomText(
                     text: "$price ${translate("icare.le")}",

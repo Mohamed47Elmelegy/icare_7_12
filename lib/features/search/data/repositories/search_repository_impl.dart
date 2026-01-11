@@ -38,6 +38,18 @@ class SearchRepositoryImpl implements SearchRepository {
 
         if (filters.serviceIds != null && filters.serviceIds!.isNotEmpty) {
           result = result.where((entity) {
+            // For doctors, check specialtyId instead of servicesList
+            if (entity.userData?.userType?.toLowerCase() == 'doctor') {
+              if (entity.specialtyId == null) {
+                return false;
+              }
+              // Check if doctor's specialty matches any requested service ID
+              final specialtyIdInt = int.tryParse(entity.specialtyId!);
+              return specialtyIdInt != null &&
+                  filters.serviceIds!.contains(specialtyIdInt);
+            }
+
+            // For nurses/assistants, check servicesList
             if (entity.servicesList == null || entity.servicesList!.isEmpty) {
               return false;
             }

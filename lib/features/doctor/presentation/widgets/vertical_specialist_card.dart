@@ -14,6 +14,7 @@ import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_app_image.dart';
 import 'package:icare/features/shared_widgets/review.dart';
+import 'package:icare/features/shared_widgets/doctor_selected_specialty_display.dart';
 
 class VerticalDoctorSpecialistCard extends StatelessWidget {
   final DoctorEntity doctor;
@@ -71,6 +72,9 @@ class VerticalDoctorSpecialistCard extends StatelessWidget {
                           ),
                           ReviewsWidget(
                               amount: 200, color: DMUtil.getBookButtonColor()),
+
+                          // Display selected specialty using the new widget
+                          DoctorSelectedSpecialtyDisplay(doctor: doctor),
                         ],
                       ),
                     ),

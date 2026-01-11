@@ -77,6 +77,14 @@ class RequestButton extends StatelessWidget {
                         DMUtil.getPC());
                   }
 
+                  if (bookingBloc
+                      .hasActiveBookingWithProvider(bloc.currentDoctor!.id)) {
+                    return SnackBarBuilder.showFeedBackMessage(
+                        context,
+                        translate("icare.ongoing_booking_exists_generic"),
+                        DMUtil.getRED());
+                  }
+
                   final res = await Util.pushPage(
                       MapScreen(
                           isSet: true,

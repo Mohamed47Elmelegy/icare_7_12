@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
+import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
 
 class SpecialtyModel {
   final int id;
@@ -32,6 +33,16 @@ class SpecialtyModel {
     return SpecialtyModel(
       id: jsonObject['id'],
       title: t,
+    );
+  }
+}
+
+/// Extension for mapping SpecialtyModel to SpecialtyEntity
+extension SpecialtyModelMapper on SpecialtyModel {
+  SpecialtyEntity toEntity() {
+    return SpecialtyEntity(
+      id: id,
+      title: title,
     );
   }
 }

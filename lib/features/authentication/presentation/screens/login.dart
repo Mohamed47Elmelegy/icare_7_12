@@ -22,6 +22,7 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
+
 class LoginScreen extends StatelessWidget {
   final bool fromRegistration;
   const LoginScreen({super.key, this.fromRegistration = false});
@@ -38,11 +39,22 @@ class LoginScreen extends StatelessWidget {
         body: BlocListener<AuthBloc, AuthState>(
           listenWhen: (context, state) =>
               state is LogInSuccessfullyState || state is LogInFailedState,
-          listener: (ctx, state) {
+          listener: (ctx, state) async {
             var bloc = AuthBloc.get(ctx);
             if (state is LogInSuccessfullyState &&
                 state.response.isSuccess == true) {
               passTextEditingController.text = "";
+
+              // ✅ Check verification status for professionals BEFORE allowing access
+              bool isVerified = await Util.checkUserVerificationStatus(context);
+              if (!isVerified) {
+                // User is pending approval, show message and stay on login
+                SnackBarBuilder.showFeedBackMessage(context,
+                    translate("toast.account_not_approved"), Colors.orange);
+                return; // Don't proceed to home
+              }
+
+              // User is verified, proceed normally
               Util.getAllUserAppData(context: context);
               // Use custom login success message
               SnackBarBuilder.showFeedBackMessage(

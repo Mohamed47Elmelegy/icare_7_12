@@ -159,7 +159,8 @@
 		"education": "Education",
 		"languages": "Languages",
 		"subscribe_plans": "Subscribe plans",
-		"subscribe": "subscribe"
+		"subscribe": "subscribe",
+		"specialities": "Specialities"
 	},
 	"booking": {
 		"edit_patient_profile": "Edit Patient Profile",

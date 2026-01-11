@@ -59,12 +59,12 @@ class NotificationsUtils {
         // إذا لم يكن هناك notification payload، أنشئ واحد من البيانات
         debugPrint("📨 Received message without notification payload");
         debugPrint("📨 Data: ${event.data}");
-        
+
         // عرض إشعار محلي باستخدام البيانات المتوفرة
         if (event.data.isNotEmpty) {
           String title = event.data['senderName'] ?? 'رسالة جديدة';
           String body = event.data['msg'] ?? event.data['message'] ?? '';
-          
+
           SetNotification.showNotification(title: title, msg: body);
         }
       }
@@ -99,7 +99,7 @@ class NotificationsUtils {
         AccountBloc.get(context).add(const FetchAllNotificationsEvent());
       }
 
-       // ✨ معالجة إشعارات الدردشة
+      // ✨ معالجة إشعارات الدردشة
       if (event.data['type'] == 'chat' ||
           event.notification!.body!.contains("رسالة") ||
           event.notification!.title!.contains("رسالة")) {

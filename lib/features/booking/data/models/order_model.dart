@@ -62,7 +62,17 @@ class OrderModel extends Booking {
           ? 'male'
           : 'female',
       nurseName: jsonObject['nurse_name'] ?? "",
-      nurseID: int.parse((jsonObject['nurse_id'] ?? "0").toString()),
+      nurseID: () {
+        int nId = int.tryParse((jsonObject['nurse_id'] ?? "0").toString()) ?? 0;
+        if (nId != 0) return nId;
+
+        // Fallback to doctor_id
+        var dIdVal = jsonObject['doctor_id'];
+        if (dIdVal != null && dIdVal.toString().trim().isNotEmpty) {
+          return int.tryParse(dIdVal.toString()) ?? 0;
+        }
+        return 0;
+      }(),
       totalPrice:
           double.tryParse((jsonObject['total_price'] ?? "0.0").toString()) ??
               0.0,

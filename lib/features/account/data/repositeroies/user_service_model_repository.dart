@@ -7,6 +7,7 @@ import 'package:icare/features/account/domain/repositories/user_service_reposito
 import 'package:icare/features/authentication/data/models/auth_response.dart';
 import 'package:icare/features/authentication/data/models/user_service_model.dart';
 import 'package:icare/features/authentication/domain/entities/user_entity.dart';
+import 'package:icare/features/categories/data/models/services.dart';
 
 class UserServiceModelRepository implements UserServiceRepository {
   final UserServiceRemoteDataSource userServiceRemoteDataSource;
@@ -92,6 +93,54 @@ class UserServiceModelRepository implements UserServiceRepository {
       try {
         return Right(await userServiceRemoteDataSource.fetchUserFullData(
             userId: userId));
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateNurseOptions(
+      Map<String, dynamic> options) async {
+    if (await networkInfo.isConnected()) {
+      try {
+        await UserServiceRemoteDataSource.updateNurseOptionsValue(
+            userData: options);
+        return const Right(true);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateDoctorOptions(
+      Map<String, dynamic> options) async {
+    if (await networkInfo.isConnected()) {
+      try {
+        await UserServiceRemoteDataSource.updateDoctorOptionsValue(
+            userData: options);
+        return const Right(true);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ServicesModel>>> getServices(
+      {String? userType}) async {
+    if (await networkInfo.isConnected()) {
+      try {
+        final services = await UserServiceRemoteDataSource.getAllServicesList(
+            userType: userType);
+        return Right(services);
       } on ServerException {
         return Left(ServerFailure());
       }

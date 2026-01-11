@@ -1,4 +1,7 @@
 import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/get_services_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/update_doctor_options_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/update_nurse_options_usecase.dart';
 import 'package:icare/features/authentication/domain/use_cases/social_login_user_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/send_request_usecase.dart';
 import 'package:icare/features/categories/data/data_sources/category_remote_data_source.dart';
@@ -34,6 +37,7 @@ import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
 import 'package:icare/features/setting/data/repositories/settings_mode_repository.dart';
 import 'package:icare/features/setting/domain/repositories/settings_repository.dart';
+import 'package:icare/features/setting/domain/use_cases/get_specialties_usecase.dart';
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;

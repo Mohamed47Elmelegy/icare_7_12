@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
+import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
 
 @immutable
 abstract class AccountEvent {
@@ -111,7 +112,7 @@ class UpdateDoctorDataEvent extends AccountEvent {
   final List<String>? coursesList;
   final List<String>? languageList;
   final List<String>? emergencyContactsList;
-  final List<ServicesModel>? servicesList;
+  final SpecialtyEntity? selectedSpecialty; // ✅ CHANGED: was servicesList
   const UpdateDoctorDataEvent(
       {this.doctor,
       this.license,
@@ -124,7 +125,7 @@ class UpdateDoctorDataEvent extends AccountEvent {
       this.coursesList,
       this.publicationsList,
       this.languageList,
-      this.servicesList,
+      this.selectedSpecialty, // ✅ CHANGED
       this.emergencyContactsList});
 }
 

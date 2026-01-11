@@ -40,18 +40,31 @@ class ServiceSelector extends StatelessWidget {
             var accountBloc = AccountBloc.get(context);
             var searchBloc = SearchBloc.get(context);
 
-            // Services are already filtered by user_type from the API
-            var servicesList = accountBloc.allServiceList;
+            // Get the appropriate list based on provider type
+            List<ServicesModel> servicesList;
+
+            if (searchBloc.selectedProviderType == 'doctor') {
+              // For doctors, convert specialties to ServicesModel format
+              servicesList = accountBloc.allSpecialtiesList.map((specialty) {
+                return ServicesModel(
+                  id: specialty.id,
+                  value: specialty.title,
+                  name: specialty.title,
+                  userType: 'doctor',
+                );
+              }).toList();
+            } else {
+              // For nurses and assistants, use services list
+              servicesList = accountBloc.allServiceList;
+            }
 
             // If no services, return empty widget (user must select provider type first)
             // But if loading, maybe show indicator? For now, keep as is.
-            if (accountBloc.allServiceList.isEmpty &&
-                accountState is! ProfileLoadingState) {
+            if (servicesList.isEmpty && accountState is! ProfileLoadingState) {
               return const SizedBox.shrink();
             }
 
-            if (accountState is ProfileLoadingState &&
-                accountBloc.allServiceList.isEmpty) {
+            if (accountState is ProfileLoadingState && servicesList.isEmpty) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 child: Center(

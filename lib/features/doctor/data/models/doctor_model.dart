@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/features/authentication/data/models/user_service_model.dart';
-import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/categories/domain/entities/categories_entity.dart';
 import 'package:icare/features/nurse/data/models/review_model.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
@@ -20,7 +19,6 @@ class DoctorModel extends DoctorEntity {
     required super.educationList,
     required super.publicationsList,
     required super.coursesList,
-    required super.servicesList,
     super.distanceKM,
     super.distanceM,
     super.specialtyId,
@@ -61,11 +59,6 @@ class DoctorModel extends DoctorEntity {
 
   static DoctorModel fromJson(Map<String, dynamic> json) {
     try {
-      List<ServicesModel> list =
-          json['services'] == null || json['services'].toString() == ""
-              ? []
-              : ServicesModel.listModelFromJson(json['services']);
-
       var doctor = DoctorModel(
         id: json['id'],
         userData: json['user'] == null
@@ -100,7 +93,6 @@ class DoctorModel extends DoctorEntity {
                 json['courses'].toString() == 'null'
             ? []
             : _parseListField(json['courses']),
-        servicesList: list,
         distanceKM: double.tryParse(json['distanceKm']?.toString() ?? "-1"),
         distanceM: double.tryParse(json['distanceMe']?.toString() ?? "-1"),
         specialtyId: json['specialties_id']?.toString(),
@@ -119,10 +111,6 @@ class DoctorModel extends DoctorEntity {
   }
 
   static DoctorModel fromJsonUser(Map<String, dynamic> json) {
-    List<ServicesModel> list =
-        json['services'] == null || json['services'].toString() == ""
-            ? []
-            : ServicesModel.listModelFromJson(json['services']);
     return DoctorModel(
       id: json['id'],
       doctorId: "${ApiUrl.STORAGE_URL}${json['identification_card']}",
@@ -147,7 +135,6 @@ class DoctorModel extends DoctorEntity {
       coursesList: json['courses'] == null || json['courses'] == ''
           ? []
           : _parseListField(json['courses']),
-      servicesList: list,
       distanceKM: double.tryParse(json['distanceKm'] ?? "-1"),
       distanceM: double.tryParse(json['distanceMe'] ?? "-1"),
       specialtyId: json['specialties_id']?.toString(),

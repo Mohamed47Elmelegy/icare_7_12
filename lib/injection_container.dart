@@ -35,7 +35,11 @@ Future<void> init() async {
       getAllUsersUseCase: sl(),
       updateProfileStatusUseCase: sl(),
       createMedicalReportUseCase: sl(),
-      getPatientMedicalReportsUseCase: sl()));
+      getPatientMedicalReportsUseCase: sl(),
+      updateNurseOptionsUseCase: sl(),
+      updateDoctorOptionsUseCase: sl(),
+      getServicesUseCase: sl(),
+      getSpecialtiesUseCase: sl()));
   sl.registerLazySingleton(
       () => GetAllUsersUseCase(userServiceRepository: sl()));
   sl.registerLazySingleton(
@@ -51,6 +55,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateMedicalReportUseCase(repository: sl()));
   sl.registerLazySingleton(
       () => GetPatientMedicalReportsUseCase(repository: sl()));
+  sl.registerLazySingleton(() => UpdateNurseOptionsUseCase(repository: sl()));
+  sl.registerLazySingleton(() => UpdateDoctorOptionsUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetServicesUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetSpecialtiesUseCase(repository: sl()));
 
   sl.registerLazySingleton<UserServiceRepository>(() =>
       UserServiceModelRepository(
