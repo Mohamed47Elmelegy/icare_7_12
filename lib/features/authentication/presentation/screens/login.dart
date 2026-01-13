@@ -22,7 +22,6 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-
 class LoginScreen extends StatelessWidget {
   final bool fromRegistration;
   const LoginScreen({super.key, this.fromRegistration = false});

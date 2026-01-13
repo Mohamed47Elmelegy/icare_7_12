@@ -612,7 +612,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           // Convert ServicesModel to SpecialtyEntity
           selectedSpecialty = SpecialtyEntity(
             id: event.item.id,
-            title: event.item.value ?? '',
+            title: event.item.value,
           );
         }
 

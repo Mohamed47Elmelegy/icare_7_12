@@ -15,7 +15,7 @@ import 'package:icare/features/booking/data/models/order_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icare/core/strings/enum/order_enum.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
+import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/account/data/data_sources/account_data_source.dart';
@@ -23,10 +23,11 @@ import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/screens/patient_profile.dart';
 import 'package:icare/features/account/presentation/widgets/save_patient_vitals_btn.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
+import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 
 class BookingRowActions extends StatelessWidget {
   final Booking item;
-  final NurseEntity orderNurse;
+  final SearchableEntity orderNurse;
   const BookingRowActions({
     super.key,
     required this.item,
@@ -110,7 +111,79 @@ class BookingRowActions extends StatelessWidget {
           );
         }
 
-        // For nurses
+        // For nurses and doctors - check booking status
+        final bookingStatus =
+            OrderModel.getStatusViewCheck(item.status.toString());
+
+        // PENDING status - show accept/reject buttons
+        if (bookingStatus == ORDER_STATUS.PENDING) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Accept button
+              Expanded(
+                child: CustomButton(
+                  height: 20.h,
+                  width: double.infinity,
+                  color: Colors.green.shade50,
+                  circular: 16,
+                  widget: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: CustomText(
+                      text: translate("notification.accept"),
+                      fontSize: AppStyle.verySmall.sp,
+                      color: Colors.green,
+                      fontWeight: FontWeight.w600,
+                      maxLine: 1,
+                    ),
+                  ),
+                  onPressed: () {
+                    final bloc = context.read<BookingBloc>();
+                    bloc.acceptOrder(item);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(translate("notification.order_accepted")),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 6.w),
+              // Reject button
+              Expanded(
+                child: CustomButton(
+                  height: 20.h,
+                  width: double.infinity,
+                  color: Colors.red.shade50,
+                  circular: 16,
+                  widget: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: CustomText(
+                      text: translate("notification.reject"),
+                      fontSize: AppStyle.verySmall.sp,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                      maxLine: 1,
+                    ),
+                  ),
+                  onPressed: () {
+                    final bloc = context.read<BookingBloc>();
+                    bloc.refuseOrder(item);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(translate("notification.order_refused")),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        }
+
+        // ONGOING status - show call, chat, and complete buttons
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -422,10 +495,8 @@ class BookingRowActions extends StatelessWidget {
             floatingActionButton: SavePatientVitalsAndCompleteBookingBtn(
               booking: item,
               vitalsKey: vitalsKey,
-              healthcareProviderId:
-                  (orderNurse.userData?.userId ?? orderNurse.userId)
-                          ?.toString() ??
-                      '', // Pass the nurse/doctor user ID with fallback
+              healthcareProviderId: orderNurse.userData?.userId?.toString() ??
+                  '', // Pass the nurse/doctor user ID
               nurseLocation: nurseLocation, // Pass nurse location
               onCompleted: () async {
                 await _afterEditPatient(context, accountBloc, orderNurse,
@@ -451,8 +522,8 @@ class BookingRowActions extends StatelessWidget {
         context);
   }
 
-  _afterEditPatient(
-      BuildContext context, AccountBloc accountBloc, NurseEntity orderNurse,
+  _afterEditPatient(BuildContext context, AccountBloc accountBloc,
+      SearchableEntity orderNurse,
       {bool pop = false}) async {
     await accountBloc.switchCurrentUserWithPatientProfile(
         orderNurse.userData!.userId.toString(), 'nurse');

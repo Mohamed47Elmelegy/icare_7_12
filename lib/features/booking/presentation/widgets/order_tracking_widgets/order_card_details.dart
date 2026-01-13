@@ -12,6 +12,8 @@ import 'package:icare/features/booking/presentation/screens/booking_details.dart
 import 'package:icare/features/booking/presentation/widgets/booking_row_actions.dart';
 import 'package:icare/features/booking/presentation/widgets/order_tracking_widgets/info_row_widget.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
+import 'package:icare/features/search/domain/entities/searchable_entity.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/locations/presentation/screens/set_and_get_coordinates.dart';
@@ -35,10 +37,27 @@ class OrderCardDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var list = NurseBloc.get(context).nursesList;
-    int index = list.indexWhere((element) => item.nurseID == element.id);
-    if (index == -1 || item.userId == null) return const SizedBox.shrink();
-    var orderNurse = list[index];
+    // Try to find nurse first
+    var nurseList = NurseBloc.get(context).nursesList;
+    int nurseIndex =
+        nurseList.indexWhere((element) => item.nurseID == element.id);
+
+    // If not found in nurses, try doctors
+    SearchableEntity? orderProvider;
+    if (nurseIndex != -1) {
+      orderProvider = nurseList[nurseIndex];
+    } else {
+      var doctorList = DoctorBloc.get(context).doctorsList;
+      int doctorIndex =
+          doctorList.indexWhere((element) => item.nurseID == element.id);
+      if (doctorIndex != -1) {
+        orderProvider = doctorList[doctorIndex];
+      }
+    }
+
+    if (orderProvider == null || item.userId == null) {
+      return const SizedBox.shrink();
+    }
 
     return InkWell(
       onTap: () => Util.pushPage(BookingDetailsScreen(item: item), context),
@@ -71,10 +90,10 @@ class OrderCardDetails extends StatelessWidget {
             builder: (context, state) {
               String userImage = "";
               if (Util.isCustomer()) {
-                // If Customer, show Nurse Image
-                userImage = orderNurse.userData?.image ?? "";
+                // If Customer, show Provider (Nurse/Doctor) Image
+                userImage = orderProvider?.userData?.image ?? "";
               } else {
-                // If Nurse, show Patient Image (from API/Cubit or item)
+                // If Nurse/Doctor, show Patient Image (from API/Cubit or item)
                 UserServiceModel? patientData;
                 if (state is BookingNurseLoaded) {
                   patientData = state.patientData;
@@ -150,7 +169,8 @@ class OrderCardDetails extends StatelessWidget {
                                 Expanded(
                                   child: InfoRowWidget(
                                     label: translate("order.gender"),
-                                    value: (orderNurse.userData?.isWomen == true
+                                    value: (orderProvider?.userData?.isWomen ==
+                                            true
                                         ? translate("profile.female")
                                         : translate("profile.male")),
                                   ),
@@ -165,7 +185,7 @@ class OrderCardDetails extends StatelessWidget {
                                       children: [
                                         CustomText(
                                           text:
-                                              "${orderNurse.distanceKM?.toStringAsFixed(1) ?? '0'} Km",
+                                              "${orderProvider?.distanceKM?.toStringAsFixed(1) ?? '0'} Km",
                                           color: DMUtil.getD2C(),
                                           fontSize: AppStyle.verySmall.sp,
                                         ),
@@ -183,21 +203,24 @@ class OrderCardDetails extends StatelessWidget {
                               InkWell(
                                 onTap: () async {
                                   try {
-                                    final trackingNurse =
+                                    final trackingProvider =
                                         await UserServiceRemoteDataSource
-                                            .getUserFullData(
-                                      orderNurse.userData!.userId.toString(),
-                                    );
+                                            .getUserFullData((orderProvider!
+                                                        .userData!.userId ??
+                                                    0)
+                                                .toString());
                                     Util.pushPage(
                                       MapScreen(
                                         isSet: true,
-                                        title:
-                                            trackingNurse.userName.toString(),
-                                        latitude: trackingNurse.lat.toString(),
+                                        title: trackingProvider.userName
+                                            .toString(),
+                                        latitude:
+                                            trackingProvider.lat.toString(),
                                         longitude:
-                                            trackingNurse.long.toString(),
-                                        userID: trackingNurse.userId.toString(),
-                                        userImg: trackingNurse.image,
+                                            trackingProvider.long.toString(),
+                                        userID:
+                                            trackingProvider.userId.toString(),
+                                        userImg: trackingProvider.image,
                                       ),
                                       context,
                                     );
@@ -235,7 +258,7 @@ class OrderCardDetails extends StatelessWidget {
                   SizedBox(height: 16.h),
 
                   // Actions
-                  BookingRowActions(item: item, orderNurse: orderNurse),
+                  BookingRowActions(item: item, orderNurse: orderProvider!),
                 ],
               );
             },
