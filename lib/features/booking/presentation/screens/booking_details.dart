@@ -12,6 +12,7 @@ import '../../../shared_widgets/custom_text.dart';
 import '../../../shared_widgets/global_widgets.dart';
 import '../../domain/entities/order.dart';
 import '../bloc/booking_nurse/booking_nurse_cubit.dart';
+import '../views/booking_doctor_view.dart';
 
 class BookingDetailsScreen extends StatelessWidget {
   final Booking item;
@@ -26,6 +27,7 @@ class BookingDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isPatient = Util.isCustomer();
+    final bool isDoctor = Util.isDoctor();
 
     return Scaffold(
       backgroundColor: DMUtil.getWC(),
@@ -46,7 +48,7 @@ class BookingDetailsScreen extends StatelessWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Only allow refresh for nurses viewing patient details
+          // Allow refresh for nurses and doctors viewing patient details
           if (!isPatient) {
             final cubit = di.sl<BookingNurseCubit>();
             await cubit.getPatientDetails(
@@ -59,7 +61,9 @@ class BookingDetailsScreen extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           child: isPatient
               ? BookingPatientView(item: item)
-              : BookingNurseView(item: item),
+              : isDoctor
+                  ? BookingDoctorView(item: item)
+                  : BookingNurseView(item: item),
         ),
       ),
     );

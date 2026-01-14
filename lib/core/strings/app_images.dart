@@ -5,14 +5,15 @@ class AppImages {
   static const String drawer = "$icons/menu.svg";
 
   static const String logoGif = "$icons/icare Logo Gift.gif";
-  static const String logo = "$icons/logo.png";
+  static const String logo = "$icons/launcherIcon.png";
   static const String logoSvg = "$icons/logo.svg";
-  static const String whiteLogo = "$icons/whiteLogo.png";
+  static const String whiteLogo = "$icons/whitelauncherIcon.png";
   static const String logoWhite = "$icons/logo_white.svg";
-  static const String logoWithoutBackGround = "$icons/logo.png";
+  static const String logoWithoutBackGround = "$icons/launcherIcon.png";
   static const String splashImage = "$images/splash.png";
   static const String splashGif = "$images/splash-animated.gif";
   static const String loadingGif = "$images/loading.gif";
+  static const String launcherIcon = "$icons/launcherIcon.png";
 
   //welcome
   static const welcomeFirst = "$images/page_item_one.svg";

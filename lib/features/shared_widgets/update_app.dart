@@ -50,7 +50,7 @@ class _UpdateAppScreenState extends State<UpdateAppScreen> {
                   child: Column(
                     children: [
                       Image.asset(
-                        "assets/icons/logo.png",
+                        "assets/icons/launcherIcon.png",
                         width: 200,
                         fit: BoxFit.contain,
                         height: 150,

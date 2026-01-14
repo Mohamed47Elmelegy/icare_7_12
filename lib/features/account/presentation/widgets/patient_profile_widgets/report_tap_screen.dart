@@ -326,23 +326,4 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
       ],
     );
   }
-
-  Widget _buildVitalInfo(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          text: label,
-          fontSize: AppStyle.small.sp - 2,
-          color: DMUtil.getD2C(),
-        ),
-        CustomText(
-          text: value,
-          fontSize: AppStyle.small.sp,
-          fontWeight: FontWeight.w500,
-          color: DMUtil.getDC(),
-        ),
-      ],
-    );
-  }
 }
