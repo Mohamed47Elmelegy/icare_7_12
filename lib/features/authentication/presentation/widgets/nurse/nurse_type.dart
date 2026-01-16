@@ -67,27 +67,27 @@ class NurseType extends StatelessWidget {
             ),
 
             // Second row: Doctor
-            SizedBox(height: 10.h),
-            InkWell(
-              onTap: () => bloc.add(
-                  const SwitchNurseTypeEvent(isNurse: false, isDoctor: true)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SelectedCircle(
-                    selected: bloc.isDoctor,
-                    selectedColor: selectedColor,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  CustomText(
-                    text: translate("doctor.doctor"),
-                    fontSize: AppStyle.small.sp,
-                  ),
-                ],
-              ),
-            ),
+            // SizedBox(height: 10.h),
+            // InkWell(
+            //   onTap: () => bloc.add(
+            //       const SwitchNurseTypeEvent(isNurse: false, isDoctor: true)),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       SelectedCircle(
+            //         selected: bloc.isDoctor,
+            //         selectedColor: selectedColor,
+            //       ),
+            //       const SizedBox(
+            //         width: 10,
+            //       ),
+            //       CustomText(
+            //         text: translate("doctor.doctor"),
+            //         fontSize: AppStyle.small.sp,
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         );
       },

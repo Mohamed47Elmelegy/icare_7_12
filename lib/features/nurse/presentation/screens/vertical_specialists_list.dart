@@ -7,7 +7,7 @@ import 'package:icare/features/doctor/presentation/bloc/doctor_event.dart'
     as doctor_event;
 import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart'
     as doctor_bloc;
-import 'package:icare/features/doctor/presentation/widgets/specialists_list.dart';
+// import 'package:icare/features/doctor/presentation/widgets/specialists_list.dart'; // Disabled
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart'
     as nurse_event;
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
@@ -31,15 +31,17 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+        length: 1, vsync: this); // Changed from 2 to 1 (removed doctor tab)
     _tabController.addListener(_handleTabSelection);
 
-    // Load initial data for both tabs
+    // Load initial data for nurse tab only
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NurseBloc.get(context).add(const nurse_event.FetchAllNurseEvent());
-      context
-          .read<doctor_bloc.DoctorBloc>()
-          .add(const doctor_event.FetchAllDoctorEvent(page: 1));
+      // Doctor tab disabled
+      // context
+      //     .read<doctor_bloc.DoctorBloc>()
+      //     .add(const doctor_event.FetchAllDoctorEvent(page: 1));
     });
   }
 
@@ -86,7 +88,7 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
                 indicatorColor: DMUtil.getPC(),
                 tabs: [
                   Tab(text: translate("nurse.nurse")),
-                  Tab(text: translate("doctor.doctor")),
+                  // Tab(text: translate("doctor.doctor")), // Doctor tab disabled
                 ],
               ),
             ),
@@ -100,14 +102,15 @@ class _AllSpecialistsScreenState extends State<AllSpecialistsScreen>
                           .add(const nurse_event.FetchAllNurseEvent()),
                       onSearch: (val) => NurseBloc.get(context)
                           .add(nurse_event.UpdateSearchTxtEvent(txt: val))),
-                  _buildTabBody(context,
-                      child: const VerticalDoctorSpecialistsList(),
-                      onRefresh: () async => context
-                          .read<doctor_bloc.DoctorBloc>()
-                          .add(const doctor_event.FetchAllDoctorEvent(page: 1)),
-                      onSearch: (val) => context
-                          .read<doctor_bloc.DoctorBloc>()
-                          .add(doctor_event.UpdateSearchTxtEvent(txt: val))),
+                  // Doctor tab disabled
+                  // _buildTabBody(context,
+                  //     child: const VerticalDoctorSpecialistsList(),
+                  //     onRefresh: () async => context
+                  //         .read<doctor_bloc.DoctorBloc>()
+                  //         .add(const doctor_event.FetchAllDoctorEvent(page: 1)),
+                  //     onSearch: (val) => context
+                  //         .read<doctor_bloc.DoctorBloc>()
+                  //         .add(doctor_event.UpdateSearchTxtEvent(txt: val))),
                 ],
               ),
             ),
