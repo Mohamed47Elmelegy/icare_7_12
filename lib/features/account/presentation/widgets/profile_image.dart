@@ -23,7 +23,7 @@ class ProfileImage extends StatelessWidget {
         Container(
           width: 100.w,
           height: 23.h,
-          color: kWhite.withOpacity(0.8),
+          color: kWhite.withValues(alpha: 0.8),
           child: CustomText(
             text: translate("profile.edit_photo"),
             fontSize: AppStyle.verySmall.sp + 2,

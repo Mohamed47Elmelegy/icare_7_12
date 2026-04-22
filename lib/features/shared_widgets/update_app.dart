@@ -9,6 +9,8 @@ import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:upgrader/upgrader.dart';
 
+import '../../core/strings/app_images.dart';
+
 class UpdateAppScreen extends StatefulWidget {
   const UpdateAppScreen({super.key});
 
@@ -50,7 +52,7 @@ class _UpdateAppScreenState extends State<UpdateAppScreen> {
                   child: Column(
                     children: [
                       Image.asset(
-                        "assets/icons/launcherIcon.png",
+                        AppImages.logo,
                         width: 200,
                         fit: BoxFit.contain,
                         height: 150,

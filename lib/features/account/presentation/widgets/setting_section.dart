@@ -16,7 +16,6 @@ import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/setting/presentation/widgets/small_widgets.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
-
 class SettingSectionWidget extends StatelessWidget {
   const SettingSectionWidget({super.key});
 
@@ -33,7 +32,7 @@ class SettingSectionWidget extends StatelessWidget {
               EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
           child: CustomText(
             text: translate("activity_setting.app_bar"),
-            color: DMUtil.getD2C().withOpacity(0.6),
+            color: DMUtil.getD2C().withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
             fontSize: AppStyle.average.sp,
           ),
@@ -136,7 +135,7 @@ class SettingSectionWidget extends StatelessWidget {
               EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
           child: CustomText(
             text: translate("drawer.help_center"),
-            color: DMUtil.getD2C().withOpacity(0.6),
+            color: DMUtil.getD2C().withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
             fontSize: AppStyle.average.sp,
           ),

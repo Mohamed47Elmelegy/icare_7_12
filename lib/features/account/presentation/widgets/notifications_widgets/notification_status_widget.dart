@@ -22,7 +22,7 @@ class NotificationStatusWidget extends StatelessWidget {
       margin: EdgeInsets.only(top: 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(.1),
+        color: color.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Center(

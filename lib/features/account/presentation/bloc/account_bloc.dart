@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:icare/core/network/token_storage_helper.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/update_nurse_options_usecase.dart';
@@ -12,6 +13,7 @@ import 'package:icare/features/setting/domain/entities/notifications_entity.dart
 import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
 import 'package:icare/features/setting/domain/use_cases/get_specialties_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/delete_account_usecase.dart';
 import 'package:icare/features/account/domain/entities/medical_report_entity.dart';
 import 'package:icare/features/account/domain/usecases/create_medical_report_usecase.dart';
 import 'package:icare/features/account/domain/usecases/get_patient_medical_reports_usecase.dart';
@@ -44,6 +46,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   UpdateDoctorOptionsUseCase updateDoctorOptionsUseCase;
   GetServicesUseCase getServicesUseCase;
   GetSpecialtiesUseCase getSpecialtiesUseCase;
+  DeleteAccountUseCase deleteAccountUseCase;
 
   AccountBloc({
     required this.getUserServiceUseCase,
@@ -58,6 +61,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     required this.updateDoctorOptionsUseCase,
     required this.getServicesUseCase,
     required this.getSpecialtiesUseCase,
+    required this.deleteAccountUseCase,
   }) : super(AccountInitialState()) {
     on<UpdateProfileEvent>((event, emit) async {
       await updateProfile(event, emit);
@@ -135,6 +139,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
     on<FetchPatientMedicalReportsEvent>((event, emit) async {
       await fetchPatientMedicalReports(event, emit);
+    });
+
+    on<DeleteAccountEvent>((event, emit) async {
+      await deleteAccount(event, emit);
     });
   }
 
@@ -421,19 +429,19 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   saveUserDate(AuthResponse res) async {
     if (res.user == null) return;
-    if (res.user!.userId == null) {
+    if (res.user!.userId != null) {
       await SharedPref()
           .setPreferencesString(Constants.userId, res.user!.userId.toString());
     }
-    if (res.user!.email == null && res.user!.email != "") {
+    if (res.user!.email != null && res.user!.email != "") {
       await SharedPref()
           .setPreferencesString(Constants.email, res.user!.email.toString());
     }
-    if (res.user!.phoneNumber == null && res.user!.phoneNumber != "") {
+    if (res.user!.phoneNumber != null && res.user!.phoneNumber != "") {
       await SharedPref().setPreferencesString(
           Constants.mobile, res.user!.phoneNumber.toString());
     }
-    if (res.user!.userName == null && res.user!.userName != "") {
+    if (res.user!.userName != null && res.user!.userName != "") {
       await SharedPref()
           .setPreferencesString(Constants.name, res.user!.userName.toString());
     }
@@ -742,6 +750,38 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } catch (e) {
       debugPrint("❌ Fetch Medical Reports Error: $e");
       emit(MedicalReportErrorState(error: e.toString()));
+    }
+  }
+
+  /// Delete Account Logic
+  deleteAccount(DeleteAccountEvent event, emit) async {
+    emit(const DeleteAccountLoadingState());
+    try {
+      final result = await deleteAccountUseCase.call(event.userId);
+
+      await result.fold((failure) async {
+        emit(DeleteAccountFailedState(message: failure.toString()));
+      }, (message) async {
+        // Clearing all local data: SharedPreferences + SecureStorage token
+        await TokenStorageHelper.deleteToken();
+        await SharedPref().removePreference(Constants.userId);
+        await SharedPref().removePreference(Constants.apiToken);
+        await SharedPref().removePreference(Constants.userType);
+        await SharedPref().removePreference(Constants.email);
+        await SharedPref().removePreference(Constants.name);
+        await SharedPref().removePreference(Constants.mobile);
+        await SharedPref().removePreference(Constants.city);
+        await SharedPref().removePreference(Constants.address);
+        await SharedPref().removePreference(Constants.userLatitude);
+        await SharedPref().removePreference(Constants.userLongitude);
+        await SharedPref().removePreference(Constants.token); // FCM token
+
+        currentUser = null;
+        emit(DeleteAccountSuccessState(message: message));
+      });
+    } catch (e) {
+      debugPrint("❌ Delete Account Error: $e");
+      emit(DeleteAccountFailedState(message: e.toString()));
     }
   }
 }

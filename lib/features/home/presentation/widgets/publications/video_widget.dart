@@ -199,7 +199,7 @@ class _VideoWidgetState extends State<VideoWidget> {
                     // Play Button Overlay
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Center(
@@ -207,11 +207,11 @@ class _VideoWidgetState extends State<VideoWidget> {
                           width: 70.w,
                           height: 70.w,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(16.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 10,
                                 spreadRadius: 2,
                               ),

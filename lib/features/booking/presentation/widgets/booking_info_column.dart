@@ -24,7 +24,7 @@ class BookingInfoColumn extends StatelessWidget {
       children: [
         CustomText(
           text: label,
-          color: DMUtil.getD2C().withOpacity(0.5),
+          color: DMUtil.getD2C().withValues(alpha: 0.5),
           fontSize: AppStyle.verySmall.sp,
         ),
         SizedBox(height: 4.h),

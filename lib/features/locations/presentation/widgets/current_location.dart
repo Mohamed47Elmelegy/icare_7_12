@@ -65,7 +65,7 @@ class CurrentLocationDetails extends StatelessWidget {
                               ? " ${bloc.currentCheckOutLocation?.address1} ${bloc.currentCheckOutLocation?.address2}"
                               : translate("toast.select_location"),
                           fontSize: AppStyle.small.sp,
-                          color: DMUtil.getPC2().withOpacity(0.9),
+                          color: DMUtil.getPC2().withValues(alpha: 0.9),
                           isEllipsis: true,
                         ),
                       ),

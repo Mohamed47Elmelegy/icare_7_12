@@ -21,7 +21,7 @@ class BookingDescription extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -39,7 +39,7 @@ class BookingDescription extends StatelessWidget {
           SizedBox(height: 8.h),
           CustomText(
             text: desc.trim(),
-            color: DMUtil.getD2C().withOpacity(0.8),
+            color: DMUtil.getD2C().withValues(alpha: 0.8),
             fontSize: AppStyle.small.sp,
             maxLine: 10,
           ),

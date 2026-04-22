@@ -77,7 +77,7 @@ class DMUtil {
   }
 
   static Color getREdOPACITY() {
-    return kRed.withOpacity(0.4);
+    return kRed.withValues(alpha: 0.4);
   }
 
   /// get categories background color

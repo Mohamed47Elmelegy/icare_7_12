@@ -197,13 +197,14 @@ class ServiceSelector extends StatelessWidget {
                                     horizontal: 12.w, vertical: 10.h),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? DMUtil.getPC().withOpacity(0.1)
+                                      ? DMUtil.getPC().withValues(alpha: 0.1)
                                       : Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color: isSelected
                                         ? DMUtil.getPC()
-                                        : DMUtil.getD2C().withOpacity(0.3),
+                                        : DMUtil.getD2C()
+                                            .withValues(alpha: 0.3),
                                     width: isSelected ? 1.5 : 1,
                                   ),
                                 ),

@@ -28,7 +28,7 @@ class RateNurseBottomSheet extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         children: [
           Container(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 400.w,
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),

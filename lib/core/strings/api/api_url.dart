@@ -6,9 +6,10 @@ import 'package:icare/core/utils/small_fun.dart';
 class ApiUrl {
   static Map<String, String> get headerAuth {
     String token = Util.getToken();
-    print("🔑 ACCESS TOKEN: $token");
+ //   print("🔑 ACCESS TOKEN: $token");
     return {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       if (Util.checkUser()) 'ID': Util.getUserID(),
       'lat': Util.getLatitude().toString(),
       'long': Util.getLongitude().toString(),
@@ -26,7 +27,7 @@ class ApiUrl {
   // static const String BASE_URL = 'http://10.0.2.2:8000/api/';
 
   //new subdomain
-  static const String MAIN_DOMAIN = 'https://admin.i-care.one';
+  static const String MAIN_DOMAIN = 'https://app.alf-salama.com';
 
   static const String BASE_URL = '$MAIN_DOMAIN/api/v1/';
   static const String STORAGE_URL = '$MAIN_DOMAIN/public/';
@@ -36,6 +37,7 @@ class ApiUrl {
   static const String LOGIN_URL = '${BASE_URL}auth/login';
   static const String SOCIAL_AUTH_URL = '${BASE_URL}auth/social';
   static const String SEND_OTP = '${BASE_URL}send-otp';
+  static const String DELETE_ACCOUNT = '${BASE_URL}user/delete';
 
   //user data
   static const String USER_PROFILE_DATA = '${BASE_URL}user/info';

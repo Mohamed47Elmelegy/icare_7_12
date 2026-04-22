@@ -83,7 +83,7 @@ class SaveProfileBtn extends StatelessWidget {
                       // ✅ Convert ServicesModel to SpecialtyEntity for Doctor
                       bloc.selectedSpecialty = SpecialtyEntity(
                         id: item.id,
-                        title: item.value ?? '',
+                        title: item.value,
                       );
                       bloc.add(UpdateDoctorDataEvent(
                           selectedSpecialty: bloc.selectedSpecialty));

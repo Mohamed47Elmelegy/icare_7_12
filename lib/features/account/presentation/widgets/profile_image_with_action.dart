@@ -87,7 +87,7 @@ class ProfileImageEdit extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.upload,
-                      color: DMUtil.getDC().withOpacity(0.6),
+                      color: DMUtil.getDC().withValues(alpha: 0.6),
                       size: 17.w,
                     ),
                   ),

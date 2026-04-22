@@ -18,14 +18,14 @@ class CircleDotsWidget extends StatelessWidget {
           border: Border.all(
               width: 1,
               color: isOpacity
-                  ? DMUtil.getRED().withOpacity(0.5)
+                  ? DMUtil.getRED().withValues(alpha: 0.5)
                   : DMUtil.getD2C()),
           borderRadius: const BorderRadius.all(Radius.circular(25)),
         ),
         child: CircleAvatar(
           radius: 18.w,
           backgroundColor: isOpacity && !isEnabled
-              ? DMUtil.getRED().withOpacity(0.5)
+              ? DMUtil.getRED().withValues(alpha: 0.5)
               : (isEnabled ? DMUtil.getRED() : DMUtil.getWC()),
         ));
   }

@@ -12,10 +12,11 @@ class EditIcon extends StatelessWidget {
       padding: const EdgeInsets.all(1),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(width: 1, color: DMUtil.getDC().withOpacity(0.4))),
+          border: Border.all(
+              width: 1, color: DMUtil.getDC().withValues(alpha: 0.4))),
       child: Icon(
         Icons.edit,
-        color: DMUtil.getDC().withOpacity(0.6),
+        color: DMUtil.getDC().withValues(alpha: 0.6),
         size: 17.w,
       ),
     );

@@ -24,7 +24,7 @@ class TrackingLineWidget extends StatelessWidget {
             Container(
               width: 6.w,
               height: 85.h,
-              color: DMUtil.getRED().withOpacity(0.6),
+              color: DMUtil.getRED().withValues(alpha: 0.6),
             ),
             CircleDotsWidget(
                 isEnabled: status == ORDER_STATUS.ONGOING ? true : false,
@@ -33,7 +33,7 @@ class TrackingLineWidget extends StatelessWidget {
             Container(
               width: 6.w,
               height: 85.h,
-              color: DMUtil.getRED().withOpacity(0.6),
+              color: DMUtil.getRED().withValues(alpha: 0.6),
             ),
             CircleDotsWidget(
                 isEnabled: status == ORDER_STATUS.COMPLETED ? true : false,

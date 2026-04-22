@@ -49,7 +49,7 @@ class LocationCardWidget extends StatelessWidget {
                   offset: const Offset(0.05, 0.05),
                   spreadRadius: 2.2,
                   color: currentLocation
-                      ? DMUtil.getRED().withOpacity(0.5)
+                      ? DMUtil.getRED().withValues(alpha: 0.5)
                       : DMUtil.getBackGround(),
                 ),
               if (!currentLocation && DMUtil.currentThemeIsDark())

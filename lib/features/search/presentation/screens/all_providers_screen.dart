@@ -160,10 +160,10 @@ class _AllProvidersScreenState extends State<AllProvidersScreen> {
                           vertical: 12.h,
                         ),
                         decoration: BoxDecoration(
-                          color: DMUtil.getPC().withOpacity(0.1),
+                          color: DMUtil.getPC().withValues(alpha: 0.1),
                           border: Border(
                             bottom: BorderSide(
-                              color: DMUtil.getD2C().withOpacity(0.2),
+                              color: DMUtil.getD2C().withValues(alpha: 0.2),
                               width: 1,
                             ),
                           ),

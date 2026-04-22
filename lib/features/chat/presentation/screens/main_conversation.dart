@@ -131,7 +131,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         borderRadius: BorderRadius.circular(15),
                         color: Colors.white,
                         border: Border.all(
-                            width: 1, color: Colors.grey.withOpacity(0.4))),
+                            width: 1,
+                            color: Colors.grey.withValues(alpha: 0.4))),
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: TextField(
                       controller: messageEditingController,
@@ -140,7 +141,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       decoration: InputDecoration(
                           hintText: translate("app_bar.type_here"),
                           hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors.white.withValues(alpha: 0.6),
                             fontSize: 16,
                           ),
                           border: InputBorder.none),

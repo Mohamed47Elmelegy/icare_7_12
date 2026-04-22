@@ -69,7 +69,7 @@ class OrderCardDetails extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -116,7 +116,7 @@ class OrderCardDetails extends StatelessWidget {
                         height: 60.w,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
-                          color: DMUtil.getPC().withOpacity(0.1),
+                          color: DMUtil.getPC().withValues(alpha: 0.1),
                           image: userImage.isNotEmpty
                               ? DecorationImage(
                                   image: NetworkImage(userImage),
@@ -237,14 +237,15 @@ class OrderCardDetails extends StatelessWidget {
                                       horizontal: 8.w, vertical: 4.h),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color:
-                                            DMUtil.getD2C().withOpacity(0.3)),
+                                        color: DMUtil.getD2C()
+                                            .withValues(alpha: 0.3)),
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
                                   child: CustomText(
                                     text: translate("order.on_map"),
                                     fontSize: AppStyle.verySmall.sp - 1,
-                                    color: DMUtil.getD2C().withOpacity(0.6),
+                                    color:
+                                        DMUtil.getD2C().withValues(alpha: 0.6),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),

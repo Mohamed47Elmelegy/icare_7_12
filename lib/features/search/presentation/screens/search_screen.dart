@@ -97,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   borderRadius: const BorderRadius.all(Radius.circular(12)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -112,7 +112,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
                   // Divider
                   Divider(
-                    color: DMUtil.getD2C().withOpacity(0.2),
+                    color: DMUtil.getD2C().withValues(alpha: 0.2),
                     height: 1,
                   ),
                   SizedBox(height: 10.h),
@@ -121,7 +121,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   // CustomTextFromField(
                   //   hasBorder: true,
                   //   borderWidth: 1,
-                  //   borderColor: DMUtil.getD2C().withOpacity(0.3),
+                  //   borderColor: DMUtil.getD2C().withValues(alpha:0.3),
                   //   labelText: '',
                   //   height: 50,
                   //   hintText: translate("search.select_area"),
@@ -211,7 +211,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   foregroundColor: DMUtil.getWC(),
                                   elevation: 2,
                                   disabledBackgroundColor:
-                                      DMUtil.getPC().withOpacity(0.6),
+                                      DMUtil.getPC().withValues(alpha: 0.6),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),

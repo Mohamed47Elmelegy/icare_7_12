@@ -49,7 +49,8 @@ class VideoPlayerControls extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(VideoPlayerConstants.overlayOpacity),
+              Colors.black
+                  .withValues(alpha: VideoPlayerConstants.overlayOpacity),
               Colors.transparent,
             ],
           ),
@@ -87,12 +88,12 @@ class VideoPlayerControls extends StatelessWidget {
             height: VideoPlayerConstants.playButtonSize.w,
             decoration: BoxDecoration(
               color: Colors.white
-                  .withOpacity(VideoPlayerConstants.playButtonOpacity),
+                  .withValues(alpha: VideoPlayerConstants.playButtonOpacity),
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black
-                      .withOpacity(VideoPlayerConstants.shadowOpacity),
+                      .withValues(alpha: VideoPlayerConstants.shadowOpacity),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -121,7 +122,8 @@ class VideoPlayerControls extends StatelessWidget {
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [
-              Colors.black.withOpacity(VideoPlayerConstants.overlayOpacity),
+              Colors.black
+                  .withValues(alpha: VideoPlayerConstants.overlayOpacity),
               Colors.transparent,
             ],
           ),

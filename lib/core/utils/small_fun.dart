@@ -381,7 +381,7 @@ class Util {
 
   static Future<String> setToken() async {
     var token = await FirebaseMessaging.instance.getToken();
-    SharedPref().setPreferencesString(token.toString(), Constants.token);
+    SharedPref().setPreferencesString(Constants.token, token.toString());
     return token.toString();
   }
 
@@ -577,6 +577,7 @@ class Util {
     } catch (e) {
       debugPrint("makeCall error: $e");
       SnackBarBuilder.showFeedBackMessage(
+        // ignore: use_build_context_synchronously
         context,
         translate("toast.oops"),
         Colors.red,

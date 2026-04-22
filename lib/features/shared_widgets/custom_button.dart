@@ -35,11 +35,14 @@ class CustomButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(circular),
               boxShadow: [
                   BoxShadow(
-                      color: DMUtil.getPC2().withOpacity(0.3), blurRadius: 10),
+                      color: DMUtil.getPC2().withValues(alpha: 0.3),
+                      blurRadius: 10),
                   BoxShadow(
-                      color: DMUtil.getPC2().withOpacity(0.3), blurRadius: 10),
+                      color: DMUtil.getPC2().withValues(alpha: 0.3),
+                      blurRadius: 10),
                   BoxShadow(
-                      color: DMUtil.getPC2().withOpacity(0.3), blurRadius: 10),
+                      color: DMUtil.getPC2().withValues(alpha: 0.3),
+                      blurRadius: 10),
                 ])
           : const BoxDecoration(),
       child: ElevatedButton(

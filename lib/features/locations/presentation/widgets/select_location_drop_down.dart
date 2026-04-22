@@ -63,7 +63,7 @@ class SelectLocations extends StatelessWidget {
                         ),
                         Icon(
                           Icons.location_on_outlined,
-                          color: DMUtil.getD2C().withOpacity(0.7),
+                          color: DMUtil.getD2C().withValues(alpha: 0.7),
                           size: AppStyle.average.w + 1,
                         ),
                         const SizedBox(
@@ -108,7 +108,7 @@ class SelectLocations extends StatelessWidget {
                 //   hint: Row(
                 //     children: [
                 //       const SizedBox(width: 10,),
-                //       Icon(Icons.location_on_outlined,color: DMUtil.getD2C().withOpacity(0.7),size: AppStyle.average.w,),
+                //       Icon(Icons.location_on_outlined,color: DMUtil.getD2C().withValues(alpha:0.7),size: AppStyle.average.w,),
                 //       const SizedBox(width: 5,),
                 //       CustomText(
                 //         text: "${translate("store.deliver_to")} ${bloc.currentCheckOutLocation?.address1}",
@@ -125,7 +125,7 @@ class SelectLocations extends StatelessWidget {
                 //     child: Row(
                 //       children: [
                 //         const SizedBox(width: 10,),
-                //         Icon(Icons.location_on_outlined,color: DMUtil.getD2C().withOpacity(0.7),size: AppStyle.average.w,),
+                //         Icon(Icons.location_on_outlined,color: DMUtil.getD2C().withValues(alpha:0.7),size: AppStyle.average.w,),
                 //         const SizedBox(width: 5,),
                 //         CustomText(
                 //           text: "${translate("store.deliver_to")} ${bloc.currentCheckOutLocation?.address1}",

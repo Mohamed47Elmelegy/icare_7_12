@@ -76,3 +76,17 @@ class MedicalReportErrorState extends AccountState {
   final String error;
   const MedicalReportErrorState({required this.error});
 }
+
+class DeleteAccountLoadingState extends AccountState {
+  const DeleteAccountLoadingState();
+}
+
+class DeleteAccountSuccessState extends AccountState {
+  final String message;
+  const DeleteAccountSuccessState({required this.message});
+}
+
+class DeleteAccountFailedState extends AccountState {
+  final String message;
+  const DeleteAccountFailedState({required this.message});
+}

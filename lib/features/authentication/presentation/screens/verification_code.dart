@@ -300,11 +300,10 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                               // Show registration success message for customer
                               SnackBarBuilder.showFeedBackMessage(
                                   context,
-                                  translate("auth.pending_approval_message"),
+                                  translate("auth.registration_success_title"),
                                   Colors.green);
                               Util.pushPageAndRemoveRoutes(
-                                  const LoginScreen(fromRegistration: true),
-                                  context);
+                                  const LoginScreen(), context);
                             } else {
                               SnackBarBuilder.showFeedBackMessage(
                                   context, bloc.resMsg, Colors.red);

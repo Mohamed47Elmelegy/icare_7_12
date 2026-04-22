@@ -131,7 +131,7 @@ class MapScreenState extends State<MapScreen> {
                             Icon(
                               Icons.location_on_outlined,
                               size: AppStyle.large.w,
-                              color: DMUtil.getD2C().withOpacity(0.7),
+                              color: DMUtil.getD2C().withValues(alpha: 0.7),
                             ),
                             const SizedBox(
                               width: 5,
@@ -142,7 +142,7 @@ class MapScreenState extends State<MapScreen> {
                                 text: selectedAddress,
                                 fontSize: AppStyle.small.sp,
                                 fontWeight: FontWeight.w600,
-                                color: DMUtil.getD2C().withOpacity(0.7),
+                                color: DMUtil.getD2C().withValues(alpha: 0.7),
                                 maxLine: 2,
                               ),
                             ),

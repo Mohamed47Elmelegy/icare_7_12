@@ -218,9 +218,9 @@ class RegisterScreen extends StatelessWidget {
               // Show registration success message for customer
               passwordTextEditingController.text = "";
               SnackBarBuilder.showFeedBackMessage(context,
-                  translate("auth.pending_approval_message"), Colors.green);
+                  translate("auth.registration_success_title"), Colors.green);
               Util.pushPageAndRemoveRoutes(
-                  const LoginScreen(fromRegistration: true), context);
+                  const LoginScreen(), context);
             } else if (state is RegisterFailedState) {
               SnackBarBuilder.showFeedBackMessage(
                   context, bloc.resMsg, Colors.red);

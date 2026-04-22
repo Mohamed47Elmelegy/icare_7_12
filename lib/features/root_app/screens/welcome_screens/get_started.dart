@@ -23,7 +23,7 @@ class GetStartedScreen extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: SvgPicture.asset(AppImages.logoSvg),
+                child: SvgPicture.asset(AppImages.logosvg),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 40.w),

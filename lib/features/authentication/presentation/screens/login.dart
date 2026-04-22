@@ -109,6 +109,7 @@ class LoginScreen extends StatelessWidget {
                                   fontSize: AppStyle.small.sp,
                                   color: Colors.blue.shade900,
                                   fontWeight: FontWeight.w500,
+                                  maxLine: 3,
                                 ),
                               ),
                             ],

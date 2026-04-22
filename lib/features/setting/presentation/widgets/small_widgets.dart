@@ -27,7 +27,7 @@ class SettingLineOption extends StatelessWidget {
           children: [
             CustomText(
               text: title,
-              color: DMUtil.getD2C().withOpacity(0.9),
+              color: DMUtil.getD2C().withValues(alpha: 0.9),
               fontSize: AppStyle.average.sp - 1.w,
               fontWeight: FontWeight.w600,
             ),

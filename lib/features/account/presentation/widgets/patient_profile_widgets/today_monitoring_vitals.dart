@@ -130,7 +130,7 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
       children: [
         Table(
           border: TableBorder.all(
-            color: DMUtil.getD2C().withOpacity(0.4),
+            color: DMUtil.getD2C().withValues(alpha: 0.4),
           ),
           children: [
             TableRow(
@@ -202,13 +202,13 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
                 borderSide: BorderSide(
-                  color: DMUtil.getD2C().withOpacity(0.3),
+                  color: DMUtil.getD2C().withValues(alpha: 0.3),
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
                 borderSide: BorderSide(
-                  color: DMUtil.getD2C().withOpacity(0.3),
+                  color: DMUtil.getD2C().withValues(alpha: 0.3),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -318,13 +318,13 @@ class VitalsWidget extends StatelessWidget {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                         borderSide: BorderSide(
-                          color: DMUtil.getD2C().withOpacity(0.3),
+                          color: DMUtil.getD2C().withValues(alpha: 0.3),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                         borderSide: BorderSide(
-                          color: DMUtil.getD2C().withOpacity(0.3),
+                          color: DMUtil.getD2C().withValues(alpha: 0.3),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -357,7 +357,7 @@ class VitalsWidget extends StatelessWidget {
                             child: CustomText(
                               text: historicalValue!,
                               fontSize: AppStyle.small.sp - 1,
-                              color: DMUtil.getPC().withOpacity(0.7),
+                              color: DMUtil.getPC().withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -368,7 +368,7 @@ class VitalsWidget extends StatelessWidget {
                         CustomText(
                           text: historicalValue!,
                           fontSize: AppStyle.small.sp,
-                          color: DMUtil.getPC().withOpacity(0.7),
+                          color: DMUtil.getPC().withValues(alpha: 0.7),
                           fontWeight: FontWeight.w500,
                         ),
                       // If both are empty

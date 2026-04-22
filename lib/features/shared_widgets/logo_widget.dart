@@ -18,7 +18,7 @@ class LogoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      isWhite ? AppImages.logoWhite : AppImages.logo,
+      isWhite ? AppImages.alfSalamaLogoWhite : AppImages.logo,
       height: height.h,
       width: width.w,
       fit: fit,

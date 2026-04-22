@@ -3,6 +3,7 @@ import 'package:icare/features/account/domain/use_cases/get_services_usecase.dar
 import 'package:icare/features/account/domain/use_cases/update_doctor_options_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/update_nurse_options_usecase.dart';
 import 'package:icare/features/authentication/domain/use_cases/social_login_user_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/delete_account_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/send_request_usecase.dart';
 import 'package:icare/features/categories/data/data_sources/category_remote_data_source.dart';
 import 'package:icare/features/categories/data/repositories/category_model_repository.dart';
@@ -41,6 +42,9 @@ import 'package:icare/features/setting/domain/use_cases/get_specialties_usecase.
 import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:icare/core/network/auth_interceptor.dart';
+import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/core/network/network.dart';
 import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/account/data/repositeroies/user_service_model_repository.dart';

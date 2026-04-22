@@ -202,10 +202,10 @@ class _RealTimeDistanceTrackerState extends State<RealTimeDistanceTracker> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: _getDistanceColor().withOpacity(0.1),
+          color: _getDistanceColor().withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: _getDistanceColor().withOpacity(0.3),
+            color: _getDistanceColor().withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -259,7 +259,7 @@ class _RealTimeDistanceTrackerState extends State<RealTimeDistanceTracker> {
                     CustomText(
                       text: _getLastUpdateText(),
                       fontSize: (AppStyle.small - 1).sp,
-                      color: DMUtil.getD2C().withOpacity(0.6),
+                      color: DMUtil.getD2C().withValues(alpha: 0.6),
                     ),
                   ],
                 ],
@@ -270,7 +270,7 @@ class _RealTimeDistanceTrackerState extends State<RealTimeDistanceTracker> {
             Icon(
               Icons.refresh,
               size: 18.w,
-              color: DMUtil.getD2C().withOpacity(0.5),
+              color: DMUtil.getD2C().withValues(alpha: 0.5),
             ),
           ],
         ),

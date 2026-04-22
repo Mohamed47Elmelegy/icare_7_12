@@ -87,6 +87,19 @@ class UserServiceModelRepository implements UserServiceRepository {
   }
 
   @override
+  Future<Either<Failure, String>> deleteAccount(String userId) async {
+    if (await networkInfo.isConnected()) {
+      try {
+        return Right(await userServiceRemoteDataSource.deleteUserAccount(userId));
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, UserServiceModel>> getUserFullData(
       {required String userId}) async {
     if (await networkInfo.isConnected()) {

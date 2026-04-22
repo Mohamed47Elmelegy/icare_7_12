@@ -24,7 +24,7 @@ Future<void> init() async {
       AuthServiceModelRepository(
           networkInfo: sl(), userServiceRemoteDataSource: sl()));
   sl.registerLazySingleton<AuthServiceRemoteDataSource>(
-      () => AuthServiceRemoteDataSource(client: sl()));
+      () => AuthServiceRemoteDataSource(dioClient: sl()));
 
   ///account module
   sl.registerFactory(() => AccountBloc(
@@ -39,7 +39,8 @@ Future<void> init() async {
       updateNurseOptionsUseCase: sl(),
       updateDoctorOptionsUseCase: sl(),
       getServicesUseCase: sl(),
-      getSpecialtiesUseCase: sl()));
+      getSpecialtiesUseCase: sl(),
+      deleteAccountUseCase: sl()));
   sl.registerLazySingleton(
       () => GetAllUsersUseCase(userServiceRepository: sl()));
   sl.registerLazySingleton(
@@ -59,6 +60,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => UpdateDoctorOptionsUseCase(repository: sl()));
   sl.registerLazySingleton(() => GetServicesUseCase(repository: sl()));
   sl.registerLazySingleton(() => GetSpecialtiesUseCase(repository: sl()));
+  sl.registerLazySingleton(() => DeleteAccountUseCase(repository: sl()));
 
   sl.registerLazySingleton<UserServiceRepository>(() =>
       UserServiceModelRepository(
@@ -179,4 +181,16 @@ Future<void> init() async {
   /// additional classes initial
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => http.Client());
+
+  // Dio setup
+  sl.registerLazySingleton<Dio>(() {
+    final dio = Dio(BaseOptions(
+      baseUrl: ApiUrl.BASE_URL,
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    ));
+    dio.interceptors.add(AuthInterceptor());
+    dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
+    return dio;
+  });
 }

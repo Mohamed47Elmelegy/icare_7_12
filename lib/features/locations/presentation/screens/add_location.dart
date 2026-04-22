@@ -135,7 +135,7 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                   children: [
                     CustomText(
                       fontSize: AppStyle.small.sp,
-                      color: DMUtil.getD2C().withOpacity(0.5),
+                      color: DMUtil.getD2C().withValues(alpha: 0.5),
                       fontWeight: FontWeight.w600,
                       text: translate("map.location_details"),
                     ),
@@ -154,7 +154,7 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                             width: 220.w,
                             child: CustomText(
                               text: locationMapEntity!.address,
-                              color: DMUtil.getD2C().withOpacity(0.9),
+                              color: DMUtil.getD2C().withValues(alpha: 0.9),
                               fontSize: AppStyle.average.sp,
                               fontWeight: FontWeight.w600,
                               maxLine: 2,
@@ -220,14 +220,14 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                       ],
                     ),
                     Divider(
-                      color: DMUtil.getD2C().withOpacity(0.6),
+                      color: DMUtil.getD2C().withValues(alpha: 0.6),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     CustomText(
                       text: translate("map.personal"),
-                      color: DMUtil.getD2C().withOpacity(0.5),
+                      color: DMUtil.getD2C().withValues(alpha: 0.5),
                       fontWeight: FontWeight.w600,
                       fontSize: AppStyle.small.sp,
                     ),
@@ -394,7 +394,8 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                                     Icons.home_outlined,
                                     color: locationType == "home"
                                         ? DMUtil.getWC()
-                                        : DMUtil.getD2C().withOpacity(0.7),
+                                        : DMUtil.getD2C()
+                                            .withValues(alpha: 0.7),
                                     size: AppStyle.average.w + 1,
                                   ),
                                   const SizedBox(
@@ -405,7 +406,8 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                                     fontWeight: FontWeight.w600,
                                     color: locationType == "home"
                                         ? DMUtil.getWC()
-                                        : DMUtil.getD2C().withOpacity(0.8),
+                                        : DMUtil.getD2C()
+                                            .withValues(alpha: 0.8),
                                     fontSize: AppStyle.small.sp,
                                   ),
                                 ],
@@ -435,7 +437,8 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                                     Icons.work,
                                     color: locationType == "work"
                                         ? DMUtil.getWC()
-                                        : DMUtil.getD2C().withOpacity(0.7),
+                                        : DMUtil.getD2C()
+                                            .withValues(alpha: 0.7),
                                     size: AppStyle.average.w + 1,
                                   ),
                                   const SizedBox(
@@ -446,7 +449,8 @@ class _AddNewLocationScreenState extends State<AddNewLocationScreen> {
                                     fontWeight: FontWeight.w600,
                                     color: locationType == "work"
                                         ? DMUtil.getWC()
-                                        : DMUtil.getD2C().withOpacity(0.8),
+                                        : DMUtil.getD2C()
+                                            .withValues(alpha: 0.8),
                                     fontSize: AppStyle.small.sp,
                                   ),
                                 ],

@@ -66,7 +66,7 @@
 //                   CustomText(
 //                     text: "${Util.formatTimeToHMPMorAM(DateTime.parse(item.date))}  -  ${Util.formatToDayMonth(DateTime.parse(item.date))}",
 //                     // text: Util.calcBetweenTwoDateTime(DateTime.parse(item.date),DateTime.now()),
-//                     color: DMUtil.getDC().withOpacity(0.6),
+//                     color: DMUtil.getDC().withValues(alpha:0.6),
 //                     fontSize: AppStyle.verySmall.sp,
 //                   ),
 //                 ],
@@ -177,7 +177,7 @@ class NotificationListCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -238,7 +238,7 @@ class NotificationListCard extends StatelessWidget {
                             children: [
                               CustomText(
                                 text: translate("notification.destination"),
-                                color: DMUtil.getD2C().withOpacity(0.5),
+                                color: DMUtil.getD2C().withValues(alpha: 0.5),
                                 fontSize: AppStyle.verySmall.sp,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -265,15 +265,15 @@ class NotificationListCard extends StatelessWidget {
                                         Icon(
                                           Icons.location_on_outlined,
                                           size: 12.w,
-                                          color:
-                                              DMUtil.getD2C().withOpacity(0.6),
+                                          color: DMUtil.getD2C()
+                                              .withValues(alpha: 0.6),
                                         ),
                                         SizedBox(width: 2.w),
                                         Flexible(
                                           child: CustomText(
                                             text: "0.8 Km",
                                             color: DMUtil.getD2C()
-                                                .withOpacity(0.6),
+                                                .withValues(alpha: 0.6),
                                             fontSize: AppStyle.verySmall.sp - 1,
                                             maxLine: 1,
                                             isEllipsis: true,
@@ -293,14 +293,15 @@ class NotificationListCard extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                             color: DMUtil.getD2C()
-                                                .withOpacity(0.3)),
+                                                .withValues(alpha: 0.3)),
                                         borderRadius:
                                             BorderRadius.circular(10.r),
                                       ),
                                       child: CustomText(
                                         text: translate("notification.on_map"),
                                         fontSize: AppStyle.verySmall.sp - 2,
-                                        color: DMUtil.getD2C().withOpacity(0.6),
+                                        color: DMUtil.getD2C()
+                                            .withValues(alpha: 0.6),
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -496,7 +497,7 @@ class NotificationListCard extends StatelessWidget {
       children: [
         CustomText(
           text: label,
-          color: DMUtil.getD2C().withOpacity(0.5),
+          color: DMUtil.getD2C().withValues(alpha: 0.5),
           fontSize: AppStyle.verySmall.sp,
           fontWeight: FontWeight.w400,
         ),

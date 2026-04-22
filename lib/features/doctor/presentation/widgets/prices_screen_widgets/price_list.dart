@@ -36,7 +36,7 @@ class DoctorPricesListWidget extends StatelessWidget {
           var specialty = accountBloc.allSpecialtiesList.firstWhere(
             (element) => element.id.toString() == specialtyId,
             orElse: () => accountBloc.allSpecialtiesList.firstWhere(
-              (element) => element.id == int.tryParse(specialtyId ?? "0"),
+              (element) => element.id == int.tryParse(specialtyId),
             ),
           );
           specialtyName = specialty.title;

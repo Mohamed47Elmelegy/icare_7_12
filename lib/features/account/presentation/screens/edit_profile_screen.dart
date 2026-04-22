@@ -9,6 +9,7 @@ import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/account/presentation/screens/emergency_number_widget.dart';
+import 'package:icare/features/account/presentation/widgets/delete_account_button.dart';
 import 'package:icare/features/account/presentation/widgets/secure_info.dart';
 import 'package:icare/features/authentication/presentation/widgets/gender_row.dart';
 import 'package:icare/features/locations/domain/entities/location_entity.dart';
@@ -334,6 +335,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 height: 40.w,
               ),
               const SecureInfo(),
+              const Divider(height: 40.0),
+              const DeleteAccountButton(),
               const SizedBox(
                 height: 70,
               ),

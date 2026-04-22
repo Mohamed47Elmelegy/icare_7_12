@@ -11,6 +11,7 @@ abstract class UserServiceRepository {
   Future<Either<Failure, List<UserService>>> getAllUsers();
   Future<Either<Failure, AuthResponse>> changePassword(
       {required Map<String, dynamic> data});
+  Future<Either<Failure, String>> deleteAccount(String userId);
   Future<Either<Failure, UserService>> updateUserProfile(
       Map<String, dynamic> userData);
   Future<Either<Failure, bool>> updateProfileStatus(

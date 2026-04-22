@@ -16,7 +16,8 @@ class ViewAllWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
         decoration: BoxDecoration(
-          border: Border.all(width: 1, color: DMUtil.getPC().withOpacity(0.4)),
+          border: Border.all(
+              width: 1, color: DMUtil.getPC().withValues(alpha: 0.4)),
         ),
         child: CustomText(
           text: translate("home.view_all"),

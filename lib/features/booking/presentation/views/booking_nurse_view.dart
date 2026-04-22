@@ -95,7 +95,7 @@ class _PatientAllergiesSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -169,7 +169,7 @@ class _PatientInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -188,7 +188,7 @@ class _PatientInfoCard extends StatelessWidget {
                 height: 60.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
-                  color: DMUtil.getPC().withOpacity(0.1),
+                  color: DMUtil.getPC().withValues(alpha: 0.1),
                   image: userImage.isNotEmpty
                       ? DecorationImage(
                           image: NetworkImage(userImage),
@@ -288,7 +288,8 @@ class _PatientInfoCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
               decoration: BoxDecoration(
-                border: Border.all(color: DMUtil.getD2C().withOpacity(0.3)),
+                border:
+                    Border.all(color: DMUtil.getD2C().withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(

@@ -136,7 +136,7 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: DMUtil.getWC(),
             border: Border.all(
-              color: DMUtil.getD2C().withOpacity(0.2),
+              color: DMUtil.getD2C().withValues(alpha: 0.2),
             ),
           ),
           child: TableCalendar(
@@ -170,7 +170,7 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
             ),
             calendarStyle: CalendarStyle(
               todayDecoration: BoxDecoration(
-                color: DMUtil.getPC().withOpacity(0.5),
+                color: DMUtil.getPC().withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
@@ -202,7 +202,7 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
-            color: DMUtil.getPC().withOpacity(0.1),
+            color: DMUtil.getPC().withValues(alpha: 0.1),
           ),
           // child: Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -270,7 +270,7 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
         //             borderRadius: const BorderRadius.all(Radius.circular(10)),
         //             color: DMUtil.getWC(),
         //             border: Border.all(
-        //               color: DMUtil.getD2C().withOpacity(0.2),
+        //               color: DMUtil.getD2C().withValues(alpha:0.2),
         //             ),
         //           ),
         //           child: Column(

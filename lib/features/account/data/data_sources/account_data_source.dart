@@ -11,6 +11,7 @@ import 'package:icare/features/categories/data/models/services.dart';
 
 abstract class UserServiceRemoteDataSourceImpl {
   Future<UserServiceModel> getUserData();
+  Future<String> deleteUserAccount(String userId);
   Future<UserServiceModel> updateUserProfile(
       {required Map<String, dynamic> userData});
   Future<bool> updateProfileStatus({required Map<String, dynamic> userData});
@@ -47,6 +48,27 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
 
       return UserServiceModel.fromJson(userData);
     } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<String> deleteUserAccount(String userId) async {
+    try {
+      var response = await client.delete(
+          Uri.parse("${ApiUrl.DELETE_ACCOUNT}/$userId"),
+          headers: ApiUrl.headerAuth);
+      debugPrint("deleteUserAccount response: ${response.body}");
+      var decodedData = json.decode(response.body);
+      if (decodedData['status'] == true || decodedData['success'] == true) {
+        return decodedData['message'] ??
+            translate("toast.account_deleted_successfully");
+      } else {
+        debugPrint("❌ deleteUserAccount failed with: ${response.body}");
+        throw ServerException();
+      }
+    } catch (e) {
+      debugPrint("deleteUserAccount error: $e");
       throw ServerException();
     }
   }

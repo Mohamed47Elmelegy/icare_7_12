@@ -31,7 +31,7 @@ class MyAccountSetting extends StatelessWidget {
               EdgeInsets.symmetric(horizontal: AppStyle.paddingFromH.w - 4),
           child: CustomText(
             text: translate("profile.my_account"),
-            color: DMUtil.getD2C().withOpacity(0.6),
+            color: DMUtil.getD2C().withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
             fontSize: AppStyle.average.sp,
           ),

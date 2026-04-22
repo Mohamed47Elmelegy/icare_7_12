@@ -91,7 +91,7 @@ class MainDrawerSection extends StatelessWidget {
             icon: Icon(
               Icons.logout,
               size: 20.w,
-              color: DMUtil.getPC2().withOpacity(0.7),
+              color: DMUtil.getPC2().withValues(alpha: 0.7),
             ),
             fn: () {
               Scaffold.of(ctx).closeDrawer();

@@ -164,3 +164,8 @@ class FetchPatientMedicalReportsEvent extends AccountEvent {
   final String patientId;
   const FetchPatientMedicalReportsEvent({required this.patientId});
 }
+
+class DeleteAccountEvent extends AccountEvent {
+  final String userId;
+  const DeleteAccountEvent({required this.userId});
+}

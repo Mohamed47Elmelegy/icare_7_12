@@ -74,7 +74,7 @@ class _InfoItem extends StatelessWidget {
         CustomText(
           text: label,
           fontSize: AppStyle.verySmall.sp,
-          color: DMUtil.getD2C().withOpacity(.5),
+          color: DMUtil.getD2C().withValues(alpha: .5),
         ),
         SizedBox(height: 4.h),
         CustomText(

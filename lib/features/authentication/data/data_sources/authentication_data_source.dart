@@ -11,6 +11,9 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
 import 'package:icare/features/authentication/data/models/user_service_model.dart';
 
+import 'package:dio/dio.dart';
+import 'package:icare/core/network/token_storage_helper.dart';
+
 abstract class AuthServiceRemoteDataSourceImpl {
   Future<AuthResponse> registerUser(Map<String, dynamic> userData);
   Future<AuthResponse> loginUser(Map<String, dynamic> userData);
@@ -18,8 +21,9 @@ abstract class AuthServiceRemoteDataSourceImpl {
 }
 
 class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
-  final http.Client client;
-  AuthServiceRemoteDataSource({required this.client});
+  final Dio dioClient;
+
+  AuthServiceRemoteDataSource({required this.dioClient});
 
   @override
   Future<AuthResponse> loginUser(Map<String, dynamic> userData) async {
@@ -30,47 +34,40 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         'password': userData['password'],
         'device_info': await ApiUrl.secureData(),
       };
-      var response = await client.post(
-        Uri.parse(ApiUrl.LOGIN_URL),
-        body: json.encode(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      
+      var response = await dioClient.post(
+        ApiUrl.LOGIN_URL,
+        data: data,
       );
-      var decodedData = json.decode(response.body);
-      debugPrint("loginUser Body: ${response.body}");
-      debugPrint("loginUser Headers: ${response.headers}");
+      
+      var decodedData = response.data;
+      debugPrint("loginUser Response: $decodedData");
 
-      if (response.body.contains("Unauthorized password")) {
-        return AuthResponse(user: null, msg: translate("toast.pass_incorrect"));
-      } else if (response.body.contains("Unauthorized") ||
-          response.body.contains("user not found")) {
-        return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
-      } else if (response.body.contains("User is banned")) {
-        return AuthResponse(user: null, msg: translate("toast.user_banned"));
-      } else if (decodedData['status']) {
-        final Map<String, dynamic> bodyData = json.decode(response.body);
+      if (decodedData['status'] == true || decodedData['user'] != null || decodedData['access_token'] != null) {
+        final Map<String, dynamic> bodyData = decodedData;
 
-        // Attempt to find token in headers if not in body
-        if (bodyData['token'] == null && bodyData['access_token'] == null) {
-          String? headerToken = response.headers['authorization'] ??
-              response.headers['Authorization'];
-          if (headerToken != null) {
-            if (headerToken.startsWith("Bearer ")) {
-              headerToken = headerToken.substring(7);
-            }
-            bodyData['access_token'] = headerToken;
-            debugPrint("🎉 Token found in Headers: $headerToken");
+        // 🟢 FIX: Securely extract and save token BEFORE branching user types
+        String? token = bodyData['access_token'] ?? bodyData['token'];
+        if (token == null) {
+          token = response.headers.value('authorization') ?? response.headers.value('Authorization');
+          if (token != null && token.startsWith("Bearer ")) {
+             token = token.substring(7);
           }
         }
 
-        UserServiceModel user = UserServiceModel.fromJson(bodyData['user']);
+        if (token != null && token.isNotEmpty) {
+          await TokenStorageHelper.saveToken(token);
+          // Legacy fallback for ApiUrl.headerAuth
+          await SharedPref().setPreferencesString(Constants.apiToken, token);
+          debugPrint("✅ Token specifically saved for user from login.");
+        }
 
-        // ✅ Only save data for customers immediately
-        // For professionals (nurse/doctor/assistant), data will be saved AFTER verification check
+        UserServiceModel user = UserServiceModel.fromJson(bodyData['user']);
+        
         String userType =
             bodyData['user']['user_type']?.toString().toLowerCase() ??
                 'customer';
+                
         if (userType == 'customer') {
           await Util.saveLocalData(bodyData);
           SetNotification.showNotification(
@@ -81,13 +78,24 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
               Constants.userId, bodyData['user']['id'].toString());
           await SharedPref().setPreferencesString(Constants.userType, userType);
           debugPrint(
-              "⏳ Professional user login - data will be saved after verification");
+              "⏳ Professional user login - data saved");
         }
 
         return AuthResponse(user: user, msg: translate("toast.signup"));
       } else {
-        return AuthResponse(user: null, msg: translate("toast.oops"));
+        String msg = decodedData['message'] ?? translate("toast.oops");
+        if (msg.contains("Unauthorized password")) {
+          return AuthResponse(user: null, msg: translate("toast.pass_incorrect"));
+        } else if (msg.contains("Unauthorized") || msg.contains("user not found")) {
+          return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
+        } else if (msg.contains("User is banned")) {
+          return AuthResponse(user: null, msg: translate("toast.user_banned"));
+        }
+        return AuthResponse(user: null, msg: msg);
       }
+    } on DioException catch(e) {
+      String msg = e.response?.data?['message'] ?? e.message ?? e.toString();
+      return AuthResponse(user: null, msg: msg);
     } catch (e) {
       return AuthResponse(user: null, msg: e.toString());
     }
@@ -205,24 +213,47 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
 
       var decodedData = jsonDecode(res.body);
 
-      // ✅ Check both 'status' and 'success'
-      bool isSuccess =
-          (decodedData['status'] == true) || (decodedData['success'] == true);
+      // ✅ Check 'status', 'success', or presence of 'user'/'access_token' (backend may omit status flag)
+      bool isSuccess = (decodedData['status'] == true) ||
+          (decodedData['success'] == true) ||
+          (decodedData['user'] != null) ||
+          (decodedData['access_token'] != null);
 
       if (isSuccess) {
-        // ✅ Only save data for customers
+        // ✅ Save token for all user types
+        String? token = decodedData['access_token'] ?? decodedData['token'];
+        if (token != null && token.isNotEmpty) {
+          await TokenStorageHelper.saveToken(token);
+          await SharedPref().setPreferencesString(Constants.apiToken, token);
+          debugPrint("✅ Token saved after registration for $userType");
+        }
+
         if (userType == 'customer') {
           await Util.saveLocalData(decodedData);
           SetNotification.showNotification(
               title: "", msg: translate("toast.welcome"));
         } else {
-          // Nurse/Doctor - pending approval
+          // Nurse/Doctor - save user_id and user_type then show pending notification
+          await SharedPref().setPreferencesString(
+              Constants.userId, decodedData['user']['id'].toString());
+          await SharedPref()
+              .setPreferencesString(Constants.userType, userType);
           SetNotification.showNotification(
               title: "", msg: translate("toast.signup"));
         }
 
+        // ✅ Safe parse: registration response is minimal (no allergies/lat/lng/nurse sub-object)
+        // Failure to parse must NOT cause RegisterFailedState for nurse/doctor
+        UserServiceModel? parsedUser;
+        try {
+          parsedUser = UserServiceModel.fromJson(decodedData['user']);
+        } catch (parseError) {
+          debugPrint("⚠️ Could not fully parse user after registration (expected for professionals): $parseError");
+          parsedUser = null;
+        }
+
         return AuthResponse(
-            user: UserServiceModel.fromJson(decodedData['user']),
+            user: parsedUser,
             msg: translate("toast.signup"),
             isSuccess: true);
       } else if (res.body.contains("already") ||
@@ -243,39 +274,55 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
 
   @override
   Future<AuthResponse> socialAuthUser(Map<String, dynamic> userData) async {
-    var data = {
-      'user_login': userData['email'],
-      'email': userData['email'],
-      'name': userData['email']
-          .toString()
-          .split("@")
-          .first
-          .toString()
-          .replaceAll("null", ""),
-      'password': userData['password'],
-      'device_token': await NotificationsUtils.getFcmToken()
-    };
-    var response = await client.post(
-      Uri.parse(ApiUrl.SOCIAL_AUTH_URL),
-      body: json.encode(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    );
-    var decodedData = json.decode(response.body);
-    debugPrint("socialAuthUser: ${response.body}");
-    if (response.body.contains("Unauthorized") ||
-        response.body.contains("user not found")) {
-      return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
-    } else if (decodedData['status']) {
-      final Map<String, dynamic> bodyData = json.decode(response.body);
-      UserServiceModel user = UserServiceModel.fromJson(bodyData['user']);
-      await Util.saveLocalData(bodyData);
-      SetNotification.showNotification(
-          title: "", msg: translate("toast.welcome"));
-      return AuthResponse(user: user, msg: translate("toast.signup"));
-    } else {
-      return AuthResponse(user: null, msg: translate("toast.oops"));
+    try {
+      var data = {
+        'user_login': userData['email'],
+        'email': userData['email'],
+        'name': userData['email']
+            .toString()
+            .split("@")
+            .first
+            .toString()
+            .replaceAll("null", ""),
+        'password': userData['password'],
+        'device_token': await NotificationsUtils.getFcmToken()
+      };
+      
+      var response = await dioClient.post(
+        ApiUrl.SOCIAL_AUTH_URL,
+        data: data,
+      );
+      
+      var decodedData = response.data;
+      debugPrint("socialAuthUser response: $decodedData");
+      if (decodedData['status'] == true || decodedData['user'] != null || decodedData['access_token'] != null) {
+        final Map<String, dynamic> bodyData = decodedData;
+
+        // Securely extract and save token
+        String? token = bodyData['access_token'] ?? bodyData['token'];
+        if (token != null && token.isNotEmpty) {
+          await TokenStorageHelper.saveToken(token);
+          await SharedPref().setPreferencesString(Constants.apiToken, token);
+        }
+
+        UserServiceModel user = UserServiceModel.fromJson(bodyData['user']);
+        await Util.saveLocalData(bodyData);
+        SetNotification.showNotification(
+            title: "", msg: translate("toast.welcome"));
+        return AuthResponse(user: user, msg: translate("toast.signup"));
+      } else {
+        String msg = decodedData['message'] ?? translate("toast.oops");
+        if (msg.toLowerCase().contains("unauthorized") ||
+            msg.toLowerCase().contains("user not found")) {
+          return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
+        }
+        return AuthResponse(user: null, msg: msg);
+      }
+    } on DioException catch (e) {
+       String msg = e.response?.data?['message'] ?? e.message ?? e.toString();
+       return AuthResponse(user: null, msg: msg);
+    } catch (e) {
+       return AuthResponse(user: null, msg: e.toString());
     }
   }
 }
