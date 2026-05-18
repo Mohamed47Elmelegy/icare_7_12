@@ -9,7 +9,7 @@ import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/booking/presentation/bloc/order_state.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/booking/presentation/screens/main_order_screen.dart';
@@ -210,15 +210,15 @@ class VerticalSpecialistCard extends StatelessWidget {
                                         DMUtil.getPC());
                                   }
 
-                                  // ✅ Validation 3: Refresh ongoing bookings first
-                                  debugPrint(
-                                      "🔄 Refreshing ongoing bookings before validation...");
+                                  // Refresh ongoing bookings before validation
                                   bookingBloc
                                       .add(const GetOngoingBookingsEvent());
 
                                   // Wait a bit for state to update
                                   await Future.delayed(
                                       const Duration(milliseconds: 300));
+
+                                  if (!context.mounted) return;
 
                                   // Check for ongoing bookings after refresh
                                   if (bookingBloc.hasOngoingBooking()) {
@@ -229,8 +229,7 @@ class VerticalSpecialistCard extends StatelessWidget {
                                     // Use generic message if nurse name is empty or null
                                     if (nurseName == null ||
                                         nurseName.trim().isEmpty) {
-                                      debugPrint(
-                                          "❌ User has ${bookingBloc.ongoingBookingsList.length} ongoing booking(s) but nurse name is missing");
+                                      // User has ongoing booking but nurse name is missing
                                       return SnackBarBuilder.showFeedBackMessage(
                                           context,
                                           translate(
@@ -238,8 +237,7 @@ class VerticalSpecialistCard extends StatelessWidget {
                                           DMUtil.getRED());
                                     }
 
-                                    debugPrint(
-                                        "❌ User has ongoing booking with: $nurseName");
+                                    // User has ongoing booking
                                     return SnackBarBuilder.showFeedBackMessage(
                                         context,
                                         translate(
@@ -248,38 +246,18 @@ class VerticalSpecialistCard extends StatelessWidget {
                                         DMUtil.getRED());
                                   }
 
-                                  debugPrint(
-                                      "✅ No ongoing bookings, proceeding with booking...");
+                                  // No ongoing bookings, proceeding with booking
 
                                   // Match selected services with nurse's prices
-                                  final accountBloc = AccountBloc.get(context);
-
-                                  debugPrint(
-                                      "🎯 ========== BOOK BUTTON PRESSED ==========");
-                                  debugPrint("📋 Services from SearchBloc:");
-                                  for (var s in searchBloc.selectedServices) {
-                                    debugPrint(
-                                        "   - ID: ${s.id}, Name: ${s.name}, Value: ${s.value}");
-                                  }
+                                  final servicesBloc =
+                                      ServicesBloc.get(context);
 
                                   // Clear existing services
-                                  debugPrint(
-                                      "🗑️ Clearing orderServiceList (current count: ${bookingBloc.orderServiceList.length})");
                                   bookingBloc.orderServiceList.clear();
-
-                                  debugPrint(
-                                      "🔍 Matching ${searchBloc.selectedServices.length} services with nurse's prices...");
 
                                   // Match each selected service with nurse's price
                                   for (var selectedService
                                       in searchBloc.selectedServices) {
-                                    debugPrint(
-                                        "   📋 Processing service ID: ${selectedService.id}");
-                                    debugPrint(
-                                        "      - Selected service name: ${selectedService.name}");
-                                    debugPrint(
-                                        "      - Selected service value: ${selectedService.value}");
-
                                     // Find this service in nurse's service list to get the price
                                     final nurseService =
                                         nurse.servicesList?.firstWhere(
@@ -291,8 +269,9 @@ class VerticalSpecialistCard extends StatelessWidget {
                                     if (nurseService != null &&
                                         nurseService.id != -1) {
                                       // Get service name from allServicesList
-                                      final serviceFromList =
-                                          accountBloc.allServiceList.firstWhere(
+                                      final serviceFromList = servicesBloc
+                                          .allServiceList
+                                          .firstWhere(
                                         (s) => s.id == selectedService.id,
                                         orElse: () => const ServicesModel(
                                             id: -1, value: ''),
@@ -316,15 +295,6 @@ class VerticalSpecialistCard extends StatelessWidget {
                                                 : selectedService.value;
                                       }
 
-                                      debugPrint(
-                                          "✅ Matched service: $serviceName (${nurseService.value} LE)");
-                                      debugPrint(
-                                          "   - Service ID: ${selectedService.id}");
-                                      debugPrint(
-                                          "   - Service Name (final): $serviceName");
-                                      debugPrint(
-                                          "   - Nurse's Price: ${nurseService.value}");
-
                                       // Add service with nurse's price and correct name
                                       bookingBloc.orderServiceList.add(
                                         ServicesModel(
@@ -335,24 +305,8 @@ class VerticalSpecialistCard extends StatelessWidget {
                                               serviceName, // Use correct service name
                                         ),
                                       );
-
-                                      debugPrint(
-                                          "   ➕ Added to orderServiceList");
-                                    } else {
-                                      debugPrint(
-                                          "⚠️ Service ${selectedService.id} not offered by this nurse");
                                     }
                                   }
-
-                                  debugPrint(
-                                      "📦 Ready to book with ${bookingBloc.orderServiceList.length} services");
-                                  debugPrint("📋 Final orderServiceList:");
-                                  for (var s in bookingBloc.orderServiceList) {
-                                    debugPrint(
-                                        "   ✓ ID: ${s.id}, Name: ${s.name}, Price: ${s.value}");
-                                  }
-                                  debugPrint(
-                                      "🎯 ==========================================");
 
                                   // ✅ Validation 4: Check if any services were matched
                                   if (bookingBloc.orderServiceList.isEmpty) {
@@ -363,9 +317,6 @@ class VerticalSpecialistCard extends StatelessWidget {
                                         DMUtil.getRED());
                                   }
 
-                                  debugPrint(
-                                      "📦 Ready to book with ${bookingBloc.orderServiceList.length} services");
-
                                   // Navigate to map for location selection
                                   final res = await Util.pushPage(
                                       MapScreen(
@@ -373,6 +324,8 @@ class VerticalSpecialistCard extends StatelessWidget {
                                           title: translate(
                                               'profile.confirm_current_location')),
                                       context);
+
+                                  if (!context.mounted) return;
 
                                   // If location selected, create the booking
                                   if (res != null && res is LocationMapEntity) {

@@ -3,17 +3,16 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:icare/core/utils/navigator_key.dart';
 import 'package:icare/core/utils/set_notification.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
-import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationsUtils {
+  // Stream for broadcasting notifications to interested Blocs/Coordinators
+  static final StreamController<RemoteMessage> notificationStream =
+      StreamController<RemoteMessage>.broadcast();
+
   static Future initialPushNotification() async {
     Permission.notification.request();
 
@@ -57,8 +56,8 @@ class NotificationsUtils {
             RemoteMessage(notification: event.notification!));
       } else {
         // إذا لم يكن هناك notification payload، أنشئ واحد من البيانات
-        debugPrint("📨 Received message without notification payload");
-        debugPrint("📨 Data: ${event.data}");
+        // Received message without notification payload
+
 
         // عرض إشعار محلي باستخدام البيانات المتوفرة
         if (event.data.isNotEmpty) {
@@ -69,16 +68,13 @@ class NotificationsUtils {
         }
       }
 
-      if (event.notification == null || event.notification!.body == null) {
-        // حتى لو مفيش notification، نفذ checkNotification للتحديثات
-        if (event.data.isNotEmpty) {
-          checkNotification(event);
-        }
-        return;
-      }
+      // Broadcast the message to listeners (Blocs/Coordinators)
+      notificationStream.add(event);
+
+      // Keep checkNotification for general logging or legacy logic
       checkNotification(event);
     }).onError((err) {
-      debugPrint("FirebaseMessaging onMessage: $err");
+      // Error handled silently
     });
   }
 
@@ -86,7 +82,6 @@ class NotificationsUtils {
     try {
       final context = navigatorKey.currentContext;
       if (context == null) {
-        debugPrint("❌ checkNotification: Context is null");
         return;
       }
 
@@ -94,22 +89,18 @@ class NotificationsUtils {
       if (event.notification!.body!.contains("request") ||
           event.notification!.body!.contains("حجز") ||
           event.notification!.body!.contains("الحجز")) {
-        debugPrint("update all orders");
-        BookingBloc.get(context).add(const FetchAllOrderEvent());
-        AccountBloc.get(context).add(const FetchAllNotificationsEvent());
+        // Order-related notification detected
       }
 
       // ✨ معالجة إشعارات الدردشة
       if (event.data['type'] == 'chat' ||
           event.notification!.body!.contains("رسالة") ||
           event.notification!.title!.contains("رسالة")) {
-        debugPrint("📨 Chat notification received");
-        debugPrint("💬 Message: ${event.data['message']}");
-        debugPrint("👤 Sender: ${event.data['senderName']}");
-        debugPrint("🏠 Room ID: ${event.data['roomID']}");
+        // Chat notification received
+      }
 
         //  يمكن إضافة تحديث قائمة الدردشات هنا إذا لزم الأمر
-      }
+
 
       // if (event.notification!.body!.contains("صلاحية") ||
       //     event.notification!.body!.contains("permission")) {
@@ -118,7 +109,7 @@ class NotificationsUtils {
       //   CustomDialogs.patientGiveAccessToEditProfile(context);
       // }
     } catch (e) {
-      debugPrint("checkNotification: $e");
+      // Error handled silently
     }
   }
 
@@ -127,10 +118,8 @@ class NotificationsUtils {
       String? token = Platform.isIOS
           ? await FirebaseMessaging.instance.getAPNSToken()
           : await FirebaseMessaging.instance.getToken();
-      debugPrint("FirebaseMessaging token: $token");
       return token ?? '';
     } catch (e) {
-      debugPrint("getFcmToken: $e");
       return '';
     }
   }
@@ -146,13 +135,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  debugPrint('📨 Handling a background message ${message.messageId}');
-  debugPrint('📨 Notification type: ${message.data['type']}');
-
+  // Handling a background message
   // معالجة إشعارات الدردشة في الخلفية
   if (message.data['type'] == 'chat') {
-    debugPrint('💬 Chat message in background: ${message.data['message']}');
-    debugPrint('👤 From: ${message.data['senderName']}');
+    // Chat message in background
   }
 }
 

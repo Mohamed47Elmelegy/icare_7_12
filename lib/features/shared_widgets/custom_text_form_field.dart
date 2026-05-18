@@ -75,10 +75,8 @@ class CustomTextFromField extends StatelessWidget {
         enabled: enabled ?? true,
         cursorColor: cursorColor ?? DMUtil.getD2C(),
         keyboardType: textInputType ?? TextInputType.text,
-        onChanged: (val) =>
-            onChanged == null ? debugPrint("") : onChanged!(val),
-        onFieldSubmitted: (val) =>
-            onFieldSubmitted == null ? debugPrint("") : onFieldSubmitted!(val),
+        onChanged: (val) => onChanged?.call(val),
+        onFieldSubmitted: (val) => onFieldSubmitted?.call(val),
         style: TextStyle(
           color: DMUtil.getD2C(),
           fontSize: AppStyle.small.sp,

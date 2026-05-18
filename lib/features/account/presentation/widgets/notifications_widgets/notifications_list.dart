@@ -1,7 +1,7 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_state.dart';
 import 'package:icare/features/account/presentation/widgets/notifications_widgets/notification_card.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_state.dart';
@@ -16,10 +16,10 @@ class NotificationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc, AccountState>(
+    return BlocBuilder<ServicesBloc, ServicesState>(
       builder: (ctx, state) {
-        var bloc = AccountBloc.get(ctx);
-        if (state is FetchNotificationsLoadingState) {
+        var servicesBloc = ServicesBloc.get(ctx);
+        if (state is NotificationsLoading) {
           return const Center(
             child: CircularProgressIndicator(
               color: kPrimary,
@@ -32,14 +32,10 @@ class NotificationsList extends StatelessWidget {
             var bookingBloc = BookingBloc.get(context);
 
             // Filter notifications locally to avoid empty spaces and duplicates
-            // Only show notifications that:
-            // 1. Are NOT 'order' type
-            // 2. Are 'order' type AND the corresponding booking exists
-            // 3. Remove duplicates based on orderID (keep the most recent)
             var visibleNotifications = <NotificationsEntity>[];
             var seenOrderIds = <String>{};
 
-            for (var item in bloc.notificationList) {
+            for (var item in servicesBloc.notificationList) {
               // Skip request-type notifications (offers)
               if (item.type == 'request') {
                 continue;

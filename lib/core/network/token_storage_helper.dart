@@ -18,4 +18,10 @@ class TokenStorageHelper {
   static Future<void> deleteToken() async {
     await _storage.delete(key: _tokenKey);
   }
+
+  /// Checks if a token exists
+  static Future<bool> hasToken() async {
+    final token = await getToken();
+    return token != null && token.isNotEmpty;
+  }
 }

@@ -4,15 +4,11 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/update_nurse_options_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/update_doctor_options_usecase.dart';
-import 'package:icare/features/account/domain/use_cases/get_services_usecase.dart';
 import 'package:icare/core/services/service_to_api_converter.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
-import 'package:icare/features/setting/domain/entities/notifications_entity.dart';
 import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
-import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
-import 'package:icare/features/setting/domain/use_cases/get_specialties_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/delete_account_usecase.dart';
 import 'package:icare/features/account/domain/entities/medical_report_entity.dart';
 import 'package:icare/features/account/domain/usecases/create_medical_report_usecase.dart';
@@ -25,6 +21,7 @@ import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/account/domain/use_cases/change_password_usercase.dart';
 import 'package:icare/features/account/domain/use_cases/get_user_service_usecase.dart';
 import 'package:icare/features/account/domain/use_cases/update_user_usecase.dart';
+import 'package:icare/features/account/domain/use_cases/get_user_full_data_usecase.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
@@ -33,39 +30,38 @@ import 'package:icare/features/authentication/domain/entities/user_entity.dart';
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
   bool showPassword = false;
   static AccountBloc get(BuildContext context) => BlocProvider.of(context);
+  int? currentModifyService;
+  int profileTapIndex = 0;
+  bool enableUpdate = false;
+  bool enableUpdateImg = false;
 
-  GetUserServiceUseCase getUserServiceUseCase;
-  ChangePasswordUseCase changePasswordUseCase;
-  UpdateUserServiceUseCase updateUserServiceUseCase;
-  GetAllNotificationsUseCase getAllNotificationsUseCase;
-  GetAllUsersUseCase getAllUsersUseCase;
-  UpdateProfileStatusUseCase updateProfileStatusUseCase;
-  CreateMedicalReportUseCase createMedicalReportUseCase;
-  GetPatientMedicalReportsUseCase getPatientMedicalReportsUseCase;
-  UpdateNurseOptionsUseCase updateNurseOptionsUseCase;
-  UpdateDoctorOptionsUseCase updateDoctorOptionsUseCase;
-  GetServicesUseCase getServicesUseCase;
-  GetSpecialtiesUseCase getSpecialtiesUseCase;
-  DeleteAccountUseCase deleteAccountUseCase;
+  final GetUserServiceUseCase getUserServiceUseCase;
+  final ChangePasswordUseCase changePasswordUseCase;
+  final UpdateUserServiceUseCase updateUserServiceUseCase;
+  final GetAllUsersUseCase getAllUsersUseCase;
+  final UpdateProfileStatusUseCase updateProfileStatusUseCase;
+  final GetUserFullDataUseCase getUserFullDataUseCase;
+  final CreateMedicalReportUseCase createMedicalReportUseCase;
+  final GetPatientMedicalReportsUseCase getPatientMedicalReportsUseCase;
+  final UpdateNurseOptionsUseCase updateNurseOptionsUseCase;
+  final UpdateDoctorOptionsUseCase updateDoctorOptionsUseCase;
+  final DeleteAccountUseCase deleteAccountUseCase;
 
   AccountBloc({
     required this.getUserServiceUseCase,
     required this.updateUserServiceUseCase,
     required this.changePasswordUseCase,
-    required this.getAllNotificationsUseCase,
     required this.getAllUsersUseCase,
     required this.updateProfileStatusUseCase,
+    required this.getUserFullDataUseCase,
     required this.createMedicalReportUseCase,
     required this.getPatientMedicalReportsUseCase,
     required this.updateNurseOptionsUseCase,
     required this.updateDoctorOptionsUseCase,
-    required this.getServicesUseCase,
-    required this.getSpecialtiesUseCase,
     required this.deleteAccountUseCase,
   }) : super(AccountInitialState()) {
     on<UpdateProfileEvent>((event, emit) async {
       await updateProfile(event, emit);
-      await getProfileData(event, emit);
     });
 
     on<UpdateProfileCurrentDataEvent>((event, emit) {
@@ -84,10 +80,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       await getAllUsersData(event, emit);
     });
 
-    on<FetchAllNotificationsEvent>((event, emit) async {
-      await getAllNotifications(event, emit);
-    });
-
     on<ChangeUserPasswordEvent>((event, emit) async {
       await changeUserPassword(event, emit);
     });
@@ -104,7 +96,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       updateCurrentPatientData(event, emit);
     });
 
-    /// nurse section
     on<UpdateNurseDataEvent>((event, emit) async {
       await updateNurseData(event, emit);
     });
@@ -113,24 +104,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       await updateDoctorData(event, emit);
     });
 
-    on<ChangeCurrentService>((event, emit) {
-      changeCurrentService(event, emit);
-    });
-
-    on<EnableModifyCurrentService>((event, emit) {
-      enableModifyService(event, emit);
-    });
-
-    on<ModifyCurrentService>((event, emit) async {
-      await modifyCurrentService(event, emit);
-    });
-
     on<SwitchProfileStatusEvent>((event, emit) async {
       await changeNurseProfileStatus(event, emit);
-    });
-
-    on<FetchAllServicesEvent>((event, emit) async {
-      await getAllServiceList(event, emit);
     });
 
     on<CreateMedicalReportEvent>((event, emit) async {
@@ -144,10 +119,16 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     on<DeleteAccountEvent>((event, emit) async {
       await deleteAccount(event, emit);
     });
+
+    on<ModifyCurrentService>((event, emit) async {
+      await modifyCurrentService(event, emit);
+    });
+
+    on<EnableModifyCurrentService>((event, emit) {
+      enableModifyCurrentService(event, emit);
+    });
   }
 
-  bool enableUpdate = false;
-  bool enableUpdateImg = false;
   enableUpdateProfile(EnableUpdateProfileEvent event, emit) {
     emit(const ProfileLoadingState());
     if (event.isImg == true) {
@@ -155,7 +136,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } else if (event.isSave == true) {
       enableUpdate = false;
       enableUpdateImg = false;
-      currentModifyService = null;
     } else {
       enableUpdate = !enableUpdate;
     }
@@ -168,8 +148,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     currentProfileTapsIndex = event.index;
     emit(const ProfileSuccessState());
   }
-
-  /// nurse section
 
   File? license;
   File? certificate;
@@ -185,14 +163,16 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   List<String>? publicationsList;
   List<String>? coursesList;
   List<String>? emergencyContactsList;
-  List<ServicesModel>? servicesList; // ✅ For Nurse/Assistant ONLY
-  SpecialtyEntity? selectedSpecialty; // ✅ For Doctor ONLY
+  List<ServicesModel>? servicesList;
+  SpecialtyEntity? selectedSpecialty;
+  String currentPublication = "";
+  String currentMedicalConditions = "";
+
   Future<void> updateNurseData(
       UpdateNurseDataEvent event, Emitter<AccountState> emit) async {
+    if (state is ProfileLoadingState) return;
     try {
       emit(const ProfileLoadingState());
-
-      // Update local state
       if (event.nurse != null) nurse = event.nurse;
       if (event.license != null) license = event.license;
       if (event.certificate != null) certificate = event.certificate;
@@ -213,7 +193,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       }
       if (event.servicesList != null) servicesList = event.servicesList;
 
-      // Call use case
       final result = await updateNurseOptionsUseCase(options: {
         if (languageList != null) 'languages': languageList,
         if (educationList != null) 'education': educationList,
@@ -221,33 +200,28 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         if (coursesList != null) 'courses': coursesList,
         if (emergencyContactsList != null)
           'emergency_contacts': emergencyContactsList,
-        if (servicesList != null && event.servicesList != null)
-          'services': ServiceToApiConverter.convertServicesToPayload(
-              event.servicesList!),
+        if (servicesList != null)
+          'services':
+              ServiceToApiConverter.convertServicesToPayload(servicesList!),
       });
 
-      // Handle result - emit states synchronously
       result.fold(
-        (failure) {
-          if (!emit.isDone) emit(const ProfileFailedState());
-        },
+        (failure) => emit(const ProfileFailedState()),
         (success) {
           _afterUpdateProfile();
-          if (!emit.isDone) emit(const UpdateNurseDataSuccessState());
+          emit(const UpdateNurseDataSuccessState());
         },
       );
     } catch (e) {
-      debugPrint('❌ updateNurseData error: $e');
-      if (!emit.isDone) emit(const ProfileFailedState());
+      emit(const ProfileFailedState());
     }
   }
 
   Future<void> updateDoctorData(
       UpdateDoctorDataEvent event, Emitter<AccountState> emit) async {
+    if (state is ProfileLoadingState) return;
     try {
       emit(const ProfileLoadingState());
-
-      // Update local state
       if (event.doctor != null) doctor = event.doctor;
       if (event.license != null) license = event.license;
       if (event.certificate != null) certificate = event.certificate;
@@ -270,7 +244,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         selectedSpecialty = event.selectedSpecialty;
       }
 
-      // Call use case
       final result = await updateDoctorOptionsUseCase(options: {
         if (languageList != null) 'languages': languageList,
         if (educationList != null) 'education': educationList,
@@ -278,35 +251,28 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         if (coursesList != null) 'courses': coursesList,
         if (emergencyContactsList != null)
           'emergency_contacts': emergencyContactsList,
-        // ✅ FIX: Send single specialty ID for doctors (not services array)
         if (selectedSpecialty != null) 'specialties_id': selectedSpecialty!.id,
       });
 
-      // Handle result - emit states synchronously
       result.fold(
-        (failure) {
-          if (!emit.isDone) emit(const ProfileFailedState());
-        },
+        (failure) => emit(const ProfileFailedState()),
         (success) {
           _afterUpdateProfile();
-          if (!emit.isDone) emit(const UpdateDoctorDataSuccessState());
+          emit(const UpdateDoctorDataSuccessState());
         },
       );
     } catch (e) {
-      debugPrint('❌ updateDoctorData error: $e');
-      if (!emit.isDone) emit(const ProfileFailedState());
+      emit(const ProfileFailedState());
     }
   }
 
   changeUserPassword(ChangeUserPasswordEvent event, emit) async {
     emit(ChangeUserPasswordState(response: AuthResponse(isLoad: true)));
-    String resMsg = "";
     try {
       var res = await changePasswordUseCase(data: event.data);
       res.fold((l) {
-        resMsg = l.toString();
         emit(ChangeUserPasswordState(
-            response: AuthResponse(isFailed: true, msg: resMsg)));
+            response: AuthResponse(isFailed: true, msg: l.toString())));
       }, (data) async {
         if (data.isSuccess == true) {
           emit(ChangeUserPasswordState(
@@ -319,11 +285,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } catch (e) {
       emit(ChangeUserPasswordState(
           response: AuthResponse(isFailed: true, msg: e.toString())));
-      debugPrint("changeUserPassword: $e");
     }
   }
 
-  UserService? currentModifiedUser;
+  UserService? currentUser;
   File? avatar;
   updateCurrentUserData(UpdateProfileCurrentDataEvent event, emit) {
     emit(const ProfileLoadingState());
@@ -332,27 +297,35 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   }
 
   updateProfile(UpdateProfileEvent event, emit) async {
+    if (state is UpdateProfileState &&
+        (state as UpdateProfileState).response.isLoad == true) {
+      return;
+    }
     if (!Util.checkUser()) return;
     emit(UpdateProfileState(response: AuthResponse(isLoad: true)));
-    String resMsg = "";
     try {
       var res = await updateUserServiceUseCase(userData: event.user);
       res.fold((l) {
-        resMsg = l.toString();
+        emit(UpdateProfileState(
+            response: AuthResponse(isFailed: true, msg: l.toString())));
       }, (data) async {
         if (data.userId != 0) {
-          currentUser = data;
+          // Trigger a silent refresh to get the full profile data (with relations)
+          // after the update, while keeping the immediate success response.
+          add(const FetchProfileDataEvent(isSilent: true));
+
           _afterUpdateProfile();
           emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
           await saveUserDate(AuthResponse(user: data));
         } else {
-          resMsg = translate("toast.wrong");
+          emit(UpdateProfileState(
+              response:
+                  AuthResponse(isFailed: true, msg: translate("toast.wrong"))));
         }
       });
     } catch (e) {
       emit(UpdateProfileState(
-          response: AuthResponse(msg: resMsg, isFailed: true)));
-      debugPrint("updateProfile: $e");
+          response: AuthResponse(isFailed: true, msg: e.toString())));
     }
   }
 
@@ -363,22 +336,47 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     currentMedicalConditions = "";
   }
 
-  UserService? currentUser;
   getProfileData(event, emit) async {
-    if (!Util.checkUser()) return;
-    emit(FetchProfileDataState(response: AuthResponse(isLoad: true)));
-    String resMsg = "";
+    // AccountBloc received FetchProfileDataEvent
+
+
+    if (state is FetchProfileDataState &&
+        (state as FetchProfileDataState).response.isLoad == true) {
+      // Already loading, ignoring duplicate event
+
+      return;
+    }
+
+    if (!Util.checkUser()) {
+      // No user session found, aborting
+
+      return;
+    }
+
+    if (!event.isSilent) {
+      emit(FetchProfileDataState(response: AuthResponse(isLoad: true)));
+      emit(FetchProfileDataState(response: AuthResponse(isLoad: true)));
+      // Emitted FetchProfileDataState (Loading)
+
+    }
+
     try {
-      var res = await getUserServiceUseCase();
+      var res = event.userId != null
+          ? await getUserFullDataUseCase(userId: event.userId!)
+          : await getUserServiceUseCase();
       res.fold((l) {
-        resMsg = l.toString();
+
+        emit(FetchProfileDataState(
+            response: AuthResponse(isFailed: true, msg: l.toString())));
       }, (data) async {
+        // Successfully fetched profile
+
+
         if (data.userId != null && data.userId != 0) {
           currentUser = data;
           isOnline = currentUser!.status ?? false;
           emergencyContactsList = currentUser!.emergencyContactsList;
 
-          // Load nurse data if exists
           if (currentUser!.nurse != null) {
             var nurse = currentUser!.nurse;
             languageList = nurse!.languageList;
@@ -386,44 +384,47 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
             publicationsList = nurse.publicationsList;
             coursesList = nurse.coursesList;
             servicesList = nurse.servicesList;
-            debugPrint(
-                "✅ Loaded nurse data: languages=${languageList?.length}, services=${servicesList?.length}");
+            // Resolved Nurse data
+
           }
 
-          // Load doctor data if exists
           if (currentUser!.doctor != null) {
             var doctor = currentUser!.doctor;
             languageList = doctor!.languageList;
             educationList = doctor.educationList;
             publicationsList = doctor.publicationsList;
             coursesList = doctor.coursesList;
-            // ⚠️ Doctors don't have servicesList, they have specialtyId
-            debugPrint(
-                "✅ Loaded doctor data: languages=${languageList?.length}, specialty=${doctor.specialtyId}");
-
-            // Load specialty if available
             if (doctor.specialtyId != null) {
               selectedSpecialty = SpecialtyEntity(
                 id: int.tryParse(doctor.specialtyId!) ?? 0,
-                title: '', // Will be populated from allSpecialtiesList
+                title: '',
               );
-              debugPrint("✅ Doctor specialty ID: ${doctor.specialtyId}");
             }
-          } else if (currentUser!.userType == 'doctor') {
-            debugPrint("❌ Doctor object is NULL for user_type=doctor!");
+            // Resolved Doctor data
+
           }
 
           _afterUpdateProfile();
-          add(const FetchAllServicesEvent());
-          emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
-          await saveUserDate(
-              AuthResponse(user: data, isSuccess: true, msg: resMsg));
+          emit(FetchProfileDataState(
+              response: AuthResponse(user: data, isSuccess: true)));
+          emit(FetchProfileDataState(
+              response: AuthResponse(user: data, isSuccess: true)));
+          // Emitted FetchProfileDataState (Success)
+
+
+          await saveUserDate(AuthResponse(user: data, isSuccess: true));
+        } else {
+          // Received empty or invalid userId
+
+          emit(FetchProfileDataState(
+              response:
+                  AuthResponse(isFailed: true, msg: "Invalid user data")));
         }
       });
     } catch (e) {
+
       emit(FetchProfileDataState(
-          response: AuthResponse(msg: resMsg, isFailed: true)));
-      debugPrint("getProfileDataBlocError: $e");
+          response: AuthResponse(isFailed: true, msg: e.toString())));
     }
   }
 
@@ -447,16 +448,14 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     }
   }
 
-  /// get all users
   List<UserService> allUsers = [];
   getAllUsersData(event, emit) async {
     emit(FetchProfileDataState(response: AuthResponse(isLoad: true)));
-    String resMsg = "";
     try {
       var res = await getAllUsersUseCase();
       res.fold((l) {
-        resMsg = l.toString();
-        emit(FetchProfileDataState(response: AuthResponse(isFailed: true)));
+        emit(FetchProfileDataState(
+            response: AuthResponse(isFailed: true, msg: l.toString())));
       }, (data) async {
         if (data.isNotEmpty) {
           allUsers = data;
@@ -465,28 +464,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       });
     } catch (e) {
       emit(FetchProfileDataState(
-          response: AuthResponse(msg: resMsg, isFailed: true)));
-      debugPrint("getProfileDataBlocError: $e");
+          response: AuthResponse(isFailed: true, msg: e.toString())));
     }
-  }
-
-  /// notifications
-  List<NotificationsEntity> notificationList = [];
-  getAllNotifications(event, emit) async {
-    if (!Util.checkUser()) return;
-    // try{
-    emit(const FetchNotificationsLoadingState());
-    var res = await getAllNotificationsUseCase();
-    res.fold((l) {
-      emit(const FetchNotificationsFailedState());
-    }, (data) {
-      notificationList = data.toList();
-      emit(const FetchNotificationsSuccessfullyState());
-    });
-    // }catch(e){
-    //   debugPrint("getAllNotifications: $e");
-    //   emit(const FetchNotificationsFailedState());
-    // }
   }
 
   bool isEnabledNotification = false;
@@ -494,183 +473,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     emit(AccountInitialState());
     isEnabledNotification = !isEnabledNotification;
     emit(const UpdateNotificationsModeState());
-  }
-
-  /// send fcm token
-  updateFcmToken() async {
-    // await UserServiceRemoteDataSource.updateUserToken();
-  }
-
-  /// patientData
-  String currentPublication = "";
-  String currentMedicalConditions = "";
-  updateCurrentPatientData(UpdateUserPatientDataEvent event, emit) {
-    emit(AccountInitialState());
-    if (event.data['publications'] != null) {
-      currentPublication = event.data['publications'];
-    }
-    if (event.data['medical_conditions'] != null) {
-      currentMedicalConditions = event.data['medical_conditions'];
-    }
-    emit(const ProfileSuccessState());
-  }
-
-  convertAllergiesToIDS() {
-    var list = [];
-    for (var i in currentUser!.allergiesList!) {
-      list.add(i.id);
-    }
-    return list;
-  }
-
-  List<ServicesModel> allServiceList = [];
-  List<SpecialtyEntity> allSpecialtiesList = [];
-  getAllServiceList(
-      FetchAllServicesEvent event, Emitter<AccountState> emit) async {
-    if (!Util.checkUser()) return;
-
-    emit(const ProfileLoadingState());
-
-    String? userType = event.userType;
-
-    // Get user_type from current user or nurse profile if not provided
-    if (userType == null) {
-      if (currentUser?.nurse?.type != null) {
-        userType = currentUser!.nurse!.type;
-        debugPrint("🔍 Using specific NURSE type: $userType");
-      } else if (currentUser?.userType != null) {
-        userType = currentUser!.userType;
-        debugPrint("🔍 Using generic user type: $userType");
-      }
-    }
-
-    if (userType == 'doctor') {
-      debugPrint("🔍 Fetching SPECIALTIES for doctor");
-      final result = await getSpecialtiesUseCase();
-      result.fold(
-        (failure) {
-          debugPrint("❌ Error fetching specialties");
-          allSpecialtiesList = [];
-        },
-        (specialties) {
-          allSpecialtiesList = specialties;
-          debugPrint(
-              "✅ Loaded ${allSpecialtiesList.length} specialties for doctor");
-
-          // Update selectedSpecialty title if we have a specialty ID but no title
-          if (selectedSpecialty != null && selectedSpecialty!.title.isEmpty) {
-            final matchingSpecialty = allSpecialtiesList.firstWhere(
-              (spec) => spec.id == selectedSpecialty!.id,
-              orElse: () => const SpecialtyEntity(id: 0, title: ''),
-            );
-            if (matchingSpecialty.id != 0) {
-              selectedSpecialty = matchingSpecialty;
-              debugPrint(
-                  "✅ Updated specialty title: ${selectedSpecialty!.title}");
-            }
-          }
-        },
-      );
-    } else {
-      final result = await getServicesUseCase(userType: userType);
-      result.fold(
-        (failure) {
-          debugPrint("❌ Error fetching services");
-          allServiceList = [];
-        },
-        (services) {
-          allServiceList = services;
-          debugPrint(
-              "📋 Loaded ${allServiceList.length} services for user_type: ${userType ?? 'all'}");
-        },
-      );
-    }
-    emit(const ProfileSuccessState());
-  }
-
-  ServicesModel? currentService;
-  String? priceTxt;
-  changeCurrentService(ChangeCurrentService event, emit) {
-    emit(AccountInitialState());
-    currentService = event.item;
-    if (event.txt != null) priceTxt = event.txt;
-    emit(const ProfileSuccessState());
-  }
-
-  int? currentModifyService;
-  enableModifyService(EnableModifyCurrentService event, emit) {
-    emit(AccountInitialState());
-    currentModifyService = event.item;
-    emit(const ProfileSuccessState());
-  }
-
-  Future<void> modifyCurrentService(
-      ModifyCurrentService event, Emitter<AccountState> emit) async {
-    try {
-      emit(AccountInitialState());
-      currentModifyService = null;
-
-      servicesList ??= [];
-
-      // ✅ FIX: Doctors can only have ONE specialty
-      if (Util.isDoctor()) {
-        if (event.isRemove == true) {
-          selectedSpecialty = null;
-        } else {
-          // Convert ServicesModel to SpecialtyEntity
-          selectedSpecialty = SpecialtyEntity(
-            id: event.item.id,
-            title: event.item.value,
-          );
-        }
-
-        final result = await updateDoctorOptionsUseCase(options: {
-          if (selectedSpecialty != null)
-            'specialties_id': selectedSpecialty!.id,
-        });
-
-        result.fold(
-          (failure) {
-            if (!emit.isDone) emit(const ProfileFailedState());
-          },
-          (success) {
-            if (!emit.isDone) emit(const ProfileSuccessState());
-          },
-        );
-      } else {
-        // Nurses/Assistants: keep existing multi-select logic
-        int indexI =
-            servicesList!.indexWhere((element) => element.id == event.item.id);
-        if (event.isRemove == true) {
-          if (indexI == -1) return;
-          servicesList!.removeAt(indexI);
-        } else {
-          if (indexI != -1) {
-            servicesList![indexI] = event.item;
-          } else {
-            servicesList!.add(event.item);
-          }
-        }
-
-        final result = await updateNurseOptionsUseCase(options: {
-          if (servicesList != null)
-            'services':
-                ServiceToApiConverter.convertServicesToPayload(servicesList!),
-        });
-
-        result.fold(
-          (failure) {
-            if (!emit.isDone) emit(const ProfileFailedState());
-          },
-          (success) {
-            if (!emit.isDone) emit(const ProfileSuccessState());
-          },
-        );
-      }
-    } catch (e) {
-      debugPrint('❌ modifyCurrentService error: $e');
-      if (!emit.isDone) emit(const ProfileFailedState());
-    }
   }
 
   bool isOnline = false;
@@ -689,25 +491,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         }
       });
     } catch (e) {
-      debugPrint("changeNurseProfileStatus: $e");
       isOnline = false;
       emit(const ProfileFailedState());
     }
   }
 
-  switchCurrentUserWithPatientProfile(String id, String userType) async {
-    // Update SharedPreferences to switch user context
-    await SharedPref().setPreferencesString(Constants.userId, id);
-    await SharedPref().setPreferencesString(Constants.userType, userType);
-
-    debugPrint("✅ Switched to user ID: $id, type: $userType");
-    // Note: ApiUrl.headerAuth is now a dynamic getter that will automatically
-    // use the updated user ID and token from SharedPreferences
-  }
-
-  /// Medical Reports Section
   List<MedicalReportEntity> patientMedicalReports = [];
-
   createMedicalReport(CreateMedicalReportEvent event, emit) async {
     emit(const MedicalReportLoadingState());
     try {
@@ -716,17 +505,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         prescriptionImage: event.prescriptionImage,
       );
       res.fold(
-        (l) {
-          debugPrint("❌ Create Medical Report Failed: $l");
-          emit(MedicalReportErrorState(error: l.toString()));
-        },
-        (data) {
-          debugPrint("✅ Medical Report Created: ${data.id}");
-          emit(const MedicalReportCreatedState());
-        },
+        (l) => emit(MedicalReportErrorState(error: l.toString())),
+        (data) => emit(const MedicalReportCreatedState()),
       );
     } catch (e) {
-      debugPrint("❌ Create Medical Report Error: $e");
       emit(MedicalReportErrorState(error: e.toString()));
     }
   }
@@ -737,32 +519,24 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     try {
       var res = await getPatientMedicalReportsUseCase(event.patientId);
       res.fold(
-        (l) {
-          debugPrint("❌ Fetch Medical Reports Failed: $l");
-          emit(MedicalReportErrorState(error: l.toString()));
-        },
+        (l) => emit(MedicalReportErrorState(error: l.toString())),
         (data) {
-          debugPrint("✅ Fetched ${data.length} Medical Reports");
           patientMedicalReports = data;
           emit(const MedicalReportsLoadedState());
         },
       );
     } catch (e) {
-      debugPrint("❌ Fetch Medical Reports Error: $e");
       emit(MedicalReportErrorState(error: e.toString()));
     }
   }
 
-  /// Delete Account Logic
   deleteAccount(DeleteAccountEvent event, emit) async {
     emit(const DeleteAccountLoadingState());
     try {
       final result = await deleteAccountUseCase.call(event.userId);
-
       await result.fold((failure) async {
         emit(DeleteAccountFailedState(message: failure.toString()));
       }, (message) async {
-        // Clearing all local data: SharedPreferences + SecureStorage token
         await TokenStorageHelper.deleteToken();
         await SharedPref().removePreference(Constants.userId);
         await SharedPref().removePreference(Constants.apiToken);
@@ -774,14 +548,102 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         await SharedPref().removePreference(Constants.address);
         await SharedPref().removePreference(Constants.userLatitude);
         await SharedPref().removePreference(Constants.userLongitude);
-        await SharedPref().removePreference(Constants.token); // FCM token
-
+        await SharedPref().removePreference(Constants.token);
         currentUser = null;
         emit(DeleteAccountSuccessState(message: message));
       });
     } catch (e) {
-      debugPrint("❌ Delete Account Error: $e");
       emit(DeleteAccountFailedState(message: e.toString()));
+    }
+  }
+
+  updateCurrentPatientData(UpdateUserPatientDataEvent event, emit) {
+    emit(AccountInitialState());
+    // Note: UserService fields are final. Local updates should ideally use copyWith.
+    // For now, we emit the state with the new data which will be fetched from API later.
+    emit(UpdateProfileState(response: AuthResponse(isSuccess: true)));
+  }
+
+  Future<void> modifyCurrentService(
+      ModifyCurrentService event, Emitter<AccountState> emit) async {
+    emit(const ProfileLoadingState());
+
+    if (Util.isDoctor()) {
+      if (event.isRemove == true) {
+        selectedSpecialty = null;
+      } else {
+        selectedSpecialty = SpecialtyEntity(
+          id: event.item.id,
+          title: event.item.value.toString(),
+        );
+      }
+
+      final result = await updateDoctorOptionsUseCase(options: {
+        'specialties_id': selectedSpecialty?.id,
+      });
+
+      result.fold(
+        (failure) => emit(const ProfileFailedState()),
+        (success) => emit(const ProfileSuccessState()),
+      );
+    } else {
+      servicesList ??= [];
+      if (event.isRemove == true) {
+        servicesList!.removeWhere((element) => element.id == event.item.id);
+      } else {
+        int index =
+            servicesList!.indexWhere((element) => element.id == event.item.id);
+        if (index != -1) {
+          servicesList![index] = event.item;
+        } else {
+          servicesList!.add(event.item);
+        }
+      }
+
+      final result = await updateNurseOptionsUseCase(options: {
+        'services':
+            ServiceToApiConverter.convertServicesToPayload(servicesList!),
+      });
+
+      result.fold(
+        (failure) => emit(const ProfileFailedState()),
+        (success) => emit(const ProfileSuccessState()),
+      );
+    }
+    currentModifyService = null;
+  }
+
+  enableModifyCurrentService(EnableModifyCurrentService event, emit) {
+    emit(AccountInitialState());
+    currentModifyService = event.item;
+    emit(const UpdateNotificationsModeState()); // UI refresh
+  }
+
+  String convertAllergiesToIDS() {
+    if (currentUser == null ||
+        currentUser!.allergiesList == null ||
+        currentUser!.allergiesList!.isEmpty) {
+      return "";
+    }
+    return currentUser!.allergiesList!.map((e) => e.id).join(',');
+  }
+
+  Future<void> switchCurrentUserWithPatientProfile(
+      String userId, String type) async {
+    // This is used by nurses to view/edit patient data during an order
+    // We fetch the patient data and set it as currentUser temporarily
+    try {
+      var res = await getUserFullDataUseCase(userId: userId);
+      res.fold((l) => null, (data) {
+        currentUser = data;
+        // Update local state variables
+        emergencyContactsList = currentUser!.emergencyContactsList;
+        if (currentUser!.nurse != null) {
+          servicesList = currentUser!.nurse!.servicesList;
+        }
+      });
+    } catch (e) {
+      // Error switching profile
     }
   }
 }

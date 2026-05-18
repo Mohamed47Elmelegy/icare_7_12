@@ -187,6 +187,7 @@ class _NurseInfoCard extends StatelessWidget {
                       await UserServiceRemoteDataSource.getUserFullData(
                     orderNurse.userData!.userId.toString(),
                   );
+                  if (!context.mounted) return;
                   Util.pushPage(
                     MapScreen(
                       isSet: true,
@@ -199,6 +200,7 @@ class _NurseInfoCard extends StatelessWidget {
                     context,
                   );
                 } catch (e) {
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(translate("toast.oops"))),
                   );

@@ -2,11 +2,14 @@ import 'package:icare/core/strings/enum/user_enum.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
 import 'package:icare/features/account/presentation/screens/admin_profile.dart';
 import 'package:icare/features/account/presentation/screens/nurse/nurse_profile.dart';
 import 'package:icare/features/account/presentation/screens/patient_profile.dart';
 import 'package:icare/features/account/presentation/screens/doctor/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/widgets/account_before_auth.dart';
 import 'package:icare/features/account/presentation/widgets/save_profile_btn.dart';
@@ -60,10 +63,10 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Future<void> _buildRefresh(BuildContext context) async {
-    AccountBloc.get(context)
-      ..add(const FetchProfileDataEvent())
-      ..add(const FetchAllNotificationsEvent())
-      ..add(const FetchAllServicesEvent());
-    // Util.getAllUserAppData(context: context);
+    AccountBloc.get(context).add(const FetchProfileDataEvent());
+
+    final servicesBloc = context.read<ServicesBloc>();
+    servicesBloc.add(const FetchAllNotificationsEvent());
+    servicesBloc.add(FetchAllServicesEvent(userType: Util.getUserType()));
   }
 }

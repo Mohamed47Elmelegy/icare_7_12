@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/authentication/domain/use_cases/social_login_user_usecase.dart';
 import 'package:flutter/material.dart';
@@ -13,28 +10,27 @@ import 'package:icare/features/authentication/domain/use_cases/login_user_usecas
 import 'package:icare/features/authentication/domain/use_cases/register_user_usecase.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
-import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
-import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
-import 'package:icare/features/setting/data/models/specialty_model.dart';
+
+import 'package:icare/core/coordinator/app_startup_coordinator.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool showPassword = false;
   String resMsg = "";
   static AuthBloc get(BuildContext context) => BlocProvider.of(context);
 
-  LoginUserServiceUseCase loginUserServiceUseCase;
-  RegisterUserServiceUseCase registerUserServiceUseCase;
-  SocialUserServiceUseCase socialUserServiceUseCase;
+  final LoginUserServiceUseCase loginUserServiceUseCase;
+  final RegisterUserServiceUseCase registerUserServiceUseCase;
+  final SocialUserServiceUseCase socialUserServiceUseCase;
+  final AppStartupCoordinator appStartupCoordinator;
+
   AuthBloc({
     required this.loginUserServiceUseCase,
     required this.registerUserServiceUseCase,
     required this.socialUserServiceUseCase,
+    required this.appStartupCoordinator,
   }) : super(AuthInitialState()) {
     on<RegisterEvent>((RegisterEvent event, emit) async {
       await register(emit, event);
-    });
-    on<UpdateNurseRegisterDataEvent>((event, emit) {
-      updateNurseRegisterData(event, emit);
     });
 
     on<LogInEvent>((event, emit) async {
@@ -82,15 +78,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SwitchNurseTypeEvent>((event, emit) async {
-      await switchNurseType(event, emit);
-    });
-
-    on<UpdateMarkersEvent>((event, emit) {
-      updateMarkers(event, emit);
-    });
-
-    on<UpdateSpecialtyEvent>((event, emit) {
-      updateSpecialty(event, emit);
+      switchNurseType(event, emit);
     });
   }
 
@@ -106,50 +94,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     currentCode = event.code;
     countryCode = event.code;
     emit(const UpdateCustomerTypeSuccessfullyState());
-  }
-
-  File? license;
-  File? certificate;
-  File? nurseID;
-  File? associationCard;
-  File? relatedJobId;
-  File? avatar;
-  NurseEntity? nurse;
-  List<String>? languageList;
-  List<String>? educationList;
-  List<String>? publicationsList;
-  List<String>? coursesList;
-  updateNurseRegisterData(UpdateNurseRegisterDataEvent event, emit) {
-    emit(const UpdateCustomerTypeLoadingState());
-    if (event.nurse != null) nurse = event.nurse;
-    if (event.license != null) license = event.license;
-    if (event.certificate != null) certificate = event.certificate;
-    if (event.nurseID != null) nurseID = event.nurseID;
-    if (event.associationCard != null) associationCard = event.associationCard;
-    if (event.relatedJobId != null) relatedJobId = event.relatedJobId;
-    if (event.avatar != null) avatar = event.avatar;
-    if (event.languageList != null) languageList = event.languageList;
-    if (event.educationList != null) educationList = event.educationList;
-    if (event.publicationsList != null) {
-      publicationsList = event.publicationsList;
-    }
-    if (event.coursesList != null) coursesList = event.coursesList;
-    emit(const UpdateCustomerTypeSuccessfullyState());
-  }
-
-  checkNurseRegisterInfoCompleted() {
-    if (nurse != null &&
-        languageList != null &&
-        languageList!.isNotEmpty &&
-        educationList != null &&
-        educationList!.isNotEmpty &&
-        publicationsList != null &&
-        publicationsList!.isNotEmpty &&
-        coursesList != null &&
-        coursesList!.isNotEmpty) {
-      return true;
-    }
-    return false;
   }
 
   String? customerType;
@@ -187,41 +131,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const EnableRegisterPhoneSuccessState());
   }
 
-  // register(emit, RegisterEvent event) async {
-  //   emit(const RegisterLoadingState());
-  //   try {
-  //     var res = await registerUserServiceUseCase(userData: event.user);
-  //     if (emit.isDone) return;
-  //     res.fold((l) {
-  //       resMsg = l.toString();
-  //       emit(RegisterFailedState(
-  //           response: AuthResponse(msg: resMsg, isFailed: true)));
-  //     }, (data) {
-  //       resMsg = data.msg.toString();
-  //       if (data.isSuccess == true) {
-  //         // Don't auto-login, instead emit pending state
-  //         // User needs admin approval before accessing the app
-  //         emit(RegistrationPendingState(
-  //             message: translate("auth.pending_approval_message")));
-  //       } else {
-  //         emit(RegisterFailedState(
-  //             response: AuthResponse(msg: resMsg, isFailed: true)));
-  //       }
-  //     });
-  //   } catch (e) {
-  //     debugPrint("registerError: $e");
-  //     if (!emit.isDone) {
-  //       emit(RegisterFailedState(
-  //           response: AuthResponse(msg: resMsg, isFailed: true)));
-  //     }
-  //   }
-  // }
   register(emit, RegisterEvent event) async {
     emit(const RegisterLoadingState());
 
     // ✅ تحقق من user_type قبل التسجيل
     String userType = event.user['user_type'] ?? 'customer';
-    debugPrint("📝 Registering as: $userType");
+    // Registering user
+
 
     try {
       var res = await registerUserServiceUseCase(userData: event.user);
@@ -252,7 +168,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       });
     } catch (e) {
-      debugPrint("registerError: $e");
+
       if (!emit.isDone) {
         emit(RegisterFailedState(
             response: AuthResponse(msg: resMsg, isFailed: true)));
@@ -265,20 +181,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       var res = await loginUserServiceUseCase(data: event.user);
       if (emit.isDone) return;
-      res.fold((l) {
+
+      await res.fold((l) {
         resMsg = l.toString();
-      }, (data) {
+        emit(LogInFailedState(
+            response: AuthResponse(msg: resMsg, isFailed: true)));
+      }, (data) async {
         resMsg = data.msg.toString();
         if (data.user == null) {
           emit(LogInFailedState(
               response: AuthResponse(msg: resMsg, isFailed: true)));
         } else {
-          emit(LogInSuccessfullyState(
-              response: AuthResponse(msg: resMsg, isSuccess: true)));
+          // Clean Architecture: Initialize app data before finalizing login state
+          emit(const AuthInitializingState());
+
+          final isInitSuccess = await appStartupCoordinator.initApp();
+
+          if (isInitSuccess) {
+            emit(LogInSuccessfullyState(
+                response: AuthResponse(msg: resMsg, isSuccess: true)));
+          } else {
+            // Initialization failed (e.g., account pending approval)
+            // resMsg should be set by coordinator if needed, otherwise fallback
+            resMsg = translate("toast.account_not_approved");
+            emit(LogInFailedState(
+                response: AuthResponse(msg: resMsg, isFailed: true)));
+          }
         }
       });
     } catch (e) {
-      debugPrint("logInError: $e");
+
       if (!emit.isDone) {
         emit(LogInFailedState(
             response: AuthResponse(msg: resMsg, isFailed: true)));
@@ -291,20 +223,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       var res = await socialUserServiceUseCase(data: event.user);
       if (emit.isDone) return;
-      res.fold((l) {
+
+      await res.fold((l) {
         resMsg = l.toString();
-      }, (data) {
+        emit(SocialFailedState(
+            response: AuthResponse(msg: resMsg, isFailed: true)));
+      }, (data) async {
         resMsg = data.msg.toString();
         if (data.user == null) {
           emit(SocialFailedState(
               response: AuthResponse(msg: resMsg, isFailed: true)));
         } else {
-          emit(SocialSuccessfullyState(
-              response: AuthResponse(msg: resMsg, isSuccess: true)));
+          // Initialize app data before finalizing login state
+          emit(const AuthInitializingState());
+
+          final isInitSuccess = await appStartupCoordinator.initApp();
+
+          if (isInitSuccess) {
+            emit(SocialSuccessfullyState(
+                response: AuthResponse(msg: resMsg, isSuccess: true)));
+          } else {
+            resMsg = translate("toast.account_not_approved");
+            emit(SocialFailedState(
+                response: AuthResponse(msg: resMsg, isFailed: true)));
+          }
         }
       });
     } catch (e) {
-      debugPrint("socialLogin: $e");
+
       if (!emit.isDone) {
         emit(SocialFailedState(
             response: AuthResponse(msg: resMsg, isFailed: true)));
@@ -328,12 +274,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(ChangePasswordState(showPass: showPassword));
   }
 
-  sendVerifyEmail(event, emit) async {
-    // var code = DateTime.now().millisecond.toString().substring(0,2).toString() + DateTime.now().minute.toString().substring(0,1)+DateTime.now().second.toString().substring(0,1)+DateTime.now().millisecondsSinceEpoch.toString().substring(0,2).toString();
-    // SharedPref.preferences.setPreferencesString(Constants.lastVerificationCode,code);
-    // await SendGmail.sendEmailMessage("Verification Code: $code", event.email.toString(), "icarestars Medical - Verification Code");
-    // emit(ConfirmEmailState(response: AuthResponse(state: states = FetchStates.SUCCESSFULLY,msg: translate("toast.successfully_send"))));
-  }
+  sendVerifyEmail(event, emit) async {}
 
   saveUserDate(AuthResponse res) async {
     if (res.user == null) return;
@@ -356,64 +297,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// nurse section
   bool isNurse = false;
   bool isDoctor = false;
-  switchNurseType(SwitchNurseTypeEvent event, emit) async {
+  switchNurseType(SwitchNurseTypeEvent event, emit) {
     emit(const EnableAuthButtonLoadingState());
     isNurse = event.isNurse;
     isDoctor = event.isDoctor ?? false;
-    if (isDoctor && (specialtyList == null || specialtyList!.isEmpty)) {
-      try {
-        debugPrint("🔄 Loading specialties...");
-        specialtyList = await SettingsRemoteDataSource.fetchAllSpecialties();
-        debugPrint("✅ Loaded ${specialtyList?.length ?? 0} specialties");
-        // Convert to simple map list for dropdown
-        specialtiesList = specialtyList
-            ?.map((s) => {
-                  'id': s.id,
-                  'name': s.title, // SpecialtyModel uses 'title' not 'name'
-                })
-            .toList();
-        debugPrint(
-            "✅ Converted to ${specialtiesList?.length ?? 0} specialty items");
-      } catch (e) {
-        debugPrint("❌ Error fetching specialties: $e");
-        specialtyList = [];
-        specialtiesList = [];
-      }
-    }
-    if (emit.isDone) return;
-    emit(const EnableAuthButtonState());
-  }
-
-  List<SpecialtyModel>? specialtyList;
-  SpecialtyModel? selectedSpecialty;
-  int? selectedSpecialtyId;
-  List<Map<String, dynamic>>? specialtiesList;
-
-  updateSpecialty(UpdateSpecialtyEvent event, emit) {
-    emit(const EnableAuthButtonLoadingState());
-    selectedSpecialtyId = event.specialtyId;
-
-    // Use provided specialty or find it in the list
-    if (event.specialty != null) {
-      selectedSpecialty = event.specialty;
-    } else if (specialtyList != null && event.specialtyId != null) {
-      try {
-        selectedSpecialty = specialtyList!.firstWhere(
-          (s) => s.id == event.specialtyId,
-        );
-      } catch (e) {
-        debugPrint("Specialty not found: $e");
-      }
-    }
-    emit(const EnableAuthButtonState());
-  }
-
-  //google map
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  updateMarkers(UpdateMarkersEvent event, emit) {
-    emit(AuthInitialState());
-    markers.addAll(event.markers!);
-    print('markers : ${markers.length}');
     emit(const EnableAuthButtonState());
   }
 }

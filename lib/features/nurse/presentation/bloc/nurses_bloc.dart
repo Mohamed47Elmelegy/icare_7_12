@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/nurse/data/models/review_model.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/nurse/domain/use_cases/get_all_nurses_usecase.dart';
@@ -88,7 +86,7 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
       }
     });
     // }catch(e){
-    //   debugPrint("getAllNursesBlocError: $e");
+    //   // getAllNursesBlocError
     //   emit(FetchAllNursesFailedState());
     // }
   }
@@ -109,7 +107,7 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
       emit(FetchAllNursesSuccessfullyState());
     });
     // }catch(e){
-    //   debugPrint("getAllNursesBlocError: $e");
+    //   // getAllNursesBlocError
     //   emit(FetchAllNursesFailedState());
     // }
   }
@@ -125,8 +123,6 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
   // addNearbyNurse(AddNewNearbyNurseEvent event,emit){
   //   emit(FetchAllNursesLoadingState());
   //   var res = checkIfNurseNearby(event.distance!);
-  //   debugPrint("distance: ${event.distance}");
-  //   debugPrint("list ${res.toList()}");
   //   if(res.first!="" || res.last!=""){
   //     int index = nearbyList.indexWhere((element) => element.userData!.userId == event.nurse!.userData!.userId);
   //     if(index!=-1||res.first=='-1')return;
@@ -172,7 +168,6 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
     emit(FetchAllNursesLoadingState());
     List<Marker> markersToAdd = [];
     Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-    AuthBloc.get(event.ctx).markers.clear();
     try {
       // Check if location services are enabled once
       if (!await Permission.location.serviceStatus.isEnabled) {
@@ -209,11 +204,10 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
 
       // Store filtered results count
       filteredResultsCount = list.length;
-      debugPrint('show all nurses: $showAllNurses for list:${list.length}');
+
       for (var i in list) {
         // if (event.ctx.mounted){
         if (markersTimer == null || !markersTimer!.isActive) {
-          debugPrint("search screen not available now");
           return;
         }
         // Ensure user data is valid
@@ -261,14 +255,10 @@ class NurseBloc extends Bloc<NurseEvent, NurseState> {
           markers.addAll(
               {for (var marker in markersToAdd) marker.markerId: marker});
           await Future.delayed(const Duration(milliseconds: 300));
-          if (event.ctx.mounted) {
-            AuthBloc.get(event.ctx).add(UpdateMarkersEvent(markers: markers));
-          }
-          debugPrint("------------------add new markerID: $markerId ");
         }
       }
     } catch (e) {
-      debugPrint("_setLocationOnMap: $e");
+      // Error handled silently
     }
   }
 }

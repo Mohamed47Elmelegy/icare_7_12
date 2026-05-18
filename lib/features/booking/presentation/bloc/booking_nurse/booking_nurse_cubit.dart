@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icare/features/authentication/data/models/user_service_model.dart';
 import 'package:icare/features/booking/domain/use_cases/get_patient_details_usecase.dart';
@@ -30,16 +29,19 @@ class BookingNurseCubit extends Cubit<BookingNurseState> {
       final timestamp = _cacheTimestamps[userId];
       if (timestamp != null &&
           DateTime.now().difference(timestamp) < _cacheDuration) {
-        debugPrint("✅ Loading patient $userId from cache");
+        // Loading patient from cache
+
         emit(BookingNurseLoaded(_patientCache[userId]!));
         return;
       } else {
-        debugPrint("⏰ Cache expired for patient $userId, fetching fresh data");
+        // Cache expired, fetching fresh data
+
       }
     }
 
     // Fetch from API
-    debugPrint("🔍 Fetching patient details for user $userId from API");
+    // Fetching patient details from API
+
     emit(BookingNurseLoading());
     final result = await getPatientDetailsUseCase(userId: userId);
     result.fold(
@@ -48,7 +50,8 @@ class BookingNurseCubit extends Cubit<BookingNurseState> {
         // Save to cache
         _patientCache[userId] = data;
         _cacheTimestamps[userId] = DateTime.now();
-        debugPrint("💾 Cached patient data for user $userId");
+        // Cached patient data
+
         emit(BookingNurseLoaded(data));
       },
     );
@@ -58,14 +61,16 @@ class BookingNurseCubit extends Cubit<BookingNurseState> {
   void clearCache() {
     _patientCache.clear();
     _cacheTimestamps.clear();
-    debugPrint("🗑️ Cleared all patient cache");
+    // Cleared all patient cache
+
   }
 
   /// Clear cached data for a specific patient
   void clearPatientCache(String userId) {
     _patientCache.remove(userId);
     _cacheTimestamps.remove(userId);
-    debugPrint("🗑️ Cleared cache for patient $userId");
+    // Cleared cache for patient
+
   }
 
   /// Check if patient data is cached

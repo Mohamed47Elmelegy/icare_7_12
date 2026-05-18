@@ -6,7 +6,7 @@ import 'package:icare/core/utils/small_fun.dart';
 class ApiUrl {
   static Map<String, String> get headerAuth {
     String token = Util.getToken();
- //   print("🔑 ACCESS TOKEN: $token");
+    //   print("🔑 ACCESS TOKEN: $token");
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

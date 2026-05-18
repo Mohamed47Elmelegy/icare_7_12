@@ -1,8 +1,9 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
-import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
+import 'package:icare/features/account/presentation/bloc/services_state.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
@@ -18,14 +19,16 @@ class SpecialtyListDropDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc, AccountState>(
+    return BlocBuilder<ServicesBloc, ServicesState>(
       builder: (ctx, state) {
-        var bloc = AccountBloc.get(ctx);
-        List<SpecialtyEntity> specialtiesList = bloc.allSpecialtiesList;
+        var servicesBloc = ServicesBloc.get(ctx);
+        var accountBloc = AccountBloc.get(ctx);
+
+        List<SpecialtyEntity> specialtiesList = servicesBloc.allSpecialtiesList;
 
         if (specialtiesList.isEmpty) return const SizedBox.shrink();
 
-        SpecialtyEntity? currentSpecialty = bloc.selectedSpecialty;
+        SpecialtyEntity? currentSpecialty = accountBloc.selectedSpecialty;
 
         return Container(
           width: width.w,
@@ -62,7 +65,7 @@ class SpecialtyListDropDown extends StatelessWidget {
                   userType: 'doctor',
                 );
 
-                bloc.add(ChangeCurrentService(
+                servicesBloc.add(ChangeCurrentService(
                   item: serviceModel,
                   txt: serviceModel.value.toString(),
                 ));

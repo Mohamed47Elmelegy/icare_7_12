@@ -1,16 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:async';
-import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/features/authentication/presentation/screens/login.dart';
 import 'package:icare/features/root_app/screens/root_screen.dart';
 import 'package:icare/features/root_app/screens/welcome_screens/get_started.dart';
-import 'package:icare/features/shared_widgets/custom_dialogs.dart';
 import 'package:icare/features/shared_widgets/no_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/core/strings/app_images.dart';
-import 'package:icare/core/utils/notifications_utils.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:icare/core/coordinator/app_startup_coordinator.dart';
+import 'package:icare/core/di/injection_core.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,42 +31,38 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void didChangeDependencies() {
     _checkInternet();
-    if (mounted) Util.getAllUserAppData(context: context, isSplash: true);
-    Timer(const Duration(seconds: 4), () async {
-      await LocationUtil.checkLocationPermission();
-      await NotificationsUtils.initialPushNotification();
-      await CustomDialogs.acceptLocationPermission(context);
-      await Upgrader.sharedInstance.initialize();
-      // if(Upgrader.sharedInstance.isUpdateAvailable()){
-      //   if(mounted) return Util.pushPageAndRemoveRoutes(const UpdateAppScreen(), context);
-      // }
-
-      if (Util.checkUser()) {
-        // Check verification status for professionals
-        bool isVerified = await Util.checkUserVerificationStatus(context);
-        if (!isVerified) {
-          // User is pending approval, redirect to login
-          debugPrint("⚠️ User pending approval, redirecting to login");
-          if (mounted) {
-            Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
-            Util.pushPage(const LoginScreen(), context);
-          }
-          return;
-        }
-        // User is verified or is a customer, proceed to home
-        if (mounted) Util.pushPageAndRemoveRoutes(const RootScreen(), context);
-      } else {
-        if (Util.getUserType() != 'null' && Util.getUserType() != '') {
-          Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
-          Util.pushPage(const LoginScreen(), context);
-          return;
-        }
-        if (mounted) {
-          Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
-        }
-      }
-    });
+    if (mounted) {
+      _startApp();
+    }
     super.didChangeDependencies();
+  }
+
+  Future<void> _startApp() async {
+    final coordinator = sl<AppStartupCoordinator>();
+
+    // Wait for brand visibility and init
+    final results = await Future.wait([
+      coordinator.initApp(),
+      Future.delayed(const Duration(seconds: 3)),
+      Upgrader.sharedInstance.initialize(),
+    ]);
+
+    final bool isInitSuccess = results[0] as bool;
+
+    if (!mounted) return;
+
+    if (isInitSuccess) {
+      // User is verified and profile is loaded
+      Util.pushPageAndRemoveRoutes(const RootScreen(), context);
+    } else {
+      // Guest or authentication failed/cleared
+      if (Util.getUserType() != 'null' && Util.getUserType() != '') {
+        Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
+        Util.pushPage(const LoginScreen(), context);
+      } else {
+        Util.pushPageAndRemoveRoutes(const GetStartedScreen(), context);
+      }
+    }
   }
 
   @override

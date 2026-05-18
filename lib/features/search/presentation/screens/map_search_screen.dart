@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
@@ -8,7 +9,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctor_event.dart';
@@ -59,7 +59,6 @@ class MapScreenState extends State<MapSearchScreen> {
   late NurseBloc nurseBloc;
   late DoctorBloc doctorBloc;
   late RootBloc rootBloc;
-  late AuthBloc authBloc;
   late SearchBloc searchBloc;
 
   @override
@@ -78,7 +77,6 @@ class MapScreenState extends State<MapSearchScreen> {
     nurseBloc = NurseBloc.get(context);
     doctorBloc = DoctorBloc.get(context);
     rootBloc = RootBloc.get(context);
-    authBloc = AuthBloc.get(context);
     searchBloc = SearchBloc.get(context);
 
     // 🔄 Update markers every 5 seconds with progressive loading
@@ -105,7 +103,7 @@ class MapScreenState extends State<MapSearchScreen> {
             final entityType = searchState.results.isNotEmpty
                 ? "${searchState.results.first.providerType}s"
                 : "providers";
-            debugPrint(
+            AppLogger.d(
                 "🔍 Search results received: ${searchState.results.length} $entityType");
 
             // Clear old markers before loading new ones
@@ -117,27 +115,25 @@ class MapScreenState extends State<MapSearchScreen> {
               onMarkerTap: _onMarkerTap,
               onUpdate: () {
                 if (mounted) {
-                  setState(() {
-                    authBloc.markers = Map.from(_markerManager.markers);
-                  });
+                  setState(() {});
                 }
               },
             );
 
-            debugPrint(
+            AppLogger.d(
                 "🗺️ Map updated with ${_markerManager.markers.length} markers");
 
-            // Move camera to show first result if available
+            // Move camera to show results (Zoomed out)
             if (_markerManager.markers.isNotEmpty && mounted) {
               try {
                 final firstMarker = _markerManager.markers.values.first;
                 rootBloc.mapController.animateCamera(
-                  CameraUpdate.newLatLngZoom(firstMarker.position, 13),
+                  CameraUpdate.newLatLngZoom(firstMarker.position,
+                      10.0), // 10.0 is a wider/zoomed out level
                 );
-                debugPrint(
-                    "📍 Camera moved to first result: ${firstMarker.position}");
+                AppLogger.d("📍 Camera zoomed out to show results");
               } catch (e) {
-                debugPrint("⚠️ Could not move camera: $e");
+                AppLogger.e("⚠️ Could not move camera: $e");
               }
             }
           }
@@ -199,7 +195,7 @@ class MapScreenState extends State<MapSearchScreen> {
       final entityType = currentState.results.isNotEmpty
           ? "${currentState.results.first.providerType}s"
           : "providers";
-      debugPrint(
+      AppLogger.d(
           "🔄 Periodic refresh: Updating ${currentState.results.length} $entityType...");
 
       await _progressiveLoader.loadProgressively(
@@ -207,14 +203,12 @@ class MapScreenState extends State<MapSearchScreen> {
         onMarkerTap: _onMarkerTap,
         onUpdate: () {
           if (mounted) {
-            setState(() {
-              authBloc.markers = Map.from(_markerManager.markers);
-            });
+            setState(() {});
           }
         },
       );
 
-      debugPrint("✅ Periodic refresh completed");
+      AppLogger.d("✅ Periodic refresh completed");
     }
 
     _isUpdating = false;
@@ -226,7 +220,7 @@ class MapScreenState extends State<MapSearchScreen> {
       LocationUtil.checkLocationPermission();
       _setUserCurrentLocation();
     } catch (e) {
-      debugPrint("_setUp: $e");
+      AppLogger.e("_setUp: $e");
     }
   }
 
@@ -269,12 +263,12 @@ class MapScreenState extends State<MapSearchScreen> {
               longitude: position.longitude,
             ));
 
-            debugPrint("📍 User Location Set (GPS):");
-            debugPrint("   └─ Latitude: ${position.latitude}");
-            debugPrint("   └─ Longitude: ${position.longitude}");
+            AppLogger.d("📍 User Location Set (GPS):");
+            AppLogger.d("   └─ Latitude: ${position.latitude}");
+            AppLogger.d("   └─ Longitude: ${position.longitude}");
           }
         } catch (e) {
-          debugPrint("⚠️ Failed to get GPS location: $e");
+          AppLogger.w("⚠️ Failed to get GPS location: $e");
 
           // Fallback to SharedPreferences
           final savedLat =
@@ -293,11 +287,11 @@ class MapScreenState extends State<MapSearchScreen> {
               longitude: savedLong,
             ));
 
-            debugPrint("📍 User Location Set (Saved):");
-            debugPrint("   └─ Latitude: $savedLat");
-            debugPrint("   └─ Longitude: $savedLong");
+            AppLogger.d("📍 User Location Set (Saved):");
+            AppLogger.d("   └─ Latitude: $savedLat");
+            AppLogger.d("   └─ Longitude: $savedLong");
           } else {
-            debugPrint("❌ No location available");
+            AppLogger.w("❌ No location available");
           }
         }
       } else {
@@ -331,7 +325,7 @@ class MapScreenState extends State<MapSearchScreen> {
         });
       }
     } catch (e) {
-      debugPrint("_setUserCurrentLocation: $e");
+      AppLogger.e("_setUserCurrentLocation: $e");
     }
   }
 
@@ -350,7 +344,7 @@ class MapScreenState extends State<MapSearchScreen> {
         selectedAddress,
       );
     } catch (e) {
-      debugPrint("_checkIFUserLocation $e");
+      AppLogger.e("_checkIFUserLocation $e");
     }
   }
 }

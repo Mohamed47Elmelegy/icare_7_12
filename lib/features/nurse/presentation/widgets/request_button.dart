@@ -86,6 +86,7 @@ class RequestButton extends StatelessWidget {
                             title:
                                 translate('profile.confirm_current_location')),
                         context);
+                    if (!context.mounted) return;
                     if (res != null && res is LocationMapEntity) {
                       bookingBloc.add(AddOrderEvent(
                           context: context,

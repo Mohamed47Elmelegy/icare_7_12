@@ -2,6 +2,7 @@ import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/personal_tap_screen.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/profile_medications_tap_screen.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/report_tap_screen.dart';
+import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/booking_history_tap_screen.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
@@ -34,9 +35,11 @@ class ProfileTapsScreens extends StatelessWidget {
           );
         } else if (currentTap == 1) {
           return const ProfileMedicationsTapScreen();
-        } else {
+        } else if (currentTap == 2) {
           return ReportTapScreen(
               isNurseEditMode: isNurseEditMode, vitalsKey: vitalsKey);
+        } else {
+          return const BookingHistoryTapScreen();
         }
       },
     );

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -36,13 +35,7 @@ class SetNotification {
   @pragma('vm:entry-point')
   static void notificationTapBackground(
       NotificationResponse notificationResponse) {
-    debugPrint('notification(${notificationResponse.id}) action tapped: '
-        '${notificationResponse.actionId} with'
-        ' payload: ${notificationResponse.payload}');
-    if (notificationResponse.input?.isNotEmpty ?? false) {
-      debugPrint(
-          'notification action tapped with input: ${notificationResponse.input}');
-    }
+    // Background notification tap handled
   }
 
   static Future<void> setupFlutterNotifications() async {
@@ -146,7 +139,7 @@ class SetNotification {
         onDidReceiveNotificationResponse: onDidReceiveLocalNotification,
       );
     } catch (e) {
-      debugPrint("setupFlutterNotifications: $e");
+      // Error handled silently
     }
   }
 
@@ -179,10 +172,9 @@ class SetNotification {
     await flutterLocalNotificationsPlugin
         .show(0, title, msg, notificationDetails, payload: 'item x')
         .onError((error, stackTrace) {
-      debugPrint("showNotification $error");
+      // Error handled silently
     }).catchError((e) {
-      debugPrint("showNotification $e");
-      return;
+      // Error handled silently
     });
   }
 }

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:icare/features/account/data/data_sources/account_data_source.dart';
 import 'package:icare/features/chat/data/models/chat_model.dart';
 
@@ -13,7 +12,7 @@ class ChatClient {
           "public"
         ]).snapshots();
     res.first.then((value) {
-      // debugPrint("getAllAdvisorChatRooms: ${value.docs.toList()}");
+      // getAllAdvisorChatRooms success
     });
     return res;
   }
@@ -24,7 +23,7 @@ class ChatClient {
         .where('users', arrayContains: FirebaseAuth.instance.currentUser!.uid)
         .snapshots();
     res.first.then((value) {
-      // debugPrint("getAllUserChatRooms: ${value.docs.toList()}");
+      // getAllUserChatRooms success
     });
     return res;
   }
@@ -38,11 +37,9 @@ class ChatClient {
           .doc(roomID)
           .set(roomData)
           .catchError((e) {
-        debugPrint("catchError: $e");
         res = false;
       });
     } catch (e) {
-      debugPrint("addNewChatRoom: $e");
       res = false;
     }
     return res;
@@ -57,11 +54,9 @@ class ChatClient {
           .doc(roomID)
           .update(roomData)
           .catchError((e) {
-        debugPrint("catchError: $e");
         res = false;
       });
     } catch (e) {
-      debugPrint("updateChatRoom: $e");
       res = false;
     }
     return res;
@@ -89,7 +84,6 @@ class ChatClient {
           .add(chatMessageMap)
           .catchError((e) {
         res = false;
-        debugPrint("sendNewMsgCatchError: $e");
         throw "";
       });
       await docRef.then((value) {
@@ -126,11 +120,9 @@ class ChatClient {
           .get()
           .then((exist) async {
         if (!exist.exists) {
-          bool res = await addNewChatRoom(roomID, roomData);
-          if (res) debugPrint("chatRoomInsertedSuccessfully...");
+          await addNewChatRoom(roomID, roomData);
         } else {
-          bool res = await updateChatRoom(roomID, roomData);
-          if (res) debugPrint("chatRoomUpdatedSuccessfully...");
+          await updateChatRoom(roomID, roomData);
         }
       });
       UserServiceRemoteDataSource.sendNotification(data: {
@@ -141,7 +133,6 @@ class ChatClient {
         // 'type': 'chat'
       });
     } catch (e) {
-      debugPrint("addCategoryErrorClient: $e");
       res = false;
     }
     return res;
@@ -157,9 +148,10 @@ class ChatClient {
           .orderBy('time', descending: true)
           .snapshots();
 
-      // debugPrint("getAllRoomChats..");
+      // getAllRoomChats..
+
     } catch (e) {
-      debugPrint("getAllUsersErrorClient: $e");
+      // Error handled silently
     }
     return snapshots;
   }

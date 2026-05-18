@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
@@ -12,6 +11,8 @@ import 'package:icare/features/setting/data/models/refund_policy_model.dart';
 import 'package:icare/features/setting/data/models/terms_model.dart';
 import 'package:icare/features/setting/data/models/specialty_model.dart';
 import 'package:icare/features/categories/data/models/allergies.dart';
+import 'package:icare/core/utils/shared_pref.dart';
+import 'package:icare/core/constants/constant.dart';
 
 abstract class SettingsRemoteDataSourceImpl {
   Future<List<AboutUsModel>> getAboutUsData();
@@ -32,7 +33,8 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
     var response = await client.get(
         Uri.parse("${ApiUrl.USER_NOTIFICATIONS}/${Util.getUserID()}"),
         headers: ApiUrl.headerAuth);
-    debugPrint("getAllNotifications ${response.body}");
+    // debugPrint("getAllNotifications ${response.body}");
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
       if (data == null) {
@@ -79,31 +81,96 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
   }
 
   static Future<List<CityModel>> fetchAllGovernorates() async {
-    var response = await http.get(Uri.parse(ApiUrl.GOVERNORATES));
-    debugPrint("fetchAllGovernorates: ${response.body}");
-    if (response.statusCode == 200) {
-      var decodedData = jsonDecode(response.body);
-      if (decodedData['status']) {
-        return CityModel.listFromJson(jsonEncode(decodedData['data']));
+    // 1. Check local cache
+    try {
+      String cachedData =
+          SharedPref().getPreferenceString(Constants.governoratesCache);
+      if (cachedData.isNotEmpty) {
+        // Refresh in background silently
+        Future.microtask(() async {
+          try {
+            var response = await http.get(Uri.parse(ApiUrl.GOVERNORATES));
+            if (response.statusCode == 200) {
+              var decodedData = jsonDecode(response.body);
+              if (decodedData['status']) {
+                SharedPref().setPreferencesString(Constants.governoratesCache,
+                    jsonEncode(decodedData['data']));
+              }
+            }
+          } catch (e) {
+            // Silent refresh failed for governorates
+          }
+        });
+        return CityModel.listFromJson(cachedData);
       }
-      return [];
-    } else {
-      return [];
+    } catch (e) {
+      // Cache read error for governorates
     }
+
+    // 2. Fetch from API if cache is empty
+    try {
+      var response = await http.get(Uri.parse(ApiUrl.GOVERNORATES));
+      // fetchAllGovernorates
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        if (decodedData['status']) {
+          String jsonList = jsonEncode(decodedData['data']);
+          SharedPref()
+              .setPreferencesString(Constants.governoratesCache, jsonList);
+          return CityModel.listFromJson(jsonList);
+        }
+      }
+    } catch (e) {
+      // API error for governorates
+    }
+    return [];
   }
 
   static Future<List<CityModel>> fetchAllCities() async {
-    var response = await http.get(Uri.parse(ApiUrl.CITIES));
-    debugPrint("fetchAllCities: ${response.body}");
-    if (response.statusCode == 200) {
-      var decodedData = jsonDecode(response.body);
-      if (decodedData['status']) {
-        return CityModel.listFromJson(jsonEncode(decodedData['data']));
+    // 1. Check local cache
+    try {
+      String cachedData =
+          SharedPref().getPreferenceString(Constants.citiesCache);
+      if (cachedData.isNotEmpty) {
+        // Refresh in background silently
+        Future.microtask(() async {
+          try {
+            var response = await http.get(Uri.parse(ApiUrl.CITIES));
+            if (response.statusCode == 200) {
+              var decodedData = jsonDecode(response.body);
+              if (decodedData['status']) {
+                SharedPref().setPreferencesString(
+                    Constants.citiesCache, jsonEncode(decodedData['data']));
+              }
+            }
+          } catch (e) {
+            // Silent refresh failed for cities
+          }
+        });
+        return CityModel.listFromJson(cachedData);
       }
-      return [];
-    } else {
-      return [];
+    } catch (e) {
+      // Cache read error for cities
     }
+
+    // 2. Fetch from API if cache is empty
+    try {
+      var response = await http.get(Uri.parse(ApiUrl.CITIES));
+      // fetchAllCities
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        if (decodedData['status']) {
+          String jsonList = jsonEncode(decodedData['data']);
+          SharedPref().setPreferencesString(Constants.citiesCache, jsonList);
+          return CityModel.listFromJson(jsonList);
+        }
+      }
+    } catch (e) {
+      // API error for cities
+    }
+    return [];
   }
 
   static Future<List<SpecialtyModel>> fetchAllSpecialties() async {
@@ -111,7 +178,8 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
       Uri.parse(ApiUrl.SPECIALTIES),
       headers: ApiUrl.headerAuth,
     );
-    debugPrint("fetchAllSpecialties: ${response.body}");
+    // fetchAllSpecialties
+
     if (response.statusCode == 200) {
       var decodedData = jsonDecode(response.body);
       if (decodedData['status']) {
@@ -124,20 +192,54 @@ class SettingsRemoteDataSource extends SettingsRemoteDataSourceImpl {
   }
 
   static Future<List<AllergiesModel>> fetchAllAllergies() async {
-    var response = await http.get(
-      Uri.parse(ApiUrl.ALLERGIES),
-      headers: ApiUrl.headerAuth,
-    );
-    debugPrint("fetchAllAllergies: ${response.body}");
-    if (response.statusCode == 200) {
-      var decodedData = jsonDecode(response.body);
-      if (decodedData['status']) {
-        return AllergiesModel.listModelFromJson(
-            jsonEncode(decodedData['data']));
+    // 1. Check local cache
+    try {
+      String cachedData =
+          SharedPref().getPreferenceString(Constants.allergiesCache);
+      if (cachedData.isNotEmpty) {
+        // Refresh in background silently
+        Future.microtask(() async {
+          try {
+            var response = await http.get(
+              Uri.parse(ApiUrl.ALLERGIES),
+              headers: ApiUrl.headerAuth,
+            );
+            if (response.statusCode == 200) {
+              var decodedData = jsonDecode(response.body);
+              if (decodedData['status']) {
+                SharedPref().setPreferencesString(
+                    Constants.allergiesCache, jsonEncode(decodedData['data']));
+              }
+            }
+          } catch (e) {
+            // Silent refresh failed for allergies
+          }
+        });
+        return AllergiesModel.listModelFromJson(cachedData);
       }
-      return [];
-    } else {
-      return [];
+    } catch (e) {
+      // Cache read error for allergies
     }
+
+    // 2. Fetch from API if cache is empty
+    try {
+      var response = await http.get(
+        Uri.parse(ApiUrl.ALLERGIES),
+        headers: ApiUrl.headerAuth,
+      );
+      // fetchAllAllergies
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        if (decodedData['status']) {
+          String jsonList = jsonEncode(decodedData['data']);
+          SharedPref().setPreferencesString(Constants.allergiesCache, jsonList);
+          return AllergiesModel.listModelFromJson(jsonList);
+        }
+      }
+    } catch (e) {
+      // API error for allergies
+    }
+    return [];
   }
 }

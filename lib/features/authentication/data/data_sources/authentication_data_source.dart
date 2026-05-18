@@ -27,6 +27,10 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
 
   @override
   Future<AuthResponse> loginUser(Map<String, dynamic> userData) async {
+    // 🔴 Ensure a clean state for the new login attempt
+    await SharedPref().clearPreferences();
+    await TokenStorageHelper.deleteToken();
+
     try {
       var data = {
         if (userData['phone'] != null) 'phone': userData['phone'],
@@ -34,24 +38,27 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         'password': userData['password'],
         'device_info': await ApiUrl.secureData(),
       };
-      
+
       var response = await dioClient.post(
         ApiUrl.LOGIN_URL,
         data: data,
       );
-      
+
       var decodedData = response.data;
       debugPrint("loginUser Response: $decodedData");
 
-      if (decodedData['status'] == true || decodedData['user'] != null || decodedData['access_token'] != null) {
+      if (decodedData['status'] == true ||
+          decodedData['user'] != null ||
+          decodedData['access_token'] != null) {
         final Map<String, dynamic> bodyData = decodedData;
 
         // 🟢 FIX: Securely extract and save token BEFORE branching user types
         String? token = bodyData['access_token'] ?? bodyData['token'];
         if (token == null) {
-          token = response.headers.value('authorization') ?? response.headers.value('Authorization');
+          token = response.headers.value('authorization') ??
+              response.headers.value('Authorization');
           if (token != null && token.startsWith("Bearer ")) {
-             token = token.substring(7);
+            token = token.substring(7);
           }
         }
 
@@ -63,11 +70,11 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         }
 
         UserServiceModel user = UserServiceModel.fromJson(bodyData['user']);
-        
+
         String userType =
             bodyData['user']['user_type']?.toString().toLowerCase() ??
                 'customer';
-                
+
         if (userType == 'customer') {
           await Util.saveLocalData(bodyData);
           SetNotification.showNotification(
@@ -77,24 +84,31 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
           await SharedPref().setPreferencesString(
               Constants.userId, bodyData['user']['id'].toString());
           await SharedPref().setPreferencesString(Constants.userType, userType);
-          debugPrint(
-              "⏳ Professional user login - data saved");
+          debugPrint("⏳ Professional user login - data saved");
         }
 
         return AuthResponse(user: user, msg: translate("toast.signup"));
       } else {
         String msg = decodedData['message'] ?? translate("toast.oops");
         if (msg.contains("Unauthorized password")) {
-          return AuthResponse(user: null, msg: translate("toast.pass_incorrect"));
-        } else if (msg.contains("Unauthorized") || msg.contains("user not found")) {
+          return AuthResponse(
+              user: null, msg: translate("toast.pass_incorrect"));
+        } else if (msg.contains("Unauthorized") ||
+            msg.contains("user not found")) {
           return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
         } else if (msg.contains("User is banned")) {
           return AuthResponse(user: null, msg: translate("toast.user_banned"));
         }
         return AuthResponse(user: null, msg: msg);
       }
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       String msg = e.response?.data?['message'] ?? e.message ?? e.toString();
+      if (msg.contains("Unauthorized password")) {
+        return AuthResponse(user: null, msg: translate("toast.pass_incorrect"));
+      } else if (msg.contains("Unauthorized") ||
+          msg.contains("user not found")) {
+        return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
+      }
       return AuthResponse(user: null, msg: msg);
     } catch (e) {
       return AuthResponse(user: null, msg: e.toString());
@@ -236,8 +250,7 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
           // Nurse/Doctor - save user_id and user_type then show pending notification
           await SharedPref().setPreferencesString(
               Constants.userId, decodedData['user']['id'].toString());
-          await SharedPref()
-              .setPreferencesString(Constants.userType, userType);
+          await SharedPref().setPreferencesString(Constants.userType, userType);
           SetNotification.showNotification(
               title: "", msg: translate("toast.signup"));
         }
@@ -248,14 +261,13 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         try {
           parsedUser = UserServiceModel.fromJson(decodedData['user']);
         } catch (parseError) {
-          debugPrint("⚠️ Could not fully parse user after registration (expected for professionals): $parseError");
+          debugPrint(
+              "⚠️ Could not fully parse user after registration (expected for professionals): $parseError");
           parsedUser = null;
         }
 
         return AuthResponse(
-            user: parsedUser,
-            msg: translate("toast.signup"),
-            isSuccess: true);
+            user: parsedUser, msg: translate("toast.signup"), isSuccess: true);
       } else if (res.body.contains("already") ||
           res.body.contains("duplicate")) {
         return AuthResponse(
@@ -274,6 +286,10 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
 
   @override
   Future<AuthResponse> socialAuthUser(Map<String, dynamic> userData) async {
+    // 🔴 Ensure a clean state for the new login attempt
+    await SharedPref().clearPreferences();
+    await TokenStorageHelper.deleteToken();
+
     try {
       var data = {
         'user_login': userData['email'],
@@ -287,15 +303,17 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         'password': userData['password'],
         'device_token': await NotificationsUtils.getFcmToken()
       };
-      
+
       var response = await dioClient.post(
         ApiUrl.SOCIAL_AUTH_URL,
         data: data,
       );
-      
+
       var decodedData = response.data;
       debugPrint("socialAuthUser response: $decodedData");
-      if (decodedData['status'] == true || decodedData['user'] != null || decodedData['access_token'] != null) {
+      if (decodedData['status'] == true ||
+          decodedData['user'] != null ||
+          decodedData['access_token'] != null) {
         final Map<String, dynamic> bodyData = decodedData;
 
         // Securely extract and save token
@@ -319,10 +337,16 @@ class AuthServiceRemoteDataSource implements AuthServiceRemoteDataSourceImpl {
         return AuthResponse(user: null, msg: msg);
       }
     } on DioException catch (e) {
-       String msg = e.response?.data?['message'] ?? e.message ?? e.toString();
-       return AuthResponse(user: null, msg: msg);
+      String msg = e.response?.data?['message'] ?? e.message ?? e.toString();
+      if (msg.contains("Unauthorized password")) {
+        return AuthResponse(user: null, msg: translate("toast.pass_incorrect"));
+      } else if (msg.contains("Unauthorized") ||
+          msg.contains("user not found")) {
+        return AuthResponse(user: null, msg: translate("toast.sign_wrong"));
+      }
+      return AuthResponse(user: null, msg: msg);
     } catch (e) {
-       return AuthResponse(user: null, msg: e.toString());
+      return AuthResponse(user: null, msg: e.toString());
     }
   }
 }

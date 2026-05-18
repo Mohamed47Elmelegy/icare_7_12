@@ -64,7 +64,7 @@ class RootBloc extends Bloc<RootEvent, RootState> {
     try {
       // ourLocations = await SettingsRemoteDataSource.getOurLocations();
     } catch (e) {
-      debugPrint("getLocationsRootBloc: $e");
+      // getLocationsRootBloc error
     }
   }
 
@@ -76,7 +76,7 @@ class RootBloc extends Bloc<RootEvent, RootState> {
       citiesList = await SettingsRemoteDataSource.fetchAllCities();
       governoratesList = await SettingsRemoteDataSource.fetchAllGovernorates();
     } catch (e) {
-      debugPrint("getAppDataRootBloc: $e");
+      // getAppDataRootBloc error
     }
   }
 

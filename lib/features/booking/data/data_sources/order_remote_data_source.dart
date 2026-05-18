@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:http/http.dart' as http;
 import 'package:icare/core/error/exception.dart';
@@ -13,7 +12,7 @@ import 'package:icare/features/booking/data/models/order_model.dart';
 import 'package:icare/features/booking/data/models/order_response.dart';
 
 abstract class OrderRemoteDataSourceImpl {
-  Future<List<OrderModel>> getAllOrder();
+  Future<List<OrderModel>> getAllOrder({String? userId});
   Future<OrderResponse> addOrder({required Map<String, dynamic> data});
   Future<OrderResponse> updateOrder(
       {required Map<String, dynamic> data, File? fileR});
@@ -26,11 +25,12 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
   final http.Client client;
   OrderRemoteDataSource({required this.client});
   @override
-  Future<List<OrderModel>> getAllOrder() async {
+  Future<List<OrderModel>> getAllOrder({String? userId}) async {
     var response = await client.get(
-        Uri.parse("${ApiUrl.FETCH_ALL_ORDERS}/${Util.getUserID()}"),
+        Uri.parse("${ApiUrl.FETCH_ALL_ORDERS}/${userId ?? Util.getUserID()}"),
         headers: ApiUrl.headerAuth);
-    debugPrint("getAllOrder: ${response.body}");
+    // getAllOrder
+
     final decodedData = json.decode(response.body);
     if (decodedData['success']) {
       List<OrderModel> orders =
@@ -47,7 +47,8 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
   Future<OrderResponse> addOrder({required Map<String, dynamic> data}) async {
     final response = await client.post(Uri.parse(ApiUrl.ADD_ORDER),
         body: json.encode(data), headers: ApiUrl.headerAuth);
-    debugPrint("addOrder: ${response.body}");
+    // addOrder
+
     var decodedData = jsonDecode(response.body);
     if (decodedData['success'] == true) {
       // Show local notification to patient
@@ -61,9 +62,11 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
             'user_id': data['nurse_id'].toString(),
             'msg': translate("notification.new_booking_request"),
           });
-          debugPrint("✅ Notification sent to nurse: ${data['nurse_id']}");
+          // Notification sent to nurse
+
         } catch (e) {
-          debugPrint("❌ Failed to send notification to nurse: $e");
+          // Failed to send notification to nurse
+
         }
       }
 
@@ -159,10 +162,12 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
         'Content-Type': 'application/json',
         'ID': Util.getUserID().toString(),
       });
-      debugPrint("giveAccessEditProfile: ${response.body}");
+      // giveAccessEditProfile
+
       return response.body.toString().contains("true");
     } catch (e) {
-      debugPrint("giveAccessEditProfile: $e");
+      // giveAccessEditProfile error
+
       return false;
     }
   }
@@ -173,7 +178,8 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     try {
       final response = await client.post(Uri.parse(ApiUrl.SEND_REQUEST),
           body: json.encode(data), headers: ApiUrl.headerAuth);
-      debugPrint("sendRequest: ${response.body}");
+      // sendRequest
+
       var decodedData = jsonDecode(response.body);
       if (decodedData['success'] == true) {
         SetNotification.showNotification(
@@ -187,7 +193,8 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
         return OrderResponse(state: false, msg: msg, orderID: "");
       }
     } catch (e) {
-      debugPrint("sendRequestDataSourceError: $e");
+      // sendRequestDataSourceError
+
       return OrderResponse(state: false, msg: '$e', orderID: "");
     }
   }
@@ -197,7 +204,8 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
     try {
       final response = await http.post(Uri.parse(ApiUrl.ACCEPT_OFFER),
           headers: ApiUrl.headerAuth, body: jsonEncode(data));
-      debugPrint("acceptOffer: ${response.body}");
+      // acceptOffer
+
       var decodedData = jsonDecode(response.body);
       String msg = (decodedData['message'] == null
           ? translate('toast.oops')
@@ -206,7 +214,8 @@ class OrderRemoteDataSource implements OrderRemoteDataSourceImpl {
               : decodedData['message'].toString()));
       return decodedData['success'] == true ? true : msg;
     } catch (e) {
-      debugPrint("acceptOffer: $e");
+      // acceptOffer error
+
       return translate('toast.oops');
     }
   }

@@ -48,20 +48,23 @@ class SmsApi {
             "Content-Type": "application/json",
           },
           body: jsonEncode(data));
-      debugPrint("sendOtp: ${response.body}");
+      // Log response handled
+
       var decodedData = jsonDecode(response.body);
       if (decodedData.toString().contains("4901")) {
         SharedPref().setPreferencesString(Constants.lastVerificationCode, otp);
         return true;
       } else {
         // decodedData['message'].toString()
-        debugPrint("sendOtp: ${response.body}");
+        // Log response handled
+
         SnackBarBuilder.showFeedBackMessage(
             ctx, translate("toast.oops"), Colors.red);
         return false;
       }
     } catch (e) {
-      debugPrint('err $e');
+      // Error handled silently
+
       return false;
     }
   }

@@ -90,7 +90,8 @@ class UserServiceModelRepository implements UserServiceRepository {
   Future<Either<Failure, String>> deleteAccount(String userId) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await userServiceRemoteDataSource.deleteUserAccount(userId));
+        return Right(
+            await userServiceRemoteDataSource.deleteUserAccount(userId));
       } on ServerException {
         return Left(ServerFailure());
       }

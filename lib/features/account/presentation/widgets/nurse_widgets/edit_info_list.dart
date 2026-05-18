@@ -6,9 +6,7 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,19 +16,19 @@ class NurseOptionsValueRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (ctx, state) {
-        var bloc = AuthBloc.get(ctx);
+    return BlocBuilder<RegistrationCubit, RegistrationState>(
+      builder: (ctx, regState) {
+        var regCubit = RegistrationCubit.get(ctx);
         List<String> list = [];
-        if (listType == "languages" && bloc.languageList != null) {
-          list = bloc.languageList!;
-        } else if (listType == "education" && bloc.educationList != null) {
-          list = bloc.educationList!;
+        if (listType == "languages" && regState.languageList != null) {
+          list = List.from(regState.languageList!);
+        } else if (listType == "education" && regState.educationList != null) {
+          list = List.from(regState.educationList!);
         } else if (listType == "publications" &&
-            bloc.publicationsList != null) {
-          list = bloc.publicationsList!;
-        } else if (listType == "courses" && bloc.coursesList != null) {
-          list = bloc.coursesList!;
+            regState.publicationsList != null) {
+          list = List.from(regState.publicationsList!);
+        } else if (listType == "courses" && regState.coursesList != null) {
+          list = List.from(regState.coursesList!);
         }
         if (list.isEmpty) return const SizedBox.shrink();
         return GridView.builder(
@@ -40,10 +38,7 @@ class NurseOptionsValueRow extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 4.h),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            // crossAxisSpacing: 10.h,
-            // mainAxisSpacing: 10.h,
             childAspectRatio: 5.h,
-            // mainAxisExtent: 246.h,
           ),
           itemBuilder: (BuildContext context, int index) {
             var item = list[index];
@@ -66,20 +61,16 @@ class NurseOptionsValueRow extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    int index = list.indexWhere((element) => element == item);
-                    if (index == -1) return;
-                    list.removeAt(index);
+                    final updated = List<String>.from(list);
+                    updated.remove(item);
                     if (listType == "languages") {
-                      bloc.add(
-                          UpdateNurseRegisterDataEvent(languageList: list));
+                      regCubit.updateLanguageList(updated);
                     } else if (listType == "education") {
-                      bloc.add(
-                          UpdateNurseRegisterDataEvent(educationList: list));
+                      regCubit.updateEducationList(updated);
                     } else if (listType == "publications") {
-                      bloc.add(
-                          UpdateNurseRegisterDataEvent(publicationsList: list));
+                      regCubit.updatePublicationsList(updated);
                     } else if (listType == "courses") {
-                      bloc.add(UpdateNurseRegisterDataEvent(coursesList: list));
+                      regCubit.updateCoursesList(updated);
                     }
                   },
                   child: Icon(

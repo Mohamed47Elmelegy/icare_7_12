@@ -1,4 +1,5 @@
 import 'package:icare/core/styles/app_style.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:icare/features/booking/presentation/widgets/order_tracking_widgets/order_card_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,7 @@ class OrderList extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             var item = list[index];
-            print(list.last.orderId);
+            AppLogger.d("OrderId: ${list.last.orderId}");
             return OrderCardDetails(
               enableTracking: true,
               item: item,

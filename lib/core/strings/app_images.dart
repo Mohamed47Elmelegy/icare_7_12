@@ -7,7 +7,7 @@ class AppImages {
   static const String logoGif = "$icons/icare Logo Gift.gif";
   static const String logo = "$icons/alf_salama2.png";
   static const String logosvg = "$icons/alf_salama2.svg";
- // static const String logoSvg = "$icons/logo.svg";
+  // static const String logoSvg = "$icons/logo.svg";
   static const String alfSalamaLogoWhite = "$icons/alf_salama2_white.svg";
   static const String whiteLogo = "$icons/whitelauncherIcon.png";
   static const String logoWhite = "$icons/logo_white.svg";

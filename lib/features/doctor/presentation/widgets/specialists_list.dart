@@ -1,7 +1,6 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctor_state.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/doctor/presentation/widgets/vertical_specialist_card.dart';
@@ -23,12 +22,6 @@ class _VerticalDoctorSpecialistsListState
   @override
   void initState() {
     super.initState();
-    // Fetch ongoing bookings when widget initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<BookingBloc>().add(const GetOngoingBookingsEvent());
-      }
-    });
   }
 
   @override

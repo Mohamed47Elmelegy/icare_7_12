@@ -19,4 +19,14 @@ class SpecialtyEntity {
 
   @override
   String toString() => 'SpecialtyEntity(id: $id, title: $title)';
+
+  SpecialtyEntity copyWith({
+    int? id,
+    String? title,
+  }) {
+    return SpecialtyEntity(
+      id: id ?? this.id,
+      title: title ?? this.title,
+    );
+  }
 }

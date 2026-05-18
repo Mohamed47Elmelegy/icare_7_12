@@ -15,7 +15,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/shared_widgets/error_widget.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/root_app/bloc/root_bloc.dart';
@@ -32,7 +34,7 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  // debugPrint = (String? message, {int? wrapWidth}) {};
+
   await Future.wait([
     Firebase.initializeApp(),
     di.init(),
@@ -60,7 +62,9 @@ class MyApp extends StatelessWidget {
               providers: [
                 BlocProvider(create: (ctx) => di.sl<RootBloc>()),
                 BlocProvider(create: (ctx) => di.sl<AuthBloc>()),
+                BlocProvider(create: (ctx) => RegistrationCubit()),
                 BlocProvider(create: (ctx) => di.sl<AccountBloc>()),
+                BlocProvider(create: (ctx) => di.sl<ServicesBloc>()),
                 BlocProvider(create: (ctx) => di.sl<NurseBloc>()),
                 BlocProvider(create: (ctx) => di.sl<DoctorBloc>()),
                 BlocProvider(create: (ctx) => di.sl<LocationsBloc>()),

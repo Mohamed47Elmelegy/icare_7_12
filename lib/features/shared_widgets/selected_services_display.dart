@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
@@ -78,8 +78,8 @@ class SelectedServicesDisplay extends StatelessWidget {
 
     if (nurse.servicesList == null) return matching;
 
-    // Get all services list from AccountBloc to get service names
-    final allServicesList = AccountBloc.get(context).allServiceList;
+    // Get all services list from ServicesBloc (allServiceList lives there)
+    final allServicesList = ServicesBloc.get(context).allServiceList;
 
     for (var selectedService in selectedServices) {
       // Find matching service in nurse's service list to get the price

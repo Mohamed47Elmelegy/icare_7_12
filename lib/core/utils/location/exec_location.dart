@@ -4,7 +4,6 @@ import 'dart:developer';
 // import 'package:background_locator/settings/android_settings.dart';
 // import 'package:background_locator/settings/ios_settings.dart';
 // import 'package:background_locator/settings/locator_settings.dart';
-import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void onStartTrack() async {
@@ -16,7 +15,7 @@ void onStartTrack() async {
       // show error
     }
   } catch (e) {
-    debugPrint("on start $e");
+    // on start error
   }
 }
 
@@ -24,7 +23,7 @@ void onStopTrack() async {
   try {
     // await BackgroundLocator.unRegisterLocationUpdate();
   } catch (e) {
-    debugPrint("onStopTrack $e");
+    // onStopTrack error
   }
 }
 
@@ -58,9 +57,9 @@ void _startLocator() {
     //             notificationIcon: 'ic_launcher',
     //             notificationTapCallback:
     //             LocationCallbackHandler.notificationCallback))).catchError((e){
-    //                    debugPrint("e $e");
+    //                    // error
     //               }).onError((error, stackTrace) {
-    //                    debugPrint("d $error");
+    //                    // error
     //               });
   } catch (e) {
     log("_startLocator: $e");

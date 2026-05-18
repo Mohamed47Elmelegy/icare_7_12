@@ -61,7 +61,7 @@ class RequestForm extends StatelessWidget {
                         UpdateRequestFormDataEvent(
                             data: {'full_name': val.toString()})),
                     onFieldSubmitted: (val) {},
-                    textInputType: TextInputType.phone,
+                    textInputType: TextInputType.name,
                     textEditingController: fullnameTextEditingController,
                     validator: () {},
                     prefixIcon: null,
@@ -83,7 +83,7 @@ class RequestForm extends StatelessWidget {
                         UpdateRequestFormDataEvent(
                             data: {'national_id': val.toString()})),
                     onFieldSubmitted: (val) {},
-                    textInputType: TextInputType.text,
+                    textInputType: TextInputType.number,
                     textEditingController: nationalIDTextEditingController,
                     validator: () {},
                     prefixIcon: null,

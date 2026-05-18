@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:icare/features/search/data/models/search_filter_model.dart';
 import 'package:icare/features/search/data/models/searchable_model_factory.dart';
 import 'package:icare/features/search/domain/entities/searchable_entity.dart';
@@ -30,14 +31,14 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       List<SearchableEntity> allResults = [];
 
       final double requestedRadius = filters.searchRadius ?? 20.0;
-      print(
+      AppLogger.d(
           "📦 Fetching up to $maxPages pages (target: $minResultsTarget+ results)...");
-      print("   └─ Frontend filter: ≤${requestedRadius}km");
-      print(
+      AppLogger.d("   └─ Frontend filter: ≤${requestedRadius}km");
+      AppLogger.d(
           "   └─ Backend request: ≤${(requestedRadius * 1.5).toInt()}km (wider for more data)");
 
       for (int page = 1; page <= maxPages; page++) {
-        print("📄 Fetching page $page...");
+        AppLogger.d("📄 Fetching page $page...");
         try {
           // Build URL with query parameters for each page
           String baseUrl = "${ApiUrl.nurses}/$page";
@@ -83,7 +84,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
           }
 
           if (page == 1) {
-            print("🌐 API Base URL: $url");
+            AppLogger.d("🌐 API Base URL: $url");
           }
 
           final response = await client
@@ -94,7 +95,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
               .timeout(
             const Duration(seconds: 30), // Increased timeout for slow networks
             onTimeout: () {
-              print("   ⏱️ Page $page timed out after 30 seconds");
+              AppLogger.e("   ⏱️ Page $page timed out after 30 seconds");
               throw Exception('Request timeout');
             },
           );
@@ -114,7 +115,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
 
             // If empty page, stop fetching more pages
             if (dataList.isEmpty) {
-              print("   ⏸️ Page $page is empty, stopping pagination");
+              AppLogger.d("   ⏸️ Page $page is empty, stopping pagination");
               break;
             }
 
@@ -128,39 +129,39 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
             }).toList();
 
             allResults.addAll(pageResults);
-            print(
+            AppLogger.d(
                 "   ✅ Page $page: ${pageResults.length} results (Total: ${allResults.length})");
 
             // Smart stopping conditions:
 
             // 1. If we got way more than expected, backend is returning all data
             if (pageResults.length > 100) {
-              print(
+              AppLogger.d(
                   "   🎯 Large page detected (${pageResults.length} results)");
-              print(
+              AppLogger.d(
                   "   🏁 Backend returned comprehensive data, stopping pagination");
               break;
             }
 
             // 2. If we have enough results, stop early
             if (allResults.length >= minResultsTarget) {
-              print(
+              AppLogger.d(
                   "   🎯 Target reached: ${allResults.length} results (>= $minResultsTarget)");
-              print("   🏁 Stopping pagination early");
+              AppLogger.d("   🏁 Stopping pagination early");
               break;
             }
 
             // 3. If we got less than 20 results, likely the last page
             if (pageResults.length < 20) {
-              print(
+              AppLogger.d(
                   "   🏁 Last page reached (${pageResults.length} results < 20)");
               break;
             }
 
             // Continue to next page
-            print("   ➡️ Continuing to page ${page + 1}...");
+            AppLogger.d("   ➡️ Continuing to page ${page + 1}...");
           } else {
-            print("   ⚠️ Page $page failed with status ${response.statusCode}");
+            AppLogger.w("   ⚠️ Page $page failed with status ${response.statusCode}");
             // Don't break, continue with what we have
           }
         } catch (pageError) {
@@ -169,14 +170,14 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
           String truncatedError = errorMsg.length > 100
               ? '${errorMsg.substring(0, 100)}...'
               : errorMsg;
-          print("   ⚠️ Page $page error: $truncatedError");
-          print(
+          AppLogger.e("   ⚠️ Page $page error: $truncatedError");
+          AppLogger.d(
               "   ↪️ Continuing with ${allResults.length} results from previous pages");
           break; // Stop trying more pages after first error
         }
       }
 
-      print("📦 Multi-page fetch complete: ${allResults.length} total results");
+      AppLogger.d("📦 Multi-page fetch complete: ${allResults.length} total results");
 
       if (allResults.isNotEmpty) {
         return allResults;

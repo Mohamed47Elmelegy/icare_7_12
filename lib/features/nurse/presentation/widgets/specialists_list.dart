@@ -1,8 +1,6 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
-import 'package:icare/features/account/presentation/bloc/account_state.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/nurse/domain/entities/nurse_entity.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_state.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
@@ -24,12 +22,6 @@ class _VerticalSpecialistsListState extends State<VerticalSpecialistsList> {
   @override
   void initState() {
     super.initState();
-    // Fetch ongoing bookings when widget initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        BookingBloc.get(context).add(const GetOngoingBookingsEvent());
-      }
-    });
   }
 
   @override
@@ -37,17 +29,19 @@ class _VerticalSpecialistsListState extends State<VerticalSpecialistsList> {
     return BlocBuilder<NurseBloc, NurseState>(
       builder: (ctx, state) {
         var bloc = NurseBloc.get(ctx);
-        if (state is FetchNotificationsLoadingState) {
+
+        if (state is FetchAllNursesLoadingState) {
           return const Center(
             child: CircularProgressIndicator(
               color: kPrimary,
             ),
           );
         }
-        if (state is! FetchNotificationsLoadingState &&
-            bloc.nursesList.isEmpty) {
+
+        if (state is! FetchAllNursesLoadingState && bloc.nursesList.isEmpty) {
           return const EmptyDataWidget();
         }
+
         var list = bloc.nursesList;
         if (bloc.searchText != '') {
           list = bloc.nursesList
@@ -63,7 +57,6 @@ class _VerticalSpecialistsListState extends State<VerticalSpecialistsList> {
 
         // Sort by distance (nearest first)
         list.sort((a, b) {
-          // Handle null or invalid distances - put them at the end
           final aDistance = (a.distanceKM != null && a.distanceKM != -1)
               ? a.distanceKM!
               : double.infinity;

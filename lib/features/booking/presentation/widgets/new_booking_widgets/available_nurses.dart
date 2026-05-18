@@ -22,15 +22,17 @@ class AvailableNurses extends StatelessWidget {
             var bloc = AccountBloc.get(ctx);
             var bookingBloc = BookingBloc.get(ctx);
 
-            if (state is FetchNotificationsLoadingState) {
+            if (state is FetchProfileDataState &&
+                state.response.isLoad == true) {
               return Center(
                 child: CircularProgressIndicator(
                   color: DMUtil.getPC2(),
                 ),
               );
             }
-            if (state is! FetchNotificationsLoadingState &&
-                bloc.notificationList.isEmpty) {
+            if (bloc.allUsers.isEmpty &&
+                (state is! FetchProfileDataState ||
+                    state.response.isLoad != true)) {
               return const EmptyDataWidget();
             }
 
@@ -38,25 +40,15 @@ class AvailableNurses extends StatelessWidget {
             final ongoingBookedProviderIds =
                 bookingBloc.getOngoingBookedProviderIds();
 
-            debugPrint("📋 ========== AVAILABLE NURSES DEBUG ==========");
-            debugPrint(
-                "📊 Total users from AccountBloc: ${bloc.allUsers.length}");
-            debugPrint(
-                "🔄 Ongoing booked provider IDs: $ongoingBookedProviderIds");
-            debugPrint(
-                "📝 Ongoing bookings list length: ${bookingBloc.ongoingBookingsList.length}");
-
             // Filter out nurses/doctors that have ongoing bookings with current user
+
             final availableUsers = bloc.allUsers.where((user) {
               final isBooked = ongoingBookedProviderIds.contains(user.userId);
-              debugPrint(
-                  "👤 User: ${user.userName} (ID: ${user.userId}) - Booked: $isBooked");
+
               return !isBooked;
             }).toList();
 
-            debugPrint(
-                "✅ Available users after filter: ${availableUsers.length}");
-            debugPrint("📋 ==========================================");
+
 
             if (availableUsers.isEmpty) {
               return const EmptyDataWidget();

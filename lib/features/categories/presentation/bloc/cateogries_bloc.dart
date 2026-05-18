@@ -76,7 +76,6 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
         emit(FetchSliderSuccessfullyState());
       });
     } catch (e) {
-      debugPrint("getAllSlidersBlocError: $e");
       emit(FetchSliderFailedState());
     }
   }
@@ -122,7 +121,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     });
     emit(const FetchCategoriesSuccessfullyState());
     // }catch(e){
-    //   debugPrint("getAllAllergiesBlocError: $e");
+    //   // getAllAllergiesBlocError
     //   emit(const FetchCategoriesFailedState());
     // }
   }
@@ -169,8 +168,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
                 ));
               }
             } catch (e) {
-              debugPrint(
-                  "Error creating YouTube controller for URL ${i.videoUrl}: $e");
+              // Error handled silently
             }
           }
         }
@@ -178,7 +176,6 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
         emit(FetchPublicationsSuccessfullyState());
       });
     } catch (e) {
-      debugPrint("getAllPublicationsBlocError: $e");
       emit(FetchPublicationsFailedState());
     }
   }

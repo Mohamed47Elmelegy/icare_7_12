@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
@@ -37,10 +36,10 @@ enum ValidationReason {
 /// - GPS Accuracy: Must be ≤50m for reliable positioning
 class OrderCompletionValidator {
   // Validation constants
-  static const double STRICT_RANGE_METERS = 100.0;
-  static const double RELAXED_RANGE_METERS = 500.0;
-  static const int MINIMUM_TIME_AT_LOCATION_MINUTES = 10;
-  static const double MAXIMUM_GPS_ACCURACY_METERS = 50.0;
+  static const double strictRangeMeters = 100.0;
+  static const double relaxedRangeMeters = 500.0;
+  static const int minimumTimeAtLocationMinutes = 10;
+  static const double maximumGpsAccuracyMeters = 50.0;
 
   /// Validates if nurse can complete the order based on location
   ///
@@ -63,7 +62,7 @@ class OrderCompletionValidator {
     }
 
     // Check GPS accuracy first
-    if (nursePosition.accuracy > MAXIMUM_GPS_ACCURACY_METERS) {
+    if (nursePosition.accuracy > maximumGpsAccuracyMeters) {
       return ValidationResult(
         isValid: false,
         message: translate('icare.gps_accuracy_too_low').replaceAll(
@@ -72,10 +71,7 @@ class OrderCompletionValidator {
       );
     }
 
-    // Debug: Log patient and nurse locations
-    debugPrint('🏥 Patient location: ${booking.lat}, ${booking.lng}');
-    debugPrint(
-        '👨‍⚕️ Nurse location: ${nursePosition.latitude}, ${nursePosition.longitude}');
+
 
     // Calculate distance between nurse and patient
     double distanceInMeters = Geolocator.distanceBetween(
@@ -85,11 +81,10 @@ class OrderCompletionValidator {
       booking.lng!,
     );
 
-    debugPrint(
-        '📏 Calculated distance: ${distanceInMeters.toInt()}m (${(distanceInMeters / 1000).toStringAsFixed(2)}km)');
+
 
     // Strict validation: Within 100m allows immediate completion
-    if (distanceInMeters <= STRICT_RANGE_METERS) {
+    if (distanceInMeters <= strictRangeMeters) {
       return ValidationResult(
         isValid: true,
         distance: distanceInMeters,
@@ -97,7 +92,7 @@ class OrderCompletionValidator {
     }
 
     // Relaxed validation: Within 500m + minimum time requirement
-    if (distanceInMeters <= RELAXED_RANGE_METERS) {
+    if (distanceInMeters <= relaxedRangeMeters) {
       // If no arrival time provided, require strict range
       if (arrivedTime == null) {
         return ValidationResult(
@@ -105,7 +100,7 @@ class OrderCompletionValidator {
           distance: distanceInMeters,
           message: translate('icare.move_closer_to_patient')
               .replaceAll('{distance}', distanceInMeters.toInt().toString())
-              .replaceAll('{required}', STRICT_RANGE_METERS.toInt().toString()),
+              .replaceAll('{required}', strictRangeMeters.toInt().toString()),
           reason: ValidationReason.tooFarStrict,
         );
       }
@@ -113,7 +108,7 @@ class OrderCompletionValidator {
       // Check if nurse has been at location for minimum required time
       int minutesAtLocation = DateTime.now().difference(arrivedTime).inMinutes;
 
-      if (minutesAtLocation >= MINIMUM_TIME_AT_LOCATION_MINUTES) {
+      if (minutesAtLocation >= minimumTimeAtLocationMinutes) {
         return ValidationResult(
           isValid: true,
           distance: distanceInMeters,
@@ -121,8 +116,7 @@ class OrderCompletionValidator {
       }
 
       // Not enough time at location
-      int remainingMinutes =
-          MINIMUM_TIME_AT_LOCATION_MINUTES - minutesAtLocation;
+      int remainingMinutes = minimumTimeAtLocationMinutes - minutesAtLocation;
       return ValidationResult(
         isValid: false,
         distance: distanceInMeters,
@@ -138,7 +132,7 @@ class OrderCompletionValidator {
       distance: distanceInMeters,
       message: translate('icare.too_far_from_patient')
           .replaceAll('{distance}', distanceInMeters.toInt().toString())
-          .replaceAll('{required}', STRICT_RANGE_METERS.toInt().toString()),
+          .replaceAll('{required}', strictRangeMeters.toInt().toString()),
       reason: ValidationReason.tooFarRelaxed,
     );
   }

@@ -23,6 +23,7 @@ import 'package:icare/core/utils/shared_pref.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/root_app/screens/welcome_screens/new_experience_screen.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
@@ -51,6 +52,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   TextEditingController textEditingController = TextEditingController();
   StreamController<ErrorAnimationType>? errorController;
   late AuthBloc authBloc;
+  late RegistrationCubit regCubit;
   bool hasError = false;
   String currentText = "";
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -63,6 +65,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   void initState() {
     locationsBloc = LocationsBloc.get(context);
     authBloc = AuthBloc.get(context);
+    regCubit = RegistrationCubit.get(context);
     onTapRecognizer = TapGestureRecognizer()
       ..onTap = () {
         Navigator.pop(context);
@@ -86,33 +89,34 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
       registerData['is_male'] = authBloc.isWomen ? "0" : "1";
       if (Util.getUserType() == UserEnum.NURSE.name.toLowerCase()) {
         registerData['user_type'] = authBloc.isNurse ? "nurse" : "assistant";
-        if (authBloc.license != null) {
-          registerData['license'] = authBloc.license;
+        var regState = regCubit.state;
+        if (regState.license != null) {
+          registerData['license'] = regState.license;
         }
-        if (authBloc.certificate != null) {
-          registerData['certificate'] = authBloc.certificate;
+        if (regState.certificate != null) {
+          registerData['certificate'] = regState.certificate;
         }
-        if (authBloc.nurseID != null) {
-          registerData['nurseID'] = authBloc.nurseID;
+        if (regState.nurseID != null) {
+          registerData['nurseID'] = regState.nurseID;
         }
-        if (authBloc.associationCard != null) {
-          registerData['associationCard'] = authBloc.associationCard;
+        if (regState.associationCard != null) {
+          registerData['associationCard'] = regState.associationCard;
         }
-        if (authBloc.relatedJobId != null) {
-          registerData['related_job_id'] = authBloc.relatedJobId;
+        if (regState.relatedJobId != null) {
+          registerData['related_job_id'] = regState.relatedJobId;
         }
-        if (authBloc.avatar != null) registerData['avatar'] = authBloc.avatar;
-        if (authBloc.languageList != null) {
-          registerData['languages'] = jsonEncode(authBloc.languageList);
+        if (regState.avatar != null) registerData['avatar'] = regState.avatar;
+        if (regState.languageList != null) {
+          registerData['languages'] = jsonEncode(regState.languageList);
         }
-        if (authBloc.educationList != null) {
-          registerData['education'] = jsonEncode(authBloc.educationList);
+        if (regState.educationList != null) {
+          registerData['education'] = jsonEncode(regState.educationList);
         }
-        if (authBloc.publicationsList != null) {
-          registerData['publications'] = jsonEncode(authBloc.publicationsList);
+        if (regState.publicationsList != null) {
+          registerData['publications'] = jsonEncode(regState.publicationsList);
         }
-        if (authBloc.coursesList != null) {
-          registerData['courses'] = jsonEncode(authBloc.coursesList);
+        if (regState.coursesList != null) {
+          registerData['courses'] = jsonEncode(regState.coursesList);
         }
       } else {
         registerData['user_type'] = Util.getUserType();
@@ -220,16 +224,17 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                                 keyboardType: TextInputType.number,
 
                                 onCompleted: (v) {
-                                  debugPrint("Completed");
+                                  // Completed
                                 },
                                 onChanged: (value) {
-                                  debugPrint(value);
+                                  // value changed
+
                                   setState(() {
                                     currentText = value;
                                   });
                                 },
                                 beforeTextPaste: (text) {
-                                  debugPrint("Allowing to paste $text");
+                                  // Allowing to paste
                                   return true;
                                 },
                               )),

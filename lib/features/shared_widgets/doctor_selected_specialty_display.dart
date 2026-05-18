@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
@@ -23,14 +23,14 @@ class DoctorSelectedSpecialtyDisplay extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    // Get specialty name from AccountBloc
-    var accountBloc = AccountBloc.get(context);
+    // Get specialty name from ServicesBloc (allSpecialtiesList lives there)
+    var servicesBloc = ServicesBloc.get(context);
     String specialtyName = "";
 
     try {
-      var specialty = accountBloc.allSpecialtiesList.firstWhere(
+      var specialty = servicesBloc.allSpecialtiesList.firstWhere(
         (element) => element.id.toString() == doctor.specialtyId,
-        orElse: () => accountBloc.allSpecialtiesList.firstWhere(
+        orElse: () => servicesBloc.allSpecialtiesList.firstWhere(
           (element) => element.id == int.tryParse(doctor.specialtyId ?? "0"),
           orElse: () => const SpecialtyEntity(id: 0, title: ""),
         ),

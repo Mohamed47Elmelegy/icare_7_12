@@ -18,10 +18,10 @@ class OrderModelRepository implements OrderRepository {
       {required this.orderRemoteDataSource, required this.networkInfo});
 
   @override
-  Future<Either<Failure, List<Booking>>> getAllOrders() async {
+  Future<Either<Failure, List<Booking>>> getAllOrders({String? userId}) async {
     if (await networkInfo.isConnected()) {
       try {
-        return Right(await orderRemoteDataSource.getAllOrder());
+        return Right(await orderRemoteDataSource.getAllOrder(userId: userId));
       } on ServerException {
         return Left(ServerFailure());
       }

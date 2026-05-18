@@ -1,9 +1,9 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
-import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
+import 'package:icare/features/account/presentation/bloc/services_state.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter/material.dart';
@@ -19,20 +19,21 @@ class ServicesListDropDown extends StatelessWidget {
       TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountBloc, AccountState>(
+    return BlocBuilder<ServicesBloc, ServicesState>(
       builder: (ctx, state) {
-        var bloc = AccountBloc.get(ctx);
+        var servicesBloc = ServicesBloc.get(ctx);
 
         // Check if user is doctor to use specialties list
         bool isDoctor = Util.isDoctor();
 
-        // Get the appropriate list based on user type
-        List<dynamic> list =
-            isDoctor ? bloc.allSpecialtiesList : bloc.allServiceList;
+        // Get the appropriate list based on user type from ServicesBloc
+        List<dynamic> list = isDoctor
+            ? servicesBloc.allSpecialtiesList
+            : servicesBloc.allServiceList;
 
         if (list.isEmpty) return const SizedBox.shrink();
-        var currentItem = bloc.currentService;
-        // currentItem ??= list.first;
+        var currentItem = servicesBloc.currentService;
+
         return Column(
           children: [
             Container(
@@ -62,7 +63,6 @@ class ServicesListDropDown extends StatelessWidget {
                 style: TextStyle(color: DMUtil.getD2C()),
                 underline: const SizedBox(),
                 onChanged: (dynamic newValue) {
-                  // Convert specialty to service model for doctor
                   ServicesModel serviceModel;
                   if (isDoctor) {
                     serviceModel = ServicesModel(
@@ -75,7 +75,7 @@ class ServicesListDropDown extends StatelessWidget {
                     serviceModel = newValue as ServicesModel;
                   }
 
-                  bloc.add(ChangeCurrentService(
+                  servicesBloc.add(ChangeCurrentService(
                       item: serviceModel,
                       txt: isDoctor ? serviceModel.value.toString() : null));
                 },
@@ -104,7 +104,7 @@ class ServicesListDropDown extends StatelessWidget {
                 height: 45,
                 hintText: translate("icare.select_price"),
                 radius: 10,
-                onChanged: (val) => bloc.add(ChangeCurrentService(
+                onChanged: (val) => servicesBloc.add(ChangeCurrentService(
                     item: currentItem, txt: val.toString().trim())),
                 onFieldSubmitted: (val) {},
                 textEditingController: textEditingController,

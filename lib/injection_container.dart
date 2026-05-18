@@ -1,196 +1,38 @@
-part of 'injection_container_import.dart';
+import 'package:icare/core/di/injection_core.dart';
+import 'package:icare/features/account/di/injection_account.dart';
+import 'package:icare/features/authentication/di/injection_auth.dart';
+import 'package:icare/features/booking/di/injection_booking.dart';
+import 'package:icare/features/categories/di/injection_categories.dart';
+import 'package:icare/features/chat/di/injection_chat.dart';
+import 'package:icare/features/doctor/di/injection_doctor.dart';
+import 'package:icare/features/locations/di/injection_locations.dart';
+import 'package:icare/features/nurse/di/injection_nurse.dart';
+import 'package:icare/features/root_app/di/injection_root.dart';
+import 'package:icare/features/search/di/injection_search.dart';
+import 'package:icare/features/setting/di/injection_settings.dart';
+import 'package:icare/core/di/injection_coordinators.dart';
 
-final sl = GetIt.instance;
+// Re-export sl so it's available from this container
+export 'package:icare/core/di/injection_core.dart' show sl;
 
+// Standalone init function that orchestrates all modules
 Future<void> init() async {
-  //controller
-  sl.registerFactory(() => RootBloc());
+  // 1. Core Infrastructure (Network, Storage, etc.) - Must be first
+  await initCoreDependencies();
 
-  /// authentication bloc and classes initial
-  sl.registerFactory(() => AuthBloc(
-        loginUserServiceUseCase: sl(),
-        registerUserServiceUseCase: sl(),
-        socialUserServiceUseCase: sl(),
-      ));
+  // 2. Feature Modules
+  initRootDependencies();
+  initAuthDependencies();
+  initAccountDependencies();
+  initBookingDependencies();
+  initSettingsDependencies();
+  initLocationsDependencies();
+  initCategoriesDependencies();
+  initNurseDependencies();
+  initDoctorDependencies();
+  initSearchDependencies();
+  initChatDependencies();
 
-  sl.registerLazySingleton(
-      () => RegisterUserServiceUseCase(authServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => LoginUserServiceUseCase(authServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => SocialUserServiceUseCase(authServiceRepository: sl()));
-
-  sl.registerLazySingleton<AuthServiceRepository>(() =>
-      AuthServiceModelRepository(
-          networkInfo: sl(), userServiceRemoteDataSource: sl()));
-  sl.registerLazySingleton<AuthServiceRemoteDataSource>(
-      () => AuthServiceRemoteDataSource(dioClient: sl()));
-
-  ///account module
-  sl.registerFactory(() => AccountBloc(
-      getUserServiceUseCase: sl(),
-      updateUserServiceUseCase: sl(),
-      changePasswordUseCase: sl(),
-      getAllNotificationsUseCase: sl(),
-      getAllUsersUseCase: sl(),
-      updateProfileStatusUseCase: sl(),
-      createMedicalReportUseCase: sl(),
-      getPatientMedicalReportsUseCase: sl(),
-      updateNurseOptionsUseCase: sl(),
-      updateDoctorOptionsUseCase: sl(),
-      getServicesUseCase: sl(),
-      getSpecialtiesUseCase: sl(),
-      deleteAccountUseCase: sl()));
-  sl.registerLazySingleton(
-      () => GetAllUsersUseCase(userServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetUserServiceUseCase(userServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => UpdateUserServiceUseCase(userServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => UpdateProfileStatusUseCase(userServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => ChangePasswordUseCase(userServiceRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetAllNotificationsUseCase(settingsRepository: sl()));
-  sl.registerLazySingleton(() => CreateMedicalReportUseCase(repository: sl()));
-  sl.registerLazySingleton(
-      () => GetPatientMedicalReportsUseCase(repository: sl()));
-  sl.registerLazySingleton(() => UpdateNurseOptionsUseCase(repository: sl()));
-  sl.registerLazySingleton(() => UpdateDoctorOptionsUseCase(repository: sl()));
-  sl.registerLazySingleton(() => GetServicesUseCase(repository: sl()));
-  sl.registerLazySingleton(() => GetSpecialtiesUseCase(repository: sl()));
-  sl.registerLazySingleton(() => DeleteAccountUseCase(repository: sl()));
-
-  sl.registerLazySingleton<UserServiceRepository>(() =>
-      UserServiceModelRepository(
-          networkInfo: sl(), userServiceRemoteDataSource: sl()));
-  sl.registerLazySingleton<UserServiceRemoteDataSource>(
-      () => UserServiceRemoteDataSource(client: sl()));
-
-  // Medical Reports Repository
-  sl.registerLazySingleton<MedicalReportsRepository>(
-      () => MedicalReportsRepositoryImpl(remoteDataSource: sl()));
-  sl.registerLazySingleton<MedicalReportsRemoteDataSource>(
-      () => MedicalReportsRemoteDataSourceImpl(client: sl()));
-
-  /// order module
-  sl.registerFactory(() => BookingBloc(
-      getAllOrderUseCase: sl(),
-      getOngoingBookingsUseCase: sl(),
-      addOrderUseCase: sl(),
-      updateOrderUseCase: sl(),
-      sendRequestUseCase: sl()));
-  sl.registerLazySingleton(() => GetAllOrderUseCase(orderRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetOngoingBookingsUseCase(orderRepository: sl()));
-  sl.registerLazySingleton(() => GetPatientDetailsUseCase(sl()));
-  // Register as singleton to preserve cache across app
-  sl.registerLazySingleton(
-      () => BookingNurseCubit(getPatientDetailsUseCase: sl()));
-  sl.registerLazySingleton(() => AddOrderUseCase(orderRepository: sl()));
-  sl.registerLazySingleton(() => CancelOrderUseCase(orderRepository: sl()));
-  sl.registerLazySingleton(() => UpdateOrderUseCase(orderRepository: sl()));
-  sl.registerLazySingleton<OrderRepository>(() =>
-      OrderModelRepository(networkInfo: sl(), orderRemoteDataSource: sl()));
-  sl.registerLazySingleton<OrderRemoteDataSourceImpl>(
-      () => OrderRemoteDataSource(client: sl()));
-
-  // request form
-  sl.registerLazySingleton(() => SendRequestUseCase(orderRepository: sl()));
-
-  sl.registerFactory(() => ChatBloc());
-
-  //
-  // /// settings module
-  sl.registerLazySingleton<SettingsRepository>(() => SettingsModelRepository(
-      networkInfo: sl(), settingsRemoteDataSourceImpl: sl()));
-  sl.registerLazySingleton<SettingsRemoteDataSourceImpl>(
-      () => SettingsRemoteDataSource(client: sl()));
-
-  /// locations module
-  sl.registerFactory(() => LocationsBloc(
-        fetchUserLocationsUseCase: sl(),
-        addLocationUseCase: sl(),
-        removeLocationUseCase: sl(),
-        updateLocationUseCase: sl(),
-      ));
-  sl.registerLazySingleton(
-      () => FetchUserLocationsUseCase(locationsRepository: sl()));
-  sl.registerLazySingleton(() => AddLocationUseCase(locationsRepository: sl()));
-  sl.registerLazySingleton(
-      () => UpdateLocationUseCase(locationsRepository: sl()));
-  sl.registerLazySingleton(
-      () => RemoveLocationUseCase(locationsRepository: sl()));
-
-  sl.registerLazySingleton<LocationsRepository>(() => LocationsModelRepository(
-      networkInfo: sl(), locationRemoteDataSource: sl()));
-  sl.registerLazySingleton<LocationRemoteDataSourceImpl>(
-      () => LocationRemoteDataSource(client: sl()));
-
-  /// categories bloc and classes initial
-  sl.registerFactory(() => CategoriesBloc(
-      getAllCategoryUseCase: sl(),
-      getAllSlidersUseCase: sl(),
-      getAllAllergiesUseCase: sl(),
-      getAllPublicationsUseCase: sl()));
-  sl.registerLazySingleton(
-      () => GetAllCategoryUseCase(categoryRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetAllAllergiesUseCase(categoryRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetPatientAllergiesUseCase(categoryRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetAllSlidersUseCase(categoryRepository: sl()));
-  sl.registerLazySingleton(
-      () => GetAllPublicationsUseCase(categoryRepository: sl()));
-  sl.registerLazySingleton<CategoryRepository>(() => CategoryModelRepository(
-      networkInfo: sl(), categoryRemoteDataSource: sl()));
-  sl.registerLazySingleton<CategoryRemoteDataSourceImpl>(
-      () => CategoryRemoteDataSource(client: sl()));
-
-  /// nurses bloc and classes initial
-  sl.registerFactory(
-      () => NurseBloc(getAllNursesUseCase: sl(), rateNurseUseCase: sl()));
-  sl.registerLazySingleton(() => GetAllNursesUseCase(nurseRepository: sl()));
-  sl.registerLazySingleton(() => RateNurseUseCase(nurseRepository: sl()));
-  sl.registerLazySingleton<NursesRepository>(() => NursesModelRepository(
-      networkInfo: sl(), nursesRemoteDataSourceImpl: sl()));
-  sl.registerLazySingleton<NursesRemoteDataSourceImpl>(
-      () => NursesRemoteDataSource(client: sl()));
-
-  /// doctors bloc and classes initial
-  sl.registerFactory(
-      () => DoctorBloc(getAllDoctorsUseCase: sl(), rateDoctorUseCase: sl()));
-  sl.registerLazySingleton(() => GetAllDoctorsUseCase(doctorRepository: sl()));
-  sl.registerLazySingleton(() => RateDoctorUseCase(doctorRepository: sl()));
-  sl.registerLazySingleton<DoctorsRepository>(() => DoctorsModelRepository(
-      networkInfo: sl(), doctorsRemoteDataSourceImpl: sl()));
-  sl.registerLazySingleton<DoctorsRemoteDataSourceImpl>(
-      () => DoctorsRemoteDataSource(client: sl()));
-
-  /// search bloc and classes initial
-  sl.registerFactory(() => SearchBloc(searchByServiceUseCase: sl()));
-  sl.registerLazySingleton(
-      () => SearchByServiceUseCase(searchRepository: sl()));
-  sl.registerLazySingleton<SearchRepository>(
-      () => SearchRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
-  sl.registerLazySingleton<SearchRemoteDataSource>(
-      () => SearchRemoteDataSourceImpl(client: sl()));
-
-  /// additional classes initial
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
-  sl.registerLazySingleton(() => http.Client());
-
-  // Dio setup
-  sl.registerLazySingleton<Dio>(() {
-    final dio = Dio(BaseOptions(
-      baseUrl: ApiUrl.BASE_URL,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-    ));
-    dio.interceptors.add(AuthInterceptor());
-    dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
-    return dio;
-  });
+  // 3. Coordinators (Business Flow Layer) - Must be after feature blocs
+  initCoordinators();
 }

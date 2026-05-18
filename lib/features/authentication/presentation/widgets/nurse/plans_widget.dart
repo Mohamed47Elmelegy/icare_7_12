@@ -186,7 +186,8 @@ class PlanWidget extends StatelessWidget {
 
                 // this callback will be triggered when user taps a link
                 onTapUrl: (url) async {
-                  debugPrint('tapped ${url.trim()}');
+                  // tapped url
+
                   await Util.pushPage(
                       WebViewScreen(
                         title: translate("nurse.subscribe"),

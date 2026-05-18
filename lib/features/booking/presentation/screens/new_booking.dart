@@ -1,8 +1,6 @@
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/authentication/presentation/widgets/gender_row.dart';
-import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/booking/presentation/widgets/new_booking_widgets/accommodation_duration_widget.dart';
 import 'package:icare/features/booking/presentation/widgets/new_booking_widgets/booking_date.dart';
 import 'package:icare/features/booking/presentation/widgets/new_booking_widgets/case_description.dart';
@@ -14,7 +12,6 @@ import 'package:icare/features/booking/presentation/widgets/new_booking_widgets/
 import 'package:icare/features/booking/presentation/widgets/new_booking_widgets/welcom_section.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewBookingScreen extends StatefulWidget {
   const NewBookingScreen({super.key});
@@ -27,12 +24,6 @@ class _NewBookingScreenState extends State<NewBookingScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch ongoing bookings to filter out busy providers
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint("🚀 NewBookingScreen: Fetching ongoing bookings...");
-      BlocProvider.of<BookingBloc>(context)
-          .add(const GetOngoingBookingsEvent());
-    });
   }
 
   @override

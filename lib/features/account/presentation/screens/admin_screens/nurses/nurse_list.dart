@@ -16,15 +16,16 @@ class NursesList extends StatelessWidget {
     return BlocBuilder<AccountBloc, AccountState>(
       builder: (ctx, state) {
         var bloc = AccountBloc.get(ctx);
-        if (state is FetchNotificationsLoadingState) {
+        if (state is FetchProfileDataState && state.response.isLoad == true) {
           return Center(
             child: CircularProgressIndicator(
               color: DMUtil.getPC2(),
             ),
           );
         }
-        if (state is! FetchNotificationsLoadingState &&
-            bloc.notificationList.isEmpty) {
+        if (bloc.allUsers.isEmpty &&
+            (state is! FetchProfileDataState ||
+                state.response.isLoad != true)) {
           return const EmptyDataWidget();
         }
         return Container(

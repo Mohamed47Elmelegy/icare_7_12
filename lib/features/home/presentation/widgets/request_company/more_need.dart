@@ -50,12 +50,9 @@ class MoreNeedWidget extends StatelessWidget {
                     activeColor: kPrimary,
                     title:
                         CustomText(text: item, fontSize: AppStyle.small.sp - 2),
-                    value: item.trim() == bloc.moreNeed.trim(),
+                    value: bloc.moreNeedList.contains(item.trim()),
                     onChanged: (value) => bloc.add(UpdateRequestFormDataEvent(
                         data: {'more_need': item.toString().trim()})),
-                    onFocusChange: (value) => bloc.add(
-                        UpdateRequestFormDataEvent(
-                            data: {'more_need': item.toString().trim()})),
                   );
                 });
           },

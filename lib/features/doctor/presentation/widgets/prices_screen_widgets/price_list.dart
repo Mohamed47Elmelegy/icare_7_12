@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctor_state.dart';
 import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
 import 'package:icare/features/doctor/presentation/widgets/prices_screen_widgets/service_price_row.dart';
@@ -28,14 +28,14 @@ class DoctorPricesListWidget extends StatelessWidget {
           return const EmptyDataWidget();
         }
 
-        // Get specialty name from AccountBloc
-        var accountBloc = AccountBloc.get(context);
+        // Get specialty name from ServicesBloc
+        var servicesBloc = ServicesBloc.get(context);
         String specialtyName = "";
 
         try {
-          var specialty = accountBloc.allSpecialtiesList.firstWhere(
+          var specialty = servicesBloc.allSpecialtiesList.firstWhere(
             (element) => element.id.toString() == specialtyId,
-            orElse: () => accountBloc.allSpecialtiesList.firstWhere(
+            orElse: () => servicesBloc.allSpecialtiesList.firstWhere(
               (element) => element.id == int.tryParse(specialtyId),
             ),
           );

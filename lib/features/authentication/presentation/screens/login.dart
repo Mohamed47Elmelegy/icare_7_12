@@ -25,42 +25,35 @@ import 'package:flutter_translate/flutter_translate.dart';
 class LoginScreen extends StatelessWidget {
   final bool fromRegistration;
   const LoginScreen({super.key, this.fromRegistration = false});
-  static final TextEditingController emailTextEditingController =
-      TextEditingController();
-  static final TextEditingController phoneTextEditingController =
-      TextEditingController();
-  static final TextEditingController passTextEditingController =
-      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final TextEditingController phoneTextEditingController =
+        TextEditingController();
+    final TextEditingController passTextEditingController =
+        TextEditingController();
+
+    bool validateForm() {
+      if (phoneTextEditingController.text.isEmpty) return false;
+      if (passTextEditingController.text.isEmpty) return false;
+      return true;
+    }
+
     return Scaffold(
         backgroundColor: DMUtil.getWC(),
         body: BlocListener<AuthBloc, AuthState>(
           listenWhen: (context, state) =>
               state is LogInSuccessfullyState || state is LogInFailedState,
-          listener: (ctx, state) async {
+          listener: (ctx, state) {
             var bloc = AuthBloc.get(ctx);
             if (state is LogInSuccessfullyState &&
                 state.response.isSuccess == true) {
-              passTextEditingController.text = "";
-
-              // ✅ Check verification status for professionals BEFORE allowing access
-              bool isVerified = await Util.checkUserVerificationStatus(context);
-              if (!isVerified) {
-                // User is pending approval, show message and stay on login
-                SnackBarBuilder.showFeedBackMessage(context,
-                    translate("toast.account_not_approved"), Colors.orange);
-                return; // Don't proceed to home
-              }
-
-              // User is verified, proceed normally
-              Util.getAllUserAppData(context: context);
-              // Use custom login success message
+              // User is verified and app is initialized (handled in AuthBloc)
               SnackBarBuilder.showFeedBackMessage(
                   context, translate("auth.login_success"), Colors.green);
               RootBloc.get(context).add(const ChangeIndex(index: 1, title: ""));
               Util.pushPageAndRemoveRoutes(const RootScreen(), context);
-            } else {
+            } else if (state is LogInFailedState) {
               SnackBarBuilder.showFeedBackMessage(
                   context, bloc.resMsg, Colors.red);
             }
@@ -69,8 +62,8 @@ class LoginScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                const AppBarWithRadius(
-                  enableBackIcon: true,
+                AppBarWithRadius(
+                  enableBackIcon: Navigator.canPop(context),
                   switchLang: true,
                 ),
                 Padding(
@@ -107,7 +100,7 @@ class LoginScreen extends StatelessWidget {
                                   text: translate(
                                       "auth.pending_approval_message"),
                                   fontSize: AppStyle.small.sp,
-                                  color: Colors.blue.shade900,
+                                  color: DMUtil.getPC(),
                                   fontWeight: FontWeight.w500,
                                   maxLine: 3,
                                 ),
@@ -140,34 +133,6 @@ class LoginScreen extends StatelessWidget {
                         ),
                         isLabelError: false,
                       ),
-                      // IntlPhoneField(
-                      //   controller: phoneTextEditingController,
-                      //   decoration: InputDecoration(
-                      //     labelText:  translate("signup.phone"),
-                      //     labelStyle: TextStyle(color: DMUtil.getD2C()),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: BorderSide(
-                      //           width: 1,color: DMUtil.getOpacity()
-                      //       ),
-                      //     ),
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: BorderSide(
-                      //           width: 1,color: DMUtil.getOpacity()
-                      //       ),
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         width: 1,color: DMUtil.getOpacity()
-                      //       ),
-                      //     ),
-                      //   ),
-                      //   initialCountryCode: 'EG',
-                      //   onChanged: (phone) {},
-                      //   onCountryChanged: (val)=>AuthBloc.get(context).add(UpdatePhoneCountryEvent(code: val.toString().trim())),
-                      // ),
-
                       const SizedBox(
                         height: 20,
                       ),
@@ -215,52 +180,63 @@ class LoginScreen extends StatelessWidget {
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (ctx, state) {
                           var autBloc = AuthBloc.get(ctx);
-                          if (state is LogInLoadingState) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
+                          // Clean Arch: UI reacts to both login and initialization states
+                          bool isLoading = state is LogInLoadingState ||
+                              state is AuthInitializingState;
                           return CustomButton(
                             height: 45.h,
                             width: 200.w,
                             circular: 10,
-                            widget: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                CustomText(
-                                  text: translate("login.login"),
-                                  color: Colors.white,
-                                  fontSize: AppStyle.average.sp - 1,
-                                  fontWeight: FontWeight.w600,
-                                  alignCenter: true,
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_outlined,
-                                  size: 20.w,
-                                  color: DMUtil.getWC(),
-                                ),
-                              ],
-                            ),
+                            widget: isLoading
+                                ? SizedBox(
+                                    height: 20.w,
+                                    width: 20.w,
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomText(
+                                        text: translate("login.login"),
+                                        color: Colors.white,
+                                        fontSize: AppStyle.average.sp - 1,
+                                        fontWeight: FontWeight.w600,
+                                        alignCenter: true,
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_outlined,
+                                        size: 20.w,
+                                        color: DMUtil.getWC(),
+                                      ),
+                                    ],
+                                  ),
                             color: DMUtil.getPC(),
-                            onPressed: () async {
-                              // SnackBarBuilder.showFeedBackMessage(context, translate("toast.wait"), Colors.green);
-                              var phone =
-                                  phoneTextEditingController.text.trim();
-                              var password = passTextEditingController.text
-                                  .trim()
-                                  .replaceAll(
-                                      '\u0000', ''); // Remove null characters
-                              if (validateForm()) {
-                                var data = {
-                                  'phone': phone,
-                                  'password': password
-                                };
-                                autBloc.add(LogInEvent(user: data));
-                              } else {
-                                SnackBarBuilder.showFeedBackMessage(context,
-                                    translate("toast.field_empty"), Colors.red);
-                              }
-                            },
+                            onPressed: isLoading
+                                ? null
+                                : () async {
+                                    var phone =
+                                        phoneTextEditingController.text.trim();
+                                    var password = passTextEditingController
+                                        .text
+                                        .trim()
+                                        .replaceAll('\u0000', '');
+                                    if (validateForm()) {
+                                      var data = {
+                                        'phone': phone,
+                                        'password': password
+                                      };
+                                      autBloc.add(LogInEvent(user: data));
+                                    } else {
+                                      SnackBarBuilder.showFeedBackMessage(
+                                          context,
+                                          translate("toast.field_empty"),
+                                          Colors.red);
+                                    }
+                                  },
                           );
                         },
                       ),
@@ -279,11 +255,5 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         ));
-  }
-
-  validateForm() {
-    if (phoneTextEditingController.text.isEmpty) return false;
-    if (passTextEditingController.text.isEmpty) return false;
-    return true;
   }
 }

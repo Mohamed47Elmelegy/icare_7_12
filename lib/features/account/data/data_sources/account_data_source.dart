@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:icare/features/authentication/data/models/auth_response.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:http/http.dart' as http;
 import 'package:icare/core/error/exception.dart';
@@ -29,21 +28,23 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     var response = await client.get(
         Uri.parse("${ApiUrl.USER_PROFILE_DATA}/${ApiUrl.headerAuth['ID']}"),
         headers: ApiUrl.headerAuth);
-    debugPrint("getUserData: ${response.body}");
+    // getUserData
+
     var decodedData = json.decode(response.body);
 
     if (decodedData['success']) {
       var body = json.decode(response.body);
       var userData = body['data']['user'][0];
 
-      // ✅ Debug logging للتشخيص
-      debugPrint("🔍 user_type: ${userData['user_type']}");
-      debugPrint("🔍 Has 'nurse' key: ${userData.containsKey('nurse')}");
-      debugPrint("🔍 Has 'doctor' key: ${userData.containsKey('doctor')}");
+      // Debug logging for diagnosis
+      // user_type
+      // Has 'nurse' key
+      // Has 'doctor' key
+
 
       if (userData['user_type'] == 'doctor') {
-        debugPrint("🔍 doctor object: ${userData['doctor']}");
-        debugPrint("🔍 specialties_id in root: ${userData['specialties_id']}");
+        // doctor object
+        // specialties_id in root
       }
 
       return UserServiceModel.fromJson(userData);
@@ -58,17 +59,20 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       var response = await client.delete(
           Uri.parse("${ApiUrl.DELETE_ACCOUNT}/$userId"),
           headers: ApiUrl.headerAuth);
-      debugPrint("deleteUserAccount response: ${response.body}");
+      // deleteUserAccount response
+
       var decodedData = json.decode(response.body);
       if (decodedData['status'] == true || decodedData['success'] == true) {
         return decodedData['message'] ??
             translate("toast.account_deleted_successfully");
       } else {
-        debugPrint("❌ deleteUserAccount failed with: ${response.body}");
+        // deleteUserAccount failed
+
         throw ServerException();
       }
     } catch (e) {
-      debugPrint("deleteUserAccount error: $e");
+      // deleteUserAccount error
+
       throw ServerException();
     }
   }
@@ -130,11 +134,15 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
         if (userData['pulse_rate'] != null)
           'pulse_rate': userData['pulse_rate'],
       };
+      String targetUserId = userData['user_id'] != null
+          ? userData['user_id'].toString()
+          : ApiUrl.headerAuth['ID'].toString();
       var response = await client.post(
-          Uri.parse("${ApiUrl.UPDATE_USER_PROFILE}/${ApiUrl.headerAuth['ID']}"),
+          Uri.parse("${ApiUrl.UPDATE_USER_PROFILE}/$targetUserId"),
           body: json.encode(body),
           headers: ApiUrl.headerAuth);
-      debugPrint("updateUserProfile: ${response.body}");
+      // updateUserProfile
+
       var decodedData = jsonDecode(response.body);
       if (decodedData['status'] == true) {
         return UserServiceModel.fromJson(decodedData['user']);
@@ -159,11 +167,15 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       if (userData['value'] != null) 'value': userData['value'],
       if (userData['type'] != null) 'type': userData['type'],
     };
+    String targetUserId = userData['user_id'] != null
+        ? userData['user_id'].toString()
+        : ApiUrl.headerAuth['ID'].toString();
     var response = await client.post(
-        Uri.parse("${ApiUrl.UPDATE_USER_PROFILE}/${ApiUrl.headerAuth['ID']}"),
+        Uri.parse("${ApiUrl.UPDATE_USER_PROFILE}/$targetUserId"),
         body: json.encode(data),
         headers: ApiUrl.headerAuth);
-    debugPrint("updatePatientData: ${response.body}");
+    // updatePatientData
+
     var decodedData = jsonDecode(response.body);
     if (decodedData['status'] == true) {
       return UserServiceModel.fromJson(decodedData['user']);
@@ -186,7 +198,8 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
         Uri.parse(
             "${ApiUrl.UPDATE_USER_PROFILE_STATUS}/${userData['status'] ?? 'offline'}/${Util.getUserID()}"),
         headers: ApiUrl.headerAuth);
-    debugPrint("updateProfileStatus: ${response.body}");
+    // updateProfileStatus
+
     var decodedData = jsonDecode(response.body);
     return decodedData['status'] == true;
   }
@@ -206,7 +219,8 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     };
     var response = await http.post(Uri.parse(ApiUrl.UPDATE_NURSE_DATA),
         body: json.encode(data), headers: ApiUrl.headerAuth);
-    debugPrint("updateNurseOptionsValue: ${response.body}");
+    // updateNurseOptionsValue
+
     var decodedData = jsonDecode(response.body);
     if (decodedData['status'] == true) {
       return const UserServiceModel(
@@ -246,7 +260,8 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     };
     var response = await http.post(Uri.parse(ApiUrl.UPDATE_DOCTOR_DATA),
         body: json.encode(data), headers: ApiUrl.headerAuth);
-    debugPrint("updateDoctorOptionsValue: ${response.body}");
+    // updateDoctorOptionsValue
+
     var decodedData = jsonDecode(response.body);
     if (decodedData['status'] == true) {
       return const UserServiceModel(
@@ -276,34 +291,40 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       String url;
       if (userType == 'nurse') {
         url = ApiUrl.NURSE_SERVICES;
-        debugPrint("🔍 Fetching services for NURSE");
+        // Fetching services for NURSE
+
       } else if (userType == 'assistant') {
         url = ApiUrl.ASSISTANT_SERVICES;
-        debugPrint("🔍 Fetching services for ASSISTANT");
+        // Fetching services for ASSISTANT
+
       } else {
         url = ApiUrl.SERVICES;
-        debugPrint("🔍 Fetching services (fallback endpoint)");
+        // Fetching services (fallback endpoint)
+
       }
 
       var response = await http.get(Uri.parse(url), headers: ApiUrl.headerAuth);
 
-      debugPrint("📥 getAllServicesList Response: ${response.statusCode}");
-      debugPrint("📥 URL: $url");
+      // getAllServicesList Response
+      // URL
+
 
       var decodedData = jsonDecode(response.body);
       if (decodedData['status'] == true) {
         var services =
             ServicesModel.listModelFromJson(jsonEncode(decodedData['data']));
-        debugPrint(
-            "✅ Loaded ${services.length} services${userType != null ? " for $userType" : ""}");
+        // Loaded services
+
 
         return services;
       } else {
-        debugPrint("❌ API returned status: false");
+        // API returned status: false
+
         return [];
       }
     } catch (e) {
-      debugPrint("❌ Error in getAllServicesList: $e");
+      // Error in getAllServicesList
+
       return [];
     }
   }
@@ -319,12 +340,14 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       request.headers.addAll(headers);
       var streamedResponse = await request.send();
       var res = await http.Response.fromStream(streamedResponse);
-      debugPrint("updateImg: ${res.body}");
+      // updateImg
+
       var decodedData = jsonDecode(res.body);
       if (decodedData['status'] == true) return true;
       return false;
     } catch (e) {
-      debugPrint("updateImg $e");
+      // updateImg error
+
       return false;
     }
   }
@@ -338,7 +361,8 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     };
     var response = await client
         .post(Uri.parse(ApiUrl.UPDATE_USER_PASSWORD_PROFILE), body: body);
-    debugPrint("changePassword: ${response.body}");
+    // changePassword
+
     var decodedData = json.decode(response.body);
     if (response.statusCode == 200) {
       if (decodedData['status'] &&
@@ -374,7 +398,8 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
     var response = await http.get(
         Uri.parse("${ApiUrl.USER_PROFILE_DATA}/$userID"),
         headers: ApiUrl.headerAuth);
-    debugPrint("getUserFullData: ${response.body}");
+    // getUserFullData
+
     var decodedData = json.decode(response.body);
     if (decodedData['success']) {
       var body = json.decode(response.body);
@@ -405,12 +430,14 @@ class UserServiceRemoteDataSource implements UserServiceRemoteDataSourceImpl {
       request.fields['msg'] = data['msg'];
       var streamedResponse = await request.send();
       var res = await http.Response.fromStream(streamedResponse);
-      debugPrint("sendNotification: ${res.body}");
+      // sendNotification
+
       var decodedData = jsonDecode(res.body);
       if (decodedData['status'] == true) return true;
       return false;
     } catch (e) {
-      debugPrint("sendNotification $e");
+      // sendNotification error
+
       return false;
     }
   }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
@@ -35,6 +35,8 @@ class RequestActions extends StatelessWidget {
             } else if (state is OrderErrorState) {
               SnackBarBuilder.showFeedBackMessage(
                   context, state.errors.toString(), Colors.red);
+            } else if (state is OrderInitialState) {
+              // Ignore initial state
             } else {
               SnackBarBuilder.showFeedBackMessage(
                   context, translate('toast.oops'), Colors.red);
@@ -60,7 +62,7 @@ class RequestActions extends StatelessWidget {
 
   navigateToOrderScreen(context) {
     BookingBloc.get(context).add(const FetchAllOrderEvent());
-    AccountBloc.get(context).add(const FetchAllNotificationsEvent());
+    ServicesBloc.get(context).add(const FetchAllNotificationsEvent());
     Util.pushPageAndRemoveRoutes(const RootScreen(), context);
     Util.pushPage(const OrderScreen(), context);
   }

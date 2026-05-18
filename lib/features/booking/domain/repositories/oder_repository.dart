@@ -6,7 +6,7 @@ import 'package:icare/features/booking/data/models/order_response.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
 
 abstract class OrderRepository {
-  Future<Either<Failure, List<Booking>>> getAllOrders();
+  Future<Either<Failure, List<Booking>>> getAllOrders({String? userId});
 
   /// Get all ongoing bookings (PENDING or ONGOING status) for current user
   Future<Either<Failure, List<Booking>>> getOngoingBookings();

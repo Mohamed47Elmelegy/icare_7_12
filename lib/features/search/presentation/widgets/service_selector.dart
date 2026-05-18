@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_state.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
@@ -35,9 +35,9 @@ class ServiceSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (ctx, searchState) {
-        return BlocBuilder<AccountBloc, AccountState>(
-          builder: (context, accountState) {
-            var accountBloc = AccountBloc.get(context);
+        return BlocBuilder<ServicesBloc, ServicesState>(
+          builder: (context, servicesState) {
+            var servicesBloc = ServicesBloc.get(context);
             var searchBloc = SearchBloc.get(context);
 
             // Get the appropriate list based on provider type
@@ -45,7 +45,7 @@ class ServiceSelector extends StatelessWidget {
 
             if (searchBloc.selectedProviderType == 'doctor') {
               // For doctors, convert specialties to ServicesModel format
-              servicesList = accountBloc.allSpecialtiesList.map((specialty) {
+              servicesList = servicesBloc.allSpecialtiesList.map((specialty) {
                 return ServicesModel(
                   id: specialty.id,
                   value: specialty.title,
@@ -55,16 +55,15 @@ class ServiceSelector extends StatelessWidget {
               }).toList();
             } else {
               // For nurses and assistants, use services list
-              servicesList = accountBloc.allServiceList;
+              servicesList = servicesBloc.allServiceList;
             }
 
             // If no services, return empty widget (user must select provider type first)
-            // But if loading, maybe show indicator? For now, keep as is.
-            if (servicesList.isEmpty && accountState is! ProfileLoadingState) {
+            if (servicesList.isEmpty && servicesState is! ServicesLoading) {
               return const SizedBox.shrink();
             }
 
-            if (accountState is ProfileLoadingState && servicesList.isEmpty) {
+            if (servicesState is ServicesLoading && servicesList.isEmpty) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 child: Center(
@@ -284,8 +283,6 @@ class ServiceSelector extends StatelessWidget {
                                 text: translate("search.clear_filters"),
                                 fontSize: AppStyle.small.sp,
                                 color: Colors.red,
-                                // fontSize: AppStyle.small.sp,
-                                // color: Colors.red,
                               ),
                             ],
                           ),

@@ -6,6 +6,7 @@ import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
@@ -18,13 +19,13 @@ class ServiceDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AccountBloc, AccountState>(
       builder: (ctx, accountState) {
-        var accountBloc = AccountBloc.get(ctx);
+        var servicesBloc = ServicesBloc.get(ctx);
         var searchBloc = SearchBloc.get(ctx);
 
         // Services are already filtered by user_type from the API
-        List<ServicesModel> availableServices = accountBloc.allServiceList;
+        List<ServicesModel> availableServices = servicesBloc.allServiceList;
 
-        if (accountBloc.allServiceList.isEmpty) {
+        if (servicesBloc.allServiceList.isEmpty) {
           return const SizedBox.shrink();
         }
 

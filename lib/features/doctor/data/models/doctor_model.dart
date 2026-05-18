@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:icare/core/strings/api/api_url.dart';
 import 'package:icare/features/authentication/data/models/user_service_model.dart';
 import 'package:icare/features/categories/domain/entities/categories_entity.dart';
@@ -101,11 +100,7 @@ class DoctorModel extends DoctorEntity {
             : null,
       );
       return doctor;
-    } catch (e, stackTrace) {
-      debugPrint("❌ Error parsing DoctorModel from JSON:");
-      debugPrint("   Error: $e");
-      debugPrint("   JSON data: ${jsonEncode(json)}");
-      debugPrint("   Stack trace: $stackTrace");
+    } catch (e) {
       rethrow;
     }
   }

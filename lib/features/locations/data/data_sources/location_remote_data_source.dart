@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:icare/features/locations/data/models/location_model.dart';
 
@@ -21,7 +20,8 @@ class LocationRemoteDataSource extends LocationRemoteDataSourceImpl {
   Future<bool> addNewLocation({required Map<String, dynamic> data}) async {
     var response = await client.post(Uri.parse(ApiUrl.ADD_NEW_ADDRESS),
         headers: ApiUrl.headerAuth, body: jsonEncode(data));
-    debugPrint("addNewLocation: ${response.body}");
+    // addNewLocation
+
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
       return body['status'] ?? false;
@@ -35,7 +35,8 @@ class LocationRemoteDataSource extends LocationRemoteDataSourceImpl {
     var response = await client.delete(
         Uri.parse("${ApiUrl.REMOVE_ADDRESS}$addressId"),
         headers: ApiUrl.headerAuth);
-    debugPrint("removeLocation: ${response.body}");
+    // removeLocation
+
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
       return body['message'].toString().contains("done") ? true : false;
@@ -50,7 +51,8 @@ class LocationRemoteDataSource extends LocationRemoteDataSourceImpl {
     //     headers: ApiUrl.headerAuth,body: jsonEncode(data));
     var response = await client.post(Uri.parse(ApiUrl.ADD_NEW_ADDRESS),
         headers: ApiUrl.headerAuth, body: jsonEncode(data));
-    debugPrint("updateLocation: ${response.body}");
+    // updateLocation
+
     if (response.statusCode == 200) {
       var body = json.decode(response.body);
       return body['message'].toString().contains("done") ? true : false;
@@ -63,7 +65,8 @@ class LocationRemoteDataSource extends LocationRemoteDataSourceImpl {
   Future<AddressModel> fetchAllLocations() async {
     var response = await client.get(Uri.parse(ApiUrl.FETCH_ADDRESS),
         headers: ApiUrl.headerAuth);
-    debugPrint("fetchAllLocations: ${response.body}");
+    // fetchAllLocations
+
     var decodedData = json.decode(response.body.toString());
     if (response.statusCode == 200 && decodedData['status']) {
       return AddressModel.fromJson(decodedData);
