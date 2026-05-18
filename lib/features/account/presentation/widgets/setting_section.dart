@@ -16,6 +16,7 @@ import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/setting/presentation/widgets/small_widgets.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
+
 class SettingSectionWidget extends StatelessWidget {
   const SettingSectionWidget({super.key});
 

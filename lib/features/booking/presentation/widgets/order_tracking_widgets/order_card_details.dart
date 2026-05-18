@@ -55,7 +55,10 @@ class OrderCardDetails extends StatelessWidget {
       }
     }
 
-    if (orderProvider == null || item.userId == null) {
+    if (item.userId == null) {
+      return const SizedBox.shrink();
+    }
+    if (Util.isCustomer() && orderProvider == null) {
       return const SizedBox.shrink();
     }
 
@@ -169,10 +172,14 @@ class OrderCardDetails extends StatelessWidget {
                                 Expanded(
                                   child: InfoRowWidget(
                                     label: translate("order.gender"),
-                                    value: (orderProvider?.userData?.isWomen ==
-                                            true
-                                        ? translate("profile.female")
-                                        : translate("profile.male")),
+                                    value: Util.isCustomer()
+                                        ? (orderProvider?.userData?.isWomen ==
+                                                true
+                                            ? translate("profile.female")
+                                            : translate("profile.male"))
+                                        : (item.userGender == 'female'
+                                            ? translate("profile.female")
+                                            : translate("profile.male")),
                                   ),
                                 ),
                                 SizedBox(width: 12.w),
@@ -203,12 +210,13 @@ class OrderCardDetails extends StatelessWidget {
                               InkWell(
                                 onTap: () async {
                                   try {
+                                    final String targetId = Util.isCustomer()
+                                        ? (orderProvider?.userData?.userId ?? 0)
+                                            .toString()
+                                        : item.userId.toString();
                                     final trackingProvider =
                                         await UserServiceRemoteDataSource
-                                            .getUserFullData((orderProvider!
-                                                        .userData!.userId ??
-                                                    0)
-                                                .toString());
+                                            .getUserFullData(targetId);
                                     Util.pushPage(
                                       MapScreen(
                                         isSet: true,
@@ -259,7 +267,7 @@ class OrderCardDetails extends StatelessWidget {
                   SizedBox(height: 16.h),
 
                   // Actions
-                  BookingRowActions(item: item, orderNurse: orderProvider!),
+                  BookingRowActions(item: item, orderNurse: orderProvider),
                 ],
               );
             },

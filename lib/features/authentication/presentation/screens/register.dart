@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
@@ -20,6 +18,7 @@ import 'package:icare/core/styles/my_colors.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,156 +47,168 @@ class RegisterScreen extends StatelessWidget {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: BlocBuilder<AuthBloc, AuthState>(
           builder: (ctx, state) {
-            if (state is LogInLoadingState) {
-              return CircularProgressIndicator(
-                backgroundColor: DMUtil.getPC(),
-              );
-            }
+            bool isLoading = state is RegisterLoadingState;
             return CustomButton(
               height: 45.h,
               width: 300.w,
               circular: 10,
-              widget: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    text: translate("signup.signup"),
-                    color: Colors.white,
-                    fontSize: AppStyle.average.sp - 1,
-                    fontWeight: FontWeight.w600,
-                    alignCenter: true,
-                  ),
-                  Icon(
-                    Icons.arrow_forward_outlined,
-                    size: 20.w,
-                    color: DMUtil.getWC(),
-                  ),
-                ],
-              ),
+              widget: isLoading
+                  ? SizedBox(
+                      height: 20.w,
+                      width: 20.w,
+                      child: const CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          text: translate("signup.signup"),
+                          color: Colors.white,
+                          fontSize: AppStyle.average.sp - 1,
+                          fontWeight: FontWeight.w600,
+                          alignCenter: true,
+                        ),
+                        Icon(
+                          Icons.arrow_forward_outlined,
+                          size: 20.w,
+                          color: DMUtil.getWC(),
+                        ),
+                      ],
+                    ),
               color: DMUtil.getPC(),
-              onPressed: () async {
-                var phone = phoneTextEditingController.text.trim();
-                var email = emailTextEditingController.text.trim();
-                if (validateForm(context: context)) {
-                  var authBloc = AuthBloc.get(context);
-                  var locationsBloc = LocationsBloc.get(context);
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      var phone = phoneTextEditingController.text.trim();
+                      var email = emailTextEditingController.text.trim();
+                      if (validateForm(context: context)) {
+                        var authBloc = AuthBloc.get(context);
+                        var regState = RegistrationCubit.get(context).state;
+                        var locationsBloc = LocationsBloc.get(context);
 
-                  // Build register data similar to verification_code.dart
-                  Map<String, dynamic> registerData = {
-                    'name': nameTextEditingController.text.trim(),
-                    'email': email,
-                    'phone': phone,
-                    // Remove null characters and validate password
-                    'password': passwordTextEditingController.text
-                        .trim()
-                        .replaceAll('\u0000', ''), // Remove null characters
-                  };
+                        // Build register data similar to verification_code.dart
+                        Map<String, dynamic> registerData = {
+                          'name': nameTextEditingController.text.trim(),
+                          'email': email,
+                          'phone': phone,
+                          // Remove null characters and validate password
+                          'password': passwordTextEditingController.text
+                              .trim()
+                              .replaceAll(
+                                  '\u0000', ''), // Remove null characters
+                        };
 
-                  registerData['city'] = locationsBloc.city;
-                  registerData['governorate'] = locationsBloc.governorate;
-                  if (locationsBloc.currentCheckOutLocation != null) {
-                    registerData['latitude'] =
-                        locationsBloc.currentCheckOutLocation!.lat;
-                    registerData['longitude'] =
-                        locationsBloc.currentCheckOutLocation!.long;
-                    registerData['address'] =
-                        "${locationsBloc.currentCheckOutLocation!.address1} ${locationsBloc.currentCheckOutLocation!.address2}";
-                  }
-                  registerData['country_code'] = '+20'; // Egyptian country code
-                  registerData['status'] = 'online';
-                  registerData['is_male'] = authBloc.isWomen ? "0" : "1";
+                        registerData['city'] = locationsBloc.city;
+                        registerData['governorate'] = locationsBloc.governorate;
+                        if (locationsBloc.currentCheckOutLocation != null) {
+                          registerData['latitude'] =
+                              locationsBloc.currentCheckOutLocation!.lat;
+                          registerData['longitude'] =
+                              locationsBloc.currentCheckOutLocation!.long;
+                          registerData['address'] =
+                              "${locationsBloc.currentCheckOutLocation!.address1} ${locationsBloc.currentCheckOutLocation!.address2}";
+                        }
+                        registerData['country_code'] =
+                            '+20'; // Egyptian country code
+                        registerData['status'] = 'online';
+                        registerData['is_male'] = authBloc.isWomen ? "0" : "1";
 
-                  // Check if doctor type first
-                  if (authBloc.isDoctor) {
-                    registerData['user_type'] = "doctor";
-                    if (authBloc.selectedSpecialtyId != null) {
-                      registerData['specialties_id'] =
-                          authBloc.selectedSpecialtyId;
-                    }
-                    if (authBloc.license != null) {
-                      registerData['license'] = authBloc.license;
-                    }
-                    if (authBloc.certificate != null) {
-                      registerData['certificate'] = authBloc.certificate;
-                    }
-                    if (authBloc.nurseID != null) {
-                      registerData['nurseID'] = authBloc.nurseID;
-                    }
-                    if (authBloc.associationCard != null) {
-                      registerData['associationCard'] =
-                          authBloc.associationCard;
-                    }
-                    if (authBloc.relatedJobId != null) {
-                      registerData['related_job_id'] = authBloc.relatedJobId;
-                    }
-                    if (authBloc.avatar != null) {
-                      registerData['avatar'] = authBloc.avatar;
-                    }
-                    if (authBloc.languageList != null) {
-                      registerData['languages'] =
-                          jsonEncode(authBloc.languageList);
-                    }
-                    if (authBloc.educationList != null) {
-                      registerData['education'] =
-                          jsonEncode(authBloc.educationList);
-                    }
-                    if (authBloc.publicationsList != null) {
-                      registerData['publications'] =
-                          jsonEncode(authBloc.publicationsList);
-                    }
-                    if (authBloc.coursesList != null) {
-                      registerData['courses'] =
-                          jsonEncode(authBloc.coursesList);
-                    }
-                  } else if (authBloc.isNurse) {
-                    registerData['user_type'] =
-                        authBloc.isNurse ? "nurse" : "assistant";
-                    if (authBloc.license != null) {
-                      registerData['license'] = authBloc.license;
-                    }
-                    if (authBloc.certificate != null) {
-                      registerData['certificate'] = authBloc.certificate;
-                    }
-                    if (authBloc.nurseID != null) {
-                      registerData['nurseID'] = authBloc.nurseID;
-                    }
-                    if (authBloc.associationCard != null) {
-                      registerData['associationCard'] =
-                          authBloc.associationCard;
-                    }
-                    if (authBloc.relatedJobId != null) {
-                      registerData['related_job_id'] = authBloc.relatedJobId;
-                    }
-                    if (authBloc.avatar != null) {
-                      registerData['avatar'] = authBloc.avatar;
-                    }
-                    if (authBloc.languageList != null) {
-                      registerData['languages'] =
-                          jsonEncode(authBloc.languageList);
-                    }
-                    if (authBloc.educationList != null) {
-                      registerData['education'] =
-                          jsonEncode(authBloc.educationList);
-                    }
-                    if (authBloc.publicationsList != null) {
-                      registerData['publications'] =
-                          jsonEncode(authBloc.publicationsList);
-                    }
-                    if (authBloc.coursesList != null) {
-                      registerData['courses'] =
-                          jsonEncode(authBloc.coursesList);
-                    }
-                  } else {
-                    // Default to customer
-                    registerData['user_type'] = "customer";
-                  }
+                        // Check if doctor type first
+                        if (authBloc.isDoctor) {
+                          registerData['user_type'] = "doctor";
+                          if (regState.selectedSpecialtyId != null) {
+                            registerData['specialties_id'] =
+                                regState.selectedSpecialtyId;
+                          }
+                          if (regState.license != null) {
+                            registerData['license'] = regState.license;
+                          }
+                          if (regState.certificate != null) {
+                            registerData['certificate'] = regState.certificate;
+                          }
+                          if (regState.nurseID != null) {
+                            registerData['nurseID'] = regState.nurseID;
+                          }
+                          if (regState.associationCard != null) {
+                            registerData['associationCard'] =
+                                regState.associationCard;
+                          }
+                          if (regState.relatedJobId != null) {
+                            registerData['related_job_id'] =
+                                regState.relatedJobId;
+                          }
+                          if (regState.avatar != null) {
+                            registerData['avatar'] = regState.avatar;
+                          }
+                          if (regState.languageList != null) {
+                            registerData['languages'] =
+                                jsonEncode(regState.languageList);
+                          }
+                          if (regState.educationList != null) {
+                            registerData['education'] =
+                                jsonEncode(regState.educationList);
+                          }
+                          if (regState.publicationsList != null) {
+                            registerData['publications'] =
+                                jsonEncode(regState.publicationsList);
+                          }
+                          if (regState.coursesList != null) {
+                            registerData['courses'] =
+                                jsonEncode(regState.coursesList);
+                          }
+                        } else if (authBloc.isNurse) {
+                          registerData['user_type'] =
+                              authBloc.isNurse ? "nurse" : "assistant";
+                          if (regState.license != null) {
+                            registerData['license'] = regState.license;
+                          }
+                          if (regState.certificate != null) {
+                            registerData['certificate'] = regState.certificate;
+                          }
+                          if (regState.nurseID != null) {
+                            registerData['nurseID'] = regState.nurseID;
+                          }
+                          if (regState.associationCard != null) {
+                            registerData['associationCard'] =
+                                regState.associationCard;
+                          }
+                          if (regState.relatedJobId != null) {
+                            registerData['related_job_id'] =
+                                regState.relatedJobId;
+                          }
+                          if (regState.avatar != null) {
+                            registerData['avatar'] = regState.avatar;
+                          }
+                          if (regState.languageList != null) {
+                            registerData['languages'] =
+                                jsonEncode(regState.languageList);
+                          }
+                          if (regState.educationList != null) {
+                            registerData['education'] =
+                                jsonEncode(regState.educationList);
+                          }
+                          if (regState.publicationsList != null) {
+                            registerData['publications'] =
+                                jsonEncode(regState.publicationsList);
+                          }
+                          if (regState.coursesList != null) {
+                            registerData['courses'] =
+                                jsonEncode(regState.coursesList);
+                          }
+                        } else {
+                          // Default to customer
+                          registerData['user_type'] = "customer";
+                        }
 
-                  authBloc.add(RegisterEvent(user: registerData));
-                } else {
-                  SnackBarBuilder.showFeedBackMessage(
-                      context, translate("toast.field_empty"), Colors.red);
-                }
-              },
+                        authBloc.add(RegisterEvent(user: registerData));
+                      } else {
+                        SnackBarBuilder.showFeedBackMessage(context,
+                            translate("toast.field_empty"), Colors.red);
+                      }
+                    },
             );
           },
         ),
@@ -219,8 +230,7 @@ class RegisterScreen extends StatelessWidget {
               passwordTextEditingController.text = "";
               SnackBarBuilder.showFeedBackMessage(context,
                   translate("auth.registration_success_title"), Colors.green);
-              Util.pushPageAndRemoveRoutes(
-                  const LoginScreen(), context);
+              Util.pushPageAndRemoveRoutes(const LoginScreen(), context);
             } else if (state is RegisterFailedState) {
               SnackBarBuilder.showFeedBackMessage(
                   context, bloc.resMsg, Colors.red);
@@ -438,7 +448,24 @@ class RegisterScreen extends StatelessWidget {
   }
 
   validateForm({BuildContext? context}) {
-    if (!emailTextEditingController.text.contains("@")) {
+    if (nameTextEditingController.text.trim().isEmpty) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context, translate("toast.name_missing"), Colors.red);
+      }
+      return false;
+    }
+
+    if (phoneTextEditingController.text.trim().isEmpty) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context, translate("toast.phone_missing"), Colors.red);
+      }
+      return false;
+    }
+
+    if (emailTextEditingController.text.trim().isEmpty ||
+        !emailTextEditingController.text.contains("@")) {
       if (context != null) {
         SnackBarBuilder.showFeedBackMessage(
             context, translate("toast.email_invalid"), Colors.red);
@@ -446,12 +473,14 @@ class RegisterScreen extends StatelessWidget {
       return false;
     }
 
-    if (emailTextEditingController.text.trim().isNotEmpty &&
-        phoneTextEditingController.text.trim().isNotEmpty &&
-        nameTextEditingController.text.trim().isNotEmpty &&
-        passwordTextEditingController.text.trim().isNotEmpty) {
-      return true;
+    if (passwordTextEditingController.text.trim().isEmpty) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context, translate("toast.pass_missing"), Colors.red);
+      }
+      return false;
     }
-    return false;
+
+    return true;
   }
 }

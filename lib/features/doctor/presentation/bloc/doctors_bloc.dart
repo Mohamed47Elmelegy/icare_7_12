@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/nurse/data/models/review_model.dart';
 import 'package:icare/features/doctor/domain/entities/doctor_entity.dart';
 import 'package:icare/features/doctor/domain/use_cases/get_all_doctors_usecase.dart';
@@ -133,7 +131,6 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
     emit(FetchAllDoctorsLoadingState());
     List<Marker> markersToAdd = [];
     Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-    AuthBloc.get(event.ctx).markers.clear();
     try {
       // Check if location services are enabled once
       if (!await Permission.location.serviceStatus.isEnabled) {
@@ -168,11 +165,10 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
 
       // Store filtered results count
       filteredResultsCount = list.length;
-      debugPrint('show all doctors: $showAllDoctors for list:${list.length}');
+
 
       for (var i in list) {
         if (markersTimer == null || !markersTimer!.isActive) {
-          debugPrint("search screen not available now");
           return;
         }
 
@@ -216,14 +212,10 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           markers.addAll(
               {for (var marker in markersToAdd) marker.markerId: marker});
           await Future.delayed(const Duration(milliseconds: 300));
-          if (event.ctx.mounted) {
-            AuthBloc.get(event.ctx).add(UpdateMarkersEvent(markers: markers));
-          }
-          debugPrint("------------------add new markerID: $markerId ");
         }
       }
     } catch (e) {
-      debugPrint("_setLocationOnMap: $e");
+      // Error handled silently
     }
   }
 }

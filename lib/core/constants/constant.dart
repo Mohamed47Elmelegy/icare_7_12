@@ -21,4 +21,9 @@ class Constants {
 
   static const String allLocalLocationsList = "locations";
   static const String allLocalWishList = "wishList";
+
+  // Local caching keys
+  static const String citiesCache = "citiesCache";
+  static const String governoratesCache = "governoratesCache";
+  static const String allergiesCache = "allergiesCache";
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icare/features/categories/data/models/services.dart';
 import 'package:icare/features/search/domain/entities/search_filter_entity.dart';
@@ -28,14 +28,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   void _onSelectProviderType(
       SelectProviderTypeEvent event, Emitter<SearchState> emit) {
-    debugPrint("🔄 Provider Type Changed:");
-    debugPrint("   └─ From: $selectedProviderType");
-    debugPrint("   └─ To: ${event.providerType}");
+    AppLogger.d("🔄 Provider Type Changed:");
+    AppLogger.d("   └─ From: $selectedProviderType");
+    AppLogger.d("   └─ To: ${event.providerType}");
 
     selectedProviderType = event.providerType;
     selectedServices = []; // Clear services when provider type changes
 
-    debugPrint("   └─ Selected services cleared");
+    AppLogger.d("   └─ Selected services cleared");
 
     emit(ProviderTypeSelectedState(providerType: event.providerType));
     // Trigger loading services for the new provider type
@@ -43,12 +43,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   void _onSelectService(SelectServiceEvent event, Emitter<SearchState> emit) {
-    debugPrint("📋 Services Selection Changed:");
-    debugPrint("   └─ Selected Services Count: ${event.services.length}");
+    AppLogger.d("📋 Services Selection Changed:");
+    AppLogger.d("   └─ Selected Services Count: ${event.services.length}");
     if (event.services.isNotEmpty) {
-      debugPrint("   └─ Selected Services:");
+      AppLogger.d("   └─ Selected Services:");
       for (var service in event.services) {
-        debugPrint(
+        AppLogger.d(
             "      • ${service.name ?? service.value} (ID: ${service.id})");
       }
     }
@@ -60,15 +60,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   Future<void> _onSearchByFilters(
       SearchByFiltersEvent event, Emitter<SearchState> emit) async {
-    debugPrint("🔍 Starting Search with Filters:");
-    debugPrint("   └─ User Type: ${event.filters.userType}");
-    debugPrint("   └─ Service IDs: ${event.filters.serviceIds}");
-    debugPrint("   └─ Latitude: ${event.filters.latitude}");
-    debugPrint("   └─ Longitude: ${event.filters.longitude}");
+    AppLogger.d("🔍 Starting Search with Filters:");
+    AppLogger.d("   └─ User Type: ${event.filters.userType}");
+    AppLogger.d("   └─ Service IDs: ${event.filters.serviceIds}");
+    AppLogger.d("   └─ Latitude: ${event.filters.latitude}");
+    AppLogger.d("   └─ Longitude: ${event.filters.longitude}");
     if (event.filters.searchRadius != null) {
-      debugPrint("   └─ Custom Max Radius: ${event.filters.searchRadius}km");
+      AppLogger.d("   └─ Custom Max Radius: ${event.filters.searchRadius}km");
     } else {
-      debugPrint("   └─ Max Radius: 20km (sorted by distance, nearest first)");
+      AppLogger.d("   └─ Max Radius: 20km (sorted by distance, nearest first)");
     }
 
     emit(SearchLoadingState());
@@ -85,13 +85,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     result.fold(
       (failure) {
-        debugPrint("❌ Search Failed: $failure");
+        AppLogger.e("❌ Search Failed: $failure");
         emit(const SearchErrorState(message: 'Failed to search'));
       },
       (results) {
-        debugPrint("✅ Search Successful: ${results.length} results found");
+        AppLogger.d("✅ Search Successful: ${results.length} results found");
         if (results.isNotEmpty && event.filters.latitude != null) {
-          debugPrint("   └─ Results sorted by distance (nearest to farthest)");
+          AppLogger.d("   └─ Results sorted by distance (nearest to farthest)");
         }
         emit(SearchSuccessState(results: results));
       },
@@ -113,9 +113,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   void _onUpdateLocation(UpdateLocationEvent event, Emitter<SearchState> emit) {
-    debugPrint("📍 Location Updated:");
-    debugPrint("   └─ Latitude: ${event.latitude}");
-    debugPrint("   └─ Longitude: ${event.longitude}");
+    AppLogger.d("📍 Location Updated:");
+    AppLogger.d("   └─ Latitude: ${event.latitude}");
+    AppLogger.d("   └─ Longitude: ${event.longitude}");
 
     currentLatitude = event.latitude;
     currentLongitude = event.longitude;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -29,12 +30,6 @@ class _AllProvidersScreenState extends State<AllProvidersScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch ongoing bookings when screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        BookingBloc.get(context).add(const GetOngoingBookingsEvent());
-      }
-    });
   }
 
   @override
@@ -115,27 +110,27 @@ class _AllProvidersScreenState extends State<AllProvidersScreen> {
                 final bookingBloc = BookingBloc.get(context);
                 final bookedIds = bookingBloc.getOngoingBookedProviderIds();
 
-                debugPrint(
+                AppLogger.d(
                     "📋 ========== ALL PROVIDERS SCREEN DEBUG ==========");
-                debugPrint(
+                AppLogger.d(
                     "📊 Total unique providers: ${uniqueProviders.length}");
-                debugPrint("🔄 Ongoing booked provider IDs: $bookedIds");
+                AppLogger.d("🔄 Ongoing booked provider IDs: $bookedIds");
 
                 if (bookedIds.isNotEmpty) {
                   uniqueProviders = uniqueProviders.where((provider) {
                     final providerId = provider.userData?.userId;
                     final isBooked =
                         providerId != null && bookedIds.contains(providerId);
-                    debugPrint(
+                    AppLogger.d(
                         "👤 Provider: ${provider.userData?.userName} (ID: $providerId) - Booked: $isBooked");
                     return providerId == null ||
                         !bookedIds.contains(providerId);
                   }).toList();
                 }
 
-                debugPrint(
+                AppLogger.d(
                     "✅ Available providers after filter: ${uniqueProviders.length}");
-                debugPrint("📋 ==========================================");
+                AppLogger.d("📋 ==========================================");
 
                 return RefreshIndicator(
                   onRefresh: () async {

@@ -14,9 +14,11 @@ import 'package:icare/features/account/presentation/widgets/nurse_widgets/edit_i
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/add_btn_row.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/app_bar_nurse_create_account.dart';
 import 'package:icare/features/authentication/presentation/screens/login.dart';
+import 'package:icare/features/authentication/presentation/screens/nurse/create_nurse_account.dart';
 import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
 import 'package:icare/features/root_app/screens/welcome_screens/new_experience_screen.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
@@ -35,12 +37,16 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
           listener: (ctx, state) {
             var bloc = AuthBloc.get(ctx);
             if (state is RegistrationPendingState) {
+              RegistrationCubit.get(ctx).reset();
+              CreateNurseAccountScreen.clearControllers();
               SnackBarBuilder.showFeedBackMessage(
                   context, state.message, Colors.green);
               Util.pushPageAndRemoveRoutes(
                   const LoginScreen(fromRegistration: true), context);
             } else if (state is RegisterSuccessfullyState &&
                 state.response.isSuccess == true) {
+              RegistrationCubit.get(ctx).reset();
+              CreateNurseAccountScreen.clearControllers();
               SnackBarBuilder.showFeedBackMessage(
                   context, bloc.resMsg, Colors.green);
               Util.pushPageAndRemoveRoutes(
@@ -63,7 +69,10 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
               state is RegisterFailedState,
           child: BlocBuilder<AuthBloc, AuthState>(
             builder: (ctx, state) {
-              var bloc = AuthBloc.get(ctx);
+              var authBloc = AuthBloc.get(ctx);
+              // Read registration data from RegistrationCubit
+              var regState = RegistrationCubit.get(ctx).state;
+
               if (state is LogInLoadingState || state is RegisterLoadingState) {
                 return CircularProgressIndicator(
                   backgroundColor: DMUtil.getPC(),
@@ -92,20 +101,42 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                 ),
                 color: DMUtil.getPC(),
                 onPressed: () async {
-                  if (bloc.checkNurseRegisterInfoCompleted() == false) {
+                  // Validation uses RegistrationCubit state
+                  if (regState.languageList == null ||
+                      regState.languageList!.isEmpty) {
                     SnackBarBuilder.showFeedBackMessage(
-                        context, translate("toast.field_empty"), Colors.red);
+                        context, translate("toast.lang_missing"), Colors.red);
+                    return;
+                  }
+                  if (regState.educationList == null ||
+                      regState.educationList!.isEmpty) {
+                    SnackBarBuilder.showFeedBackMessage(
+                        context, translate("toast.edu_missing"), Colors.red);
+                    return;
+                  }
+                  if (regState.publicationsList == null ||
+                      regState.publicationsList!.isEmpty) {
+                    SnackBarBuilder.showFeedBackMessage(context,
+                        translate("toast.experience_missing"), Colors.red);
+                    return;
+                  }
+                  if (regState.coursesList == null ||
+                      regState.coursesList!.isEmpty) {
+                    SnackBarBuilder.showFeedBackMessage(context,
+                        translate("toast.courses_missing"), Colors.red);
                     return;
                   }
 
                   // Get LocationsBloc for location data
                   var locationsBloc = LocationsBloc.get(context);
 
-                  // Build registerData similar to verification_code.dart
+                  // Build registerData — reads from RegistrationCubit (fixed)
                   Map<String, dynamic> registerData = {
-                    'name': bloc.nurse?.userData!.userName.toString(),
-                    'email': bloc.nurse?.userData!.email.toString(),
-                    'phone': bloc.nurse?.userData!.phoneNumber.toString(),
+                    'name': regState.nurse?.userData!.userName.toString(),
+                    'email': regState.nurse?.userData!.email.toString(),
+                    'phone': regState.nurse?.userData!.phoneNumber.toString(),
+                    'password': CreateNurseAccountScreen
+                        .passwordTextEditingController.text,
                   };
 
                   // Add location data
@@ -121,58 +152,59 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                   }
                   registerData['country_code'] = '';
                   registerData['status'] = 'online';
-                  registerData['is_male'] = bloc.isWomen ? "0" : "1";
+                  registerData['is_male'] = authBloc.isWomen ? "0" : "1";
 
-                  // Add nurse-specific data
-                  // Add nurse-specific data
-                  // Since this screen is only for professionals (Nurse, Doctor, Assistant),
-                  // we rely on the bloc state set in the previous screen.
-                  if (bloc.isDoctor) {
+                  // User-type specific data — reads registration files from cubit
+                  if (authBloc.isDoctor) {
                     registerData['user_type'] = "doctor";
-                    if (bloc.nurseID != null) {
-                      registerData['nurseID'] = bloc.nurseID;
+                    if (regState.nurseID != null) {
+                      registerData['nurseID'] = regState.nurseID;
                     }
-                    if (bloc.selectedSpecialtyId != null) {
-                      registerData['specialties_id'] = bloc.selectedSpecialtyId;
+                    if (regState.selectedSpecialtyId != null) {
+                      registerData['specialties_id'] =
+                          regState.selectedSpecialtyId;
                     }
                   } else {
                     registerData['user_type'] =
-                        bloc.isNurse ? "nurse" : "assistant";
-                    if (bloc.nurseID != null) {
-                      registerData['nurseID'] = bloc.nurseID;
+                        authBloc.isNurse ? "nurse" : "assistant";
+                    if (regState.nurseID != null) {
+                      registerData['nurseID'] = regState.nurseID;
                     }
                   }
 
-                  if (bloc.license != null) {
-                    registerData['license'] = bloc.license;
+                  if (regState.license != null) {
+                    registerData['license'] = regState.license;
                   }
-                  if (bloc.certificate != null) {
-                    registerData['certificate'] = bloc.certificate;
+                  if (regState.certificate != null) {
+                    registerData['certificate'] = regState.certificate;
                   }
-
-                  if (bloc.associationCard != null) {
-                    registerData['associationCard'] = bloc.associationCard;
+                  if (regState.associationCard != null) {
+                    registerData['associationCard'] = regState.associationCard;
                   }
-                  if (bloc.relatedJobId != null) {
-                    registerData['related_job_id'] = bloc.relatedJobId;
+                  if (regState.relatedJobId != null) {
+                    registerData['related_job_id'] = regState.relatedJobId;
                   }
-                  if (bloc.avatar != null) registerData['avatar'] = bloc.avatar;
-                  if (bloc.languageList != null) {
-                    registerData['languages'] = jsonEncode(bloc.languageList);
+                  if (regState.avatar != null) {
+                    registerData['avatar'] = regState.avatar;
                   }
-                  if (bloc.educationList != null) {
-                    registerData['education'] = jsonEncode(bloc.educationList);
+                  if (regState.languageList != null) {
+                    registerData['languages'] =
+                        jsonEncode(regState.languageList);
                   }
-                  if (bloc.publicationsList != null) {
+                  if (regState.educationList != null) {
+                    registerData['education'] =
+                        jsonEncode(regState.educationList);
+                  }
+                  if (regState.publicationsList != null) {
                     registerData['publications'] =
-                        jsonEncode(bloc.publicationsList);
+                        jsonEncode(regState.publicationsList);
                   }
-                  if (bloc.coursesList != null) {
-                    registerData['courses'] = jsonEncode(bloc.coursesList);
+                  if (regState.coursesList != null) {
+                    registerData['courses'] = jsonEncode(regState.coursesList);
                   }
 
-                  // Call register event
-                  bloc.add(RegisterEvent(user: registerData));
+                  // Dispatch register to AuthBloc (auth concern only)
+                  authBloc.add(RegisterEvent(user: registerData));
                 },
               );
             },
@@ -194,14 +226,12 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.languageList ??= [];
-                        int index = bloc.languageList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.languageList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            languageList: bloc.languageList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.languageList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updateLanguageList(updated);
                       }
                     },
                     title: translate("nurse.languages"),
@@ -219,14 +249,12 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.educationList ??= [];
-                        int index = bloc.educationList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.educationList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            educationList: bloc.educationList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.educationList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updateEducationList(updated);
                       }
                     },
                     title: translate("nurse.education"),
@@ -244,14 +272,12 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.publicationsList ??= [];
-                        int index = bloc.publicationsList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.publicationsList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            publicationsList: bloc.publicationsList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.publicationsList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updatePublicationsList(updated);
                       }
                     },
                     title: translate("nurse.experience_year"),
@@ -269,14 +295,12 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.coursesList ??= [];
-                        int index = bloc.coursesList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.coursesList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            coursesList: bloc.coursesList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.coursesList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updateCoursesList(updated);
                       }
                     },
                     title: translate("nurse.courses"),

@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
 import 'package:icare/features/booking/presentation/bloc/order_event.dart';
 import 'package:icare/features/booking/presentation/bloc/order_state.dart';
@@ -21,7 +21,7 @@ class SendRequestBtn extends StatelessWidget {
     return BlocListener<BookingBloc, BookingState>(
       listener: (ctx, state) {
         if (state is SendBookingRequestFormSuccessfullyState) {
-          AccountBloc.get(context).add(const FetchAllNotificationsEvent());
+          ServicesBloc.get(context).add(const FetchAllNotificationsEvent());
           Navigator.of(ctx).pop();
           SnackBarBuilder.showFeedBackMessage(
               context, translate('toast.success_msg'), kPrimary);

@@ -7,9 +7,7 @@ import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/core/utils/upload_document.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 
@@ -54,28 +52,29 @@ class AppBarNurseCreateAccount extends StatelessWidget {
         if (showCircleImg)
           Positioned(
               top: 90.w,
-              child: BlocBuilder<AuthBloc, AuthState>(
-                builder: (ctx, state) {
-                  var bloc = AuthBloc.get(ctx);
+              child: BlocBuilder<RegistrationCubit, RegistrationState>(
+                builder: (ctx, regState) {
+                  var regCubit = RegistrationCubit.get(ctx);
                   return InkWell(
                     onTap: () async {
                       final res = await getImage(ctx: context);
                       if (res != null) {
                         final file = await cropImage(res);
                         if (file != null) {
-                          bloc.add(UpdateNurseRegisterDataEvent(avatar: file));
+                          // Avatar is registration data → stored in RegistrationCubit
+                          regCubit.updateAvatar(file);
                         }
                       }
                     },
                     child: Stack(
                       alignment: Alignment.bottomLeft,
                       children: [
-                        if (bloc.avatar != null) ...[
+                        if (regState.avatar != null) ...[
                           CircleAvatar(
                             radius: 55.w,
                             backgroundColor: Colors.transparent,
                             backgroundImage: FileImage(
-                              bloc.avatar!,
+                              regState.avatar!,
                             ),
                           ),
                         ] else ...[

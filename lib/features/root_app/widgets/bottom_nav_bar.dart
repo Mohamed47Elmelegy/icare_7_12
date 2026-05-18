@@ -3,8 +3,6 @@ import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_fonts.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
-import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
-import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/root_app/screens/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,10 +18,10 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RootBloc, RootState>(
-      builder: (ctx, state) {
+    return BlocSelector<RootBloc, RootState, int>(
+      selector: (state) => RootBloc.get(context).currentScreenIndex,
+      builder: (ctx, currentIndex) {
         var bloc = RootBloc.get(ctx);
-        int currentIndex = bloc.currentScreenIndex;
         return BottomNavigationBar(
           onTap: (index) {
             if (isRoot == false) {
@@ -34,9 +32,6 @@ class BottomNavBar extends StatelessWidget {
             } else {
               bloc.add(ChangeIndex(index: index, title: ""));
             }
-
-            /// check if not get all nurses fetch it
-            NurseBloc.get(context).add(const FetchAllNurseEvent(page: 2));
           },
           currentIndex: currentIndex,
           backgroundColor: DMUtil.getWC(),

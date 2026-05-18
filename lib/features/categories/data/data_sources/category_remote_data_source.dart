@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
@@ -39,7 +38,8 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
   @override
   Future<List<AllergiesModel>> getAllAllergies() async {
     var response = await client.get(Uri.parse(ApiUrl.ALLERGIES));
-    debugPrint("getAllAllergies ${response.body}");
+    // getAllAllergies
+
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
       List<AllergiesModel> list = body['data'].map<AllergiesModel>((model) {
@@ -63,7 +63,8 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
         if (Util.checkUser()) 'Authorization': 'Bearer ${Util.getToken()}',
       },
     );
-    debugPrint("getPatientAllergies for user $userId: ${response.body}");
+    // getPatientAllergies
+
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
       if (body['data'] != null && body['data'] is List) {
@@ -96,7 +97,8 @@ class CategoryRemoteDataSource implements CategoryRemoteDataSourceImpl {
   Future<List<PublicationsModel>> getAllPublications() async {
     var response = await client
         .get(Uri.parse("${ApiUrl.PUBLICATIONS}/${Util.getUserType()}"));
-    debugPrint("getAllPublications: ${response.body}");
+    // getAllPublications
+
     if (response.statusCode == 200) {
       final body = json.decode(response.body);
       return PublicationsModel.listDFromJson(body['data']);

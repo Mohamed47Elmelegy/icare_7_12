@@ -8,6 +8,8 @@ import 'package:icare/features/home/presentation/widgets/specialists/view_all_sp
 import 'package:flutter/material.dart';
 
 import '../../../../core/utils/notifications_utils.dart';
+import 'package:icare/core/coordinator/feature_preload_manager.dart';
+import 'package:icare/core/di/injection_core.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,9 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     NotificationsUtils.pushNotificationListener();
-    // Timer(const Duration(seconds: 2), () {
-    //   if (mounted) CustomDialogs.patientGiveAccessToEditProfile(context);
-    // });
   }
 
   @override
@@ -31,35 +30,34 @@ class _HomeScreenState extends State<HomeScreen> {
     return RefreshIndicator(
       onRefresh: () => onRefresh(context),
       color: DMUtil.getRED(),
-      child: const SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            HomeBackGroundWithRadius(
+      child: const CustomScrollView(
+        physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        slivers: [
+          SliverToBoxAdapter(
+            child: HomeBackGroundWithRadius(
               setRequestBtn: true,
             ),
-
-            PublicationsList(),
-            // UserActivities(),
-            SizedBox(
-              height: 10,
+          ),
+          PublicationsList(),
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                ViewAllSpecialists(),
+                SizedBox(
+                  height: 100,
+                )
+              ],
             ),
-            ViewAllSpecialists(),
-
-            SizedBox(
-              height: 100,
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Future onRefresh(BuildContext context) async {
-    // await UserServiceRemoteDataSource.getAllServicesList();
-    // NurseBloc.get(context).add(const FetchAllNurseEvent());
-    // CategoriesBloc.get(context).add(const FetchAllPublicationsEvent());
+    sl<FeaturePreloadManager>().preloadHomeData();
   }
 }

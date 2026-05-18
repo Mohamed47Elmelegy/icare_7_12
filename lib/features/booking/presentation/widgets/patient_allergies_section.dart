@@ -35,7 +35,8 @@ class _PatientAllergiesSectionState extends State<PatientAllergiesSection>
     // Cache the Future to prevent multiple API calls
     _patientDataFuture =
         UserServiceRemoteDataSource.getUserFullData(widget.patientId);
-    debugPrint("🔍 Fetching patient allergies for user ${widget.patientId}");
+    // Fetching patient allergies
+
   }
 
   @override
@@ -46,8 +47,8 @@ class _PatientAllergiesSectionState extends State<PatientAllergiesSection>
       setState(() {
         _patientDataFuture =
             UserServiceRemoteDataSource.getUserFullData(widget.patientId);
-        debugPrint(
-            "🔄 Patient ID changed, re-fetching allergies for user ${widget.patientId}");
+        // Patient ID changed, re-fetching allergies
+
       });
     }
   }

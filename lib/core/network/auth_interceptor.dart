@@ -28,7 +28,6 @@ class AuthInterceptor extends Interceptor {
     return super.onRequest(options, handler);
   }
 
-
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // Check if the backend bounced the request due to Authentication

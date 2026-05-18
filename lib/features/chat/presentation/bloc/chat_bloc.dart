@@ -45,8 +45,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   static ChatBloc get(BuildContext context) => BlocProvider.of(context);
 
   searchChatList(event, emit) async {
-    chatTxtSearch = event.txt;
-    debugPrint(chatTxtSearch);
     emit(ChatSuccessfullyState());
   }
 
@@ -56,7 +54,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       chats = await _chatClient.getAllRoomChats(event.roomID.toString().trim());
       emit(ChatSuccessfullyState());
     } catch (e) {
-      debugPrint("getAllRoomChatListBloc: $e");
       emit(ChatErrorState(errors: e.toString()));
     }
   }

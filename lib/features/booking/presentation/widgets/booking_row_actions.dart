@@ -24,14 +24,16 @@ import 'package:icare/features/account/presentation/screens/patient_profile.dart
 import 'package:icare/features/account/presentation/widgets/save_patient_vitals_btn.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
+import 'package:icare/features/root_app/bloc/root_bloc.dart';
+import 'package:icare/features/root_app/bloc/root_event.dart';
 
 class BookingRowActions extends StatelessWidget {
   final Booking item;
-  final SearchableEntity orderNurse;
+  final SearchableEntity? orderNurse;
   const BookingRowActions({
     super.key,
     required this.item,
-    required this.orderNurse,
+    this.orderNurse,
   });
 
   @override
@@ -283,7 +285,7 @@ class BookingRowActions extends StatelessWidget {
   Future<void> _handleCall(BuildContext context) async {
     String? phoneNumber;
     if (Util.isCustomer()) {
-      phoneNumber = orderNurse.userData?.phoneNumber;
+      phoneNumber = orderNurse?.userData?.phoneNumber;
     } else {
       // For nurse calling patient, we need to fetch user data first
       try {
@@ -291,7 +293,8 @@ class BookingRowActions extends StatelessWidget {
             item.userId.toString());
         phoneNumber = patient.phoneNumber;
       } catch (e) {
-        debugPrint("Error fetching patient phone: $e");
+        // Error fetching patient phone
+
       }
     }
 
@@ -330,8 +333,8 @@ class BookingRowActions extends StatelessWidget {
       // Verify location is fresh (not older than 30 seconds)
       final locationAge = DateTime.now().difference(nursePosition.timestamp);
       if (locationAge.inSeconds > 30) {
-        debugPrint(
-            '⚠️ Location is cached (${locationAge.inSeconds}s old). Retrying...');
+        // Location is cached, retrying...
+
 
         // Try again to get fresh location
         nursePosition = await Geolocator.getCurrentPosition(
@@ -342,10 +345,8 @@ class BookingRowActions extends StatelessWidget {
         );
       }
 
-      debugPrint(
-          '📍 Fresh location obtained: ${nursePosition.latitude}, ${nursePosition.longitude}');
-      debugPrint('🕐 Location timestamp: ${nursePosition.timestamp}');
-      debugPrint('📏 Location accuracy: ${nursePosition.accuracy}m');
+      // Fresh location obtained
+
 
       // Close loading dialog
       if (context.mounted) Navigator.of(context).pop();
@@ -371,8 +372,8 @@ class BookingRowActions extends StatelessWidget {
       }
 
       // Step 4: Location validated - proceed with order completion
-      debugPrint(
-          '✅ Location validated. Distance: ${validationResult.distance?.toInt()}m');
+      // Location validated
+
 
       // Store nurse location for backend
       final nurseLocation = {
@@ -406,7 +407,7 @@ class BookingRowActions extends StatelessWidget {
           message: errorMessage,
         );
       }
-      debugPrint('❌ Location error: $e');
+      // Location error
     }
   }
 
@@ -443,7 +444,7 @@ class BookingRowActions extends StatelessWidget {
               SizedBox(height: 8.h),
               CustomText(
                 text:
-                    '${translate('order.required_distance')}: ${OrderCompletionValidator.STRICT_RANGE_METERS.toInt()}m',
+                    '${translate('order.required_distance')}: ${OrderCompletionValidator.strictRangeMeters.toInt()}m',
                 fontSize: 12,
                 color: Colors.grey,
               ),
@@ -474,9 +475,7 @@ class BookingRowActions extends StatelessWidget {
   ) async {
     // Navigate directly to edit patient profile without permission check
     var accountBloc = AccountBloc.get(context);
-    await accountBloc.switchCurrentUserWithPatientProfile(
-        item.userId.toString(), 'customer');
-    accountBloc.add(const FetchProfileDataEvent());
+    accountBloc.add(FetchProfileDataEvent(userId: item.userId.toString()));
 
     // Create a GlobalKey to access the vitals widget state
     final vitalsKey = GlobalKey<TodayMonitoringVitalsState>();
@@ -484,7 +483,7 @@ class BookingRowActions extends StatelessWidget {
     await Util.pushPage(
         PopScope(
           canPop: true,
-          onPopInvoked: (didPop) async {
+          onPopInvokedWithResult: (didPop, result) async {
             if (didPop) {
               await _afterEditPatient(context, accountBloc, orderNurse);
             }
@@ -495,14 +494,17 @@ class BookingRowActions extends StatelessWidget {
             floatingActionButton: SavePatientVitalsAndCompleteBookingBtn(
               booking: item,
               vitalsKey: vitalsKey,
-              healthcareProviderId: orderNurse.userData?.userId?.toString() ??
-                  '', // Pass the nurse/doctor user ID
+              healthcareProviderId:
+                  Util.getUserID(), // Pass the nurse/doctor user ID
               nurseLocation: nurseLocation, // Pass nurse location
               onCompleted: () async {
                 await _afterEditPatient(context, accountBloc, orderNurse,
                     pop: true);
-                // Go back to the previous screen (bookings list)
-                if (context.mounted) Navigator.of(context).pop();
+                // Go to the Home screen for the Nurse
+                if (context.mounted) {
+                  context.read<RootBloc>().add(
+                      ChangeIndex(index: 1, title: translate("home.home")));
+                }
               },
             ),
             body: SingleChildScrollView(
@@ -523,12 +525,8 @@ class BookingRowActions extends StatelessWidget {
   }
 
   _afterEditPatient(BuildContext context, AccountBloc accountBloc,
-      SearchableEntity orderNurse,
+      SearchableEntity? orderNurse,
       {bool pop = false}) async {
-    await accountBloc.switchCurrentUserWithPatientProfile(
-        orderNurse.userData!.userId.toString(), 'nurse');
-
-    ///will be change if nurse or assistant
     accountBloc.add(const FetchProfileDataEvent());
     await Future.delayed(const Duration(microseconds: 100));
     if (pop && context.mounted) Navigator.of(context).pop();

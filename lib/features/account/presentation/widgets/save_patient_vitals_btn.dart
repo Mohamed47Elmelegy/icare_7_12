@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
 import 'package:icare/features/booking/domain/entities/order.dart';
@@ -51,24 +52,24 @@ class _SavePatientVitalsAndCompleteBookingBtnState
   Widget build(BuildContext context) {
     return BlocListener<AccountBloc, AccountState>(
       listener: (context, state) {
-        print("🔵 [COMPLETE ORDER] AccountBloc State: ${state.runtimeType}");
-        print(
+        AppLogger.d("🔵 [COMPLETE ORDER] AccountBloc State: ${state.runtimeType}");
+        AppLogger.d(
             "🔵 [COMPLETE ORDER] _waitingForProfileUpdate: $_waitingForProfileUpdate");
-        print(
+        AppLogger.d(
             "🔵 [COMPLETE ORDER] _waitingForMedicalReport: $_waitingForMedicalReport");
 
         // Handle profile update states ONLY if waiting for profile update
         if (state is UpdateProfileState && _waitingForProfileUpdate) {
-          print(
+          AppLogger.d(
               "🟢 [STEP 2] Profile Update State - isSuccess: ${state.response.isSuccess}, isFailed: ${state.response.isFailed}");
           if (state.response.isSuccess == true) {
             // Profile updated successfully, now create medical report
-            print("✅ [STEP 2] Profile updated successfully!");
+            AppLogger.d("✅ [STEP 2] Profile updated successfully!");
             _waitingForProfileUpdate = false;
             _createMedicalReport();
           } else if (state.response.isFailed == true) {
             // Profile update failed
-            print("❌ [STEP 2] Profile update FAILED: ${state.response.msg}");
+            AppLogger.e("❌ [STEP 2] Profile update FAILED: ${state.response.msg}");
             _waitingForProfileUpdate = false;
             setState(() => _isProcessing = false);
             SnackBarBuilder.showFeedBackMessage(
@@ -78,24 +79,24 @@ class _SavePatientVitalsAndCompleteBookingBtnState
             );
           }
         } else if (state is MedicalReportCreatedState) {
-          print("🟡 [DEBUG STEP 3] Received MedicalReportCreatedState");
-          print(
+          AppLogger.d("🟡 [DEBUG STEP 3] Received MedicalReportCreatedState");
+          AppLogger.d(
               "🟡 [DEBUG STEP 3] _waitingForMedicalReport = $_waitingForMedicalReport");
           if (!_waitingForMedicalReport) {
-            print(
+            AppLogger.w(
                 "❌ [DEBUG STEP 3] SKIPPED! _waitingForMedicalReport is FALSE");
             return;
           }
           // Medical report created successfully, now update order
-          print("✅ [STEP 3] Medical report created successfully!");
+          AppLogger.d("✅ [STEP 3] Medical report created successfully!");
           _waitingForMedicalReport = false;
-          print("🔄 [DEBUG STEP 3] Calling _submitOrderUpdate()...");
+          AppLogger.d("🔄 [DEBUG STEP 3] Calling _submitOrderUpdate()...");
           _submitOrderUpdate();
-          print("✅ [DEBUG STEP 3] _submitOrderUpdate() called!");
+          AppLogger.d("✅ [DEBUG STEP 3] _submitOrderUpdate() called!");
         } else if (state is MedicalReportErrorState) {
           if (!_waitingForMedicalReport) return;
           // Medical report creation failed
-          print("❌ [STEP 3] Medical report creation FAILED: ${state.error}");
+          AppLogger.e("❌ [STEP 3] Medical report creation FAILED: ${state.error}");
           _waitingForMedicalReport = false;
           setState(() => _isProcessing = false);
           SnackBarBuilder.showFeedBackMessage(
@@ -107,14 +108,14 @@ class _SavePatientVitalsAndCompleteBookingBtnState
       },
       child: BlocConsumer<BookingBloc, BookingState>(
         listener: (context, state) {
-          print("🔵 [COMPLETE ORDER] BookingBloc State: ${state.runtimeType}");
-          print("🔵 [COMPLETE ORDER] _isProcessing: $_isProcessing");
+          AppLogger.d("🔵 [COMPLETE ORDER] BookingBloc State: ${state.runtimeType}");
+          AppLogger.d("🔵 [COMPLETE ORDER] _isProcessing: $_isProcessing");
 
           if (!_isProcessing) return;
 
           if (state is UpdateOrderSuccessfullyState) {
             // Success - show message and call completion callback
-            print("✅ [STEP 4] Order updated to COMPLETED successfully!");
+            AppLogger.d("✅ [STEP 4] Order updated to COMPLETED successfully!");
             SnackBarBuilder.showFeedBackMessage(
               context,
               translate("order.order_completed_successfully"),
@@ -124,12 +125,12 @@ class _SavePatientVitalsAndCompleteBookingBtnState
             setState(() => _isProcessing = false);
 
             if (widget.onCompleted != null) {
-              print("🔄 [STEP 5] Calling onCompleted callback...");
+              AppLogger.d("🔄 [STEP 5] Calling onCompleted callback...");
               widget.onCompleted!();
             }
           } else if (state is OrderErrorState) {
             // Error - show error message
-            print("❌ [STEP 4] Order update FAILED: ${state.errors}");
+            AppLogger.e("❌ [STEP 4] Order update FAILED: ${state.errors}");
             SnackBarBuilder.showFeedBackMessage(
               context,
               state.errors,
@@ -173,22 +174,22 @@ class _SavePatientVitalsAndCompleteBookingBtnState
   }
 
   void _handleSaveAndComplete() async {
-    print("\n🚀 [STEP 1] Starting Complete Order Flow...");
-    print("📋 [STEP 1] Booking ID: ${widget.booking.orderId}");
-    print("👤 [STEP 1] Patient ID: ${widget.booking.userId}");
-    print("🏥 [STEP 1] Healthcare Provider ID: ${widget.healthcareProviderId}");
+    AppLogger.d("\n🚀 [STEP 1] Starting Complete Order Flow...");
+    AppLogger.d("📋 [STEP 1] Booking ID: ${widget.booking.orderId}");
+    AppLogger.d("👤 [STEP 1] Patient ID: ${widget.booking.userId}");
+    AppLogger.d("🏥 [STEP 1] Healthcare Provider ID: ${widget.healthcareProviderId}");
 
     final vitalsState = widget.vitalsKey.currentState;
     if (vitalsState == null) {
-      print("❌ [STEP 1] Vitals state is NULL!");
+      AppLogger.e("❌ [STEP 1] Vitals state is NULL!");
       return;
     }
 
     final vitalValues = vitalsState.getVitalValues();
-    print("💉 [STEP 1] Vital Values: $vitalValues");
+    AppLogger.d("💉 [STEP 1] Vital Values: $vitalValues");
 
     if (vitalValues.values.any((element) => element.isEmpty)) {
-      print(
+      AppLogger.w(
           "❌ [STEP 1] Validation FAILED - Some vitals are empty: $vitalValues");
       SnackBarBuilder.showFeedBackMessage(
         context,
@@ -198,7 +199,7 @@ class _SavePatientVitalsAndCompleteBookingBtnState
       return;
     }
 
-    print("✅ [STEP 1] Validation PASSED - All vitals filled");
+    AppLogger.d("✅ [STEP 1] Validation PASSED - All vitals filled");
     setState(() => _isProcessing = true);
     _pendingVitalValues = vitalValues;
 
@@ -209,13 +210,13 @@ class _SavePatientVitalsAndCompleteBookingBtnState
     if (accountBloc.currentMedicalConditions.isNotEmpty) {
       profileUpdates['medical_conditions'] =
           accountBloc.currentMedicalConditions;
-      print(
+      AppLogger.d(
           "📝 [STEP 1] Adding medical conditions: ${accountBloc.currentMedicalConditions}");
     }
 
     if (accountBloc.currentPublication.isNotEmpty) {
       profileUpdates['publications'] = accountBloc.currentPublication;
-      print(
+      AppLogger.d(
           "📝 [STEP 1] Adding publications: ${accountBloc.currentPublication}");
     }
 
@@ -228,14 +229,14 @@ class _SavePatientVitalsAndCompleteBookingBtnState
 
     // Always trigger profile update first
     _waitingForProfileUpdate = true;
-    print("🔄 [STEP 2] Updating profile with data: $profileUpdates");
+    AppLogger.d("🔄 [STEP 2] Updating profile with data: $profileUpdates");
     accountBloc.add(UpdateProfileEvent(user: profileUpdates));
   }
 
   void _createMedicalReport() {
-    print("\n🔄 [STEP 3] Creating Medical Report...");
+    AppLogger.d("\n🔄 [STEP 3] Creating Medical Report...");
     if (_pendingVitalValues == null) {
-      print("❌ [STEP 3] _pendingVitalValues is NULL!");
+      AppLogger.e("❌ [STEP 3] _pendingVitalValues is NULL!");
       return;
     }
     final vitalValues = _pendingVitalValues!;
@@ -266,9 +267,9 @@ class _SavePatientVitalsAndCompleteBookingBtnState
       'description': description,
     };
 
-    print("📋 [STEP 3] Medical Report Data: $reportData");
+    AppLogger.d("📋 [STEP 3] Medical Report Data: $reportData");
     if (prescriptionImage != null) {
-      print("📸 [STEP 3] Attaching prescription image");
+      AppLogger.d("📸 [STEP 3] Attaching prescription image");
     }
 
     _waitingForMedicalReport = true;
@@ -279,9 +280,9 @@ class _SavePatientVitalsAndCompleteBookingBtnState
   }
 
   void _submitOrderUpdate() {
-    print("\n🔄 [STEP 4] Updating Order Status to COMPLETED...");
+    AppLogger.d("\n🔄 [STEP 4] Updating Order Status to COMPLETED...");
     if (_pendingVitalValues == null) {
-      print("❌ [STEP 4] _pendingVitalValues is NULL!");
+      AppLogger.e("❌ [STEP 4] _pendingVitalValues is NULL!");
       return;
     }
     final vitalValues = _pendingVitalValues!;
@@ -304,12 +305,12 @@ class _SavePatientVitalsAndCompleteBookingBtnState
           widget.nurseLocation!['longitude'].toString();
       orderData['distance_to_patient'] =
           widget.nurseLocation!['distance'].toString();
-      print(
+      AppLogger.d(
           "📍 [STEP 4] Nurse Location: Lat=${orderData['nurse_latitude']}, Lng=${orderData['nurse_longitude']}, Distance=${orderData['distance_to_patient']}m");
     }
 
-    print("📋 [STEP 4] Order Update Data: $orderData");
-    print("🎯 [STEP 4] Setting status to: COMPLETED");
+    AppLogger.d("📋 [STEP 4] Order Update Data: $orderData");
+    AppLogger.d("🎯 [STEP 4] Setting status to: COMPLETED");
 
     BookingBloc.get(context).add(UpdateOrderEvent(data: orderData));
   }

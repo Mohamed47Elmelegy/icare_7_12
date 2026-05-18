@@ -17,31 +17,42 @@ class PublicationsList extends StatelessWidget {
       builder: (ctx, state) {
         var bloc = CategoriesBloc.get(ctx);
         var list = bloc.publicationsList;
+
         if (state is FetchPublicationsLoadingState) {
-          return Image.asset(
-            AppImages.loadingGif,
-            height: 100.w,
-            width: double.infinity,
+          return SliverToBoxAdapter(
+            child: Image.asset(
+              AppImages.loadingGif,
+              height: 100.w,
+              width: double.infinity,
+            ),
           );
         }
-        if (list.isEmpty) return const SizedBox.shrink();
-        return ListView.separated(
+
+        if (list.isEmpty) {
+          return const SliverToBoxAdapter(child: SizedBox.shrink());
+        }
+
+        return SliverPadding(
           padding: EdgeInsets.symmetric(
               vertical: 15.h, horizontal: AppStyle.paddingFromH.w),
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (ctx, index) {
-            var item = list[index];
-            return PublicationWidget(
-              item: item,
-            );
-          },
-          separatorBuilder: (ctx, index) => Divider(
-            height: 15.w,
-            color: DMUtil.getOpacity(),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (ctx, index) {
+                final int itemIndex = index ~/ 2;
+                if (index.isEven) {
+                  var item = list[itemIndex];
+                  return PublicationWidget(
+                    item: item,
+                  );
+                }
+                return Divider(
+                  height: 15.w,
+                  color: DMUtil.getOpacity(),
+                );
+              },
+              childCount: list.isNotEmpty ? list.length * 2 - 1 : 0,
+            ),
           ),
-          itemCount: list.length,
         );
       },
     );

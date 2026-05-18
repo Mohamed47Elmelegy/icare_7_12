@@ -1,79 +1,9 @@
-import 'package:icare/features/account/domain/use_cases/get_all_users_usecase.dart';
-import 'package:icare/features/account/domain/use_cases/get_services_usecase.dart';
-import 'package:icare/features/account/domain/use_cases/update_doctor_options_usecase.dart';
-import 'package:icare/features/account/domain/use_cases/update_nurse_options_usecase.dart';
-import 'package:icare/features/authentication/domain/use_cases/social_login_user_usecase.dart';
-import 'package:icare/features/account/domain/use_cases/delete_account_usecase.dart';
-import 'package:icare/features/booking/domain/use_cases/send_request_usecase.dart';
-import 'package:icare/features/categories/data/data_sources/category_remote_data_source.dart';
-import 'package:icare/features/categories/data/repositories/category_model_repository.dart';
-import 'package:icare/features/categories/domain/repositories/category_repository.dart';
-import 'package:icare/features/categories/domain/use_cases/get_all_categories_usecase.dart';
-import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart';
-import 'package:icare/features/chat/presentation/bloc/chat_bloc.dart';
-import 'package:icare/features/locations/data/data_sources/location_remote_data_source.dart';
-import 'package:icare/features/locations/data/repositories/locations_model_repository.dart';
-import 'package:icare/features/locations/domain/repositories/location_repository.dart';
-import 'package:icare/features/locations/domain/use_cases/locations_usecase.dart';
-import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
-import 'package:icare/features/booking/domain/use_cases/update_order_usecase.dart';
-import 'package:icare/features/nurse/data/data_sources/nurse_remote_data_source.dart';
-import 'package:icare/features/nurse/data/repositories/nurse_model_repository.dart';
-import 'package:icare/features/nurse/domain/repositories/nurse_repository.dart';
-import 'package:icare/features/nurse/domain/use_cases/get_all_nurses_usecase.dart';
-import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
+import 'package:icare/injection_container.dart' as container;
 
-// Doctor imports
-import 'package:icare/features/doctor/data/data_sources/doctor_remote_data_source.dart';
-import 'package:icare/features/doctor/data/repositories/doctor_model_repository.dart';
-import 'package:icare/features/doctor/domain/repositories/doctor_repository.dart';
-import 'package:icare/features/doctor/domain/use_cases/get_all_doctors_usecase.dart';
-import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
+// Expose the Service Locator for backward compatibility
+final sl = container.sl;
 
-import 'package:icare/features/search/data/data_sources/search_remote_data_source.dart';
-import 'package:icare/features/search/data/repositories/search_repository_impl.dart';
-import 'package:icare/features/search/domain/repositories/search_repository.dart';
-import 'package:icare/features/search/domain/use_cases/search_by_service_usecase.dart';
-import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
-import 'package:icare/features/setting/data/data_sources/settings_remote_data_source.dart';
-import 'package:icare/features/setting/data/repositories/settings_mode_repository.dart';
-import 'package:icare/features/setting/domain/repositories/settings_repository.dart';
-import 'package:icare/features/setting/domain/use_cases/get_specialties_usecase.dart';
-import 'package:icare/features/setting/domain/use_cases/notifications_usecase.dart';
-import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
-import 'package:icare/core/network/auth_interceptor.dart';
-import 'package:icare/core/strings/api/api_url.dart';
-import 'package:icare/core/network/network.dart';
-import 'package:icare/features/account/data/data_sources/account_data_source.dart';
-import 'package:icare/features/account/data/repositeroies/user_service_model_repository.dart';
-import 'package:icare/features/account/domain/repositories/user_service_repository.dart';
-import 'package:icare/features/account/domain/use_cases/change_password_usercase.dart';
-import 'package:icare/features/account/domain/use_cases/get_user_service_usecase.dart';
-import 'package:icare/features/account/domain/use_cases/update_user_usecase.dart';
-import 'package:icare/features/account/domain/usecases/create_medical_report_usecase.dart';
-import 'package:icare/features/account/domain/usecases/get_patient_medical_reports_usecase.dart';
-import 'package:icare/features/account/domain/repositories/medical_reports_repository.dart';
-import 'package:icare/features/account/data/repositories/medical_reports_repository_impl.dart';
-import 'package:icare/features/account/data/data_sources/medical_reports_remote_data_source.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/authentication/data/data_sources/authentication_data_source.dart';
-import 'package:icare/features/authentication/data/repositories/auth_service_model_repository.dart';
-import 'package:icare/features/authentication/domain/repositories/auth_service_repository.dart';
-import 'package:icare/features/authentication/domain/use_cases/login_user_usecase.dart';
-import 'package:icare/features/authentication/domain/use_cases/register_user_usecase.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/booking/data/data_sources/order_remote_data_source.dart';
-import 'package:icare/features/booking/data/repositories/order_model_repository.dart';
-import 'package:icare/features/booking/domain/repositories/oder_repository.dart';
-import 'package:icare/features/booking/domain/use_cases/add_order_usecase.dart';
-import 'package:icare/features/booking/domain/use_cases/delete_order_usecase.dart';
-import 'package:icare/features/booking/domain/use_cases/get_all_order_usecase.dart';
-import 'package:icare/features/booking/domain/use_cases/get_ongoing_bookings_usecase.dart';
-import 'package:icare/features/booking/domain/use_cases/get_patient_details_usecase.dart';
-import 'package:icare/features/booking/presentation/bloc/booking_nurse/booking_nurse_cubit.dart';
-import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/root_app/bloc/root_bloc.dart';
-
-part 'injection_container.dart';
+// Orchestrate initialization
+Future<void> init() async {
+  await container.init();
+}

@@ -11,11 +11,6 @@ abstract class AccountEvent {
   const AccountEvent();
 }
 
-class FetchAllServicesEvent extends AccountEvent {
-  final String? userType;
-  const FetchAllServicesEvent({this.userType});
-}
-
 class EnableUpdateProfileEvent extends AccountEvent {
   final bool? isImg;
   final bool? isSave;
@@ -33,15 +28,13 @@ class UpdateProfileEvent extends AccountEvent {
 }
 
 class FetchProfileDataEvent extends AccountEvent {
-  const FetchProfileDataEvent();
+  final bool isSilent;
+  final String? userId;
+  const FetchProfileDataEvent({this.isSilent = false, this.userId});
 }
 
 class FetchAllUsersDataEvent extends AccountEvent {
   const FetchAllUsersDataEvent();
-}
-
-class FetchAllNotificationsEvent extends AccountEvent {
-  const FetchAllNotificationsEvent();
 }
 
 class ChangeUserPasswordEvent extends AccountEvent {
@@ -129,27 +122,6 @@ class UpdateDoctorDataEvent extends AccountEvent {
       this.emergencyContactsList});
 }
 
-class ChangeCurrentService extends AccountEvent {
-  final ServicesModel item;
-  final String? txt;
-  const ChangeCurrentService({required this.item, this.txt});
-}
-
-/// nurse section
-class ModifyCurrentService extends AccountEvent {
-  final ServicesModel item;
-  final String? txt;
-  final bool? isRemove;
-  const ModifyCurrentService({required this.item, this.txt, this.isRemove});
-}
-
-class EnableModifyCurrentService extends AccountEvent {
-  final int item;
-  const EnableModifyCurrentService({
-    required this.item,
-  });
-}
-
 /// Medical Reports Section
 class CreateMedicalReportEvent extends AccountEvent {
   final Map<String, dynamic> data;
@@ -168,4 +140,15 @@ class FetchPatientMedicalReportsEvent extends AccountEvent {
 class DeleteAccountEvent extends AccountEvent {
   final String userId;
   const DeleteAccountEvent({required this.userId});
+}
+
+class ModifyCurrentService extends AccountEvent {
+  final ServicesModel item;
+  final bool? isRemove;
+  const ModifyCurrentService({required this.item, this.isRemove});
+}
+
+class EnableModifyCurrentService extends AccountEvent {
+  final int item;
+  const EnableModifyCurrentService({required this.item});
 }

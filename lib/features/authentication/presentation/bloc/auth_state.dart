@@ -22,6 +22,10 @@ class LogInLoadingState extends AuthState {
   const LogInLoadingState();
 }
 
+class AuthInitializingState extends AuthState {
+  const AuthInitializingState();
+}
+
 class LogOutLoadingState extends AuthState {
   const LogOutLoadingState();
 }

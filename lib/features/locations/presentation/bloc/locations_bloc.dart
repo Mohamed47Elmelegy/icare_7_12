@@ -89,7 +89,6 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
         emit(const LocationsSuccessfullyState());
       });
     } catch (e) {
-      debugPrint("getUserLocationsData: $e");
       emit(const LocationsFailedState());
     }
   }
@@ -172,7 +171,6 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
         }
       });
     } catch (e) {
-      debugPrint("addNewLocationsData: $e");
       emit(const LocationsFailedState());
     }
   }
@@ -191,7 +189,6 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
         }
       });
     } catch (e) {
-      debugPrint("updateLocationsData: $e");
       emit(const LocationsFailedState());
     }
   }
@@ -210,7 +207,6 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
         }
       });
     } catch (e) {
-      debugPrint("removeLocationsData: $e");
       emit(const LocationsFailedState());
     }
   }

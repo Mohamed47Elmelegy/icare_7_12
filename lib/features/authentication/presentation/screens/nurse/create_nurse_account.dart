@@ -12,6 +12,7 @@ import 'package:icare/features/authentication/presentation/screens/nurse/next_st
 import 'package:icare/features/authentication/presentation/screens/doctor/complete_doctor_register.dart';
 import 'package:icare/features/authentication/presentation/widgets/already_have_account.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/app_bar_nurse_create_account.dart';
+import 'package:icare/features/authentication/presentation/widgets/nurse/specialty_drop_down.dart';
 import 'package:icare/features/authentication/presentation/widgets/upload_widget.dart';
 import 'package:icare/features/locations/presentation/widgets/city_list_drop_down.dart';
 import 'package:icare/features/locations/presentation/widgets/current_location.dart';
@@ -23,8 +24,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
-import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/features/shared_widgets/custom_text_form_field.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+
+import '../../bloc/auth_event.dart';
 
 class CreateNurseAccountScreen extends StatelessWidget {
   const CreateNurseAccountScreen({super.key});
@@ -59,6 +62,22 @@ class CreateNurseAccountScreen extends StatelessWidget {
       TextEditingController();
   static final TextEditingController relatedJobCardTextEditingController =
       TextEditingController();
+
+  static void clearControllers() {
+    emailTextEditingController.clear();
+    firstNameTextEditingController.clear();
+    phoneTextEditingController.clear();
+    passwordTextEditingController.clear();
+    ageTextEditingController.clear();
+    cityTextEditingController.clear();
+    addressTextEditingController.clear();
+    licenceTextEditingController.clear();
+    certificateTextEditingController.clear();
+    nurseIDTextEditingController.clear();
+    associateTextEditingController.clear();
+    relatedJobCardTextEditingController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,25 +114,23 @@ class CreateNurseAccountScreen extends StatelessWidget {
               ),
               color: DMUtil.getPC(),
               onPressed: () async {
-                if (bloc.avatar == null) {
+                var regCubit = RegistrationCubit.get(context);
+                if (regCubit.state.avatar == null) {
                   SnackBarBuilder.showFeedBackMessage(
                       context, translate("toast.img_missing"), Colors.red);
                   return;
                 }
                 if (validateForm(context: context, bloc: bloc)) {
-                  bloc.add(UpdateNurseRegisterDataEvent(
-                    nurse: NurseEntity(
-                      id: 0,
-                      userData: UserService(
-                          userName: firstNameTextEditingController.text.trim(),
-                          email: emailTextEditingController.text.trim(),
-                          phoneNumber: phoneTextEditingController.text.trim()),
-                    ),
+                  regCubit.updateNurse(NurseEntity(
+                    id: 0,
+                    userData: UserService(
+                        userName: firstNameTextEditingController.text.trim(),
+                        email: emailTextEditingController.text.trim(),
+                        phoneNumber: phoneTextEditingController.text.trim()),
                   ));
 
                   // Navigate to appropriate screen based on user type
                   if (bloc.isDoctor) {
-                    // No need to check specialties - will be set after login
                     Util.pushPage(
                         const CompleteDoctorRegisterDataScreen(), context);
                   } else {
@@ -237,8 +254,20 @@ class CreateNurseAccountScreen extends StatelessWidget {
                       SizedBox(
                         height: 10.w,
                       ),
-                      // Specialty selection removed - will be set from account settings after login
-                      // Similar to how nurses set their services after registration
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (ctx, state) {
+                          var bloc = AuthBloc.get(ctx);
+                          if (bloc.isDoctor) {
+                            return Column(
+                              children: [
+                                const SpecialtyListDropDown(),
+                                SizedBox(height: 10.w),
+                              ],
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (ctx, state) {
                           var bloc = AuthBloc.get(ctx);
@@ -335,9 +364,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                               if (file != null) {
                                 nurseIDTextEditingController.text =
                                     _getFileName(file);
-                                AuthBloc.get(context).add(
-                                    UpdateNurseRegisterDataEvent(
-                                        nurseID: file));
+                                RegistrationCubit.get(context)
+                                    .updateNurseID(file);
                               }
                             },
                             child: const UploadWidget(),
@@ -387,9 +415,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                                         if (file != null) {
                                           relatedJobCardTextEditingController
                                               .text = _getFileName(file);
-                                          AuthBloc.get(context).add(
-                                              UpdateNurseRegisterDataEvent(
-                                                  relatedJobId: file));
+                                          RegistrationCubit.get(context)
+                                              .updateRelatedJobId(file);
                                         }
                                       },
                                       child: const UploadWidget(),
@@ -438,9 +465,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                                         if (file != null) {
                                           licenceTextEditingController.text =
                                               _getFileName(file);
-                                          AuthBloc.get(context).add(
-                                              UpdateNurseRegisterDataEvent(
-                                                  license: file));
+                                          RegistrationCubit.get(context)
+                                              .updateLicense(file);
                                         }
                                       },
                                       child: const UploadWidget(),
@@ -484,9 +510,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                                         if (file != null) {
                                           certificateTextEditingController
                                               .text = _getFileName(file);
-                                          AuthBloc.get(context).add(
-                                              UpdateNurseRegisterDataEvent(
-                                                  certificate: file));
+                                          RegistrationCubit.get(context)
+                                              .updateCertificate(file);
                                         }
                                       },
                                       child: const UploadWidget(),
@@ -531,9 +556,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                                         if (file != null) {
                                           associateTextEditingController.text =
                                               _getFileName(file);
-                                          AuthBloc.get(context).add(
-                                              UpdateNurseRegisterDataEvent(
-                                                  associationCard: file));
+                                          RegistrationCubit.get(context)
+                                              .updateAssociationCard(file);
                                         }
                                       },
                                       child: const UploadWidget(),
@@ -579,9 +603,8 @@ class CreateNurseAccountScreen extends StatelessWidget {
                                           if (file != null) {
                                             relatedJobCardTextEditingController
                                                 .text = _getFileName(file);
-                                            AuthBloc.get(context).add(
-                                                UpdateNurseRegisterDataEvent(
-                                                    relatedJobId: file));
+                                            RegistrationCubit.get(context)
+                                                .updateRelatedJobId(file);
                                           }
                                         },
                                         child: const UploadWidget(),
@@ -619,7 +642,13 @@ class CreateNurseAccountScreen extends StatelessWidget {
   }
 
   validateForm({BuildContext? context, required AuthBloc bloc}) {
-    if (phoneTextEditingController.text.isEmpty) return false;
+    if (phoneTextEditingController.text.isEmpty) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context, translate("toast.phone_missing"), Colors.red);
+      }
+      return false;
+    }
 
     if (emailTextEditingController.text.isEmpty ||
         !emailTextEditingController.text.contains("@")) {
@@ -629,26 +658,77 @@ class CreateNurseAccountScreen extends StatelessWidget {
       }
       return false;
     }
+
+    if (firstNameTextEditingController.text.isEmpty) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context, translate("toast.name_missing"), Colors.red);
+      }
+      return false;
+    }
+
+    if (passwordTextEditingController.text.isEmpty && !bloc.registerByPhone) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context, translate("toast.pass_missing"), Colors.red);
+      }
+      return false;
+    }
+
+    if (nurseIDTextEditingController.text.isEmpty) {
+      if (context != null) {
+        SnackBarBuilder.showFeedBackMessage(
+            context,
+            bloc.isDoctor
+                ? translate("toast.doctor_id_missing")
+                : translate("toast.nurse_id_missing"),
+            Colors.red);
+      }
+      return false;
+    }
+
     if (bloc.isNurse || bloc.isDoctor) {
-      if (associateTextEditingController.text.isEmpty ||
-          licenceTextEditingController.text.isEmpty ||
-          certificateTextEditingController.text.isEmpty) {
+      if (licenceTextEditingController.text.isEmpty) {
+        if (context != null) {
+          SnackBarBuilder.showFeedBackMessage(
+              context, translate("toast.license_missing"), Colors.red);
+        }
+        return false;
+      }
+      if (certificateTextEditingController.text.isEmpty) {
+        if (context != null) {
+          SnackBarBuilder.showFeedBackMessage(
+              context, translate("toast.certificate_missing"), Colors.red);
+        }
+        return false;
+      }
+      if (associateTextEditingController.text.isEmpty) {
+        if (context != null) {
+          SnackBarBuilder.showFeedBackMessage(
+              context, translate("toast.associate_missing"), Colors.red);
+        }
         return false;
       }
       if (bloc.isDoctor) {
-        // Specialty validation removed - will be set after login
         if (relatedJobCardTextEditingController.text.isEmpty) {
+          if (context != null) {
+            SnackBarBuilder.showFeedBackMessage(
+                context, translate("toast.related_job_missing"), Colors.red);
+          }
           return false;
         }
       }
     } else {
-      if (relatedJobCardTextEditingController.text.isEmpty) return false;
+      // Assistant
+      if (relatedJobCardTextEditingController.text.isEmpty) {
+        if (context != null) {
+          SnackBarBuilder.showFeedBackMessage(
+              context, translate("toast.related_job_missing"), Colors.red);
+        }
+        return false;
+      }
     }
-    if (firstNameTextEditingController.text.isNotEmpty &&
-        passwordTextEditingController.text.isNotEmpty &&
-        nurseIDTextEditingController.text.isNotEmpty) {
-      return true;
-    }
-    return false;
+
+    return true;
   }
 }

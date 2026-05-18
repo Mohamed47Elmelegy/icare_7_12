@@ -86,7 +86,7 @@ class LocationUtil {
       Placemark place = places[0];
       return place;
     } catch (e) {
-      debugPrint("getAndSaveLocationDetails $e");
+      // getAndSaveLocationDetails error
       return const Placemark();
     }
   }
@@ -104,11 +104,11 @@ class LocationUtil {
           .setPreferenceDouble(Constants.userLatitude, position.latitude);
       SharedPref()
           .setPreferenceDouble(Constants.userLongitude, position.longitude);
-      debugPrint(
-          "checkLocationPermission ${await Permission.location.serviceStatus.isEnabled}");
+      // checkLocationPermission status check
+
       return true;
     } catch (e) {
-      debugPrint("checkLocationPermission $e");
+      // checkLocationPermission error
       return false;
     }
   }
@@ -199,9 +199,9 @@ class LocationUtil {
       final data = await image.toByteData(format: ui.ImageByteFormat.png);
 
       //convert PNG bytes as BitmapDescriptor
-      return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+      return BitmapDescriptor.bytes(data!.buffer.asUint8List());
     } catch (e) {
-      debugPrint("convertImageFileToCustomBitmapDescriptor: $e $imgUrl");
+      // convertImageFileToCustomBitmapDescriptor error
       return BitmapDescriptor.defaultMarker;
     }
   }
@@ -214,7 +214,7 @@ class LocationUtil {
             .buffer
             .asUint8List();
     final BitmapDescriptor bitmapDescriptor =
-        BitmapDescriptor.fromBytes(await _addCircleMask(iconBytes, 90));
+        BitmapDescriptor.bytes(await _addCircleMask(iconBytes, 90));
 
     return bitmapDescriptor;
   }

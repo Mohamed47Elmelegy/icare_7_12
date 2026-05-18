@@ -8,7 +8,7 @@ class GetAllOrderUseCase {
 
   const GetAllOrderUseCase({required this.orderRepository});
 
-  Future<Either<Failure, List<Booking>>> call() async {
-    return await orderRepository.getAllOrders();
+  Future<Either<Failure, List<Booking>>> call({String? userId}) async {
+    return await orderRepository.getAllOrders(userId: userId);
   }
 }

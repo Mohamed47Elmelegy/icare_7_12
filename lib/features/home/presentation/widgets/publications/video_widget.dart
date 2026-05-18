@@ -34,7 +34,7 @@
 //           _controller!.pause();
 //         }
 //       } catch (e) {
-//         debugPrint("Error pausing controller on dispose: $e");
+//         // Error pausing controller on dispose
 //       }
 //     }
 
@@ -134,7 +134,7 @@ class _VideoWidgetState extends State<VideoWidget> {
           _controller!.pause();
         }
       } catch (e) {
-        debugPrint("Error pausing controller on dispose: $e");
+        // Error pausing controller on dispose
       }
     }
 

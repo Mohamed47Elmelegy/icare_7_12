@@ -3,8 +3,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/styles/my_colors.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
 import 'package:icare/features/booking/data/data_sources/order_remote_data_source.dart';
 import 'package:icare/features/booking/domain/entities/request_entity.dart';
 import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
@@ -140,12 +140,11 @@ class RequestDetailsScreen extends StatelessWidget {
                                         context,
                                         translate('toast.gmail_send'),
                                         kPrimary);
-                                    AccountBloc.get(context).add(
+                                    ServicesBloc.get(context).add(
                                         const FetchAllNotificationsEvent());
                                     BookingBloc.get(context)
                                         .add(const FetchAllOrderEvent());
                                     Navigator.of(context).pop();
-                                    // Util.pushPage(const MainBookingScreen(), context);
                                   } else {
                                     SnackBarBuilder.showFeedBackMessage(
                                         context, result, Colors.red);

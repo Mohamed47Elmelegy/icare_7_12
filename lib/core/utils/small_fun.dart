@@ -8,16 +8,6 @@ import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/location/location_util.dart';
 import 'package:icare/features/authentication/presentation/screens/nurse/create_nurse_account.dart';
 import 'package:icare/features/authentication/presentation/screens/login.dart';
-import 'package:icare/features/categories/presentation/bloc/cateogries_bloc.dart';
-import 'package:icare/features/categories/presentation/bloc/cateogries_event.dart';
-import 'package:icare/features/booking/presentation/bloc/order_bloc.dart';
-import 'package:icare/features/booking/presentation/bloc/order_event.dart';
-import 'package:icare/features/nurse/presentation/bloc/nurse_event.dart';
-import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
-import 'package:icare/features/doctor/presentation/bloc/doctor_event.dart';
-import 'package:icare/features/doctor/presentation/bloc/doctors_bloc.dart';
-import 'package:icare/features/root_app/bloc/root_bloc.dart';
-import 'package:icare/features/root_app/bloc/root_event.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -25,116 +15,13 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:icare/core/constants/constant.dart';
 import 'package:icare/core/utils/shared_pref.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/root_app/screens/root_screen.dart';
 import 'package:icare/features/chat/presentation/screens/main_conversation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Util {
-  // implemented this function after register and login
-  static getAllUserAppData(
-      {required BuildContext context, bool isSplash = false}) async {
-    if (isSplash) {
-      /// get all app data like [GOVERNORATE,CITIES]
-      RootBloc.get(context).add(const FetchSettingEvent());
-      NurseBloc.get(context).add(const FetchAllNurseEvent());
-      NurseBloc.get(context).add(const FetchAllNurseEvent(page: 2));
-      DoctorBloc.get(context).add(const FetchAllDoctorEvent());
-      DoctorBloc.get(context).add(const FetchAllDoctorEvent(page: 2));
-    }
-    CategoriesBloc.get(context).add(const FetchAllPublicationsEvent());
-    CategoriesBloc.get(context).add(const FetchAllAllergiesEvent());
-    BookingBloc.get(context).add(const FetchAllOrderEvent());
-    AccountBloc.get(context)
-      ..add(const FetchProfileDataEvent())
-      ..add(const FetchAllNotificationsEvent())
-      ..add(const FetchAllServicesEvent());
-    await updateLocationAndToken(context);
-  }
-
-  static updateLocationAndToken(context) async {
-    try {
-      bool locationEnabled = await Permission.location.serviceStatus.isEnabled;
-      Position? position;
-      if (locationEnabled) {
-        position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-      }
-      var user = {
-        'profile': '',
-        'remember_token': await Util.setToken(),
-        if (locationEnabled && position != null)
-          'latitude': position.latitude.toString(),
-        if (locationEnabled && position != null)
-          'longitude': position.longitude.toString(),
-      };
-      AccountBloc.get(context).add(UpdateProfileEvent(user: user));
-    } catch (e) {
-      debugPrint("updateLocationAndTokenUtil: $e");
-    }
-  }
-
-  /// Check if user is verified (for professionals) or is a customer
-  /// Returns true if user can access the app, false if pending approval
-  static Future<bool> checkUserVerificationStatus(BuildContext context) async {
-    try {
-      // Customers don't need verification
-      if (isCustomer()) {
-        debugPrint("✅ User is customer, no verification needed");
-        return true;
-      }
-
-      // For professionals (nurse/doctor/assistant), check verification status
-      debugPrint("🔍 Checking verification status for professional user...");
-
-      // Fetch user data from backend
-      final result =
-          await AccountBloc.get(context).getUserServiceUseCase.call();
-
-      return result.fold(
-        (failure) {
-          debugPrint("❌ Failed to fetch user data: $failure");
-          // On error, clear session and require re-login
-          SharedPref().clearPreferences();
-          return false;
-        },
-        (user) {
-          int? verificationStatus;
-
-          // Check verification status based on user type
-          if (isNurse() || isAssistant()) {
-            verificationStatus = user.nurse?.verificationStatus;
-            debugPrint(
-                "🏥 Nurse/Assistant verification status: $verificationStatus");
-          } else if (isDoctor()) {
-            verificationStatus = user.doctor?.verificationStatus;
-            debugPrint("👨‍⚕️ Doctor verification status: $verificationStatus");
-          }
-
-          // If status is 0 (Pending), clear session and deny access
-          if (verificationStatus == 0) {
-            debugPrint("⏳ User is pending approval, clearing session...");
-            SharedPref().clearPreferences();
-            return false;
-          }
-
-          // If status is 1 (Approved) or null, allow access
-          debugPrint("✅ User is verified or status is null, allowing access");
-          return true;
-        },
-      );
-    } catch (e) {
-      debugPrint("❌ Error checking verification status: $e");
-      // On error, clear session and require re-login
-      SharedPref().clearPreferences();
-      return false;
-    }
-  }
-
   static goToStore() async {
     if (Platform.isIOS) {
       return await openUrl("", externalApp: true);
@@ -181,7 +68,6 @@ class Util {
       // debugPrint("$vC $otp");
       return "8084".trim() == otp.trim();
     } catch (e) {
-      debugPrint("verifyFirebaseCode: $e");
       return false;
     }
   }
@@ -198,17 +84,15 @@ class Util {
 
   static openUrl(String url, {bool externalApp = false}) async {
     try {
-      await canLaunchUrl(
-                Uri.parse(url),
-              ) ==
-              true
-          ? await launchUrl(Uri.parse(url),
-              mode: externalApp
-                  ? LaunchMode.externalApplication
-                  : LaunchMode.platformDefault)
-          : debugPrint("error when openGmsUrl");
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri,
+            mode: externalApp
+                ? LaunchMode.externalApplication
+                : LaunchMode.platformDefault);
+      }
     } catch (e) {
-      debugPrint("openUrl: $e");
+      // Error handled silently
     }
   }
 
@@ -227,20 +111,21 @@ class Util {
         subject: msg,
       }),
     );
-    await canLaunchUrl(emailLaunchUri) == true
-        ? await launchUrl(emailLaunchUri)
-        : debugPrint("error when sendMailMsg");
+    if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri);
+    }
   }
 
   static call(String phone) async {
     try {
       if (!phone.startsWith("0")) phone = "0$phone";
       phone = "tel:$phone";
-      await canLaunchUrl(Uri.parse(phone)) == true
-          ? await launchUrl(Uri.parse(phone))
-          : debugPrint("error when call");
+      final uri = Uri.parse(phone);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      }
     } catch (e) {
-      debugPrint("error when call: $e ");
+      // Error handled silently
     }
   }
 
@@ -248,7 +133,8 @@ class Util {
     try {
       await LocationUtil.checkLocationPermission();
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+          locationSettings:
+              const LocationSettings(accuracy: LocationAccuracy.high));
       var latLng = LatLng(position.latitude, position.longitude);
       Placemark address = await LocationUtil.getAndSaveLocationDetails(latLng);
       if (!phone.startsWith("0")) phone = "20$phone";
@@ -262,11 +148,11 @@ class Util {
           'body': Uri.encodeComponent(msg.toString().replaceAll("null", "")),
         },
       );
-      await canLaunchUrl(smsLaunchUri) == true
-          ? await launchUrl(smsLaunchUri)
-          : debugPrint("error when sms");
+      if (await canLaunchUrl(smsLaunchUri)) {
+        await launchUrl(smsLaunchUri);
+      }
     } catch (e) {
-      debugPrint("error when call: $e ");
+      // Error handled silently
     }
   }
 
@@ -276,7 +162,7 @@ class Util {
     try {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } catch (e) {
-      debugPrint("sendWhatsApp: $e");
+      // Error handled silently
     }
   }
 
@@ -288,7 +174,7 @@ class Util {
     try {
       await launchUrl(Uri.parse(whatsappUrl));
     } catch (e) {
-      debugPrint("sendWhatsApp: $e");
+      // Error handled silently
     }
   }
 
@@ -328,27 +214,19 @@ class Util {
       await SharedPref().setPreferencesString(
           Constants.userType, bodyData['user']['user_type'].toString());
 
-      debugPrint("🔍 LOGIN RESPONSE BODY: $bodyData");
       // Save API authentication token (not FCM token)
       if (bodyData['token'] != null) {
         await SharedPref().setPreferencesString(
             Constants.apiToken, bodyData['token'].toString());
-        debugPrint(
-            "✅ API Token saved: ${bodyData['token'].toString().substring(0, 20)}...");
       } else if (bodyData['access_token'] != null) {
         await SharedPref().setPreferencesString(
             Constants.apiToken, bodyData['access_token'].toString());
-        debugPrint(
-            "✅ API Token saved: ${bodyData['access_token'].toString().substring(0, 20)}...");
-      } else {
-        debugPrint(
-            "⚠️ No API token found in response. Full Data keys: ${bodyData.keys.toList()}");
       }
 
       // Note: No need to manually set ApiUrl.headerAuth anymore
       // It's now a getter that will automatically include the token
     } catch (e) {
-      debugPrint("saveLocalData: $e");
+      // Error handled silently
     }
   }
 
@@ -464,7 +342,6 @@ class Util {
     try {
       return SharedPref().getPreferenceDouble(Constants.userLongitude);
     } catch (e) {
-      debugPrint("getLongitude: $e");
       return 0.0;
     }
   }
@@ -536,7 +413,7 @@ class Util {
         deviceId = iosInfo.identifierForVendor;
       }
     } on PlatformException {
-      debugPrint('Failed to get device ID');
+      // Error handled silently
     }
 
     return deviceId;
@@ -575,7 +452,6 @@ class Util {
     try {
       await call(phoneNumber);
     } catch (e) {
-      debugPrint("makeCall error: $e");
       SnackBarBuilder.showFeedBackMessage(
         // ignore: use_build_context_synchronously
         context,

@@ -10,7 +10,8 @@ abstract class BookingEvent {
 }
 
 class FetchAllOrderEvent extends BookingEvent {
-  const FetchAllOrderEvent();
+  final String? userId;
+  const FetchAllOrderEvent({this.userId});
 }
 
 class UpdateBookingServiceListEvent extends BookingEvent {

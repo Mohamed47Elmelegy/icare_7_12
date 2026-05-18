@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/strings/enum/order_enum.dart';
 import 'package:icare/core/utils/location/exec_location.dart';
+import 'package:icare/core/utils/notifications_utils.dart';
 import 'package:icare/core/utils/small_fun.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:async';
 import 'package:icare/features/booking/data/models/order_model.dart';
 import 'package:icare/features/booking/domain/use_cases/get_all_order_usecase.dart';
 import 'package:icare/features/booking/domain/use_cases/get_ongoing_bookings_usecase.dart';
@@ -25,6 +28,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   UpdateOrderUseCase updateOrderUseCase;
 
   SendRequestUseCase sendRequestUseCase;
+  StreamSubscription<RemoteMessage>? _notificationSubscription;
 
   BookingBloc(
       {required this.addOrderUseCase,
@@ -33,8 +37,22 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       required this.updateOrderUseCase,
       required this.sendRequestUseCase})
       : super(OrderInitialState()) {
+    // 🔔 Listen for notifications to refresh orders automatically
+    _notificationSubscription =
+        NotificationsUtils.notificationStream.stream.listen((message) {
+      if (message.notification?.body != null) {
+        final body = message.notification!.body!;
+        if (body.contains("request") ||
+            body.contains("حجز") ||
+            body.contains("الحجز")) {
+          // Notification received, refreshing orders
+          add(const FetchAllOrderEvent());
+        }
+      }
+    });
+
     on<FetchAllOrderEvent>((event, emit) async {
-      await getAllOrder(emit);
+      await getAllOrder(emit, userId: event.userId);
     });
 
     on<UpdateBookingServiceListEvent>((event, emit) {
@@ -122,12 +140,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   }
 
   List<Booking> getCurrentOrdersByType() {
-    // Filter orders by type, but exclude PENDING orders from ONGOING (Current) list
     if (currentOrdersType == ORDER_STATUS.ONGOING) {
-      // For current orders, only show ONGOING status (exclude PENDING)
+      // Show both ONGOING and PENDING in the "Current booking" tab
       return bookingList.where((element) {
         var status = OrderModel.getStatusViewCheck(element.status.toString());
-        return status == ORDER_STATUS.ONGOING;
+        return status == ORDER_STATUS.ONGOING || status == ORDER_STATUS.PENDING;
       }).toList();
     } else {
       // For other tabs (COMPLETED, etc.), show orders matching the selected type
@@ -139,11 +156,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     }
   }
 
-  getAllOrder(emit) async {
+  getAllOrder(emit, {String? userId}) async {
     if (!Util.checkUser()) return;
     emit(OrderLoadingState());
     // try{
-    var res = await getAllOrderUseCase();
+    var res = await getAllOrderUseCase(userId: userId);
     res.fold((l) {
       emit(OrderErrorState(errors: l.toString()));
     }, (data) {
@@ -152,7 +169,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       emit(OrderSuccessfullyState());
     });
     // }catch(e){
-    //   debugPrint("getAllOrderBlocError: $e");
+    //   // getAllOrderBlocError
     //   emit(OrderErrorState(errors: e.toString()));
     // }
   }
@@ -194,7 +211,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         }
       });
     } catch (e) {
-      debugPrint("addNewOrderError: $e");
       emit(OrderErrorState(errors: e.toString()));
     }
   }
@@ -202,19 +218,14 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   updateOrder(UpdateOrderEvent event, emit) async {
     emit(OrderLoadingState());
     try {
-      debugPrint("🚀 Updating Order: ${event.data}");
       var res = await updateOrderUseCase(
         data: event.data,
       );
       res.fold((l) {
-        debugPrint("❌ Update Order Failed (Left): $l");
         emit(OrderErrorState(errors: l.toString()));
       }, (data) async {
-        debugPrint(
-            "✅ Update Order Result (Right): state=${data.state}, msg=${data.msg}");
         if (data.state == true) {
           // Refresh ongoing bookings after update
-          debugPrint("🔄 Refreshing ongoing bookings after order update...");
           await getOngoingBookings(emit);
 
           if (event.data['status'] == 'CANCELLED') {
@@ -223,12 +234,10 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
             emit(UpdateOrderSuccessfullyState());
           }
         } else {
-          debugPrint("❌ Update Order Failed (Response False): ${data.msg}");
           emit(OrderErrorState(errors: data.msg.toString()));
         }
       });
     } catch (e) {
-      debugPrint("updateOrderError: $e");
       emit(OrderErrorState(errors: e.toString()));
     }
   }
@@ -243,7 +252,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       //   emit(OrderErrorState(errors: res.msg.toString()));
       // }
     } catch (e) {
-      debugPrint("addNewOrderError: $e");
       emit(OrderErrorState(errors: e.toString()));
     }
   }
@@ -264,23 +272,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   Map<String, dynamic> collectOrderData(
       {required PaymentOption payment,
       required Map<String, dynamic> orderData}) {
-    debugPrint("📦 ========== COLLECT ORDER DATA ==========");
-    debugPrint(
-        "📋 Total services in orderServiceList: ${orderServiceList.length}");
-
     String desc = "";
     for (var i in orderServiceList) {
-      debugPrint("   🔹 Service ID: ${i.id}");
-      debugPrint("      - Name: ${i.name}");
-      debugPrint("      - Value (Price): ${i.value}");
-
       desc += "${i.name}: ${i.value}${translate("icare.le")} ";
-
-      debugPrint(
-          "      - Added to desc: '${i.name}: ${i.value}${translate("icare.le")}'");
     }
 
-    debugPrint("✅ Final Description String: '$desc'");
 
     var data = {
       'user_id': Util.getUserID(),
@@ -300,16 +296,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
           'PENDING' // ✅ Fixed: Use 'current_status' as per backend API
     };
 
-    debugPrint("📤 Sending order data to API:");
-    debugPrint("   - user_id: ${data['user_id']}");
-    debugPrint("   - nurse_id: ${data['nurse_id']}");
-    debugPrint("   - doctor_id: ${data['doctor_id']}"); // ✅ Debug print added
-    debugPrint("   - desc: ${data['desc']}");
-    debugPrint("   - address: ${data['address']}");
-    debugPrint("   - lat: ${data['lat']}");
-    debugPrint("   - lng: ${data['lng']}");
-    debugPrint("   - current_status: ${data['current_status']}");
-    debugPrint("📦 ========================================");
 
     return data;
   }
@@ -359,20 +345,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   getOngoingBookings(emit) async {
     if (!Util.checkUser()) return;
-    debugPrint("🔄 BookingBloc: Fetching ongoing bookings...");
     emit(OrderLoadingState());
     var res = await getOngoingBookingsUseCase();
     res.fold((l) {
-      debugPrint("❌ BookingBloc: Failed to fetch ongoing bookings: $l");
       emit(OrderErrorState(errors: l.toString()));
     }, (data) {
       ongoingBookingsList = data.toList();
-      debugPrint(
-          "✅ BookingBloc: Fetched ${ongoingBookingsList.length} ongoing bookings");
-      for (var booking in ongoingBookingsList) {
-        debugPrint(
-            "   📦 Booking ID: ${booking.orderId}, Nurse ID: ${booking.nurseID}, Status: ${booking.status}");
-      }
       emit(OngoingBookingsLoadedState(ongoingBookings: data));
     });
   }
@@ -383,19 +361,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         .map((booking) => booking.nurseID ?? -1)
         .where((id) => id != -1)
         .toList();
-    debugPrint("🔍 BookingBloc: Extracted provider IDs: $ids");
     return ids;
   }
 
   /// Check if current user has any ongoing booking
   bool hasOngoingBooking() {
-    debugPrint("🔍 Checking ongoing bookings...");
-    debugPrint(
-        "   📦 ongoingBookingsList.length: ${ongoingBookingsList.length}");
-    for (var booking in ongoingBookingsList) {
-      debugPrint(
-          "   - Booking ID: ${booking.orderId}, Status: ${booking.status}, Nurse: ${booking.nurseName}");
-    }
     return ongoingBookingsList.isNotEmpty;
   }
 
@@ -403,15 +373,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   Booking? getOngoingBookingDetails() {
     final booking =
         ongoingBookingsList.isNotEmpty ? ongoingBookingsList.first : null;
-    debugPrint(
-        "🔍 Getting ongoing booking details: ${booking?.orderId}, Nurse: ${booking?.nurseName}");
     return booking;
   }
 
   /// Check if user has an active booking (ONGOING or PENDING) with a specific provider
   bool hasActiveBookingWithProvider(int providerId) {
     try {
-      final existingBooking = ongoingBookingsList.firstWhere(
+      ongoingBookingsList.firstWhere(
         (booking) {
           final status =
               OrderModel.getStatusViewCheck(booking.status.toString());
@@ -421,8 +389,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
                   status == ORDER_STATUS.PENDING);
         },
       );
-      debugPrint(
-          "⚠️ Found existing active booking with provider $providerId: ID ${existingBooking.orderId}");
+      // Found existing active booking
+
       return true;
     } catch (_) {
       return false;
@@ -453,7 +421,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   String dateVal = 'يوم';
   String movmentLevel = 'قادر علي الحركة';
   String needTO = 'تمريض يومي';
-  String moreNeed = 'تغيير الضمادات';
+  String moreNeed = '';
+  List<String> moreNeedList = [];
   String gender = 'male';
 
   updateRequestForm(UpdateRequestFormDataEvent event, emit) {
@@ -487,7 +456,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       needTO = event.data['need_to'].toString();
     }
     if (event.data['more_need'] != null) {
-      moreNeed = event.data['more_need'].toString();
+      String item = event.data['more_need'].toString();
+      if (moreNeedList.contains(item)) {
+        moreNeedList.remove(item);
+      } else {
+        moreNeedList.add(item);
+      }
+      moreNeed = moreNeedList.join(', ');
     }
     if (event.data['gender'] != null) gender = event.data['gender'].toString();
     emit(const UpdateBookingRequestFormSuccessfullyState());
@@ -534,6 +509,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     emit(const SendBookingRequestLoadingState());
     try {
       var res = await sendRequestUseCase(data: {
+        'full_name': formData['full_name'] ?? '',
         'phone': formData['phone'] ?? '',
         'main_medical': formData['main_medical'] ?? '',
         'national_id': formData['national_id'] ?? '',
@@ -542,7 +518,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         'date_val': dateVal,
         'movment_level': movmentLevel,
         'need_to': needTO,
-        'more_need': moreNeed,
+        'more_need': moreNeed.isEmpty ? 'لا يوجد' : moreNeed,
         'gender': gender,
       });
       res.fold((l) {
@@ -555,8 +531,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         }
       });
     } catch (e) {
-      debugPrint("sendRequestFnError: $e");
       emit(SendBookingRequestFialedState(msg: e.toString()));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _notificationSubscription?.cancel();
+    return super.close();
   }
 }

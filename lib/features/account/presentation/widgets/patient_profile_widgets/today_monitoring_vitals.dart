@@ -1,4 +1,5 @@
 import 'package:icare/core/strings/app_images.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
@@ -56,9 +57,9 @@ class TodayMonitoringVitalsState extends State<TodayMonitoringVitals> {
       descriptionController = TextEditingController(text: "");
       prescriptionImageNameController = TextEditingController(text: "");
     } else {
-      print(
+      AppLogger.d(
           "DEBUG: TodayMonitoringVitals received latestBooking: ${widget.latestBooking?.orderId}");
-      print(
+      AppLogger.d(
           "DEBUG: Initializing controllers with - HR: ${widget.latestBooking?.heartRate}");
 
       heartRateController =
@@ -342,25 +343,25 @@ class VitalsWidget extends StatelessWidget {
                     children: [
                       // Display current value
                       if (controller.text.isNotEmpty)
-                        // CustomText(
-                        //   text: controller.text,
-                        //   fontSize: AppStyle.small.sp,
-                        //   color: DMUtil.getDC(),
-                        //   fontWeight: FontWeight.w600,
-                        // ),
-                        // Display historical value if available and different from current
-                        if (historicalValue != null &&
-                            historicalValue!.isNotEmpty &&
-                            historicalValue != controller.text)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: CustomText(
-                              text: historicalValue!,
-                              fontSize: AppStyle.small.sp - 1,
-                              color: DMUtil.getPC().withValues(alpha: 0.7),
-                              fontWeight: FontWeight.w500,
-                            ),
+                        CustomText(
+                          text: controller.text,
+                          fontSize: AppStyle.small.sp,
+                          color: DMUtil.getDC(),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      // Display historical value if available and different from current
+                      if (historicalValue != null &&
+                          historicalValue!.isNotEmpty &&
+                          historicalValue != controller.text)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: CustomText(
+                            text: historicalValue!,
+                            fontSize: AppStyle.small.sp - 1,
+                            color: DMUtil.getPC().withValues(alpha: 0.7),
+                            fontWeight: FontWeight.w500,
                           ),
+                        ),
                       // If no current value but historical exists
                       if (controller.text.isEmpty &&
                           historicalValue != null &&

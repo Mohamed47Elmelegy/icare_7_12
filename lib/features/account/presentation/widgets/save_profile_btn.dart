@@ -8,8 +8,10 @@ import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_state.dart';
 import 'package:icare/features/categories/data/models/services.dart';
-import 'package:icare/features/setting/domain/entities/specialty_entity.dart'; // ✅ ADDED
+import 'package:icare/features/setting/domain/entities/specialty_entity.dart';
 import 'package:icare/features/shared_widgets/custom_button.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 
@@ -18,107 +20,129 @@ class SaveProfileBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AccountBloc, AccountState>(
-      listener: (context, state) {
-        // ✅ No need to fetch again - Optimistic Update already updated local state
-        // Removed Timer + FetchProfileDataEvent to prevent infinite loop
-      },
-      listenWhen: (previous, current) =>
-          current is UpdateNurseDataSuccessState ||
-          current is UpdateDoctorDataSuccessState,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AccountBloc, AccountState>(
+          listener: (context, state) {},
+          listenWhen: (previous, current) =>
+              current is UpdateNurseDataSuccessState ||
+              current is UpdateDoctorDataSuccessState,
+        ),
+      ],
       child: BlocBuilder<AccountBloc, AccountState>(
         builder: (ctx, state) {
-          var bloc = AccountBloc.get(ctx);
+          var accountBloc = AccountBloc.get(ctx);
 
           // Hide button when viewing Reports tab (index 2) for patients
-          // Only nurses can edit medical conditions
-          if (bloc.currentProfileTapsIndex == 2 &&
+          if (accountBloc.currentProfileTapsIndex == 2 &&
               !Util.isNurse() &&
               !Util.isAssistant()) {
             return const SizedBox.shrink();
           }
 
-          // if(bloc.enableUpdate==false && bloc.enableUpdateImg==false)return const SizedBox.shrink();
           if (state is UpdateProfileState && state.response.isLoad == true) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
-          return Container(
-            color: Colors.transparent,
-            padding: const EdgeInsets.all(10),
-            child: CustomButton(
-              height: 34.w,
-              width: 250.w,
-              widget: CustomText(
-                text:
-                    bloc.enableUpdate == false && bloc.enableUpdateImg == false
+
+          return BlocBuilder<ServicesBloc, ServicesState>(
+            builder: (context, servicesState) {
+              var servicesBloc = ServicesBloc.get(context);
+
+              return Container(
+                color: Colors.transparent,
+                padding: const EdgeInsets.all(10),
+                child: CustomButton(
+                  height: 34.w,
+                  width: 250.w,
+                  widget: CustomText(
+                    text: accountBloc.enableUpdate == false &&
+                            accountBloc.enableUpdateImg == false
                         ? translate("app_bar.edit")
                         : translate("button.save"),
-                fontSize: AppStyle.small.sp,
-                fontWeight: FontWeight.w600,
-                color: DMUtil.getWC(),
-              ),
-              color: DMUtil.getPC(),
-              onPressed: () {
-                if (bloc.enableUpdate == false &&
-                    bloc.enableUpdateImg == false) {
-                  bloc.add(const EnableUpdateProfileEvent());
-                  return;
-                }
-                if (Util.isNurse() || Util.isAssistant() || Util.isDoctor()) {
-                  // Safeguard for Doctor: Ensure priceTxt is set from service value if null
-                  if (Util.isDoctor() && bloc.currentService != null) {
-                    bloc.priceTxt = bloc.currentService!.value;
-                  }
-
-                  if (bloc.currentService != null && bloc.priceTxt != null) {
-                    bloc.servicesList ??= [];
-                    var item = ServicesModel(
-                        id: bloc.currentService!.id,
-                        value: bloc.priceTxt.toString());
-                    int index = bloc.servicesList!
-                        .indexWhere((element) => element.id == item.id);
-                    if (index != -1) bloc.servicesList!.removeAt(index);
-                    bloc.servicesList!.add(item);
-                    if (Util.isDoctor()) {
-                      // ✅ Convert ServicesModel to SpecialtyEntity for Doctor
-                      bloc.selectedSpecialty = SpecialtyEntity(
-                        id: item.id,
-                        title: item.value,
-                      );
-                      bloc.add(UpdateDoctorDataEvent(
-                          selectedSpecialty: bloc.selectedSpecialty));
-                    } else {
-                      bloc.add(UpdateNurseDataEvent(
-                          servicesList: bloc.servicesList!));
+                    fontSize: AppStyle.small.sp,
+                    fontWeight: FontWeight.w600,
+                    color: DMUtil.getWC(),
+                  ),
+                  color: DMUtil.getPC(),
+                  onPressed: () {
+                    if (accountBloc.enableUpdate == false &&
+                        accountBloc.enableUpdateImg == false) {
+                      accountBloc.add(const EnableUpdateProfileEvent());
+                      return;
                     }
-                  }
-                  if (bloc.avatar != null) {
-                    bloc.add(UpdateProfileEvent(user: {
-                      if (bloc.avatar != null) 'avatar': bloc.avatar?.path
-                    }));
-                  }
-                  if ((bloc.currentService == null || bloc.priceTxt == null) &&
-                      bloc.avatar == null) {
-                    bloc.add(const EnableUpdateProfileEvent(isSave: true));
-                  }
-                } else {
-                  if (bloc.currentMedicalConditions.trim() == "" &&
-                      bloc.currentPublication.trim() == "" &&
-                      bloc.avatar == null) {
-                    bloc.add(const EnableUpdateProfileEvent(isSave: true));
-                    return;
-                  }
-                }
 
-                bloc.add(UpdateProfileEvent(user: {
-                  if (bloc.currentMedicalConditions != "")
-                    'medical_conditions': bloc.currentMedicalConditions,
-                  if (bloc.currentPublication != "")
-                    'publications': bloc.currentPublication,
-                  if (bloc.avatar != null) 'avatar': bloc.avatar?.path
-                }));
-              },
-            ),
+                    if (Util.isNurse() ||
+                        Util.isAssistant() ||
+                        Util.isDoctor()) {
+                      // Safeguard for Doctor: Ensure priceTxt is set from service value if null
+                      if (Util.isDoctor() &&
+                          servicesBloc.currentService != null) {
+                        servicesBloc.priceTxt =
+                            servicesBloc.currentService!.value;
+                      }
+
+                      if (servicesBloc.currentService != null &&
+                          servicesBloc.priceTxt != null) {
+                        accountBloc.servicesList ??= [];
+                        var item = ServicesModel(
+                            id: servicesBloc.currentService!.id,
+                            value: servicesBloc.priceTxt.toString());
+
+                        int index = accountBloc.servicesList!
+                            .indexWhere((element) => element.id == item.id);
+                        if (index != -1) {
+                          accountBloc.servicesList!.removeAt(index);
+                        }
+                        accountBloc.servicesList!.add(item);
+
+                        if (Util.isDoctor()) {
+                          accountBloc.selectedSpecialty = SpecialtyEntity(
+                            id: item.id,
+                            title: item.value,
+                          );
+                          accountBloc.add(UpdateDoctorDataEvent(
+                              selectedSpecialty:
+                                  accountBloc.selectedSpecialty));
+                        } else {
+                          accountBloc.add(UpdateNurseDataEvent(
+                              servicesList: accountBloc.servicesList!));
+                        }
+                      }
+
+                      if (accountBloc.avatar != null) {
+                        accountBloc.add(UpdateProfileEvent(
+                            user: {'avatar': accountBloc.avatar?.path}));
+                      }
+
+                      if ((servicesBloc.currentService == null ||
+                              servicesBloc.priceTxt == null) &&
+                          accountBloc.avatar == null) {
+                        accountBloc
+                            .add(const EnableUpdateProfileEvent(isSave: true));
+                      }
+                    } else {
+                      if (accountBloc.currentMedicalConditions.trim() == "" &&
+                          accountBloc.currentPublication.trim() == "" &&
+                          accountBloc.avatar == null) {
+                        accountBloc
+                            .add(const EnableUpdateProfileEvent(isSave: true));
+                        return;
+                      }
+                    }
+
+                    accountBloc.add(UpdateProfileEvent(user: {
+                      if (accountBloc.currentMedicalConditions != "")
+                        'medical_conditions':
+                            accountBloc.currentMedicalConditions,
+                      if (accountBloc.currentPublication != "")
+                        'publications': accountBloc.currentPublication,
+                      if (accountBloc.avatar != null)
+                        'avatar': accountBloc.avatar?.path
+                    }));
+                  },
+                ),
+              );
+            },
           );
         },
       ),

@@ -6,7 +6,6 @@ import 'package:icare/core/utils/dark_mode_utility.dart';
 import 'package:icare/core/utils/small_fun.dart';
 import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
 import 'package:icare/features/account/presentation/bloc/account_state.dart';
-import 'package:icare/features/home/presentation/widgets/request_company/request_btn.dart';
 import 'package:icare/features/shared_widgets/custom_text.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:icare/features/shared_widgets/logo_widget.dart';
@@ -49,16 +48,16 @@ class HomeBackGroundWithRadius extends StatelessWidget {
                 const BackArrowButton()
               else
                 const SizedBox(width: 35),
-              Flexible(
+              const Flexible(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const LogoWidget(
-                      width: 100,
-                      height: 53,
+                    LogoWidget(
+                      width: 200,
+                      height: 60,
                       isWhite: true,
                     ),
-                    if (setRequestBtn && Util.isCustomer()) const RequestBtn(),
+                    //  if (setRequestBtn && Util.isCustomer()) const RequestBtn(),
                   ],
                 ),
               ),
@@ -74,10 +73,9 @@ class HomeBackGroundWithRadius extends StatelessWidget {
           SizedBox(
             height: 12.w,
           ),
-          BlocBuilder<AccountBloc, AccountState>(
-            builder: (ctx, state) {
-              var bloc = AccountBloc.get(ctx);
-              var currentUser = bloc.currentUser;
+          BlocSelector<AccountBloc, AccountState, dynamic>(
+            selector: (state) => AccountBloc.get(context).currentUser,
+            builder: (ctx, currentUser) {
               if (currentUser == null) return const SizedBox.shrink();
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

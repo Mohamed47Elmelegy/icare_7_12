@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurse_state.dart';
 import 'package:icare/features/nurse/presentation/bloc/nurses_bloc.dart';
 import 'package:icare/features/nurse/presentation/widgets/prices_screen_widgets/service_price_row.dart';
@@ -26,7 +26,7 @@ class PricesListWidget extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (ctx, index) {
               var item = list[index];
-              var mainList = AccountBloc.get(context).allServiceList;
+              var mainList = ServicesBloc.get(context).allServiceList;
               int ind = mainList.indexWhere((element) => item.id == element.id);
               if (ind == -1) return const SizedBox.shrink();
               return ServicePriceRow(

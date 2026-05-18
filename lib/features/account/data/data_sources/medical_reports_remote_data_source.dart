@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:icare/core/error/exception.dart';
 import 'package:icare/core/strings/api/api_url.dart';
@@ -72,23 +71,27 @@ class MedicalReportsRemoteDataSourceImpl
         ));
       }
 
-      debugPrint("📤 Creating Medical Report: ${request.fields}");
+      // Creating Medical Report
+
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint("📥 Create Medical Report Response: ${response.body}");
+      // Create Medical Report Response
+
 
       final decodedData = json.decode(response.body);
 
       if (decodedData['status'] == true) {
         return MedicalReportModel.fromJson(decodedData['data']);
       } else {
-        debugPrint("❌ API Error: ${decodedData['message']}");
+        // API Error
+
         throw ServerException();
       }
     } catch (e) {
-      debugPrint("❌ Create Medical Report Error: $e");
+      // Create Medical Report Error
+
       throw ServerException();
     }
   }
@@ -103,7 +106,8 @@ class MedicalReportsRemoteDataSourceImpl
         headers: ApiUrl.headerAuth,
       );
 
-      debugPrint("📥 Get Patient Medical Reports Response: ${response.body}");
+      // Get Patient Medical Reports Response
+
 
       final decodedData = json.decode(response.body);
 
@@ -122,7 +126,8 @@ class MedicalReportsRemoteDataSourceImpl
         throw ServerException();
       }
     } catch (e) {
-      debugPrint("❌ Get Patient Medical Reports Error: $e");
+      // Get Patient Medical Reports Error
+
       throw ServerException();
     }
   }

@@ -211,7 +211,7 @@ class MapScreenState extends State<MapScreen> {
       _setUserCurrentLocation();
       _setLocationOnMap();
     } catch (e) {
-      debugPrint("_setUp: $e");
+      // Error handled silently
     }
   }
 
@@ -229,10 +229,9 @@ class MapScreenState extends State<MapScreen> {
   _setLocationOnMap() async {
     try {
       if (widget.latitude == null) return;
-      debugPrint("lat & lon location: ${widget.latitude}${widget.longitude}");
       _animateToUserLocation(widget.latitude!, widget.longitude!);
     } catch (e) {
-      debugPrint("_setLocationOnMap: $e");
+      // Error handled silently
     }
   }
 
@@ -246,7 +245,7 @@ class MapScreenState extends State<MapScreen> {
       infoWindow: InfoWindow(
         title: widget.title.toString(),
       ),
-      icon: BitmapDescriptor.fromBytes(widget.userImg != null
+      icon: BitmapDescriptor.bytes(widget.userImg != null
           ? await LocationUtil.markerNetworkIcon(widget.userImg)
           : await LocationUtil.markerIcon()),
     );
@@ -298,7 +297,7 @@ class MapScreenState extends State<MapScreen> {
                 street: data.street.toString()));
       }
     } catch (e) {
-      debugPrint("_handleTap: $e");
+      // Error handled silently
     }
   }
 
@@ -306,7 +305,8 @@ class MapScreenState extends State<MapScreen> {
     if (widget.longitude == null) {
       markers.clear();
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+          locationSettings:
+              const LocationSettings(accuracy: LocationAccuracy.high));
       if (mounted) {
         setState(() {
           lastLocation = LatLng(position.latitude, position.longitude);
@@ -347,7 +347,7 @@ class MapScreenState extends State<MapScreen> {
       SharedPref()
           .setPreferencesString(Constants.userLocationDetails, selectedAddress);
     } catch (e) {
-      debugPrint("_checkIFUserLocation $e");
+      // Error handled silently
     }
   }
 }

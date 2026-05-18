@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
-import 'package:icare/features/account/presentation/bloc/account_bloc.dart';
-import 'package:icare/features/account/presentation/bloc/account_event.dart';
 import 'package:icare/features/shared_widgets/snackbars_builder.dart';
 import 'package:icare/features/search/presentation/bloc/search_bloc.dart';
 import 'package:icare/features/search/presentation/bloc/search_event.dart';
 import 'package:icare/features/search/presentation/bloc/search_state.dart';
+import 'package:icare/features/account/presentation/bloc/services_bloc.dart';
+import 'package:icare/features/account/presentation/bloc/services_event.dart';
 import 'package:icare/features/search/presentation/screens/map_search_screen.dart';
 import 'package:icare/features/search/presentation/screens/all_providers_screen.dart';
 import 'package:icare/features/search/presentation/widgets/provider_type_selector.dart';
@@ -29,14 +30,20 @@ class _SearchScreenState extends State<SearchScreen> {
   final ExpansibleController _expansionTileController = ExpansibleController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<SearchBloc, SearchState>(
       listener: (context, state) {
         // Reload services when provider type changes
         if (state is ProviderTypeSelectedState) {
-          final accountBloc = context.read<AccountBloc>();
-          accountBloc.add(FetchAllServicesEvent(userType: state.providerType));
-          debugPrint("🔄 Reloading services for: ${state.providerType}");
+          context
+              .read<ServicesBloc>()
+              .add(FetchAllServicesEvent(userType: state.providerType));
+          AppLogger.d("🔄 Reloading services for: ${state.providerType}");
         }
 
         if (state is SearchSuccessState) {

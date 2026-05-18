@@ -17,12 +17,12 @@ import 'package:icare/features/shared_widgets/review.dart';
 
 class CompletedBookingMenuWidget extends StatelessWidget {
   final Booking item;
-  final SearchableEntity orderNurse;
+  final SearchableEntity? orderNurse;
   final UserService currentUser;
   const CompletedBookingMenuWidget(
       {super.key,
       required this.item,
-      required this.orderNurse,
+      this.orderNurse,
       required this.currentUser});
 
   @override
@@ -32,8 +32,7 @@ class CompletedBookingMenuWidget extends StatelessWidget {
       child: Row(
         children: [
           if (currentUser.userType.toString().toLowerCase() == "customer") ...[
-            // Only show rating option if the provider is a nurse
-            if (orderNurse.providerType.toLowerCase() == 'nurse')
+            if (orderNurse?.providerType.toLowerCase() == 'nurse')
               PopupMenuButton(
                 icon: Icon(
                   Icons.info_outline,

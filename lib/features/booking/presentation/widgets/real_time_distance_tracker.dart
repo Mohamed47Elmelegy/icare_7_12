@@ -88,13 +88,15 @@ class _RealTimeDistanceTrackerState extends State<RealTimeDistanceTracker> {
       (_) => _updateDistance(),
     );
 
-    debugPrint('📍 Started real-time location tracking');
+    // Started real-time location tracking
+
   }
 
   void _stopLocationTracking() {
     _locationTimer?.cancel();
     _locationTimer = null;
-    debugPrint('🛑 Stopped real-time location tracking');
+    // Stopped real-time location tracking
+
   }
 
   Future<void> _updateDistance() async {
@@ -129,9 +131,11 @@ class _RealTimeDistanceTrackerState extends State<RealTimeDistanceTracker> {
         });
       }
 
-      debugPrint('📏 Distance updated: ${distance.toInt()}m');
+      // Distance updated
+
     } catch (e) {
-      debugPrint('❌ Error updating distance: $e');
+      // Error updating distance
+
       if (mounted) {
         setState(() {
           _isUpdating = false;

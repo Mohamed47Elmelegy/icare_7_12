@@ -59,7 +59,7 @@ class OnGoingBookingMenuWidget extends StatelessWidget {
                 await Util.pushPage(
                     PopScope(
                       canPop: true,
-                      onPopInvoked: (didPop) async {
+                      onPopInvokedWithResult: (didPop, result) async {
                         if (didPop) {
                           await _afterEditPatient(
                               context, accountBloc, orderNurse);

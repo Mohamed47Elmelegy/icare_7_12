@@ -1,4 +1,5 @@
 import 'package:icare/features/account/presentation/widgets/patient_profile_widgets/today_monitoring_vitals.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:icare/core/styles/app_style.dart';
 import 'package:icare/core/utils/dark_mode_utility.dart';
@@ -35,7 +36,11 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
     // Fetch medical reports when screen loads
     if (Util.checkUser()) {
       final accountBloc = AccountBloc.get(context);
-      final patientId = Util.getUserID();
+      // Use the currentUser from AccountBloc which is set to the patient when nurse enters their profile
+      final patientId =
+          accountBloc.currentUser?.userId?.toString() ?? Util.getUserID();
+      AppLogger.d(
+          "📡 [ReportTap] Fetching medical reports for patient: $patientId");
       accountBloc.add(FetchPatientMedicalReportsEvent(patientId: patientId));
     }
   }
@@ -59,7 +64,7 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
         // Try parsing with DateFormat if the format is different
         return DateFormat('yyyy-MM-dd').parse(dateString);
       } catch (e2) {
-        print("DEBUG: Error parsing date: $dateString - $e2");
+        AppLogger.e("DEBUG: Error parsing date: $dateString - $e2");
         return null;
       }
     }
@@ -81,7 +86,13 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
         ),
         BlocBuilder<BookingBloc, BookingState>(
           builder: (context, state) {
-            var orders = BookingBloc.get(context).bookingList;
+            var allOrders = BookingBloc.get(context).bookingList;
+            final accountBloc = AccountBloc.get(context);
+            final patientId = accountBloc.currentUser?.userId;
+
+            // Filter orders by patient ID
+            var orders = allOrders.where((o) => o.userId == patientId).toList();
+
             Booking? latestBooking;
             try {
               if (orders.isNotEmpty) {
@@ -99,11 +110,10 @@ class _ReportTapScreenState extends State<ReportTapScreen> {
                 }
               }
             } catch (e) {
-              print("DEBUG: Error finding latest booking: $e");
+              AppLogger.e("DEBUG: Error finding latest booking: $e");
             }
 
             // Get filtered reports for selected date
-            final accountBloc = AccountBloc.get(context);
             final allReports = accountBloc.patientMedicalReports;
             final selectedDateReports = allReports.where((report) {
               final reportDate = _parseDate(report.createdAt);

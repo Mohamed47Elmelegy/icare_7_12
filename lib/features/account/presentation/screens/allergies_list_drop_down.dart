@@ -10,14 +10,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 
-class AllergiesListDropDown extends StatelessWidget {
+class AllergiesListDropDown extends StatefulWidget {
   final double width;
   const AllergiesListDropDown({super.key, this.width = 110});
 
   @override
+  State<AllergiesListDropDown> createState() => _AllergiesListDropDownState();
+}
+
+class _AllergiesListDropDownState extends State<AllergiesListDropDown> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      width: width.w,
+      width: widget.width.w,
       decoration: BoxDecoration(
           color: DMUtil.getWC(),
           borderRadius: BorderRadius.circular(10),

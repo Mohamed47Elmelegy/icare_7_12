@@ -13,7 +13,9 @@ import 'package:icare/features/account/presentation/widgets/nurse_widgets/edit_i
 import 'package:icare/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_event.dart';
 import 'package:icare/features/authentication/presentation/bloc/auth_state.dart';
+import 'package:icare/features/authentication/presentation/cubit/registration_cubit.dart';
 import 'package:icare/features/authentication/presentation/screens/login.dart';
+import 'package:icare/features/authentication/presentation/screens/nurse/create_nurse_account.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/add_btn_row.dart';
 import 'package:icare/features/authentication/presentation/widgets/nurse/app_bar_nurse_create_account.dart';
 import 'package:icare/features/locations/presentation/bloc/locations_bloc.dart';
@@ -34,6 +36,8 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
         listener: (ctx, state) {
           var bloc = AuthBloc.get(ctx);
           if (state is RegistrationPendingState) {
+            RegistrationCubit.get(ctx).reset();
+            CreateNurseAccountScreen.clearControllers();
             SnackBarBuilder.showFeedBackMessage(
               context,
               state.message,
@@ -45,6 +49,8 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
             );
           } else if (state is RegisterSuccessfullyState &&
               state.response.isSuccess == true) {
+            RegistrationCubit.get(ctx).reset();
+            CreateNurseAccountScreen.clearControllers();
             SnackBarBuilder.showFeedBackMessage(
               context,
               bloc.resMsg,
@@ -68,7 +74,10 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
             state is RegisterFailedState,
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (ctx, state) {
-            var bloc = AuthBloc.get(ctx);
+            var authBloc = AuthBloc.get(ctx);
+            // Read registration data from RegistrationCubit (fixed)
+            var regState = RegistrationCubit.get(ctx).state;
+
             if (state is LogInLoadingState || state is RegisterLoadingState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -108,10 +117,10 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
               ),
               color: DMUtil.getPC(),
               onPressed: () async {
-                // ✅ Validate required files first
-                if (bloc.license == null ||
-                    bloc.certificate == null ||
-                    bloc.nurseID == null) {
+                // ✅ Validate required files from RegistrationCubit (fixed)
+                if (regState.license == null ||
+                    regState.certificate == null ||
+                    regState.nurseID == null) {
                   SnackBarBuilder.showFeedBackMessage(
                     context,
                     "يرجى رفع جميع المستندات المطلوبة (الترخيص، الشهادة، بطاقة الهوية)",
@@ -120,9 +129,7 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                   return;
                 }
 
-                // Specialty validation removed - will be set after login
-
-                if (bloc.checkNurseRegisterInfoCompleted() == false) {
+                if (!regState.isInfoCompleted) {
                   SnackBarBuilder.showFeedBackMessage(
                     context,
                     translate("toast.field_empty"),
@@ -131,14 +138,25 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                   return;
                 }
 
+                if (regState.selectedSpecialtyId == null) {
+                  SnackBarBuilder.showFeedBackMessage(
+                    context,
+                    translate("toast.specialty_required"),
+                    Colors.red,
+                  );
+                  return;
+                }
+
                 // Get LocationsBloc for location data
                 var locationsBloc = LocationsBloc.get(context);
 
-                // Build register data
+                // Build register data — reads from RegistrationCubit (fixed)
                 Map<String, dynamic> registerData = {
-                  'name': bloc.nurse?.userData!.userName.toString(),
-                  'email': bloc.nurse?.userData!.email.toString(),
-                  'phone': bloc.nurse?.userData!.phoneNumber.toString(),
+                  'name': regState.nurse?.userData!.userName.toString(),
+                  'email': regState.nurse?.userData!.email.toString(),
+                  'phone': regState.nurse?.userData!.phoneNumber.toString(),
+                  'password': CreateNurseAccountScreen
+                      .passwordTextEditingController.text,
                 };
 
                 // Add location data
@@ -154,53 +172,55 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                 }
                 registerData['country_code'] = '';
                 registerData['status'] = 'online';
-                registerData['is_male'] = bloc.isWomen ? "0" : "1";
+                registerData['is_male'] = authBloc.isWomen ? "0" : "1";
 
                 // Add doctor-specific data
                 registerData['user_type'] = 'doctor';
 
-                // ✅ Add specialty if selected (optional)
-                if (bloc.selectedSpecialtyId != null) {
-                  registerData['specialties_id'] = bloc.selectedSpecialtyId;
+                // ✅ Add specialty from RegistrationCubit (fixed)
+                if (regState.selectedSpecialtyId != null) {
+                  registerData['specialties_id'] = regState.selectedSpecialtyId;
                 }
 
-                // Add files
-                if (bloc.avatar != null) {
-                  registerData['avatar'] = bloc.avatar;
+                // Add files from RegistrationCubit (fixed)
+                if (regState.avatar != null) {
+                  registerData['avatar'] = regState.avatar;
                 }
-                if (bloc.license != null) {
-                  registerData['license'] = bloc.license;
+                if (regState.license != null) {
+                  registerData['license'] = regState.license;
                 }
-                if (bloc.certificate != null) {
-                  registerData['certificate'] = bloc.certificate;
+                if (regState.certificate != null) {
+                  registerData['certificate'] = regState.certificate;
                 }
-                if (bloc.nurseID != null) {
-                  registerData['nurseID'] = bloc.nurseID;
+                if (regState.nurseID != null) {
+                  registerData['nurseID'] = regState.nurseID;
                 }
-                if (bloc.associationCard != null) {
-                  registerData['associationCard'] = bloc.associationCard;
+                if (regState.associationCard != null) {
+                  registerData['associationCard'] = regState.associationCard;
                 }
 
-                // Add professional data
-                if (bloc.languageList != null &&
-                    bloc.languageList!.isNotEmpty) {
-                  registerData['languages'] = jsonEncode(bloc.languageList);
+                // Add professional data from RegistrationCubit (fixed)
+                if (regState.languageList != null &&
+                    regState.languageList!.isNotEmpty) {
+                  registerData['languages'] = jsonEncode(regState.languageList);
                 }
-                if (bloc.educationList != null &&
-                    bloc.educationList!.isNotEmpty) {
-                  registerData['education'] = jsonEncode(bloc.educationList);
+                if (regState.educationList != null &&
+                    regState.educationList!.isNotEmpty) {
+                  registerData['education'] =
+                      jsonEncode(regState.educationList);
                 }
-                if (bloc.publicationsList != null &&
-                    bloc.publicationsList!.isNotEmpty) {
+                if (regState.publicationsList != null &&
+                    regState.publicationsList!.isNotEmpty) {
                   registerData['publications'] =
-                      jsonEncode(bloc.publicationsList);
+                      jsonEncode(regState.publicationsList);
                 }
-                if (bloc.coursesList != null && bloc.coursesList!.isNotEmpty) {
-                  registerData['courses'] = jsonEncode(bloc.coursesList);
+                if (regState.coursesList != null &&
+                    regState.coursesList!.isNotEmpty) {
+                  registerData['courses'] = jsonEncode(regState.coursesList);
                 }
 
-                // Send registration request
-                bloc.add(RegisterEvent(user: registerData));
+                // Send registration request to AuthBloc (auth concern only)
+                authBloc.add(RegisterEvent(user: registerData));
               },
             );
           },
@@ -230,38 +250,18 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                     color: DMUtil.getD2C(),
                   ),
                   SizedBox(height: 10.h),
-                  // CustomText(
-                  //   text:
-                  //       "يرجى إكمال البيانات المهنية (يمكنك إضافة التخصص لاحقاً من الحساب)",
-                  //   fontSize: AppStyle.small.sp,
-                  //   color: DMUtil.getD2C().withValues(alpha: 0.7),
-                  // ),
-                  // SizedBox(height: 20.h),
-
-                  // // Specialty Selection (Optional)
-                  // CustomText(
-                  //   text: "التخصص (اختياري)",
-                  //   fontSize: AppStyle.average.sp,
-                  //   fontWeight: FontWeight.w600,
-                  //   color: DMUtil.getD2C(),
-                  // ),
-                  // SizedBox(height: 10.h),
-                  // const SpecialtyListDropDown(),
-                  // SizedBox(height: 20.h),
 
                   // Languages
                   AddRowWithTitle(
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.languageList ??= [];
-                        int index = bloc.languageList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.languageList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            languageList: bloc.languageList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.languageList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updateLanguageList(updated);
                       }
                     },
                     title: translate("nurse.languages"),
@@ -275,14 +275,12 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.educationList ??= [];
-                        int index = bloc.educationList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.educationList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            educationList: bloc.educationList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.educationList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updateEducationList(updated);
                       }
                     },
                     title: translate("nurse.education"),
@@ -296,14 +294,12 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.publicationsList ??= [];
-                        int index = bloc.publicationsList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.publicationsList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            publicationsList: bloc.publicationsList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.publicationsList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updatePublicationsList(updated);
                       }
                     },
                     title: translate("nurse.experience_year"),
@@ -317,14 +313,12 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                     onTap: () async {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
-                        var bloc = AuthBloc.get(context);
-                        bloc.coursesList ??= [];
-                        int index = bloc.coursesList!
-                            .indexWhere((element) => element == res);
-                        if (index != -1) return;
-                        bloc.coursesList!.add(res);
-                        bloc.add(UpdateNurseRegisterDataEvent(
-                            coursesList: bloc.coursesList));
+                        var regCubit = RegistrationCubit.get(context);
+                        List<String> updated =
+                            List.from(regCubit.state.coursesList ?? []);
+                        if (updated.contains(res)) return;
+                        updated.add(res);
+                        regCubit.updateCoursesList(updated);
                       }
                     },
                     title: translate("nurse.courses"),

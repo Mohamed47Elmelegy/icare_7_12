@@ -49,8 +49,8 @@ class OrderModel extends Booking {
       orderId: int.parse((jsonObject['id'] ?? "0").toString()),
       code: int.parse((jsonObject['id'] ?? "0").toString()),
       desc: jsonObject['desc'].toString(),
-      status: jsonObject['order_status'],
-      statusView: getStatus(jsonObject['order_status']),
+      status: jsonObject['order_status']?.toString(),
+      statusView: getStatus(jsonObject['order_status']?.toString()),
       date: jsonObject['created_at'] ?? "",
       city: jsonObject['address'] ?? "",
       shippingAddress: jsonObject['address'] ?? "",
@@ -61,7 +61,7 @@ class OrderModel extends Booking {
               jsonObject['user_gender'].toString() == '1')
           ? 'male'
           : 'female',
-      nurseName: jsonObject['nurse_name'] ?? "",
+      nurseName: jsonObject['nurse_name'] ?? jsonObject['doctor_name'] ?? "",
       nurseID: () {
         int nId = int.tryParse((jsonObject['nurse_id'] ?? "0").toString()) ?? 0;
         if (nId != 0) return nId;
@@ -101,14 +101,15 @@ class OrderModel extends Booking {
     return ApiUrl.STORAGE_URL + image;
   }
 
-  static getStatus(String val) {
-    if (val == "wc-processing" || val == "PENDING") {
+  static getStatus(String? val) {
+    if (val == null) return translate("order.pending");
+    if (val == "wc-processing" || val.toUpperCase() == "PENDING") {
       return translate("order.pending");
-    } else if (val == "wc-on-hold") {
+    } else if (val == "wc-on-hold" || val.toUpperCase() == "ONGOING") {
       return translate("order.on_going_orders");
     } else if (val == "wc-completed" ||
-        val == "COMPLETED" ||
-        val == "DELIVERED") {
+        val.toUpperCase() == "COMPLETED" ||
+        val.toUpperCase() == "DELIVERED") {
       return translate("order.order_has_done");
     } else if (val.toUpperCase() == "REFUESD" ||
         val.toUpperCase() == "REFUSED" ||
@@ -118,14 +119,15 @@ class OrderModel extends Booking {
     return val;
   }
 
-  static getStatusViewCheck(String val) {
+  static getStatusViewCheck(String? val) {
+    if (val == null) return ORDER_STATUS.PENDING;
     if (val == "wc-processing" || val.toUpperCase() == "PENDING") {
       return ORDER_STATUS.PENDING;
     } else if (val == "wc-on-hold" || val.toUpperCase() == "ONGOING") {
       return ORDER_STATUS.ONGOING;
     } else if (val == "wc-completed" ||
         val.toUpperCase() == "COMPLETED" ||
-        val == "DELIVERED") {
+        val.toUpperCase() == "DELIVERED") {
       return ORDER_STATUS.COMPLETED;
     } else if (val.toUpperCase() == "REFUESD" ||
         val.toUpperCase() == "REFUSED" ||

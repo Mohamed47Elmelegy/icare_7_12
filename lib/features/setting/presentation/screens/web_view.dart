@@ -1,4 +1,5 @@
 import 'package:icare/core/utils/dark_mode_utility.dart';
+import 'package:icare/core/utils/app_logger.dart';
 import 'package:icare/features/shared_widgets/global_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -33,16 +34,16 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
-            debugPrint('WebView is loading (progress : $progress%)');
+            AppLogger.d('WebView is loading (progress : $progress%)');
           },
           onPageStarted: (String url) {
-            debugPrint('Page started loading: $url');
+            AppLogger.d('Page started loading: $url');
           },
           onPageFinished: (String url) {
-            debugPrint('Page finished loading: $url');
+            AppLogger.d('Page finished loading: $url');
           },
           onWebResourceError: (WebResourceError error) {
-            debugPrint('''
+            AppLogger.e('''
 Page resource error:
   code: ${error.errorCode}
   description: ${error.description}
@@ -52,14 +53,14 @@ Page resource error:
           },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith('https://www.youtube.com/')) {
-              // debugPrint('blocking navigation to ${request.url}');
+              // AppLogger.d('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
-            debugPrint('allowing navigation to ${request.url}');
+            AppLogger.d('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
           onUrlChange: (UrlChange change) {
-            debugPrint('url change to ${change.url}');
+            AppLogger.d('url change to ${change.url}');
           },
         ),
       )
