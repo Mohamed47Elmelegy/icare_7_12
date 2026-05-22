@@ -70,8 +70,6 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
           child: BlocBuilder<AuthBloc, AuthState>(
             builder: (ctx, state) {
               var authBloc = AuthBloc.get(ctx);
-              // Read registration data from RegistrationCubit
-              var regState = RegistrationCubit.get(ctx).state;
 
               if (state is LogInLoadingState || state is RegisterLoadingState) {
                 return CircularProgressIndicator(
@@ -101,6 +99,17 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                 ),
                 color: DMUtil.getPC(),
                 onPressed: () async {
+                  // Read the latest RegistrationCubit state. The enclosing
+                  // BlocBuilder only rebuilds on AuthBloc changes, so the
+                  // `regState` captured above goes stale the moment the user
+                  // adds a language/education/etc. entry.
+                  final regState = RegistrationCubit.get(context).state;
+                  // ---- DEBUG TRACE (registration validation) ----
+                  debugPrint('[REG][validate] Cubit hash: '
+                      '${RegistrationCubit.get(context).hashCode}');
+                  debugPrint('[REG][validate] Languages: '
+                      '${regState.languageList}');
+                  // -----------------------------------------------
                   // Validation uses RegistrationCubit state
                   if (regState.languageList == null ||
                       regState.languageList!.isEmpty) {
@@ -136,7 +145,8 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                     'email': regState.nurse?.userData!.email.toString(),
                     'phone': regState.nurse?.userData!.phoneNumber.toString(),
                     'password': CreateNurseAccountScreen
-                        .passwordTextEditingController.text,
+                        .passwordTextEditingController.text
+                        .trim(),
                   };
 
                   // Add location data
@@ -227,11 +237,21 @@ class CompleteNurseRegisterDataScreen extends StatelessWidget {
                       var res = await CustomDialogs.addNewValue(context);
                       if (res != null && res != "") {
                         var regCubit = RegistrationCubit.get(context);
+                        // ---- DEBUG TRACE (add language) ----
+                        debugPrint('[REG][add-lang] Cubit hash: '
+                            '${regCubit.hashCode}');
+                        debugPrint('[REG][add-lang] BEFORE: '
+                            '${regCubit.state.languageList}');
+                        // ------------------------------------
                         List<String> updated =
                             List.from(regCubit.state.languageList ?? []);
                         if (updated.contains(res)) return;
                         updated.add(res);
                         regCubit.updateLanguageList(updated);
+                        // ---- DEBUG TRACE (add language) ----
+                        debugPrint('[REG][add-lang] AFTER : '
+                            '${regCubit.state.languageList}');
+                        // ------------------------------------
                       }
                     },
                     title: translate("nurse.languages"),

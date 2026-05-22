@@ -19,6 +19,10 @@ class NurseOptionsValueRow extends StatelessWidget {
     return BlocBuilder<RegistrationCubit, RegistrationState>(
       builder: (ctx, regState) {
         var regCubit = RegistrationCubit.get(ctx);
+        // ---- DEBUG TRACE (registration display widget) ----
+        debugPrint('[REG][display:$listType] Cubit hash: '
+            '${regCubit.hashCode} | languages: ${regState.languageList}');
+        // ---------------------------------------------------
         List<String> list = [];
         if (listType == "languages" && regState.languageList != null) {
           list = List.from(regState.languageList!);

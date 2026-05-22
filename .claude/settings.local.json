@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze *)",
+      "PowerShell(flutter pub *)",
+      "PowerShell(flutter analyze *)",
+      "Bash(flutter clean *)"
+    ]
+  }
+}

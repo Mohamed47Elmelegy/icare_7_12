@@ -115,6 +115,11 @@ class CreateNurseAccountScreen extends StatelessWidget {
               color: DMUtil.getPC(),
               onPressed: () async {
                 var regCubit = RegistrationCubit.get(context);
+                // ---- DEBUG TRACE (create-account screen) ----
+                debugPrint('[REG][create-account] Cubit hash: '
+                    '${regCubit.hashCode} | languages: '
+                    '${regCubit.state.languageList}');
+                // ---------------------------------------------
                 if (regCubit.state.avatar == null) {
                   SnackBarBuilder.showFeedBackMessage(
                       context, translate("toast.img_missing"), Colors.red);

@@ -222,8 +222,7 @@ class LoginScreen extends StatelessWidget {
                                         phoneTextEditingController.text.trim();
                                     var password = passTextEditingController
                                         .text
-                                        .trim()
-                                        .replaceAll('\u0000', '');
+                                        .trim();
                                     if (validateForm()) {
                                       var data = {
                                         'phone': phone,

@@ -75,8 +75,6 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (ctx, state) {
             var authBloc = AuthBloc.get(ctx);
-            // Read registration data from RegistrationCubit (fixed)
-            var regState = RegistrationCubit.get(ctx).state;
 
             if (state is LogInLoadingState || state is RegisterLoadingState) {
               return Column(
@@ -117,6 +115,11 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
               ),
               color: DMUtil.getPC(),
               onPressed: () async {
+                // Read the latest RegistrationCubit state. The enclosing
+                // BlocBuilder only rebuilds on AuthBloc changes, so the
+                // `regState` captured above goes stale the moment the user
+                // adds a language/education/etc. entry.
+                final regState = RegistrationCubit.get(context).state;
                 // ✅ Validate required files from RegistrationCubit (fixed)
                 if (regState.license == null ||
                     regState.certificate == null ||
@@ -156,7 +159,8 @@ class CompleteDoctorRegisterDataScreen extends StatelessWidget {
                   'email': regState.nurse?.userData!.email.toString(),
                   'phone': regState.nurse?.userData!.phoneNumber.toString(),
                   'password': CreateNurseAccountScreen
-                      .passwordTextEditingController.text,
+                      .passwordTextEditingController.text
+                      .trim(),
                 };
 
                 // Add location data

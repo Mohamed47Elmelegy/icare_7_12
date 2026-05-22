@@ -94,11 +94,7 @@ class RegisterScreen extends StatelessWidget {
                           'name': nameTextEditingController.text.trim(),
                           'email': email,
                           'phone': phone,
-                          // Remove null characters and validate password
-                          'password': passwordTextEditingController.text
-                              .trim()
-                              .replaceAll(
-                                  '\u0000', ''), // Remove null characters
+                          'password': passwordTextEditingController.text.trim(),
                         };
 
                         registerData['city'] = locationsBloc.city;
